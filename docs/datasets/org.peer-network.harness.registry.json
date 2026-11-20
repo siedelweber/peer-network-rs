@@ -3062,7 +3062,8 @@
         "pn-host::scram::tests::derivation_permits",
         "pn-host::scram::tests::derivation_cost",
         "pn-host::publication::comparison::tests::comparison_editions",
-        "pn-host::publication::controller::tests::controller_editions"
+        "pn-host::publication::controller::tests::controller_editions",
+        "pn-host::admitted_result::position::tests::tree_audit_span_position"
       ],
       "implementation": "pn-host-rust",
       "kind": "suite",
@@ -3345,7 +3346,11 @@
         "pn-host::storage::tree::server::tests::tree_server_surplus",
         "pn-host::storage::tree::server::tests::tree_server_plans",
         "pn-host::storage::catalogue::tests::tree_catalogue_exact",
-        "pn-host::storage::catalogue::tests::bounds::tree_catalogue_bounds_and_roles"
+        "pn-host::storage::catalogue::tests::bounds::tree_catalogue_bounds_and_roles",
+        "pn-host::storage::tree::audit::server::tests::tree_audit_server_inventory",
+        "pn-host::storage::tree::audit::server::tests::tree_audit_server_cursor",
+        "pn-host::storage::tree::audit::server::tests::tree_audit_server_location",
+        "pn-host::storage::tree::audit::server::tests::tree_audit_server_limits"
       ],
       "implementation": "pn-host-postgresql",
       "kind": "suite",

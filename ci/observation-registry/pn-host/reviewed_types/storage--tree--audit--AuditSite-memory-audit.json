@@ -4,6 +4,6 @@
     "item": "storage::tree::audit::AuditSite",
     "package": "pn-host",
     "path": "packages/host/src/storage/tree/audit.rs",
-    "syntax": "# [derive (Clone , Copy)] # [allow (clippy :: large_enum_variant)] pub (super) enum AuditSite < 'a > { NotRead , Row { relation : & 'static str , slots : [SitePart < 'a > ; 6] , } , }"
+    "syntax": "# [derive (Clone , Copy)] # [allow (clippy :: large_enum_variant)] pub (super) enum AuditSite < 'a > { NotRead , OverBound , Row { relation : & 'static str , slots : [SitePart < 'a > ; 6] , } , }"
   }
 }

@@ -57,6 +57,7 @@
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::roots",
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::tips",
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerReader < '_ >::usage",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::audit",
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::commit",
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::open",
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::reader",

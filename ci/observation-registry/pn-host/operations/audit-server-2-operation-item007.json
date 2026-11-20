@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "item": "admitted_result::position::<StoredFields < 'a > as PositionFieldView>::marker_index",
+    "owner": "HOST",
+    "signature": "fn marker_index (& self , marker : Self :: Marker) -> u64",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.",
+      "witness": "HOST::claim:history:tree-audit-span-position",
+      "boundary": "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::audit",
+      "class_decision": "host-storage"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::<StoredFields < 'a > as PositionFieldView>::marker_index",
+    "body": "{ marker . field (0) . ok () . and_then (| v | stored_decimal (v , 5) . ok ()) . unwrap_or (u64 :: MAX) }",
+    "class_decision": "host-storage",
+    "item_premise": "The private stored-span field accessor is reached from the observed bounded server audit, with strict span checks and no credentials or driver diagnostic.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

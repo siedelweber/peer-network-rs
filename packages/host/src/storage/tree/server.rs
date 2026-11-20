@@ -5,17 +5,20 @@ use std::fmt::Write;
 
 use super::super::{DISCLOSURE_RECIPE, Family, PAYLOAD_RECIPE, Payload, Version, digest};
 use super::super::{Session, Statement, StatementParameter, StatementRow, StatementTransaction, catalogue, observed};
-use super::{EpochScope, Error, Generation, Identity, Meter, Page, Range, ReadBudget, StorageError, Usage, fields, scope_check};
+use super::{
+    AuditBudget, AuditFailure, AuditInventory, AuditUsage, EpochScope, Error, Generation, Identity, Meter, Page, Range,
+    ReadBudget, StorageError, Usage, fields, scope_check,
+};
 use crate::admitted_result::DeclarationUse;
 use crate::admitted_result::position::Retained;
 
 mod content;
 mod generation;
-mod projection;
+pub(in crate::storage::tree) mod projection;
 mod result;
-mod spans;
+pub(crate) mod spans;
 #[cfg(test)]
-mod tests;
+pub(in crate::storage::tree) mod tests;
 
 /// A verified tree catalogue, without a result-write capability.
 /// (´[ROOT-amend:storage:admitted-layout]´)
@@ -27,6 +30,47 @@ pub struct ServerTree {
 }
 
 impl ServerTree {
+    /// Reconcile one complete read-only snapshot into an immutable logical inventory.
+    /// (´[ROOT-amend:storage:tree-audit]´)
+    /// # Errors
+    /// Refuses the first damaged domain, exhausted allowance or wrapped request failure.
+    pub async fn audit(&mut self, budget: AuditBudget, usage: &mut AuditUsage) -> Result<AuditInventory, AuditFailure> {
+        let operation = cli_common::observation::scope(
+            "HOST",
+            "sig:design:storage",
+            "storage::tree::server::ServerTree::audit",
+            &(budget,),
+        );
+        *usage = AuditUsage::default();
+        let mut meter = super::audit::AuditMeter::new(budget);
+        if let Err(error) = meter.begin(budget) {
+            *usage = meter.usage();
+            operation.finish(&Err::<AuditInventory, _>(&error));
+            return Err(error);
+        }
+        let transaction = match self.session.client.snapshot(self.session.store_requests.clone()).await {
+            Ok(transaction) => transaction,
+            Err(error) => {
+                let failure = meter.refused(error, super::audit::AuditSite::NotRead);
+                *usage = meter.usage();
+                operation.finish(&Err::<AuditInventory, _>(&failure));
+                return Err(failure);
+            }
+        };
+        let outcome = super::audit::server::reconcile_tx(&transaction, &mut meter, budget.page_rows).await;
+        let result = match outcome {
+            Ok(inventory) => transaction
+                .commit()
+                .await
+                .map(|()| inventory)
+                .map_err(|error| meter.refused(error, super::audit::AuditSite::NotRead)),
+            Err(error) => Err(transaction.refuse(error).await),
+        };
+        *usage = meter.usage();
+        operation.finish(&result);
+        result
+    }
+
     /// Verify the exact catalogue before exposing its closed reader.
     /// (´[ROOT-amend:storage:admitted-layout]´)
     /// # Errors
@@ -589,26 +633,7 @@ fn decode_version(meter: &mut Meter, row: &StatementRow, start: usize) -> Result
         (None, None) if disclosure.is_none() => None,
         (Some(content), Some(stored_digest)) => {
             let validated = spans::Validated::new(content, meter)?;
-            let envelope = validated.root()?.array(3)?;
-            if envelope.field(0)?.text()? != PAYLOAD_RECIPE
-                || envelope.field(1)?.text()? != family.name()
-                || digest(PAYLOAD_RECIPE, content) != stored_digest
-            {
-                return Err(StorageError::CorruptHistory.into());
-            }
-            if family == Family::UnsettledRecognition {
-                let body = envelope.field(2)?.array(4)?;
-                let input = body.field(2)?;
-                let expected = digest(DISCLOSURE_RECIPE, input.bytes());
-                if body.field(0)?.text()? != DISCLOSURE_RECIPE
-                    || body.field(1)?.blob()? != expected
-                    || disclosure != Some(expected)
-                {
-                    return Err(StorageError::CorruptHistory.into());
-                }
-            } else if disclosure.is_some() {
-                return Err(StorageError::CorruptHistory.into());
-            }
+            spans::history_payload(&validated, family, content, stored_digest, disclosure)?;
             let mut bytes = Vec::new();
             meter.reserve(&mut bytes, content.len())?;
             bytes.extend_from_slice(content);
@@ -1387,7 +1412,7 @@ fn optional_bytes(row: &StatementRow, value: usize, length: usize, maximum: usiz
         _ => Err(StorageError::CorruptHistory.into()),
     }
 }
-fn family(name: &str) -> Result<Family, Error> {
+pub(super) fn family(name: &str) -> Result<Family, Error> {
     match name {
         "constants" => Ok(Family::Constants),
         "rule" => Ok(Family::Rule),

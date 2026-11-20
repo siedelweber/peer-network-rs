@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::server::Cell",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit/server.rs",
+    "syntax": "enum Cell { Text (String) , Bytes (Vec < u8 >) , Integer (i64) , Null , }"
+  }
+}

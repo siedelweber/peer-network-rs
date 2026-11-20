@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::server::projection::AuditReservations",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server/projection.rs",
+    "syntax": "struct AuditReservations < 'a , 's > { meter : & 'a mut AuditMeter , site : AuditSite < 's > , failure : Option < AuditFailure > , }"
+  }
+}

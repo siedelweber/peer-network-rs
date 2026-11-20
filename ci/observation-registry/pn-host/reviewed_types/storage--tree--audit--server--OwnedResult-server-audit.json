@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::server::OwnedResult",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit/server.rs",
+    "syntax": "struct OwnedResult { key : String , scope : EpochScope , identity : Identity , parent : Option < Identity > , depth : u64 , segment : Identity , generation : u64 , }"
+  }
+}

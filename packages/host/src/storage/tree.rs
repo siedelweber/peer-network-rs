@@ -10,7 +10,7 @@ mod read;
 pub use read::{DebitRead, Page, Reader, ResultRead};
 mod audit;
 pub use audit::{AuditBudget, AuditFailure, AuditInventory, AuditLocation, AuditUsage};
-mod server;
+pub(crate) mod server;
 pub use server::{ServerDebit, ServerJudgement, ServerReader, ServerResult, ServerSelection, ServerTree};
 mod stage;
 
@@ -651,23 +651,41 @@ impl<'a> MemoryTree<'a> {
         meter: &mut Meter,
         probes: bool,
     ) -> Result<(), Error> {
+        Self::selected_indexed(
+            generation.declaration,
+            &generation.versions,
+            &generation.closures,
+            use_,
+            meter,
+            probes,
+        )
+    }
+
+    fn selected_indexed(
+        declaration: &Generation,
+        versions: &[usize],
+        closures: &[usize],
+        use_: &DeclarationUse,
+        meter: &mut Meter,
+        probes: bool,
+    ) -> Result<(), Error> {
         let expected = &use_.version;
         let mut exact = None;
         let mut active = None;
         let key = (expected.family.name(), expected.key.as_str());
         let before = |index: usize, inclusive: bool| {
-            let v = &generation.declaration.versions[index];
+            let v = &declaration.versions[index];
             let candidate = (v.family.name(), v.key.as_str());
             if inclusive { candidate <= key } else { candidate < key }
         };
         if probes {
             meter.row(|| ())?;
         }
-        let start = generation.versions.partition_point(|&i| before(i, false));
-        let end = generation.versions.partition_point(|&i| before(i, true));
-        for &index in &generation.versions[start..end] {
+        let start = versions.partition_point(|&i| before(i, false));
+        let end = versions.partition_point(|&i| before(i, true));
+        for &index in &versions[start..end] {
             let v = meter
-                .row(|| generation.declaration.versions.get(index))?
+                .row(|| declaration.versions.get(index))?
                 .ok_or(StorageError::CorruptHistory)?;
             if v.family != expected.family || v.key != expected.key {
                 continue;
@@ -678,11 +696,10 @@ impl<'a> MemoryTree<'a> {
             if probes {
                 meter.row(|| ())?;
             }
-            let end = generation
-                .closures
-                .binary_search_by(|&i| closure_key(&generation.declaration.closures[i]).cmp(&declaration_key(v)))
+            let end = closures
+                .binary_search_by(|&i| closure_key(&declaration.closures[i]).cmp(&declaration_key(v)))
                 .ok()
-                .map(|i| meter.row(|| generation.declaration.closures[generation.closures[i]].closes_at))
+                .map(|i| meter.row(|| declaration.closures[closures[i]].closes_at))
                 .transpose()?;
             if v.opens_at <= use_.selected_at && end.is_none_or(|e| use_.selected_at < e) {
                 if active.is_some() {

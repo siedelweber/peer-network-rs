@@ -6,6 +6,7 @@ use super::{
     spans::{Item, Validated},
 };
 use crate::admitted_result::{DebitVintage, DeclarationUse};
+use crate::storage::tree::audit::{AuditFailure, AuditMeter, AuditSite, RawExpectedDebit, RawSelection};
 use std::fmt::Write;
 
 trait SelectedUse {
@@ -21,6 +22,12 @@ impl SelectedUse for Selected<'_> {
     /// Justified: Immutable public projection access inherits its enclosing metered writer or reader operation.
     fn use_(&self) -> &DeclarationUse {
         self.use_
+    }
+}
+impl SelectedUse for RawSelection<'_> {
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn use_(&self) -> &DeclarationUse {
+        self.use_.as_ref()
     }
 }
 
@@ -48,15 +55,65 @@ impl DebitUse for DebitVintage {
         &self.bytes
     }
 }
+impl DebitUse for RawExpectedDebit<'_> {
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn act(&self) -> &pn_records::ActId {
+        self.act.as_ref()
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn bytes(&self) -> &[u8] {
+        self.bytes.as_ref()
+    }
+}
 
-struct Uses<'a, 'm, S: SelectedUse> {
+trait ProjectionReservations {
+    fn found(&mut self, found: &mut Vec<bool>, additional: usize) -> Result<(), Error>;
+    fn payload<'a>(&mut self, bytes: &'a [u8]) -> Result<Validated<'a>, Error>;
+}
+
+impl ProjectionReservations for Meter {
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn found(&mut self, found: &mut Vec<bool>, additional: usize) -> Result<(), Error> {
+        self.reserve(found, additional)
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn payload<'a>(&mut self, bytes: &'a [u8]) -> Result<Validated<'a>, Error> {
+        Validated::new(bytes, self)
+    }
+}
+
+struct AuditReservations<'a, 's> {
+    meter: &'a mut AuditMeter,
+    site: AuditSite<'s>,
+    failure: Option<AuditFailure>,
+}
+
+impl ProjectionReservations for AuditReservations<'_, '_> {
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn found(&mut self, found: &mut Vec<bool>, additional: usize) -> Result<(), Error> {
+        self.meter.reserve(found, additional, self.site).map_err(|failure| {
+            self.failure = Some(failure);
+            StorageError::ReadLimit.into()
+        })
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn payload<'a>(&mut self, bytes: &'a [u8]) -> Result<Validated<'a>, Error> {
+        Validated::audit(bytes, self.meter, self.site).map_err(|failure| {
+            self.failure = Some(failure);
+            StorageError::ReadLimit.into()
+        })
+    }
+}
+
+struct Uses<'a, 'm, S: SelectedUse, M: ProjectionReservations> {
     scope: &'a EpochScope,
-    header: &'a Header,
+    identity: [u8; 32],
+    depth: u64,
     document: &'a Validated<'a>,
     frame: Item<'a>,
     selections: &'a [S],
     found: Vec<bool>,
-    meter: &'m mut Meter,
+    meter: &'m mut M,
 }
 
 pub(super) fn validate(
@@ -67,7 +124,7 @@ pub(super) fn validate(
     debits: &[ServerDebit],
     meter: &mut Meter,
 ) -> Result<(), Error> {
-    validate_inner(scope, header, document, selections, debits, meter)
+    validate_inner(scope, header.identity, header.depth, document, selections, debits, meter)
 }
 
 pub(super) fn validate_input(
@@ -78,16 +135,90 @@ pub(super) fn validate_input(
     debits: &[DebitVintage],
     meter: &mut Meter,
 ) -> Result<(), Error> {
-    validate_inner(scope, header, document, selections, debits, meter)
+    validate_inner(scope, header.identity, header.depth, document, selections, debits, meter)
 }
 
-fn validate_inner<S: SelectedUse, D: DebitUse>(
+pub(in crate::storage::tree) fn validate_audit(
     scope: &EpochScope,
-    header: &Header,
+    result: ([u8; 32], u64),
+    document: &Validated<'_>,
+    selections: &[RawSelection<'_>],
+    debits: &[RawExpectedDebit<'_>],
+    meter: &mut AuditMeter,
+    site: AuditSite<'_>,
+) -> Result<(), AuditFailure> {
+    let (identity, depth) = result;
+    let mut reservations = AuditReservations {
+        meter,
+        site,
+        failure: None,
+    };
+    let result = validate_inner(scope, identity, depth, document, selections, debits, &mut reservations);
+    if let Some(failure) = reservations.failure {
+        return Err(failure);
+    }
+    result.map_err(|_| reservations.meter.refused(StorageError::CorruptHistory, site))
+}
+
+pub(in crate::storage::tree) fn expected_debits_audit<'a>(
+    document: &Validated<'_>,
+    meter: &mut AuditMeter,
+    site: AuditSite<'_>,
+) -> Result<Vec<RawExpectedDebit<'a>>, AuditFailure> {
+    let ledger = document
+        .root()
+        .and_then(|root| root.map_value(3))
+        .and_then(|ledger| {
+            ledger
+                .children()
+                .and_then(|children| children.last().ok_or(StorageError::CorruptHistory.into()))
+        })
+        .map_err(|_| meter.refused(StorageError::CorruptHistory, site))?;
+    let entries = ledger
+        .field(3)
+        .and_then(Item::children)
+        .map_err(|_| meter.refused(StorageError::CorruptHistory, site))?;
+    let mut entries = entries;
+    let mut expected = Vec::new();
+    while let Some(key) = entries.next() {
+        let value = entries
+            .next()
+            .ok_or_else(|| meter.refused(StorageError::CorruptHistory, site))?;
+        let key = key.array(3).map_err(|_| meter.refused(StorageError::CorruptHistory, site))?;
+        let author = key
+            .field(0)
+            .and_then(Item::text)
+            .map_err(|_| meter.refused(StorageError::CorruptHistory, site))?;
+        let sequence = key
+            .field(1)
+            .and_then(Item::text)
+            .and_then(decimal)
+            .map_err(|_| meter.refused(StorageError::CorruptHistory, site))?;
+        let family = key
+            .field(2)
+            .and_then(Item::text)
+            .map_err(|_| meter.refused(StorageError::CorruptHistory, site))?;
+        meter.reserve(&mut expected, 1, site)?;
+        expected.push(RawExpectedDebit {
+            act: std::borrow::Cow::Owned(pn_records::ActId {
+                author: meter.copy_text(author, site)?,
+                sequence,
+                family: meter.copy_text(family, site)?,
+            }),
+            bytes: std::borrow::Cow::Owned(meter.copy_bytes(value.bytes(), site)?),
+        });
+    }
+    Ok(expected)
+}
+
+fn validate_inner<S: SelectedUse, D: DebitUse, M: ProjectionReservations>(
+    scope: &EpochScope,
+    identity: [u8; 32],
+    depth: u64,
     document: &Validated<'_>,
     selections: &[S],
     debits: &[D],
-    meter: &mut Meter,
+    meter: &mut M,
 ) -> Result<(), Error> {
     let root = document.root()?;
     if root.children()?.count() != 18
@@ -99,11 +230,12 @@ fn validate_inner<S: SelectedUse, D: DebitUse>(
     let reproductions = root.map_value(8)?.array(4)?.field(3)?;
     let first = reproductions.children()?.next().ok_or(StorageError::CorruptHistory)?;
     let mut found = Vec::new();
-    meter.reserve(&mut found, selections.len())?;
+    meter.found(&mut found, selections.len())?;
     found.resize(selections.len(), false);
     let mut uses = Uses {
         scope,
-        header,
+        identity,
+        depth,
         document,
         frame: first,
         selections,
@@ -126,14 +258,14 @@ fn validate_inner<S: SelectedUse, D: DebitUse>(
         policy.field(1)?.text()?,
         policy.field(2)?.text()?,
     ] != fields(scope)
-        || decimal(last.field(2)?.field(0)?.text()?)? != header.depth
+        || decimal(last.field(2)?.field(0)?.text()?)? != depth
     {
         return Err(StorageError::CorruptHistory.into());
     }
     debit_values(root, debits)
 }
 
-impl<'a, S: SelectedUse> Uses<'a, '_, S> {
+impl<'a, S: SelectedUse, M: ProjectionReservations> Uses<'a, '_, S, M> {
     fn key(&self, suffix: &[&str], observation: bool) -> Result<Scope, Error> {
         let mut key = Scope {
             bytes: [0; 1024],
@@ -145,7 +277,7 @@ impl<'a, S: SelectedUse> Uses<'a, '_, S> {
         for field in fields(self.scope) {
             append(field)?;
         }
-        let hex = hex(self.header.identity);
+        let hex = hex(self.identity);
         if observation {
             append(std::str::from_utf8(&hex).map_err(|_| StorageError::CorruptHistory)?)?;
         }
@@ -184,7 +316,7 @@ impl<'a, S: SelectedUse> Uses<'a, '_, S> {
             return Err(StorageError::CorruptHistory.into());
         }
         let payload = selected.use_().version.payload.as_ref().ok_or(StorageError::CorruptHistory)?;
-        let validated = Validated::new(&payload.bytes, self.meter)?;
+        let validated = self.meter.payload(&payload.bytes)?;
         compare(validated.root()?.array(3)?.field(2)?)?;
         self.found[index] = true;
         Ok(())
@@ -335,16 +467,9 @@ impl<'a, S: SelectedUse> Uses<'a, '_, S> {
         suffix: &[&str],
         compare: impl FnOnce(Item<'_>) -> Result<(), Error>,
     ) -> Result<(), Error> {
-        let encoded = hex(self.header.identity);
+        let encoded = hex(self.identity);
         let edition = std::str::from_utf8(&encoded).map_err(|_| StorageError::CorruptHistory)?;
-        self.expected(
-            family,
-            suffix,
-            self.header.depth,
-            edition,
-            (self.header.depth, self.header.depth),
-            compare,
-        )
+        self.expected(family, suffix, self.depth, edition, (self.depth, self.depth), compare)
     }
     fn observations(&mut self) -> Result<(), Error> {
         let frame = self.frame;
@@ -511,7 +636,7 @@ fn find_record_optional<'a>(history: Item<'a>, name: &str) -> Result<Option<Item
 pub(super) fn extends(a: &Validated<'_>, b: &Validated<'_>) -> Result<(), Error> {
     ensure(extends_match(a, b)?)
 }
-pub(super) fn extends_match(a: &Validated<'_>, b: &Validated<'_>) -> Result<bool, Error> {
+pub(in crate::storage::tree) fn extends_match(a: &Validated<'_>, b: &Validated<'_>) -> Result<bool, Error> {
     let mut same = context_match(a, b)?;
     let a = last(a)?;
     let b = last(b)?;

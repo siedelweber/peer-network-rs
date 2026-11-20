@@ -9,6 +9,7 @@ use std::cell::OnceCell;
 
 mod memory;
 mod output;
+pub(super) mod server;
 #[cfg(test)]
 mod tests;
 
@@ -202,8 +203,10 @@ impl AuditLocation {
 pub(super) enum SitePart<'a> {
     Empty,
     Scope(&'a EpochScope),
+    ScopeText(&'a str),
     Text(&'a str, usize),
     Identity(Identity),
+    RawBytes(&'a [u8], usize),
     Decimal(u64),
     Integer(u64),
     Signed(i64),
@@ -214,7 +217,7 @@ impl SitePart<'_> {
     fn length(self) -> usize {
         match self {
             Self::Decimal(value) => decimal_length(value),
-            Self::Text(value, _) => value.len(),
+            Self::Text(value, _) | Self::ScopeText(value) => value.len(),
             _ => 0,
         }
     }
@@ -225,6 +228,7 @@ impl SitePart<'_> {
 #[allow(clippy::large_enum_variant)]
 pub(super) enum AuditSite<'a> {
     NotRead,
+    OverBound,
     Row {
         relation: &'static str,
         slots: [SitePart<'a>; 6],
@@ -349,6 +353,7 @@ impl AuditMeter {
         let AuditSite::Row { relation, slots } = site else {
             return AuditLocation::unavailable(match site {
                 AuditSite::NotRead => LocationState::NotRead,
+                AuditSite::OverBound => LocationState::OverBound,
                 AuditSite::Row { .. } => unreachable!(),
             });
         };
@@ -360,6 +365,12 @@ impl AuditMeter {
                     Ok(length) => length,
                     Err(_) => return AuditLocation::unavailable(LocationState::OverBound),
                 },
+                SitePart::ScopeText(value) => {
+                    if value.len() > 1024 {
+                        return AuditLocation::unavailable(LocationState::OverBound);
+                    }
+                    value.len()
+                }
                 SitePart::Text(value, bound) => {
                     if value.len() > *bound {
                         return AuditLocation::unavailable(LocationState::OverBound);
@@ -367,6 +378,12 @@ impl AuditMeter {
                     value.len()
                 }
                 SitePart::Identity(_) => 32,
+                SitePart::RawBytes(value, bound) => {
+                    if value.len() > *bound {
+                        return AuditLocation::unavailable(LocationState::OverBound);
+                    }
+                    value.len()
+                }
                 SitePart::Decimal(value) => decimal_length(*value),
                 _ => 0,
             };
@@ -381,8 +398,8 @@ impl AuditMeter {
             "pn_epoch_debits" | "pn_epoch_debit_chunks" | "pn_epoch_result_debits"
         ) {
             let [
-                SitePart::Scope(scope),
-                SitePart::Identity(_),
+                scope @ (SitePart::Scope(_) | SitePart::ScopeText(_)),
+                SitePart::Identity(_) | SitePart::RawBytes(_, 32),
                 SitePart::Text(author, _),
                 sequence @ (SitePart::Decimal(_) | SitePart::Text(_, 20)),
                 SitePart::Text(family, _),
@@ -391,8 +408,12 @@ impl AuditMeter {
             else {
                 return AuditLocation::unavailable(LocationState::OverBound);
             };
-            let Some(framed) = scope_key_length(scope)
-                .ok()
+            let scope_length = match scope {
+                SitePart::Scope(scope) => scope_key_length(scope).ok(),
+                SitePart::ScopeText(value) => Some(value.len()),
+                _ => None,
+            };
+            let Some(framed) = scope_length
                 .and_then(|total| total.checked_add(author.len()))
                 .and_then(|total| total.checked_add(sequence.length()))
                 .and_then(|total| total.checked_add(family.len()))
@@ -426,11 +447,15 @@ impl AuditMeter {
                     }
                     LocationKind::Text
                 }
-                SitePart::Text(value, _) => {
+                SitePart::ScopeText(value) | SitePart::Text(value, _) => {
                     self.diagnostic.extend_from_slice(value.as_bytes());
                     LocationKind::Text
                 }
                 SitePart::Identity(value) => {
+                    self.diagnostic.extend_from_slice(value);
+                    LocationKind::Bytes
+                }
+                SitePart::RawBytes(value, _) => {
                     self.diagnostic.extend_from_slice(value);
                     LocationKind::Bytes
                 }
@@ -484,6 +509,59 @@ impl AuditMeter {
 
     pub(super) fn visit(&mut self, location: AuditSite<'_>) -> Result<(), AuditFailure> {
         self.visit_at(location).map(|_| ())
+    }
+
+    pub(super) fn remaining_rows(&self) -> usize {
+        self.core.limit.rows.saturating_sub(self.core.used.rows)
+    }
+
+    pub(super) fn remaining_allocation(&self) -> usize {
+        self.core.limit.bytes.saturating_sub(self.core.used.allocation_bytes)
+    }
+
+    pub(super) fn copy_text(&mut self, value: &str, site: AuditSite<'_>) -> Result<String, AuditFailure> {
+        if value.is_empty() {
+            return Ok(String::new());
+        }
+        self.allocation(value.len(), site)?;
+        let mut copy = String::new();
+        copy.try_reserve_exact(value.len()).map_err(|_| self.allocated(site))?;
+        copy.push_str(value);
+        Ok(copy)
+    }
+
+    pub(super) fn copy_bytes(&mut self, value: &[u8], site: AuditSite<'_>) -> Result<Vec<u8>, AuditFailure> {
+        if value.is_empty() {
+            return Ok(Vec::new());
+        }
+        self.allocation(value.len(), site)?;
+        let mut copy = Vec::new();
+        copy.try_reserve_exact(value.len()).map_err(|_| self.allocated(site))?;
+        copy.extend_from_slice(value);
+        Ok(copy)
+    }
+
+    pub(super) fn admit_delivery(&mut self, count: usize, maximum: usize, site: AuditSite<'_>) -> Result<(), AuditFailure> {
+        let bytes = count
+            .checked_mul(maximum)
+            .ok_or_else(|| self.refused(StorageError::ReadLimit, site))?;
+        let rows = self
+            .core
+            .used
+            .rows
+            .checked_add(count)
+            .ok_or_else(|| self.refused(StorageError::ReadLimit, site))?;
+        if rows > self.core.limit.rows {
+            return Err(self.refused(StorageError::ReadLimit, site));
+        }
+        self.allocation(bytes, site)?;
+        self.core.used.rows = rows;
+        Ok(())
+    }
+
+    pub(super) fn release_delivery(&mut self, unused: usize, maximum: usize) {
+        self.core.used.rows -= unused;
+        self.core.used.allocation_bytes -= unused * maximum;
     }
 
     fn visit_at<'a>(&mut self, location: AuditSite<'a>) -> Result<AuditSite<'a>, AuditFailure> {
@@ -776,7 +854,7 @@ pub(super) struct RawDescriptor<'a> {
 }
 
 pub(super) struct RawSelection<'a> {
-    pub use_: &'a DeclarationUse,
+    pub use_: std::borrow::Cow<'a, DeclarationUse>,
     pub origin: Identity,
 }
 
@@ -788,8 +866,8 @@ pub(super) struct RawDebit<'a> {
 }
 
 pub(super) struct RawExpectedDebit<'a> {
-    pub act: &'a ActId,
-    pub bytes: &'a [u8],
+    pub act: std::borrow::Cow<'a, ActId>,
+    pub bytes: std::borrow::Cow<'a, [u8]>,
 }
 
 #[derive(Clone, Copy)]
@@ -821,7 +899,7 @@ impl<'a> RawResult<'a> {
 /// Borrowed facts used at the depth-ordered semantic turn and during output.
 /// The memory collector reserves these vectors in its existing collection order.
 pub(super) struct RawContent<'a> {
-    pub package: &'a [u8],
+    pub package: std::borrow::Cow<'a, [u8]>,
     pub selections: Vec<RawSelection<'a>>,
     pub selection_order: Vec<usize>,
     pub observations: Vec<&'a crate::storage::Version>,
@@ -1196,7 +1274,7 @@ fn check_content<'a>(
         let mut observed = row.content().observations.iter();
         for selection in &row.content().selections {
             if !unqualified(selection.use_.version.family) {
-                let site = reference_location(row.scope, row.identity, selection.use_);
+                let site = reference_location(row.scope, row.identity, selection.use_.as_ref());
                 meter.visit(site)?;
                 let Some(version) = observed.next() else {
                     return Err(meter.refused(StorageError::CorruptHistory, site));
@@ -1210,7 +1288,7 @@ fn check_content<'a>(
             return Err(meter.refused(StorageError::CorruptHistory, result_location(row.scope, row.identity)));
         }
         for selection in &row.content().selections {
-            let site = reference_location(row.scope, row.identity, selection.use_);
+            let site = reference_location(row.scope, row.identity, selection.use_.as_ref());
             meter.visit(site)?;
             let expected_origin = if unqualified(selection.use_.version.family) {
                 let inherited = if let Some(prior) = parent {
@@ -1219,7 +1297,7 @@ fn check_content<'a>(
                         .content()
                         .selection_order
                         .binary_search_by(|&index| {
-                            coordinate(prior.content().selections[index].use_).cmp(&coordinate(selection.use_))
+                            coordinate(prior.content().selections[index].use_.as_ref()).cmp(&coordinate(selection.use_.as_ref()))
                         })
                         .ok()
                         .map(|index| &prior.content().selections[prior.content().selection_order[index]])
@@ -1309,7 +1387,7 @@ fn check_content<'a>(
         for (actual, expected) in debits[at].iter().zip(&row.content().expected_debits) {
             let site = debit_location(actual.scope, actual.origin, actual.act, "pn_epoch_result_debits", None);
             meter.visit(site)?;
-            if actual.act != expected.act || actual.bytes != expected.bytes {
+            if actual.act != expected.act.as_ref() || actual.bytes != expected.bytes.as_ref() {
                 return Err(meter.refused(StorageError::CorruptHistory, site));
             }
         }

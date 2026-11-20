@@ -40940,10 +40940,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "33",
+          "exact": "34",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "33",
+          "num": "34",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40958,7 +40958,7 @@
           "exact_digits": 32
         }
       },
-      "total": 33
+      "total": 34
     },
     {
       "category": "record-coverage",

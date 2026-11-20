@@ -73,14 +73,15 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
             for reference in &node.references {
                 meter.visit(reference_location(scope, *identity, reference.use_))?;
                 selections.push(RawSelection {
-                    use_: reference.use_,
+                    use_: std::borrow::Cow::Borrowed(reference.use_),
                     origin: reference.origin,
                 });
             }
             let mut selection_order = Vec::new();
             meter.reserve(&mut selection_order, selections.len(), result_location(scope, *identity))?;
             selection_order.extend(0..selections.len());
-            selection_order.sort_unstable_by(|&a, &b| coordinate(selections[a].use_).cmp(&coordinate(selections[b].use_)));
+            selection_order
+                .sort_unstable_by(|&a, &b| coordinate(selections[a].use_.as_ref()).cmp(&coordinate(selections[b].use_.as_ref())));
             let mut local = Vec::new();
             let location = result_location(scope, *identity);
             meter.reserve(&mut local, node.introductions.len(), location)?;
@@ -119,8 +120,8 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
             for debit in node.input.debits() {
                 meter.visit(result_location(scope, *identity))?;
                 expected_debits.push(RawExpectedDebit {
-                    act: &debit.key.act,
-                    bytes: &debit.bytes,
+                    act: std::borrow::Cow::Borrowed(&debit.key.act),
+                    bytes: std::borrow::Cow::Borrowed(&debit.bytes),
                 });
             }
             results.push(RawResult {
@@ -133,7 +134,7 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
                 label: node.label,
                 generation: node.generation,
                 content: std::cell::OnceCell::from(RawContent {
-                    package: node.input.bytes(),
+                    package: std::borrow::Cow::Borrowed(node.input.bytes()),
                     selections,
                     selection_order,
                     observations,
@@ -479,7 +480,7 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
             }
             bytes.extend_from_slice(chunk);
         }
-        if bytes != row.content().package || node.references.len() != node.input.declarations().len() {
+        if bytes != row.content().package.as_ref() || node.references.len() != node.input.declarations().len() {
             return Err(meter.refused(StorageError::CorruptHistory, result_location(row.scope, row.identity)));
         }
         for (reference, expected) in node.references.iter().zip(node.input.declarations()) {

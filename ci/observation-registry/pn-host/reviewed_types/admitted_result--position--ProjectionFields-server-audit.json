@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::position::ProjectionFields",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "syntax": "# [derive (Clone , Copy)] struct ProjectionFields < 'a > { genesis : DeclarationFields < 'a > , policy : PolicyFields < 'a > , initial : MarkerFields < 'a > , terminal : MarkerFields < 'a > , records : RecordsFields < 'a > , }"
+  }
+}

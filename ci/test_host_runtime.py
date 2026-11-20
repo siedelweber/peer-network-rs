@@ -399,6 +399,15 @@ def sentinel_retake_control(test, command, env, value):
     print(f'STORAGE-SENTINEL-RETAKE injected=lost-carrying-record detected_attempt={attempt}')
 
 
+def storage_statement_sql(source):
+    matches=re.findall(r'Self::([A-Za-z]+)\s*=>\s*(?:\{\s*)?(r#".*?"#|r".*?"|"(?:[^"\\\n]|\\.)*")',source,re.DOTALL)
+    def value(literal):
+        if literal.startswith('r#"'):return literal[3:-2]
+        if literal.startswith('r"'):return literal[2:-1]
+        return json.loads(literal)
+    return [(name,value(literal)) for name,literal in matches]
+
+
 def capture_regressions(test, prefix):
     """Run both real test bodies against bad incomplete children followed by clean answers."""
     from devperf import report_loss
@@ -407,7 +416,7 @@ def capture_regressions(test, prefix):
     config=dict(endpoint='192.0.2.31',port='42617',user='private_role_probe',password='private_password_probe',transport='tcp')
     public=b'{"store_link_case":"host-secured","persistence":"disabled","value":731}\n'
     source=Path('packages/host/src/storage.rs').read_text().split('impl Statement {',1)[1].split('// The raw driver',1)[0]
-    statements=[json.loads('"'+literal+'"') for literal in re.findall(r'Self::[A-Za-z]+\s*=>\s*(?:\{\s*)?"((?:[^"\\\n]|\\.)*)"',source)]
+    statements=[value for _,value in storage_statement_sql(source)]
     statements += re.findall(r'pub\(super\) const (?:CREATE|VERIFY): &str = r#?"(.*?)"#?;',Path('packages/host/src/storage/catalogue.rs').read_text(),re.DOTALL)
     method='test_storage_statements' if prefix=='storage' else 'test_public_transport'
     with tempfile.TemporaryDirectory(dir='.lane') as directory:
@@ -707,7 +716,7 @@ class HostRuntime(unittest.TestCase):
         self.assertIn(b'forbidden_inline_sql',result.stderr)
 
     def test_storage_statements(self):
-        """Claim: Every closed storage statement is exercised in one of two complete bounded trace groups, history/catalogue and tree reads, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt resets its dedicated store before observation and checks private content and every completed child's public bytes before any retake, and counted trace loss is recorded as a completeness finding and refuses without recovery, with a failed child retaining its original exit outcome before refusal; acquisition uses one bounded evidence capture and default and trace return identical bytes, while an injected capture loss forces real-child retaking of each group with all of its statements present, including the catalogue query in its group, and a test-only metadata query is caught at the private role sentinel in a file-captured trace selected by its own accounting: an attempt that delivers the value detects it, an attempt that counts loss without it is inconclusive and retaken at most three times, and loss in every attempt is reported as loss rather than a missing detection, as synthetic selection cases witness; a forced lost carrying record, prepared and retaken under the same accounting, must leave its capture inconclusive and be detected by a later attempt within that bound, with natural loss before injection or on the retake still detecting and a complete miss or failed child still failing.
+        """Claim: Every closed storage statement is exercised in one of three complete bounded trace groups, history/catalogue, tree reads and tree audit, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt resets its dedicated store before observation and checks private content and every completed child's public bytes before any retake, and counted trace loss is recorded as a completeness finding and refuses without recovery, with a failed child retaining its original exit outcome before refusal; acquisition uses one bounded evidence capture and default and trace return identical bytes, while an injected capture loss forces real-child retaking of each group with all of its statements present, including the catalogue query in its group, and a test-only metadata query is caught at the private role sentinel in a file-captured trace selected by its own accounting: an attempt that delivers the value detects it, an attempt that counts loss without it is inconclusive and retaken at most three times, and loss in every attempt is reported as loss rather than a missing detection, as synthetic selection cases witness; a forced lost carrying record, prepared and retaken under the same accounting, must leave its capture inconclusive and be detected by a later attempt within that bound, with natural loss before injection or on the retake still detecting and a complete miss or failed child still failing.
         ´claim:discipline:storage-results-preserve-the-secret-boundary´
         ´test:integration:test-storage-statements´
         """
@@ -716,16 +725,21 @@ class HostRuntime(unittest.TestCase):
         capture_regressions(self,'storage')
         outputs=[]
         source=Path('packages/host/src/storage.rs').read_text().split('impl Statement {',1)[1].split('// The raw driver',1)[0]
-        statements=[json.loads('"'+literal+'"') for literal in re.findall(r'Self::[A-Za-z]+\s*=>\s*(?:\{\s*)?"((?:[^"\\\n]|\\.)*)"',source)]
-        statements += re.findall(r'pub\(super\) const (?:CREATE|VERIFY): &str = r#?"(.*?)"#?;',Path('packages/host/src/storage/catalogue.rs').read_text(),re.DOTALL)
-        self.assertEqual(len(statements),48)
-        groups=(('history',statements[32:]),('tree',statements[:32]))
+        statements=storage_statement_sql(source)
+        catalogue=re.findall(r'pub\(super\) const (?:CREATE|VERIFY): &str = r#?"(.*?)"#?;',Path('packages/host/src/storage/catalogue.rs').read_text(),re.DOTALL)
+        self.assertEqual(len(statements)+len(catalogue),79)
+        original=[value for name,value in statements if not name.startswith('Audit')]
+        audit=[value for name,value in statements if name.startswith('Audit')]
+        self.assertEqual(len(original),46)
+        self.assertEqual(len(audit),31)
+        groups=(('history',original[32:]+catalogue),('tree',original[:32]),('audit',audit))
         controls=[]
         for level in ('default','trace'):
             for surface,closed in groups:
                 env=dict(os.environ,PN_OBSERVE_LEVEL=level,PN_HOST_STORAGE_FIXTURE=f'storage-trace-{level}.json')
                 env.pop('PN_HOST_STORAGE_READER_TRACE',None)
-                if surface=='tree':env['PN_HOST_STORAGE_READER_TRACE']='1'
+                if surface in ('tree','audit'):
+                    env['PN_HOST_STORAGE_READER_TRACE']='audit' if surface=='audit' else '1'
                 validate=capture_validator(self,lambda:[json.loads((root/f'{prefix}-trace-{level}.json').read_text()) for prefix in ('storage','storage-tree','storage-reader')],outputs)
                 result,rows,status,wall=traced_capture(self,[target,'storage::tests::storage_runtime','--exact','--nocapture'],env,level,validate)
                 text=decoded_content(rows)
@@ -739,8 +753,8 @@ class HostRuntime(unittest.TestCase):
                     for statement in closed:self.assertIn(statement,text)
                     controls.append((dict(env),validate,closed))
                 print(f'STORAGE-RUNTIME surface={surface} level={level} wall_seconds={wall:.6f} delivered={status["delivered_records"]} lost={status["lost_records"]}')
-        self.assertEqual(outputs[:2],outputs[2:])
-        self.assertEqual(len(outputs),4)
+        self.assertEqual(outputs[:3],outputs[3:])
+        self.assertEqual(len(outputs),6)
         # Counted loss is incomplete evidence; loss without a named cause is refused.
         lossy={'level':'trace','lost_records':2,'undelivered_records':0,'in_flight_records':0,'loss_causes':{'queue_full':2,'writer':0}}
         self.assertFalse(capture_complete(lossy)[0])

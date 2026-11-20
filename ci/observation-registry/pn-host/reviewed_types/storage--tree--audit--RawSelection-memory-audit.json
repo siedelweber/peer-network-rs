@@ -4,6 +4,6 @@
     "item": "storage::tree::audit::RawSelection",
     "package": "pn-host",
     "path": "packages/host/src/storage/tree/audit.rs",
-    "syntax": "pub (super) struct RawSelection < 'a > { pub use_ : & 'a DeclarationUse , pub origin : Identity , }"
+    "syntax": "pub (super) struct RawSelection < 'a > { pub use_ : std :: borrow :: Cow < 'a , DeclarationUse > , pub origin : Identity , }"
   }
 }

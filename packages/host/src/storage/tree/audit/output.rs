@@ -390,8 +390,8 @@ pub(super) fn materialize(
         meter.reserve(&mut order, row.content().selections.len(), site)?;
         order.extend(0..row.content().selections.len());
         order.sort_unstable_by(|&a, &b| {
-            let a = row.content().selections[a].use_;
-            let b = row.content().selections[b].use_;
+            let a = row.content().selections[a].use_.as_ref();
+            let b = row.content().selections[b].use_.as_ref();
             (a.selected_at, a.version.family.name(), &a.version.key, &a.version.edition).cmp(&(
                 b.selected_at,
                 b.version.family.name(),
@@ -401,7 +401,7 @@ pub(super) fn materialize(
         });
         for offset in order {
             let selection = &row.content().selections[offset];
-            let site = reference_location(row.scope, row.identity, selection.use_);
+            let site = reference_location(row.scope, row.identity, selection.use_.as_ref());
             selections.push(array(
                 [
                     Value::Unsigned(selection.use_.selected_at),
@@ -442,7 +442,7 @@ pub(super) fn materialize(
                 bytes(&row.identity, meter, site)?,
                 parent,
                 Value::Unsigned(row.depth),
-                bytes(row.content().package, meter, site)?,
+                bytes(row.content().package.as_ref(), meter, site)?,
                 text(row.label, meter, site)?,
                 Value::Unsigned(row.generation),
                 sequence(&mut selections),

@@ -1,9 +1,10 @@
 //! Borrowed semantic access to the interchange validator's completed item spans.
 //! No CBOR head, integer or container grammar is decoded here.
 //! (´[ROOT-amend:storage:canonical-values]´)
-use super::{Error, Meter, StorageError};
+use super::{DISCLOSURE_RECIPE, Error, Family, Meter, PAYLOAD_RECIPE, StorageError, digest};
+use crate::storage::tree::audit::{AuditFailure, AuditMeter, AuditSite};
 use pn_interchange::{CanonicalUsage, DecodeError, Value};
-use std::cell::{Cell, RefCell};
+use std::cell::RefCell;
 
 #[derive(Clone, Copy)]
 struct Span {
@@ -15,35 +16,92 @@ struct Span {
     argument: u64,
 }
 
-pub(super) struct Validated<'a> {
+pub(crate) struct Validated<'a> {
     bytes: &'a [u8],
     spans: Vec<Span>,
 }
 
 impl<'a> Validated<'a> {
+    #[cfg(test)]
+    pub(crate) fn for_position_test(bytes: &'a [u8]) -> Result<Self, Error> {
+        let mut meter = Meter {
+            limit: super::ReadBudget {
+                rows: usize::MAX,
+                bytes: usize::MAX,
+            },
+            used: super::Usage::default(),
+        };
+        Self::new(bytes, &mut meter)
+    }
+
     pub(super) fn new(bytes: &'a [u8], meter: &mut Meter) -> Result<Self, Error> {
         let allowance = meter.limit.bytes.saturating_sub(meter.used.allocation_bytes);
         let meter = RefCell::new(meter);
-        let failure = Cell::new(false);
+        Self::with_reservations(
+            bytes,
+            allowance,
+            |amount| meter.borrow_mut().allocation(amount),
+            |spans, growth| meter.borrow_mut().reserve(spans, growth),
+            |error| match error {
+                DecodeError::CanonicalLimit { .. }
+                | DecodeError::CanonicalAllocation { .. }
+                | DecodeError::CanonicalReservation { .. } => StorageError::ReadLimit.into(),
+                _ => StorageError::CorruptHistory.into(),
+            },
+        )
+    }
+
+    pub(in crate::storage::tree) fn audit(
+        bytes: &'a [u8],
+        meter: &mut AuditMeter,
+        site: AuditSite<'_>,
+    ) -> Result<Self, AuditFailure> {
+        let allowance = meter.remaining_allocation();
+        let meter = RefCell::new(meter);
+        Self::with_reservations(
+            bytes,
+            allowance,
+            |amount| meter.borrow_mut().allocation(amount, site).map(|_| ()),
+            |spans, growth| meter.borrow_mut().reserve(spans, growth, site),
+            |error| match error {
+                DecodeError::CanonicalAllocation { .. } => meter.borrow_mut().allocated(site),
+                DecodeError::CanonicalLimit { .. } | DecodeError::CanonicalReservation { .. } => {
+                    meter.borrow_mut().refused(StorageError::ReadLimit, site)
+                }
+                _ => meter.borrow_mut().refused(StorageError::CorruptHistory, site),
+            },
+        )
+    }
+
+    fn with_reservations<E>(
+        bytes: &'a [u8],
+        allowance: usize,
+        mut allocation: impl FnMut(usize) -> Result<(), E>,
+        mut reserve_spans: impl FnMut(&mut Vec<Span>, usize) -> Result<(), E>,
+        decode: impl FnOnce(DecodeError) -> E,
+    ) -> Result<Self, E> {
+        let failure = RefCell::new(None);
         let mut spans = Vec::new();
         let result = Value::validate_canonical_bytes(
             bytes,
             allowance,
             &mut CanonicalUsage::default(),
             |amount| {
-                meter.borrow_mut().allocation(amount).map_err(|_| {
-                    failure.set(true);
+                allocation(amount).map_err(|error| {
+                    *failure.borrow_mut() = Some(error);
                 })
             },
             |item| {
                 #[cfg(test)]
                 super::tests::validated_event();
-                if failure.get() {
+                if failure.borrow().is_some() {
                     return;
                 }
                 let growth = spans.capacity().max(1);
-                if spans.len() == spans.capacity() && meter.borrow_mut().reserve(&mut spans, growth).is_err() {
-                    failure.set(true);
+                if spans.len() == spans.capacity()
+                    && let Err(error) = reserve_spans(&mut spans, growth)
+                {
+                    *failure.borrow_mut() = Some(error);
                     return;
                 }
                 spans.push(Span {
@@ -56,20 +114,15 @@ impl<'a> Validated<'a> {
                 });
             },
         );
-        if failure.get() {
-            return Err(StorageError::ReadLimit.into());
+        if let Some(error) = failure.into_inner() {
+            return Err(error);
         }
-        result.map_err(|error| match error {
-            DecodeError::CanonicalLimit { .. }
-            | DecodeError::CanonicalAllocation { .. }
-            | DecodeError::CanonicalReservation { .. } => StorageError::ReadLimit,
-            _ => StorageError::CorruptHistory,
-        })?;
+        result.map_err(decode)?;
         spans.sort_unstable_by_key(|span| span.offset);
         Ok(Self { bytes, spans })
     }
 
-    pub(super) fn root(&self) -> Result<Item<'_>, Error> {
+    pub(crate) fn root(&self) -> Result<Item<'_>, Error> {
         self.item(0)
     }
     fn item(&self, index: usize) -> Result<Item<'_>, Error> {
@@ -82,38 +135,66 @@ impl<'a> Validated<'a> {
     }
 }
 
+/// Validate the same stored history envelope for both bounded readers.
+pub(in crate::storage::tree) fn history_payload(
+    validated: &Validated<'_>,
+    family: Family,
+    content: &[u8],
+    stored_digest: [u8; 32],
+    disclosure: Option<[u8; 32]>,
+) -> Result<(), Error> {
+    let envelope = validated.root()?.array(3)?;
+    if envelope.field(0)?.text()? != PAYLOAD_RECIPE
+        || envelope.field(1)?.text()? != family.name()
+        || digest(PAYLOAD_RECIPE, content) != stored_digest
+    {
+        return Err(StorageError::CorruptHistory.into());
+    }
+    if family == Family::UnsettledRecognition {
+        let body = envelope.field(2)?.array(4)?;
+        let input = body.field(2)?;
+        let expected = digest(DISCLOSURE_RECIPE, input.bytes());
+        if body.field(0)?.text()? != DISCLOSURE_RECIPE || body.field(1)?.blob()? != expected || disclosure != Some(expected) {
+            return Err(StorageError::CorruptHistory.into());
+        }
+    } else if disclosure.is_some() {
+        return Err(StorageError::CorruptHistory.into());
+    }
+    Ok(())
+}
+
 #[derive(Clone, Copy)]
-pub(super) struct Item<'a> {
+pub(crate) struct Item<'a> {
     document: &'a Validated<'a>,
     span: Span,
     index: usize,
 }
 impl<'a> Item<'a> {
-    pub(super) fn bytes(self) -> &'a [u8] {
+    pub(crate) fn bytes(self) -> &'a [u8] {
         &self.document.bytes[self.span.offset..self.span.offset + self.span.length]
     }
-    pub(super) fn unsigned(self) -> Result<u64, Error> {
+    pub(crate) fn unsigned(self) -> Result<u64, Error> {
         if self.span.major != 0 {
             return Err(StorageError::CorruptHistory.into());
         }
         Ok(self.span.argument)
     }
-    pub(super) fn text(self) -> Result<&'a str, Error> {
+    pub(crate) fn text(self) -> Result<&'a str, Error> {
         if self.span.major != 3 {
             return Err(StorageError::CorruptHistory.into());
         }
         std::str::from_utf8(&self.bytes()[self.span.payload..]).map_err(|_| StorageError::CorruptHistory.into())
     }
-    pub(super) fn blob(self) -> Result<&'a [u8], Error> {
+    pub(crate) fn blob(self) -> Result<&'a [u8], Error> {
         if self.span.major != 2 {
             return Err(StorageError::CorruptHistory.into());
         }
         Ok(&self.bytes()[self.span.payload..])
     }
-    pub(super) fn null(self) -> bool {
+    pub(crate) fn null(self) -> bool {
         self.span.major == 7 && self.span.argument == 22
     }
-    pub(super) fn children(self) -> Result<Children<'a>, Error> {
+    pub(crate) fn children(self) -> Result<Children<'a>, Error> {
         if !matches!(self.span.major, 4 | 5) {
             return Err(StorageError::CorruptHistory.into());
         }
@@ -122,16 +203,16 @@ impl<'a> Item<'a> {
             next: self.index + 1,
         })
     }
-    pub(super) fn field(self, field: usize) -> Result<Self, Error> {
+    pub(crate) fn field(self, field: usize) -> Result<Self, Error> {
         self.children()?.nth(field).ok_or(StorageError::CorruptHistory.into())
     }
-    pub(super) fn array(self, length: usize) -> Result<Self, Error> {
+    pub(crate) fn array(self, length: usize) -> Result<Self, Error> {
         if self.span.major != 4 || self.span.argument != length as u64 {
             return Err(StorageError::CorruptHistory.into());
         }
         Ok(self)
     }
-    pub(super) fn map_value(self, key: u64) -> Result<Self, Error> {
+    pub(crate) fn map_value(self, key: u64) -> Result<Self, Error> {
         if self.span.major != 5 {
             return Err(StorageError::CorruptHistory.into());
         }
@@ -145,7 +226,7 @@ impl<'a> Item<'a> {
         Err(StorageError::CorruptHistory.into())
     }
 }
-pub(super) struct Children<'a> {
+pub(crate) struct Children<'a> {
     parent: Item<'a>,
     next: usize,
 }

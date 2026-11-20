@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/server.rs",
+    "item": "storage::tree::server::ServerTree::audit",
+    "owner": "HOST",
+    "signature": "async fn audit (& mut self , budget : AuditBudget , usage : & mut AuditUsage) -> Result < AuditInventory , AuditFailure >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::audit",
+    "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::tree::server::ServerTree::audit\" , & (budget ,) ,) ; * usage = AuditUsage :: default () ; let mut meter = super :: audit :: AuditMeter :: new (budget) ; if let Err (error) = meter . begin (budget) { * usage = meter . usage () ; operation . finish (& Err :: < AuditInventory , _ > (& error)) ; return Err (error) ; } let transaction = match self . session . client . snapshot (self . session . store_requests . clone ()) . await { Ok (transaction) => transaction , Err (error) => { let failure = meter . refused (error , super :: audit :: AuditSite :: NotRead) ; * usage = meter . usage () ; operation . finish (& Err :: < AuditInventory , _ > (& failure)) ; return Err (failure) ; } } ; let outcome = super :: audit :: server :: reconcile_tx (& transaction , & mut meter , budget . page_rows) . await ; let result = match outcome { Ok (inventory) => transaction . commit () . await . map (| () | inventory) . map_err (| error | meter . refused (error , super :: audit :: AuditSite :: NotRead)) , Err (error) => Err (transaction . refuse (error) . await) , } ; * usage = meter . usage () ; operation . finish (& result) ; result }",
+    "class_decision": "host-storage",
+    "item_premise": "The public server audit observes one bounded read-only snapshot, reports an owned complete inventory or one located refusal, and records no private session data.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

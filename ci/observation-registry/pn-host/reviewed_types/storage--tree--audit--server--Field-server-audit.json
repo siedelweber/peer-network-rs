@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::server::Field",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit/server.rs",
+    "syntax": "# [derive (Clone , Copy)] enum Field { Text { bound : usize , nullable : bool } , Bytes { bound : usize , nullable : bool } , Integer { minimum : i64 , nullable : bool } , }"
+  }
+}

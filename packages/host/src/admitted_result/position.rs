@@ -159,6 +159,30 @@ impl<'a> Position<'a> {
     }
 }
 
+/// Project strict stored spans with the same field selection and builder as admitted input.
+/// The caller retains the snapshot, charges every reservation and compares the residue.
+pub(crate) fn from_stored_spans(
+    document: &StoredDocument<'_>,
+    parent: Option<(&StoredDocument<'_>, &[u8; 32])>,
+    ceiling: usize,
+    usage: &mut EncodingUsage,
+    reservation: &mut dyn FnMut(usize) -> Result<(), ()>,
+) -> Result<([u8; 32], Value, Vec<u8>), Error> {
+    *usage = EncodingUsage::default();
+    let input = ProjectionFields::validated(document)?;
+    let previous = parent
+        .map(|(document, _)| ProjectionFields::validated(document))
+        .transpose()?;
+    let mut builder = Builder {
+        ceiling,
+        usage,
+        reservation,
+    };
+    let (bytes, context) = builder.preimage_fields(&input, previous.as_ref(), parent.map(|(_, id)| id))?;
+    let residue = crate::storage::digest(RECIPE, &bytes);
+    Ok((residue, context, bytes))
+}
+
 /// Complete package retention with result-qualified observation versions.
 /// This carrier is not accepted by either existing chain-store commit operation.
 /// (´[ROOT-amend:storage:admitted-correspondence]´)
@@ -378,6 +402,91 @@ fn select_fields<V: PositionFieldView>(view: &V) -> Result<SelectedFrom<V>, Erro
 
 struct AdmittedFields<'a>(&'a pn_epoch::publication::Carrier);
 
+type StoredItem<'a> = crate::storage::tree::server::spans::Item<'a>;
+type StoredDocument<'a> = crate::storage::tree::server::spans::Validated<'a>;
+
+struct StoredFields<'a> {
+    document: &'a StoredDocument<'a>,
+}
+
+impl<'a> StoredFields<'a> {
+    fn frames(&self) -> Option<StoredItem<'a>> {
+        self.document.root().ok()?.map_value(8).ok()?.field(3).ok()
+    }
+    fn declarations(&self) -> Option<StoredItem<'a>> {
+        self.document.root().ok()?.map_value(8).ok()?.field(0).ok()
+    }
+}
+
+impl<'a> PositionFieldView for StoredFields<'a> {
+    type Frame = StoredItem<'a>;
+    type Marker = StoredItem<'a>;
+    type Declaration = StoredItem<'a>;
+
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn frame_count(&self) -> usize {
+        self.frames().and_then(|v| v.children().ok()).map_or(0, Iterator::count)
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn frame(&self, at: usize) -> Option<Self::Frame> {
+        self.frames()?.children().ok()?.nth(at)
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn marker_count(&self, frame: Self::Frame) -> usize {
+        frame
+            .field(7)
+            .ok()
+            .and_then(|v| v.field(1).ok())
+            .and_then(|v| v.children().ok())
+            .map_or(0, Iterator::count)
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn marker(&self, frame: Self::Frame, at: usize) -> Option<Self::Marker> {
+        frame.field(7).ok()?.field(1).ok()?.children().ok()?.nth(at)
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn boundary(&self, frame: Self::Frame) -> u64 {
+        frame
+            .field(2)
+            .ok()
+            .and_then(|v| stored_decimal(v, 0).ok())
+            .unwrap_or(u64::MAX)
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn marker_index(&self, marker: Self::Marker) -> u64 {
+        marker
+            .field(0)
+            .ok()
+            .and_then(|v| stored_decimal(v, 5).ok())
+            .unwrap_or(u64::MAX)
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn declaration_count(&self) -> usize {
+        self.declarations().and_then(|v| v.children().ok()).map_or(0, Iterator::count)
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn declaration(&self, at: usize) -> Option<Self::Declaration> {
+        self.declarations()?.children().ok()?.nth(at)
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn is_genesis(&self, declaration: Self::Declaration) -> bool {
+        declaration.field(0).and_then(|v| v.field(0)).and_then(StoredItem::text).ok() == Some("deployment")
+            && declaration.field(0).and_then(|v| v.field(1)).and_then(StoredItem::text).ok() == Some("genesis")
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn genesis_at(&self, declaration: Self::Declaration) -> Option<u64> {
+        declaration.field(3).ok().and_then(|v| stored_decimal(v, 1).ok())
+    }
+    /// Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.
+    fn policy_genesis_at(&self, frame: Self::Frame) -> u64 {
+        frame
+            .field(5)
+            .ok()
+            .and_then(|v| stored_decimal(v, 4).ok())
+            .unwrap_or(u64::MAX)
+    }
+}
+
 impl<'a> PositionFieldView for AdmittedFields<'a> {
     type Frame = &'a Frame;
     type Marker = &'a burn::RecognizedMarker;
@@ -518,6 +627,431 @@ impl<'a> Input<'a> {
             }
         }
         Ok(())
+    }
+}
+
+#[derive(Clone, Copy)]
+enum PolicyFields<'a> {
+    Admitted(&'a burn::PolicyInput),
+    Stored(StoredItem<'a>),
+}
+#[derive(Clone, Copy)]
+enum DeclarationFields<'a> {
+    Admitted(&'a Declaration),
+    Stored(StoredItem<'a>),
+}
+#[derive(Clone, Copy)]
+enum RecordFields<'a> {
+    Admitted(&'a burn::BurnRecord),
+    Stored(StoredItem<'a>),
+}
+#[derive(Clone, Copy)]
+enum RecordsFields<'a> {
+    Admitted(&'a [burn::BurnRecord]),
+    Stored(StoredItem<'a>),
+}
+#[derive(Clone, Copy)]
+enum MarkerFields<'a> {
+    Admitted(&'a burn::RecognizedMarker),
+    Stored(StoredItem<'a>),
+}
+#[derive(Clone, Copy)]
+struct ProjectionFields<'a> {
+    genesis: DeclarationFields<'a>,
+    policy: PolicyFields<'a>,
+    initial: MarkerFields<'a>,
+    terminal: MarkerFields<'a>,
+    records: RecordsFields<'a>,
+}
+
+fn stored<T>(result: Result<T, crate::storage::tree::Error>) -> Result<T, Error> {
+    result.map_err(|_| Error::InvalidPosition)
+}
+
+fn stored_text(item: StoredItem<'_>, at: usize) -> Result<&str, Error> {
+    stored(item.field(at).and_then(StoredItem::text))
+}
+fn stored_decimal(item: StoredItem<'_>, at: usize) -> Result<u64, Error> {
+    let value = stored(item.field(at))?;
+    if let Ok(number) = value.unsigned() {
+        return Ok(number);
+    }
+    value
+        .text()
+        .map_err(|_| Error::InvalidPosition)?
+        .parse()
+        .map_err(|_| Error::InvalidPosition)
+}
+
+fn stored_sorted_text_at(item: StoredItem<'_>, at: usize) -> Result<&str, Error> {
+    let mut previous = None;
+    for _ in 0..=at {
+        let mut next = None;
+        for candidate in stored(item.children())? {
+            let text = stored(candidate.text())?;
+            if previous.is_none_or(|before| text > before) && next.is_none_or(|after| text < after) {
+                next = Some(text);
+            }
+        }
+        previous = Some(next.ok_or(Error::InvalidPosition)?);
+    }
+    previous.ok_or(Error::InvalidPosition)
+}
+
+impl<'a> PolicyFields<'a> {
+    fn text(self, at: usize) -> Result<&'a str, Error> {
+        match self {
+            Self::Admitted(p) => match at {
+                0 => Ok(&p.identity),
+                1 => Ok(&p.edition),
+                2 => Ok(&p.sequence),
+                5 => Ok(&p.initial_marker),
+                7 => Ok(&p.placement_procedure),
+                8 => Ok(&p.cadence),
+                11 => Ok(&p.verification_profile),
+                _ => Err(Error::InvalidPosition),
+            },
+            Self::Stored(p) => stored_text(p, at),
+        }
+    }
+    fn number(self, at: usize) -> Result<u64, Error> {
+        match self {
+            Self::Admitted(p) => match at {
+                3 => Ok(p.published_at),
+                4 => Ok(p.genesis_at),
+                12 => Ok(p.stability_buffer),
+                _ => Err(Error::InvalidPosition),
+            },
+            Self::Stored(p) => stored_decimal(p, at),
+        }
+    }
+    fn open(self) -> Result<bool, Error> {
+        match self {
+            Self::Admitted(p) => Ok(p.open_placement),
+            Self::Stored(p) => {
+                let value = stored(p.field(6))?;
+                match value.bytes() {
+                    [0xf4] => Ok(false),
+                    [0xf5] => Ok(true),
+                    _ => Err(Error::InvalidPosition),
+                }
+            }
+        }
+    }
+    fn encoding(self) -> Result<u64, Error> {
+        match self {
+            Self::Admitted(p) => Ok(match p.encoding {
+                burn::Encoding::CompleteList => 0,
+                burn::Encoding::PublicCommitment => 1,
+                burn::Encoding::WholePrefixAcceptAll => 2,
+            }),
+            Self::Stored(p) => {
+                let tag = stored(stored(p.field(9))?.field(0).and_then(StoredItem::unsigned))?;
+                if tag > 2 { Err(Error::InvalidPosition) } else { Ok(tag) }
+            }
+        }
+    }
+    fn candidate(self) -> Result<u64, Error> {
+        match self {
+            Self::Admitted(p) => Ok(match p.candidate_rule {
+                burn::CandidateRule::FirstValidInHistoryOrder => 0,
+                burn::CandidateRule::UniquePerIndex => 1,
+            }),
+            Self::Stored(p) => {
+                let tag = stored(stored(p.field(10))?.field(0).and_then(StoredItem::unsigned))?;
+                if tag > 1 { Err(Error::InvalidPosition) } else { Ok(tag) }
+            }
+        }
+    }
+}
+
+impl<'a> DeclarationFields<'a> {
+    fn id(self, at: usize) -> Result<&'a str, Error> {
+        match self {
+            Self::Admitted(d) => match at {
+                0 => Ok(&d.id.namespace),
+                1 => Ok(&d.id.name),
+                _ => Err(Error::InvalidPosition),
+            },
+            Self::Stored(d) => stored_text(stored(d.field(0))?, at),
+        }
+    }
+    fn number(self, at: usize) -> Result<u64, Error> {
+        match self {
+            Self::Admitted(d) => match at {
+                0 => Ok(d.id.edition),
+                1 => Ok(d.announced_at),
+                2 => Ok(d.effective_at),
+                3 => match d.content {
+                    DeclarationContent::Deployment { genesis_at } => Ok(genesis_at),
+                    _ => Err(Error::InvalidPosition),
+                },
+                _ => Err(Error::InvalidPosition),
+            },
+            Self::Stored(d) => match at {
+                0 => stored_decimal(stored(d.field(0))?, 2),
+                1 | 2 => stored_decimal(d, at),
+                3 => {
+                    let content = stored(d.field(3))?;
+                    if stored(content.field(0).and_then(StoredItem::unsigned))? != 1 {
+                        return Err(Error::InvalidPosition);
+                    }
+                    stored_decimal(content, 1)
+                }
+                _ => Err(Error::InvalidPosition),
+            },
+        }
+    }
+}
+
+impl<'a> RecordFields<'a> {
+    fn rational(self) -> Result<(&'a str, &'a str), Error> {
+        match self {
+            Self::Admitted(record) => {
+                let exact = record.amount.exact();
+                Ok(exact.split_once('/').unwrap_or((exact, "1")))
+            }
+            Self::Stored(record) => {
+                let amount = stored(record.field(3).and_then(|v| v.field(0)))?;
+                Ok((stored_text(amount, 0)?, stored_text(amount, 1)?))
+            }
+        }
+    }
+    fn text(self, at: usize) -> Result<&'a str, Error> {
+        match self {
+            Self::Admitted(r) => match at {
+                0 => Ok(&r.identity),
+                1 => Ok(&r.destruction),
+                2 => Ok(&r.address.0),
+                4 => Ok(r.amount.unit()),
+                _ => Err(Error::InvalidPosition),
+            },
+            Self::Stored(r) => match at {
+                0..=2 => stored_text(r, at),
+                4 => stored_text(stored(r.field(3))?, 1),
+                _ => Err(Error::InvalidPosition),
+            },
+        }
+    }
+}
+
+impl<'a> RecordsFields<'a> {
+    fn find(self, identity: &str) -> Result<RecordFields<'a>, Error> {
+        let mut found = None;
+        match self {
+            Self::Admitted(records) => {
+                for record in records {
+                    if record.identity == identity && found.replace(RecordFields::Admitted(record)).is_some() {
+                        return Err(Error::InvalidPosition);
+                    }
+                }
+            }
+            Self::Stored(records) => {
+                for record in stored(records.children())? {
+                    if stored_text(record, 0)? == identity && found.replace(RecordFields::Stored(record)).is_some() {
+                        return Err(Error::InvalidPosition);
+                    }
+                }
+            }
+        }
+        found.ok_or(Error::InvalidPosition)
+    }
+}
+
+impl<'a> MarkerFields<'a> {
+    fn identity(self) -> Result<StoredItem<'a>, Error> {
+        match self {
+            Self::Stored(marker) => stored(marker.field(0)),
+            Self::Admitted(_) => Err(Error::InvalidPosition),
+        }
+    }
+    fn text(self, at: usize) -> Result<&'a str, Error> {
+        match self {
+            Self::Admitted(marker) => {
+                let id = marker.identity();
+                match at {
+                    0 => Ok(&id.name),
+                    1 => Ok(&id.history),
+                    2 => Ok(&id.policy_identity),
+                    3 => Ok(&id.policy_edition),
+                    4 => Ok(&id.sequence),
+                    _ => Err(Error::InvalidPosition),
+                }
+            }
+            Self::Stored(_) => stored_text(self.identity()?, at),
+        }
+    }
+    fn number(self, at: usize) -> Result<u64, Error> {
+        match self {
+            Self::Admitted(marker) => match at {
+                5 => Ok(marker.identity().index),
+                6 => Ok(marker.identity().history_position),
+                _ => Err(Error::InvalidPosition),
+            },
+            Self::Stored(_) => stored_decimal(self.identity()?, at),
+        }
+    }
+    fn predecessor(self) -> Result<Option<u64>, Error> {
+        match self {
+            Self::Admitted(marker) => Ok(marker.identity().predecessor),
+            Self::Stored(_) => {
+                let value = stored(self.identity()?.field(7))?;
+                if value.null() {
+                    Ok(None)
+                } else {
+                    value
+                        .text()
+                        .map_err(|_| Error::InvalidPosition)?
+                        .parse()
+                        .map(Some)
+                        .map_err(|_| Error::InvalidPosition)
+                }
+            }
+        }
+    }
+    fn lineage_count(self) -> Result<usize, Error> {
+        match self {
+            Self::Admitted(marker) => Ok(marker.identity().lineage.len()),
+            Self::Stored(_) => Ok(stored(self.identity()?.field(8).and_then(StoredItem::children))?.count()),
+        }
+    }
+    fn lineage_at(self, at: usize) -> Result<&'a str, Error> {
+        match self {
+            Self::Admitted(marker) => marker
+                .identity()
+                .lineage
+                .iter()
+                .nth(at)
+                .map(String::as_str)
+                .ok_or(Error::InvalidPosition),
+            Self::Stored(_) => stored_sorted_text_at(stored(self.identity()?.field(8))?, at),
+        }
+    }
+    fn accepted_count(self) -> Result<usize, Error> {
+        match self {
+            Self::Admitted(marker) => Ok(marker.accepted().len()),
+            Self::Stored(marker) => Ok(stored(marker.field(1).and_then(StoredItem::children))?.count()),
+        }
+    }
+    fn accepted_at(self, at: usize) -> Result<&'a str, Error> {
+        match self {
+            Self::Admitted(marker) => marker
+                .accepted()
+                .iter()
+                .nth(at)
+                .map(String::as_str)
+                .ok_or(Error::InvalidPosition),
+            Self::Stored(marker) => stored_sorted_text_at(stored(marker.field(1))?, at),
+        }
+    }
+    fn contains_lineage(self, value: &str) -> Result<bool, Error> {
+        for at in 0..self.lineage_count()? {
+            if self.lineage_at(at)? == value {
+                return Ok(true);
+            }
+        }
+        Ok(false)
+    }
+    fn contains_accepted(self, value: &str) -> Result<bool, Error> {
+        for at in 0..self.accepted_count()? {
+            if self.accepted_at(at)? == value {
+                return Ok(true);
+            }
+        }
+        Ok(false)
+    }
+    fn accepted_kind(self) -> Result<u64, Error> {
+        match self {
+            Self::Admitted(marker) => Ok(match marker.identity().accepted {
+                burn::AcceptedSet::CompleteList(_) => 0,
+                burn::AcceptedSet::Commitment { .. } => 1,
+                burn::AcceptedSet::WholePrefix => 2,
+            }),
+            Self::Stored(_) => {
+                let tag = stored(
+                    self.identity()?
+                        .field(9)
+                        .and_then(|v| v.field(0))
+                        .and_then(StoredItem::unsigned),
+                )?;
+                if tag > 2 { Err(Error::InvalidPosition) } else { Ok(tag) }
+            }
+        }
+    }
+    fn accepted_variant_count(self) -> Result<usize, Error> {
+        match self {
+            Self::Admitted(marker) => match &marker.identity().accepted {
+                burn::AcceptedSet::CompleteList(members) => Ok(members.len()),
+                _ => Err(Error::InvalidPosition),
+            },
+            Self::Stored(_) => Ok(stored(
+                self.identity()?
+                    .field(9)
+                    .and_then(|v| v.field(1))
+                    .and_then(StoredItem::children),
+            )?
+            .count()),
+        }
+    }
+    fn accepted_variant_at(self, at: usize) -> Result<&'a str, Error> {
+        match self {
+            Self::Admitted(marker) => match &marker.identity().accepted {
+                burn::AcceptedSet::CompleteList(members) => {
+                    members.iter().nth(at).map(String::as_str).ok_or(Error::InvalidPosition)
+                }
+                _ => Err(Error::InvalidPosition),
+            },
+            Self::Stored(_) => stored_sorted_text_at(stored(self.identity()?.field(9).and_then(|v| v.field(1)))?, at),
+        }
+    }
+    fn commitment(self) -> Result<&'a [u8], Error> {
+        match self {
+            Self::Admitted(marker) => match &marker.identity().accepted {
+                burn::AcceptedSet::Commitment { commitment, .. } => Ok(commitment),
+                _ => Err(Error::InvalidPosition),
+            },
+            Self::Stored(_) => stored(self.identity()?.field(9).and_then(|v| v.field(1)).and_then(StoredItem::blob)),
+        }
+    }
+    fn initial_snapshot_empty(self) -> Result<bool, Error> {
+        match self {
+            Self::Admitted(marker) => Ok(marker
+                .identity()
+                .initial_snapshot
+                .as_ref()
+                .is_some_and(std::collections::BTreeMap::is_empty)),
+            Self::Stored(_) => {
+                let value = stored(self.identity()?.field(10))?;
+                Ok(!value.null() && stored(value.children())?.next().is_none())
+            }
+        }
+    }
+}
+
+impl<'a> ProjectionFields<'a> {
+    fn admitted(input: &Input<'a>) -> Self {
+        Self {
+            genesis: DeclarationFields::Admitted(input.genesis),
+            policy: PolicyFields::Admitted(&input.frame.marker_policy),
+            initial: MarkerFields::Admitted(input.initial),
+            terminal: MarkerFields::Admitted(input.terminal),
+            records: RecordsFields::Admitted(&input.frame.marker_history.records),
+        }
+    }
+    fn validated(document: &'a StoredDocument<'a>) -> Result<Self, Error> {
+        let SelectedFields {
+            frame,
+            initial,
+            terminal,
+            genesis,
+        } = select_fields(&StoredFields { document })?;
+        Ok(Self {
+            genesis: DeclarationFields::Stored(genesis),
+            policy: PolicyFields::Stored(stored(frame.field(5))?),
+            initial: MarkerFields::Stored(initial),
+            terminal: MarkerFields::Stored(terminal),
+            records: RecordsFields::Stored(stored(frame.field(6).and_then(|v| v.field(1)))?),
+        })
     }
 }
 fn signed(value: u64) -> Result<(), Error> {
@@ -709,140 +1243,176 @@ impl Builder<'_> {
         }
         Ok(Value::Text(Text::take_reserved(&mut self.buffer(&digits[at..])?)?))
     }
-    fn set(&mut self, values: &BTreeSet<String>, base: Option<&BTreeSet<String>>) -> Result<Value, Error> {
-        let count = values.iter().filter(|v| base.is_none_or(|b| !b.contains(*v))).count();
+    fn set_fields(&mut self, marker: MarkerFields<'_>, base: Option<MarkerFields<'_>>, variant: bool) -> Result<Value, Error> {
+        let length = if variant {
+            marker.accepted_variant_count()?
+        } else {
+            marker.accepted_count()?
+        };
+        let mut count = 0;
+        for at in 0..length {
+            let value = if variant {
+                marker.accepted_variant_at(at)?
+            } else {
+                marker.accepted_at(at)?
+            };
+            if base
+                .map(|prior| prior.contains_accepted(value))
+                .transpose()?
+                .is_none_or(|contained| !contained)
+            {
+                count += 1;
+            }
+        }
         self.array(count, |b, out| {
-            // String order is UTF-8 byte order; Value comparison allocates and is not used.
-            for value in values.iter().filter(|v| base.is_none_or(|b| !b.contains(*v))) {
-                out.push(b.text(value)?);
+            for at in 0..length {
+                let value = if variant {
+                    marker.accepted_variant_at(at)?
+                } else {
+                    marker.accepted_at(at)?
+                };
+                if base
+                    .map(|prior| prior.contains_accepted(value))
+                    .transpose()?
+                    .is_none_or(|contained| !contained)
+                {
+                    out.push(b.text(value)?);
+                }
             }
             Ok(())
         })
     }
+    #[cfg(test)]
     fn policy(&mut self, p: &burn::PolicyInput) -> Result<Value, Error> {
+        self.policy_fields(PolicyFields::Admitted(p))
+    }
+    fn policy_fields(&mut self, p: PolicyFields<'_>) -> Result<Value, Error> {
         self.array(13, |b, out| {
-            for s in [&p.identity, &p.edition, &p.sequence] {
-                out.push(b.text(s)?);
+            for at in 0..3 {
+                out.push(b.text(p.text(at)?)?);
             }
-            out.push(b.decimal(p.published_at)?);
-            out.push(b.decimal(p.genesis_at)?);
-            out.push(b.text(&p.initial_marker)?);
-            out.push(Value::Bool(p.open_placement));
-            out.push(b.text(&p.placement_procedure)?);
-            out.push(b.text(&p.cadence)?);
-            let encoding = match p.encoding {
-                burn::Encoding::CompleteList => 0,
-                burn::Encoding::PublicCommitment => 1,
-                burn::Encoding::WholePrefixAcceptAll => 2,
-            };
+            out.push(b.decimal(p.number(3)?)?);
+            out.push(b.decimal(p.number(4)?)?);
+            out.push(b.text(p.text(5)?)?);
+            out.push(Value::Bool(p.open()?));
+            out.push(b.text(p.text(7)?)?);
+            out.push(b.text(p.text(8)?)?);
+            let encoding = p.encoding()?;
             out.push(b.array(1, |_, v| {
                 v.push(Value::Unsigned(encoding));
                 Ok(())
             })?);
-            let candidate = match p.candidate_rule {
-                burn::CandidateRule::FirstValidInHistoryOrder => 0,
-                burn::CandidateRule::UniquePerIndex => 1,
-            };
+            let candidate = p.candidate()?;
             out.push(b.array(1, |_, v| {
                 v.push(Value::Unsigned(candidate));
                 Ok(())
             })?);
-            out.push(b.text(&p.verification_profile)?);
-            out.push(b.decimal(p.stability_buffer)?);
+            out.push(b.text(p.text(11)?)?);
+            out.push(b.decimal(p.number(12)?)?);
             Ok(())
         })
     }
+    #[cfg(test)]
     fn declaration(&mut self, d: &Declaration) -> Result<Value, Error> {
-        let DeclarationContent::Deployment { genesis_at } = d.content else {
-            return Err(Error::InvalidPosition);
-        };
+        self.declaration_fields(DeclarationFields::Admitted(d))
+    }
+    fn declaration_fields(&mut self, d: DeclarationFields<'_>) -> Result<Value, Error> {
         self.array(4, |b, out| {
             out.push(b.array(3, |b, v| {
-                v.push(b.text(&d.id.namespace)?);
-                v.push(b.text(&d.id.name)?);
-                v.push(b.decimal(d.id.edition)?);
+                v.push(b.text(d.id(0)?)?);
+                v.push(b.text(d.id(1)?)?);
+                v.push(b.decimal(d.number(0)?)?);
                 Ok(())
             })?);
-            out.push(b.decimal(d.announced_at)?);
-            out.push(b.decimal(d.effective_at)?);
+            out.push(b.decimal(d.number(1)?)?);
+            out.push(b.decimal(d.number(2)?)?);
             out.push(b.array(2, |b, v| {
                 v.push(Value::Unsigned(1));
-                v.push(b.decimal(genesis_at)?);
+                v.push(b.decimal(d.number(3)?)?);
                 Ok(())
             })?);
             Ok(())
         })
     }
+    #[cfg(test)]
     fn record(&mut self, r: &burn::BurnRecord) -> Result<Value, Error> {
+        self.record_fields(RecordFields::Admitted(r))
+    }
+    fn record_fields(&mut self, r: RecordFields<'_>) -> Result<Value, Error> {
         self.array(4, |b, out| {
-            out.push(b.text(&r.identity)?);
-            out.push(b.text(&r.destruction)?);
-            out.push(b.text(&r.address.0)?);
+            out.push(b.text(r.text(0)?)?);
+            out.push(b.text(r.text(1)?)?);
+            out.push(b.text(r.text(2)?)?);
             out.push(b.array(2, |b, v| {
-                let (n, d) = r.amount.exact().split_once('/').unwrap_or((r.amount.exact(), "1"));
+                let (n, d) = r.rational()?;
                 v.push(b.array(2, |b, v| {
                     v.push(b.text(n)?);
                     v.push(b.text(d)?);
                     Ok(())
                 })?);
-                v.push(b.text(r.amount.unit())?);
+                v.push(b.text(r.text(4)?)?);
                 Ok(())
             })?);
             Ok(())
         })
     }
-    fn marker(
+    fn marker_fields(
         &mut self,
-        records: &[burn::BurnRecord],
-        m: &burn::RecognizedMarker,
-        base: Option<&burn::RecognizedMarker>,
+        records: RecordsFields<'_>,
+        marker: MarkerFields<'_>,
+        base: Option<MarkerFields<'_>>,
     ) -> Result<Value, Error> {
-        let marker = m.identity();
         self.array(12, |b, out| {
-            for value in scope(marker) {
-                out.push(b.text(value)?);
+            for at in 1..=4 {
+                out.push(b.text(marker.text(at)?)?);
             }
-            out.push(Value::Unsigned(marker.index));
-            out.push(Value::Unsigned(marker.history_position));
-            out.push(marker.predecessor.map_or(Value::Null, Value::Unsigned));
-            let count = marker
-                .lineage
-                .iter()
-                .filter(|v| base.is_none_or(|p| !p.identity().lineage.contains(*v)))
-                .count();
-            out.push(b.array(count, |b, v| {
-                for id in marker
-                    .lineage
-                    .iter()
-                    .filter(|v| base.is_none_or(|p| !p.identity().lineage.contains(*v)))
+            out.push(Value::Unsigned(marker.number(5)?));
+            out.push(Value::Unsigned(marker.number(6)?));
+            out.push(marker.predecessor()?.map_or(Value::Null, Value::Unsigned));
+            let length = marker.lineage_count()?;
+            let mut count = 0;
+            for at in 0..length {
+                let value = marker.lineage_at(at)?;
+                if base
+                    .map(|prior| prior.contains_lineage(value))
+                    .transpose()?
+                    .is_none_or(|contained| !contained)
                 {
-                    let mut matches = records.iter().filter(|record| &record.identity == id);
-                    let record = matches.next().ok_or(Error::InvalidPosition)?;
-                    if matches.next().is_some() {
-                        return Err(Error::InvalidPosition);
+                    count += 1;
+                }
+            }
+            out.push(b.array(count, |b, v| {
+                for at in 0..length {
+                    let identity = marker.lineage_at(at)?;
+                    if base
+                        .map(|prior| prior.contains_lineage(identity))
+                        .transpose()?
+                        .is_none_or(|contained| !contained)
+                    {
+                        v.push(b.record_fields(records.find(identity)?)?);
                     }
-                    v.push(b.record(record)?);
                 }
                 Ok(())
             })?);
-            out.push(match &marker.accepted {
-                burn::AcceptedSet::CompleteList(members) => b.array(2, |b, v| {
+            out.push(match marker.accepted_kind()? {
+                0 => b.array(2, |b, v| {
                     v.push(Value::Unsigned(0));
-                    v.push(b.set(members, base.map(burn::RecognizedMarker::accepted))?);
+                    v.push(b.set_fields(marker, base, true)?);
                     Ok(())
                 })?,
-                burn::AcceptedSet::Commitment { commitment, .. } => b.array(2, |b, v| {
+                1 => b.array(2, |b, v| {
                     v.push(Value::Unsigned(1));
-                    v.push(b.bytes(commitment)?);
+                    v.push(b.bytes(marker.commitment()?)?);
                     Ok(())
                 })?,
-                burn::AcceptedSet::WholePrefix => b.array(1, |_, v| {
+                2 => b.array(1, |_, v| {
                     v.push(Value::Unsigned(2));
                     Ok(())
                 })?,
+                _ => return Err(Error::InvalidPosition),
             });
-            out.push(b.set(m.accepted(), base.map(burn::RecognizedMarker::accepted))?);
-            out.push(if marker.index == 0 {
+            out.push(b.set_fields(marker, base, false)?);
+            out.push(if marker.number(5)? == 0 && marker.initial_snapshot_empty()? {
                 Value::Map(Map::take_empty_reserved(&mut Vec::new())?)
             } else {
                 Value::Null
@@ -858,39 +1428,55 @@ impl Builder<'_> {
         initial: &burn::RecognizedMarker,
         records: &[burn::BurnRecord],
     ) -> Result<Value, Error> {
+        self.context_fields(&ProjectionFields {
+            genesis: DeclarationFields::Admitted(genesis),
+            policy: PolicyFields::Admitted(policy),
+            initial: MarkerFields::Admitted(initial),
+            terminal: MarkerFields::Admitted(initial),
+            records: RecordsFields::Admitted(records),
+        })
+    }
+    fn context_fields(&mut self, input: &ProjectionFields<'_>) -> Result<Value, Error> {
         self.array(4, |b, v| {
             v.push(b.array(4, |b, v| {
-                for s in scope(initial.identity()) {
-                    v.push(b.text(s)?);
+                for at in 1..=4 {
+                    v.push(b.text(input.initial.text(at)?)?);
                 }
                 Ok(())
             })?);
-            v.push(b.declaration(genesis)?);
-            v.push(b.policy(policy)?);
-            v.push(b.marker(records, initial, None)?);
+            v.push(b.declaration_fields(input.genesis)?);
+            v.push(b.policy_fields(input.policy)?);
+            v.push(b.marker_fields(input.records, input.initial, None)?);
             Ok(())
         })
     }
     fn projection(&mut self, input: &Input<'_>, previous: Option<&Input<'_>>, parent: Option<&[u8; 32]>) -> Result<Owned, Error> {
+        self.projection_fields(
+            &ProjectionFields::admitted(input),
+            previous.as_ref().map(|input| ProjectionFields::admitted(input)).as_ref(),
+            parent,
+        )
+    }
+    fn projection_fields(
+        &mut self,
+        input: &ProjectionFields<'_>,
+        previous: Option<&ProjectionFields<'_>>,
+        parent: Option<&[u8; 32]>,
+    ) -> Result<Owned, Error> {
         Ok(Owned(Some(self.array(2, |b, out| {
             out.push(b.text(TAG)?);
             out.push(b.array(3, |b, v| {
                 v.push(if parent.is_some() {
                     Value::Null
                 } else {
-                    b.context(
-                        input.genesis,
-                        &input.frame.marker_policy,
-                        input.initial,
-                        &input.frame.marker_history.records,
-                    )?
+                    b.context_fields(input)?
                 });
                 v.push(match parent {
                     Some(id) => b.bytes(id)?,
                     None => Value::Null,
                 });
-                v.push(b.marker(
-                    &input.frame.marker_history.records,
+                v.push(b.marker_fields(
+                    input.records,
                     input.terminal,
                     Some(previous.map_or(input.initial, |p| p.terminal)),
                 )?);
@@ -902,6 +1488,17 @@ impl Builder<'_> {
     fn preimage(&mut self, input: &Input<'_>, previous: Option<&Input<'_>>, parent: Option<&[u8; 32]>) -> Result<Vec<u8>, Error> {
         let value = self.projection(input, previous, parent)?;
         self.encode(&value)
+    }
+    fn preimage_fields(
+        &mut self,
+        input: &ProjectionFields<'_>,
+        previous: Option<&ProjectionFields<'_>>,
+        parent: Option<&[u8; 32]>,
+    ) -> Result<(Vec<u8>, Value), Error> {
+        let value = self.projection_fields(input, previous, parent)?;
+        let bytes = self.encode(&value)?;
+        let context = self.context_fields(input)?;
+        Ok((bytes, context))
     }
     fn encode(&mut self, value: &Owned) -> Result<Vec<u8>, Error> {
         let value = value.0.as_ref().ok_or(Error::InvalidPosition)?;

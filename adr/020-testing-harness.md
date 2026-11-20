@@ -158,7 +158,7 @@
 | pn-graph::title | active | public-surface | pn-graph-rust | fast | 1 |
 | pn-graph::verification-resource-cause | active | integration | pn-graph-rust | extended | 1 |
 | pn-graph::workload_correctness | active | integration | pn-graph-rust | fast | 6 |
-| pn-host | active | unit | pn-host-rust | fast | 66 |
+| pn-host | active | unit | pn-host-rust | fast | 67 |
 | pn-host-doctests | active | doctest | pn-host-rust | fast | 5 |
 | pn-host::admitted-carrier | active | integration | pn-host-rust | extended | 1 |
 | pn-host::admitted-carrier-held | active | integration | pn-host-memory-and-postgresql | service | 1 |
@@ -169,7 +169,7 @@
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 14 |
 | pn-host::public | active | public-surface | pn-host-rust | fast | 23 |
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |
-| pn-host::storage-tree | active | integration | pn-host-postgresql | service | 19 |
+| pn-host::storage-tree | active | integration | pn-host-postgresql | service | 23 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |
 | pn-interchange | active | unit | pn-interchange-rust | fast | 251 |
 | pn-interchange-doctests | active | doctest | pn-interchange-rust | fast | 174 |

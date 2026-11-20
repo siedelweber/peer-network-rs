@@ -152,6 +152,98 @@ fn vector_frame(name: &str, mut frame: Frame) -> Frame {
     frame
 }
 
+fn encoded_position_disclosure(package: &AdmittedPackage, frame: Option<&Frame>) -> Vec<u8> {
+    let mut disclosure = package.disclosures();
+    if let Some(frame) = frame {
+        let selected = disclosure.frames.last_mut().unwrap();
+        selected.marker_policy = frame.marker_policy.clone();
+        selected.marker_history = frame.marker_history.clone();
+        selected.closure.markers.basis = frame.closure.markers.basis().clone();
+        selected.closure.markers.markers = frame
+            .closure
+            .markers
+            .markers()
+            .iter()
+            .map(|marker| d::Marker {
+                identity: marker.identity().clone(),
+                accepted: marker.accepted().clone(),
+                destructions: marker.destructions().clone(),
+            })
+            .collect();
+    }
+    crate::publication::encode(&disclosure, &mut base::numeric(), d::Limits::default()).unwrap()
+}
+
+/// Claim: The private stored-span route reproduces the admitted route's complete projection bytes, computed residue and C on the seven independent position vectors without granting admission.
+/// ´claim:history:tree-audit-span-position´
+/// ´test:unit:tree-audit-span-position´
+#[test]
+fn tree_audit_span_position() {
+    let (root, child) = packages();
+    let root_input = Input::admitted(root).unwrap();
+    let root_position = position(root, None);
+    let root_package = encoded_position_disclosure(root, None);
+    let root_spans = crate::storage::tree::server::spans::Validated::for_position_test(&root_package).unwrap();
+    let corpus: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(workspace().join("packages/host/src/admitted_result/position/vectors.json")).unwrap(),
+    )
+    .unwrap();
+    let rows = corpus.as_array().unwrap();
+    assert_eq!(rows.len(), 7);
+    for row in rows {
+        let name = row["case"].as_str().unwrap();
+        let mut frame = root_input.frame.clone();
+        frame = vector_frame(name, frame);
+        let (published, expected, expected_context, parent) = if name == "ordinary" {
+            let child_input = Input::admitted(child).unwrap();
+            let expected = bytes(&child_input, Some(&root_input), Some(root_position.residue()));
+            let context = Builder {
+                ceiling: usize::MAX,
+                usage: &mut EncodingUsage::default(),
+                reservation: &mut |_| Ok(()),
+            }
+            .context(
+                child_input.genesis,
+                &child_input.frame.marker_policy,
+                child_input.initial,
+                &child_input.frame.marker_history.records,
+            )
+            .unwrap();
+            (
+                encoded_position_disclosure(child, None),
+                expected,
+                context,
+                Some((&root_spans, root_position.residue())),
+            )
+        } else {
+            let selected = input(&frame, root_input.genesis);
+            let expected = bytes(&selected, None, None);
+            let context = Builder {
+                ceiling: usize::MAX,
+                usage: &mut EncodingUsage::default(),
+                reservation: &mut |_| Ok(()),
+            }
+            .context(
+                selected.genesis,
+                &selected.frame.marker_policy,
+                selected.initial,
+                &selected.frame.marker_history.records,
+            )
+            .unwrap();
+            (encoded_position_disclosure(root, Some(&frame)), expected, context, None)
+        };
+        let spans = crate::storage::tree::server::spans::Validated::for_position_test(&published).unwrap();
+        let (residue, context, actual) =
+            from_stored_spans(&spans, parent, usize::MAX, &mut EncodingUsage::default(), &mut |_| Ok(())).unwrap();
+        assert_eq!(actual.len(), expected.len(), "projection length: {name}");
+        if let Some(at) = actual.iter().zip(&expected).position(|(a, b)| a != b) {
+            assert_eq!(actual[at], expected[at], "first projection byte at {at}: {name}");
+        }
+        assert_eq!(hex(&residue), row["residue"].as_str().unwrap(), "residue: {name}");
+        assert_eq!(context, expected_context, "initial context: {name}");
+    }
+}
+
 /// Claim: Seven distinct unsorted public projection inputs match independent canonical preimages and residues, including an admitted root and ordinary child; transition continuity is not fabricated.
 /// ´claim:history:position-vectors´
 /// ´test:unit:position-vectors´

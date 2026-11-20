@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::position::RecordsFields",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "syntax": "# [derive (Clone , Copy)] enum RecordsFields < 'a > { Admitted (& 'a [burn :: BurnRecord]) , Stored (StoredItem < 'a >) , }"
+  }
+}

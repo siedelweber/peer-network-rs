@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "admitted_result::position::PolicyFields",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "syntax": "# [derive (Clone , Copy)] enum PolicyFields < 'a > { Admitted (& 'a burn :: PolicyInput) , Stored (StoredItem < 'a >) , }"
+  }
+}

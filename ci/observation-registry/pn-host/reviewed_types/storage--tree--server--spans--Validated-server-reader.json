@@ -4,6 +4,6 @@
     "item": "storage::tree::server::spans::Validated",
     "package": "pn-host",
     "path": "packages/host/src/storage/tree/server/spans.rs",
-    "syntax": "pub (super) struct Validated < 'a > { bytes : & 'a [u8] , spans : Vec < Span > , }"
+    "syntax": "pub (crate) struct Validated < 'a > { bytes : & 'a [u8] , spans : Vec < Span > , }"
   }
 }

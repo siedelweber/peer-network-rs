@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::audit::server::Field",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit/server.rs",
+    "syntax": "# [derive (Clone , Copy)]",
+    "class_decision": "host-storage",
+    "expansion_review": "The private server audit discriminant derives only Copy and Clone over fixed field descriptions; the enclosing server audit is observed and no private session data enters it."
+  }
+}

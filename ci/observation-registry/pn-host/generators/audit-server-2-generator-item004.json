@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "admitted_result::position::RecordsFields",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/admitted_result/position.rs",
+    "syntax": "# [derive (Clone , Copy)]",
+    "class_decision": "host-admitted-carrier",
+    "expansion_review": "The private field-view wrapper derives only Copy and Clone over borrowed public fields; the enclosing position construction or retention is observed and no secret flows through the generated operations."
+  }
+}

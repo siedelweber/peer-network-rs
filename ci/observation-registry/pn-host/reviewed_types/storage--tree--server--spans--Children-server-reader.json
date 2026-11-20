@@ -4,6 +4,6 @@
     "item": "storage::tree::server::spans::Children",
     "package": "pn-host",
     "path": "packages/host/src/storage/tree/server/spans.rs",
-    "syntax": "pub (super) struct Children < 'a > { parent : Item < 'a > , next : usize , }"
+    "syntax": "pub (crate) struct Children < 'a > { parent : Item < 'a > , next : usize , }"
   }
 }

@@ -870,8 +870,8 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:storage-results-preserve-the-secret-boundary",
       "before": "",
-      "after": "Claim: Every closed storage statement is exercised in one of two complete bounded trace groups, history/catalogue and tree reads, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt resets its dedicated store before observation and checks private content and every completed child's public bytes before any retake, and counted trace loss is recorded as a completeness finding and refuses without recovery, with a failed child retaining its original exit outcome before refusal; acquisition uses one bounded evidence capture and default and trace return identical bytes, while an injected capture loss forces real-child retaking of each group with all of its statements present, including the catalogue query in its group, and a test-only metadata query is caught at the private role sentinel in a file-captured trace selected by its own accounting: an attempt that delivers the value detects it, an attempt that counts loss without it is inconclusive and retaken at most three times, and loss in every attempt is reported as loss rather than a missing detection, as synthetic selection cases witness; a forced lost carrying record, prepared and retaken under the same accounting, must leave its capture inconclusive and be detected by a later attempt within that bound, with natural loss before injection or on the retake still detecting and a complete miss or failed child still failing.",
-      "review": "Two independently complete trace groups cover the forty closed storage statements, including bounded tree reads, with catalogue-bootstrap and reader fixture configurations both included in private-content checks. Each group stays within the existing evidence bound and has its own injected retake; no group can use another group to excuse missing content. Literal extraction retains escaped identifier quotes in static statements; the fixed count and presence assertions remain exact. Existing counted-loss refusal, injected retake and private sentinel controls retain their scope."
+      "after": "Claim: Every closed storage statement is exercised in one of three complete bounded trace groups, history/catalogue, tree reads and tree audit, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt resets its dedicated store before observation and checks private content and every completed child's public bytes before any retake, and counted trace loss is recorded as a completeness finding and refuses without recovery, with a failed child retaining its original exit outcome before refusal; acquisition uses one bounded evidence capture and default and trace return identical bytes, while an injected capture loss forces real-child retaking of each group with all of its statements present, including the catalogue query in its group, and a test-only metadata query is caught at the private role sentinel in a file-captured trace selected by its own accounting: an attempt that delivers the value detects it, an attempt that counts loss without it is inconclusive and retaken at most three times, and loss in every attempt is reported as loss rather than a missing detection, as synthetic selection cases witness; a forced lost carrying record, prepared and retaken under the same accounting, must leave its capture inconclusive and be detected by a later attempt within that bound, with natural loss before injection or on the retake still detecting and a complete miss or failed child still failing.",
+      "review": "Three independently complete trace groups cover the seventy-nine closed storage and catalogue statements, with bounded tree reads and audit requests. Each group stays within the existing evidence bound and has its own injected retake; no group can use another to excuse missing content. Literal extraction retains escaped identifier quotes. Counted-loss refusal, injected retake and private sentinel controls retain their scope."
     },
     {
       "operation": "ci::test_linter_entry.Conformance.test_build_graph_census",
@@ -4331,6 +4331,14 @@
       "review": "Guard entry is observed once with pending values on refusal and unwinding. Disposal completeness rests on the interchange release witness, not this counter; no disposal-call deletion kill, deallocation or allocator observation is claimed. A dependency release-inventory seam is set aside because the dependency already witnesses completeness."
     },
     {
+      "operation": "pn-host::admitted_result::position::tests::tree_audit_span_position",
+      "path": "packages/host/src/admitted_result/position/tests.rs",
+      "claim": "HOST::claim:history:tree-audit-span-position",
+      "before": "",
+      "after": "Claim: The private stored-span route reproduces the admitted route's complete projection bytes, computed residue and C on the seven independent position vectors without granting admission.",
+      "review": "Focused private stored-span or disposable PostgreSQL audit evidence on explicit fixed inputs; later corruption, snapshot, capacity and performance campaigns remain owed."
+    },
+    {
       "operation": "pn-host::admitted_result::position::tests::tree_carrier_retention",
       "path": "packages/host/src/admitted_result/position/tests.rs",
       "claim": "HOST::claim:history:tree-carrier-retention",
@@ -5073,6 +5081,38 @@
       "before": "",
       "after": "Claim: Deleted successors, shortened or overlapping closures, a deleted closed middle edition, compound tampering and damaged selected payloads refuse in both adapters at boundaries inside their defects; future damage is unread by load but refused by the full audit, including after the store was opened.",
       "review": "Read boundaries inside deleted or lengthened closure overlaps, deleted closed middle successor and compound exact-closure state on memory and PostgreSQL, plus existing selected-payload and audit cases."
+    },
+    {
+      "operation": "pn-host::storage::tree::audit::server::tests::tree_audit_server_cursor",
+      "path": "packages/host/src/storage/tree/audit/server/tests.rs",
+      "claim": "HOST::claim:history:tree-audit-server-cursor",
+      "before": "",
+      "after": "Claim: One complete history cursor pass uses only the one-row and sixty-four-row fetch rungs, includes its last row and terminal empty fetch, and leaves the cursor names reusable by a fresh invocation.",
+      "review": "Focused private stored-span or disposable PostgreSQL audit evidence on explicit fixed inputs; later corruption, snapshot, capacity and performance campaigns remain owed."
+    },
+    {
+      "operation": "pn-host::storage::tree::audit::server::tests::tree_audit_server_inventory",
+      "path": "packages/host/src/storage/tree/audit/server/tests.rs",
+      "claim": "HOST::claim:history:tree-audit-server-inventory",
+      "before": "",
+      "after": "Claim: A server invocation returns the complete logical inventory of the empty, declaration-only two-scope and finite fork fixtures, matching the memory source without treating physical placement as an inventory field.",
+      "review": "Focused private stored-span or disposable PostgreSQL audit evidence on explicit fixed inputs; later corruption, snapshot, capacity and performance campaigns remain owed."
+    },
+    {
+      "operation": "pn-host::storage::tree::audit::server::tests::tree_audit_server_limits",
+      "path": "packages/host/src/storage/tree/audit/server/tests.rs",
+      "claim": "HOST::claim:history:tree-audit-server-limits",
+      "before": "",
+      "after": "Claim: The complete empty server audit admits its stated row, allocation and logical ceilings, while one byte below the first history delivery boundary refuses before FETCH and a fresh invocation succeeds on the same session.",
+      "review": "Focused private stored-span or disposable PostgreSQL audit evidence on explicit fixed inputs; later corruption, snapshot, capacity and performance campaigns remain owed."
+    },
+    {
+      "operation": "pn-host::storage::tree::audit::server::tests::tree_audit_server_location",
+      "path": "packages/host/src/storage/tree/audit/server/tests.rs",
+      "claim": "HOST::claim:history:tree-audit-server-location",
+      "before": "",
+      "after": "Claim: A malformed signed package-chunk ordinal retains its original complete observed key, refuses `CorruptHistory` without inventory, and leaves the repaired fixture auditable.",
+      "review": "The malformed signed ordinal is read from the disposable service and its complete original key is asserted; the typed corruption refusal returns no inventory. After repair, a fresh audit succeeds. The claim names the storage error as a Rust item."
     },
     {
       "operation": "pn-host::storage::tree::audit::tests::tree_audit_memory_content",

@@ -522,6 +522,37 @@ type StatementParameter<'a> = &'a (dyn tokio_postgres::types::ToSql + Sync);
 
 #[derive(Clone, Copy)]
 enum Statement {
+    AuditStoreIdentity,
+    AuditAdmissionGenerations,
+    AuditKeyMultiplicityAdmissionGenerations,
+    AuditAdmissionVersions,
+    AuditKeyMultiplicityAdmissionVersions,
+    AuditAdmissionClosures,
+    AuditKeyMultiplicityAdmissionClosures,
+    AuditScopes,
+    AuditKeyMultiplicityScopes,
+    AuditResults,
+    AuditKeyMultiplicityResults,
+    AuditSegments,
+    AuditKeyMultiplicitySegments,
+    AuditResultChunks,
+    AuditKeyMultiplicityResultChunks,
+    AuditReferences,
+    AuditKeyMultiplicityReferences,
+    AuditDebits,
+    AuditKeyMultiplicityDebits,
+    AuditDebitChunks,
+    AuditKeyMultiplicityDebitChunks,
+    AuditIntroductions,
+    AuditKeyMultiplicityIntroductions,
+    AuditVersionsOpen,
+    AuditVersionsFetchOne,
+    AuditVersionsFetchSixtyFour,
+    AuditVersionsClose,
+    AuditClosuresOpen,
+    AuditClosuresFetchOne,
+    AuditClosuresFetchSixtyFour,
+    AuditClosuresClose,
     BootstrapLock,
     HasTables,
     HasIdentity,
@@ -576,6 +607,87 @@ impl Statement {
     #[expect(clippy::too_many_lines)]
     const fn sql(self) -> &'static str {
         match self {
+            Self::AuditStoreIdentity => {
+                r"SELECT count(*)::bigint,CASE WHEN count(*)=1 THEN CASE WHEN max(octet_length(identity))<=28 THEN min(identity) ELSE '' END ELSE NULL END,CASE WHEN count(*)=1 THEN max(octet_length(identity))::bigint ELSE NULL END FROM public.pn_store_identity"
+            }
+            Self::AuditAdmissionGenerations => {
+                r#"SELECT CASE WHEN scope IS NULL THEN NULL WHEN octet_length(scope)<=1024 THEN scope ELSE '' END,octet_length(scope)::bigint,generation::bigint,CASE WHEN label IS NULL THEN NULL WHEN octet_length(label)<=1024 THEN label ELSE '' END,octet_length(label)::bigint,previous::bigint,minimum::bigint,version_count::bigint,closure_count::bigint FROM public.pn_admission_generations WHERE ($1::boolean OR (scope COLLATE "C",generation)>($2,$3) OR scope IS NULL OR generation IS NULL) ORDER BY scope COLLATE "C" ASC NULLS LAST,generation ASC NULLS LAST LIMIT $4::bigint"#
+            }
+            Self::AuditKeyMultiplicityAdmissionGenerations => {
+                r#"SELECT count(*)::bigint FROM public.pn_admission_generations WHERE scope COLLATE "C"=$1 AND generation=$2"#
+            }
+            Self::AuditAdmissionVersions => {
+                r#"SELECT CASE WHEN scope IS NULL THEN NULL WHEN octet_length(scope)<=1024 THEN scope ELSE '' END,octet_length(scope)::bigint,generation::bigint,CASE WHEN family IS NULL THEN NULL WHEN octet_length(family)<=21 THEN family ELSE '' END,octet_length(family)::bigint,CASE WHEN key IS NULL THEN NULL WHEN octet_length(key)<=1024 THEN key ELSE '' END,octet_length(key)::bigint,CASE WHEN edition IS NULL THEN NULL WHEN octet_length(edition)<=1024 THEN edition ELSE '' END,octet_length(edition)::bigint FROM public.pn_admission_versions WHERE ($1::boolean OR (family COLLATE "C",key COLLATE "C",edition COLLATE "C")>($2,$3,$4) OR family IS NULL OR key IS NULL OR edition IS NULL) ORDER BY family COLLATE "C" ASC NULLS LAST,key COLLATE "C" ASC NULLS LAST,edition COLLATE "C" ASC NULLS LAST LIMIT $5::bigint"#
+            }
+            Self::AuditKeyMultiplicityAdmissionVersions => {
+                r#"SELECT count(*)::bigint FROM public.pn_admission_versions WHERE family COLLATE "C"=$1 AND key COLLATE "C"=$2 AND edition COLLATE "C"=$3"#
+            }
+            Self::AuditAdmissionClosures => {
+                r#"SELECT CASE WHEN scope IS NULL THEN NULL WHEN octet_length(scope)<=1024 THEN scope ELSE '' END,octet_length(scope)::bigint,generation::bigint,CASE WHEN family IS NULL THEN NULL WHEN octet_length(family)<=21 THEN family ELSE '' END,octet_length(family)::bigint,CASE WHEN key IS NULL THEN NULL WHEN octet_length(key)<=1024 THEN key ELSE '' END,octet_length(key)::bigint,CASE WHEN edition IS NULL THEN NULL WHEN octet_length(edition)<=1024 THEN edition ELSE '' END,octet_length(edition)::bigint FROM public.pn_admission_closures WHERE ($1::boolean OR (family COLLATE "C",key COLLATE "C",edition COLLATE "C")>($2,$3,$4) OR family IS NULL OR key IS NULL OR edition IS NULL) ORDER BY family COLLATE "C" ASC NULLS LAST,key COLLATE "C" ASC NULLS LAST,edition COLLATE "C" ASC NULLS LAST LIMIT $5::bigint"#
+            }
+            Self::AuditKeyMultiplicityAdmissionClosures => {
+                r#"SELECT count(*)::bigint FROM public.pn_admission_closures WHERE family COLLATE "C"=$1 AND key COLLATE "C"=$2 AND edition COLLATE "C"=$3"#
+            }
+            Self::AuditScopes => {
+                r#"SELECT CASE WHEN scope IS NULL THEN NULL WHEN octet_length(scope)<=1024 THEN scope ELSE '' END,octet_length(scope)::bigint,substring(context_root FROM 1 FOR 32),octet_length(context_root)::bigint FROM public.pn_epoch_scopes WHERE ($1::boolean OR (scope COLLATE "C")>($2) OR scope IS NULL) ORDER BY scope COLLATE "C" ASC NULLS LAST LIMIT $3::bigint"#
+            }
+            Self::AuditKeyMultiplicityScopes => {
+                r#"SELECT count(*)::bigint FROM public.pn_epoch_scopes WHERE scope COLLATE "C"=$1"#
+            }
+            Self::AuditResults => {
+                r#"SELECT CASE WHEN scope IS NULL THEN NULL WHEN octet_length(scope)<=1024 THEN scope ELSE '' END,octet_length(scope)::bigint,substring(identity FROM 1 FOR 32),octet_length(identity)::bigint,depth::bigint,substring(parent FROM 1 FOR 32),octet_length(parent)::bigint,parent_depth::bigint,substring(parent_segment FROM 1 FOR 32),octet_length(parent_segment)::bigint,substring(segment FROM 1 FOR 32),octet_length(segment)::bigint,generation::bigint,package_bytes::bigint,package_chunks::bigint,reference_count::bigint,debit_count::bigint FROM public.pn_epoch_results WHERE ($1::boolean OR (scope COLLATE "C",identity)>($2,$3) OR scope IS NULL OR identity IS NULL) ORDER BY scope COLLATE "C" ASC NULLS LAST,identity ASC NULLS LAST LIMIT $4::bigint"#
+            }
+            Self::AuditKeyMultiplicityResults => {
+                r#"SELECT count(*)::bigint FROM public.pn_epoch_results WHERE scope COLLATE "C"=$1 AND identity=$2"#
+            }
+            Self::AuditSegments => {
+                r#"SELECT CASE WHEN scope IS NULL THEN NULL WHEN octet_length(scope)<=1024 THEN scope ELSE '' END,octet_length(scope)::bigint,substring(segment FROM 1 FOR 32),octet_length(segment)::bigint,start_depth::bigint,substring(parent_segment FROM 1 FOR 32),octet_length(parent_segment)::bigint,substring(fork_parent FROM 1 FOR 32),octet_length(fork_parent)::bigint,fork_depth::bigint FROM public.pn_epoch_branches WHERE ($1::boolean OR (scope COLLATE "C",segment)>($2,$3) OR scope IS NULL OR segment IS NULL) ORDER BY scope COLLATE "C" ASC NULLS LAST,segment ASC NULLS LAST LIMIT $4::bigint"#
+            }
+            Self::AuditKeyMultiplicitySegments => {
+                r#"SELECT count(*)::bigint FROM public.pn_epoch_branches WHERE scope COLLATE "C"=$1 AND segment=$2"#
+            }
+            Self::AuditResultChunks => {
+                r#"SELECT CASE WHEN scope IS NULL THEN NULL WHEN octet_length(scope)<=1024 THEN scope ELSE '' END,octet_length(scope)::bigint,substring(identity FROM 1 FOR 32),octet_length(identity)::bigint,ordinal::bigint,substring(bytes FROM 1 FOR 256*1024),octet_length(bytes)::bigint FROM public.pn_epoch_package_chunks WHERE ($1::boolean OR (scope COLLATE "C",identity,ordinal)>($2,$3,$4) OR scope IS NULL OR identity IS NULL OR ordinal IS NULL) ORDER BY scope COLLATE "C" ASC NULLS LAST,identity ASC NULLS LAST,ordinal ASC NULLS LAST LIMIT $5::bigint"#
+            }
+            Self::AuditKeyMultiplicityResultChunks => {
+                r#"SELECT count(*)::bigint FROM public.pn_epoch_package_chunks WHERE scope COLLATE "C"=$1 AND identity=$2 AND ordinal=$3"#
+            }
+            Self::AuditReferences => {
+                r#"SELECT CASE WHEN scope IS NULL THEN NULL WHEN octet_length(scope)<=1024 THEN scope ELSE '' END,octet_length(scope)::bigint,substring(identity FROM 1 FOR 32),octet_length(identity)::bigint,selected_at::bigint,CASE WHEN family IS NULL THEN NULL WHEN octet_length(family)<=21 THEN family ELSE '' END,octet_length(family)::bigint,CASE WHEN key IS NULL THEN NULL WHEN octet_length(key)<=1024 THEN key ELSE '' END,octet_length(key)::bigint,CASE WHEN edition IS NULL THEN NULL WHEN octet_length(edition)<=1024 THEN edition ELSE '' END,octet_length(edition)::bigint,substring(judgement_origin FROM 1 FOR 32),octet_length(judgement_origin)::bigint FROM public.pn_epoch_references WHERE ($1::boolean OR (scope COLLATE "C",identity,selected_at,family COLLATE "C",key COLLATE "C")>($2,$3,$4,$5,$6) OR scope IS NULL OR identity IS NULL OR selected_at IS NULL OR family IS NULL OR key IS NULL) ORDER BY scope COLLATE "C" ASC NULLS LAST,identity ASC NULLS LAST,selected_at ASC NULLS LAST,family COLLATE "C" ASC NULLS LAST,key COLLATE "C" ASC NULLS LAST LIMIT $7::bigint"#
+            }
+            Self::AuditKeyMultiplicityReferences => {
+                r#"SELECT count(*)::bigint FROM public.pn_epoch_references WHERE scope COLLATE "C"=$1 AND identity=$2 AND selected_at=$3 AND family COLLATE "C"=$4 AND key COLLATE "C"=$5"#
+            }
+            Self::AuditDebits => {
+                r#"SELECT CASE WHEN scope IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN scope ELSE '' END,octet_length(scope)::bigint,substring(origin FROM 1 FOR 32),octet_length(origin)::bigint,CASE WHEN author IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN author ELSE '' END,octet_length(author)::bigint,CASE WHEN act_sequence IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN act_sequence ELSE '' END,octet_length(act_sequence)::bigint,CASE WHEN act_family IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN act_family ELSE '' END,octet_length(act_family)::bigint,writing_boundary::bigint,vintage_bytes::bigint,vintage_chunks::bigint FROM public.pn_epoch_debits WHERE ($1::boolean OR (scope COLLATE "C",origin,author COLLATE "C",act_sequence COLLATE "C",act_family COLLATE "C")>($2,$3,$4,$5,$6) OR scope IS NULL OR origin IS NULL OR author IS NULL OR act_sequence IS NULL OR act_family IS NULL) ORDER BY scope COLLATE "C" ASC NULLS LAST,origin ASC NULLS LAST,author COLLATE "C" ASC NULLS LAST,act_sequence COLLATE "C" ASC NULLS LAST,act_family COLLATE "C" ASC NULLS LAST LIMIT $7::bigint"#
+            }
+            Self::AuditKeyMultiplicityDebits => {
+                r#"SELECT count(*)::bigint FROM public.pn_epoch_debits WHERE scope COLLATE "C"=$1 AND origin=$2 AND author COLLATE "C"=$3 AND act_sequence COLLATE "C"=$4 AND act_family COLLATE "C"=$5"#
+            }
+            Self::AuditDebitChunks => {
+                r#"SELECT CASE WHEN scope IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN scope ELSE '' END,octet_length(scope)::bigint,substring(origin FROM 1 FOR 32),octet_length(origin)::bigint,CASE WHEN author IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN author ELSE '' END,octet_length(author)::bigint,CASE WHEN act_sequence IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN act_sequence ELSE '' END,octet_length(act_sequence)::bigint,CASE WHEN act_family IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN act_family ELSE '' END,octet_length(act_family)::bigint,ordinal::bigint,substring(bytes FROM 1 FOR 256*1024),octet_length(bytes)::bigint FROM public.pn_epoch_debit_chunks WHERE ($1::boolean OR (scope COLLATE "C",origin,author COLLATE "C",act_sequence COLLATE "C",act_family COLLATE "C",ordinal)>($2,$3,$4,$5,$6,$7) OR scope IS NULL OR origin IS NULL OR author IS NULL OR act_sequence IS NULL OR act_family IS NULL OR ordinal IS NULL) ORDER BY scope COLLATE "C" ASC NULLS LAST,origin ASC NULLS LAST,author COLLATE "C" ASC NULLS LAST,act_sequence COLLATE "C" ASC NULLS LAST,act_family COLLATE "C" ASC NULLS LAST,ordinal ASC NULLS LAST LIMIT $8::bigint"#
+            }
+            Self::AuditKeyMultiplicityDebitChunks => {
+                r#"SELECT count(*)::bigint FROM public.pn_epoch_debit_chunks WHERE scope COLLATE "C"=$1 AND origin=$2 AND author COLLATE "C"=$3 AND act_sequence COLLATE "C"=$4 AND act_family COLLATE "C"=$5 AND ordinal=$6"#
+            }
+            Self::AuditIntroductions => {
+                r#"SELECT CASE WHEN scope IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN scope ELSE '' END,octet_length(scope)::bigint,substring(origin FROM 1 FOR 32),octet_length(origin)::bigint,CASE WHEN author IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN author ELSE '' END,octet_length(author)::bigint,CASE WHEN act_sequence IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN act_sequence ELSE '' END,octet_length(act_sequence)::bigint,CASE WHEN act_family IS NULL THEN NULL WHEN (octet_length(scope)::bigint+octet_length(author)::bigint+octet_length(act_sequence)::bigint+octet_length(act_family)::bigint+length(octet_length(author)::text)+length(octet_length(act_sequence)::text)+length(octet_length(act_family)::text)+3)<=1024 AND octet_length(act_sequence)<=20 THEN act_family ELSE '' END,octet_length(act_family)::bigint,substring(segment FROM 1 FOR 32),octet_length(segment)::bigint,origin_depth::bigint FROM public.pn_epoch_result_debits WHERE ($1::boolean OR (scope COLLATE "C",origin,author COLLATE "C",act_sequence COLLATE "C",act_family COLLATE "C")>($2,$3,$4,$5,$6) OR scope IS NULL OR origin IS NULL OR author IS NULL OR act_sequence IS NULL OR act_family IS NULL) ORDER BY scope COLLATE "C" ASC NULLS LAST,origin ASC NULLS LAST,author COLLATE "C" ASC NULLS LAST,act_sequence COLLATE "C" ASC NULLS LAST,act_family COLLATE "C" ASC NULLS LAST LIMIT $7::bigint"#
+            }
+            Self::AuditKeyMultiplicityIntroductions => {
+                r#"SELECT count(*)::bigint FROM public.pn_epoch_result_debits WHERE scope COLLATE "C"=$1 AND origin=$2 AND author COLLATE "C"=$3 AND act_sequence COLLATE "C"=$4 AND act_family COLLATE "C"=$5"#
+            }
+            Self::AuditVersionsOpen => {
+                r#"DECLARE pn_audit_versions NO SCROLL CURSOR WITHOUT HOLD FOR SELECT CASE WHEN family IS NULL THEN NULL WHEN octet_length(family)<=21 THEN family ELSE '' END,octet_length(family)::bigint,CASE WHEN key IS NULL THEN NULL WHEN octet_length(key)<=1024 THEN key ELSE '' END,octet_length(key)::bigint,CASE WHEN edition IS NULL THEN NULL WHEN octet_length(edition)<=1024 THEN edition ELSE '' END,octet_length(edition)::bigint,announced::bigint,opens::bigint,substring(payload FROM 1 FOR 256*1024),octet_length(payload)::bigint,substring(digest FROM 1 FOR 32),octet_length(digest)::bigint,substring(disclosure FROM 1 FOR 32),octet_length(disclosure)::bigint FROM public.pn_versions ORDER BY family COLLATE "C" ASC NULLS LAST,key COLLATE "C" ASC NULLS LAST,edition COLLATE "C" ASC NULLS LAST"#
+            }
+            Self::AuditVersionsFetchOne => r"FETCH FORWARD 1 FROM pn_audit_versions",
+            Self::AuditVersionsFetchSixtyFour => r"FETCH FORWARD 64 FROM pn_audit_versions",
+            Self::AuditVersionsClose => r"CLOSE pn_audit_versions",
+            Self::AuditClosuresOpen => {
+                r#"DECLARE pn_audit_closures NO SCROLL CURSOR WITHOUT HOLD FOR SELECT CASE WHEN family IS NULL THEN NULL WHEN octet_length(family)<=21 THEN family ELSE '' END,octet_length(family)::bigint,CASE WHEN key IS NULL THEN NULL WHEN octet_length(key)<=1024 THEN key ELSE '' END,octet_length(key)::bigint,CASE WHEN edition IS NULL THEN NULL WHEN octet_length(edition)<=1024 THEN edition ELSE '' END,octet_length(edition)::bigint,closes::bigint FROM public.pn_closures ORDER BY family COLLATE "C" ASC NULLS LAST,key COLLATE "C" ASC NULLS LAST,edition COLLATE "C" ASC NULLS LAST"#
+            }
+            Self::AuditClosuresFetchOne => r"FETCH FORWARD 1 FROM pn_audit_closures",
+            Self::AuditClosuresFetchSixtyFour => r"FETCH FORWARD 64 FROM pn_audit_closures",
+            Self::AuditClosuresClose => r"CLOSE pn_audit_closures",
             Self::ReadEpochDebitKeys => {
                 "SELECT substring(origin FROM 1 FOR 32),octet_length(origin)::bigint,origin_depth,CASE WHEN octet_length(author)<=1024 THEN author ELSE '' END,octet_length(author)::bigint,CASE WHEN octet_length(act_sequence)<=20 THEN act_sequence ELSE '' END,octet_length(act_sequence)::bigint,CASE WHEN octet_length(act_family)<=1024 THEN act_family ELSE '' END,octet_length(act_family)::bigint FROM public.pn_epoch_result_debits WHERE scope=$1 AND segment=$2 AND origin_depth BETWEEN $3 AND $4 ORDER BY author,length(act_sequence),act_sequence,act_family,origin LIMIT $5"
             }

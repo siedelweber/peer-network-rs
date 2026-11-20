@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit/server.rs",
+    "item": "storage::tree::audit::server::<ServerSource as AuditSource < 'a >>::check_generation_indices",
+    "owner": "HOST",
+    "signature": "fn check_generation_indices (& self , rows : & mut Collected < 'a > , meter : & mut AuditMeter) -> Result < () , AuditFailure >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Private field access or reconciliation inherits the enclosing observed position or server audit operation.",
+      "witness": "HOST::claim:history:tree-audit-server-inventory",
+      "boundary": "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::audit",
+      "class_decision": "host-storage"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree/audit/server.rs::storage::tree::audit::server::<ServerSource as AuditSource < 'a >>::check_generation_indices",
+    "body": "{ for (at , domain) in [(1 , & self . arena . domains [1]) , (2 , & self . arena . domains [2])] { let history = if at == 1 { & self . arena . domains [6] } else { & self . arena . domains [7] } ; for mapping in domain { let site = mapping . site (& SPECS [at]) ; meter . visit (site) ? ; let scope = text_cell (mapping , 0 , site , meter) ? ; let ordinal = unsigned_cell (mapping , 1 , site , meter) ? ; meter . visit (site) ? ; if rows . generations . binary_search_by (| generation | { (generation . key . as_str () , generation . declaration . ordinal) . cmp (& (scope , ordinal)) }) . is_err () { return Err (meter . refused (StorageError :: CorruptHistory , site)) ; } let target = (mapping . text (2) , mapping . text (3) , mapping . text (4)) ; meter . visit (site) ? ; if history . binary_search_by (| row | (row . text (0) , row . text (1) , row . text (2)) . cmp (& target)) . is_err () { return Err (meter . refused (StorageError :: CorruptHistory , site)) ; } } } for generation in & rows . generations { let site = AuditSite :: row (\"pn_admission_generations\" , & [SitePart :: Scope (& generation . declaration . scope) , SitePart :: Integer (generation . declaration . ordinal) ,] ,) ; meter . visit (site) ? ; let key = & generation . key ; let ordinal = i64 :: try_from (generation . declaration . ordinal) . map_err (| _ | meter . refused (StorageError :: CorruptHistory , site)) ? ; meter . visit (site) ? ; let header_at = self . arena . domains [0] . binary_search_by (| row | (row . text (0) , row . integer (1)) . cmp (& (Some (key . as_str ()) , Some (ordinal)))) . map_err (| _ | meter . refused (StorageError :: CorruptHistory , site)) ? ; let header = & self . arena . domains [0] [header_at] ; if header . integer (5) . and_then (| n | usize :: try_from (n) . ok ()) != Some (generation . declaration . versions . len ()) || header . integer (6) . and_then (| n | usize :: try_from (n) . ok ()) != Some (generation . declaration . closures . len ()) { return Err (meter . refused (StorageError :: CorruptHistory , site)) ; } } for (history_at , mapping_at) in [(6 , 1) , (7 , 2)] { let mappings = & self . arena . domains [mapping_at] ; for history in & self . arena . domains [history_at] { let site = history . site (& SPECS [history_at]) ; meter . visit (site) ? ; let family = text_cell (history , 0 , site , meter) ? ; if ! matches ! (family , \"rule\" | \"constants\") { continue ; } let target = (history . text (0) , history . text (1) , history . text (2)) ; meter . visit (site) ? ; if mappings . binary_search_by (| row | (row . text (2) , row . text (3) , row . text (4)) . cmp (& target)) . is_err () { return Err (meter . refused (StorageError :: CorruptHistory , site)) ; } } } for (row , version) in self . arena . domains [6] . iter () . zip (& self . histories) { let site = row . site (& SPECS [6]) ; meter . visit (site) ? ; if let Some (payload) = & version . payload { let validated = crate :: storage :: tree :: server :: spans :: Validated :: audit (& payload . bytes , meter , site) ? ; crate :: storage :: tree :: server :: spans :: history_payload (& validated , version . family , & payload . bytes , payload . digest , payload . disclosure ,) . map_err (| _ | meter . refused (StorageError :: CorruptHistory , site)) ? ; } } Ok (()) }",
+    "class_decision": "host-storage",
+    "item_premise": "The private operation reads public retained facts under the one observed, bounded position or server audit operation, and cannot expose credentials or a driver diagnostic.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

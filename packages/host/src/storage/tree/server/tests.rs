@@ -13,13 +13,13 @@ fn reset_events() {
 fn events() -> usize {
     EVENTS.get()
 }
-pub(super) fn fetched() {
+pub(in crate::storage::tree) fn fetched() {
     FETCHES.set(FETCHES.get() + 1);
 }
-fn reset_fetches() {
+pub(in crate::storage::tree) fn reset_fetches() {
     FETCHES.set(0);
 }
-fn fetches() -> usize {
+pub(in crate::storage::tree) fn fetches() -> usize {
     FETCHES.get()
 }
 use super::super::{MemoryTree, tests::forks};
@@ -49,7 +49,7 @@ async fn setup(reverse: bool) -> MemoryTree<'static> {
     setup_named(reverse, "storage-tree-reads.json").await
 }
 
-async fn setup_named(reverse: bool, name: &str) -> MemoryTree<'static> {
+pub(in crate::storage::tree) async fn setup_named(reverse: bool, name: &str) -> MemoryTree<'static> {
     let f = forks();
     let mut model = MemoryTree::default();
     model
@@ -579,7 +579,58 @@ pub(in crate::storage::tree) async fn prepare_trace(name: &str) -> ServerTree {
     ServerTree::open(connect_named(name).await).await.unwrap()
 }
 
+pub(in crate::storage::tree) async fn audit_negative_chunk(store: &mut ServerTree, scope: &EpochScope, identity: Identity) {
+    let encoded = ServerReader::scope(scope).unwrap();
+    let scope = encoded.text().unwrap();
+    store
+        .session
+        .client()
+        .batch_execute("ALTER TABLE public.pn_epoch_package_chunks DROP CONSTRAINT pn_epoch_package_chunks_ordinal_check")
+        .await
+        .unwrap();
+    store
+        .session
+        .client()
+        .execute(
+            "INSERT INTO public.pn_epoch_package_chunks(scope,identity,ordinal,bytes) VALUES ($1,$2,-1,$3)",
+            &[&scope, &&identity[..], &b"audit-damage".as_slice()],
+        )
+        .await
+        .unwrap();
+}
+
+pub(in crate::storage::tree) fn audit_root() -> (EpochScope, Identity) {
+    let fork = forks();
+    let (scope, identity, _, _) = fork.main[0].event();
+    (scope.clone(), *identity)
+}
+
+pub(in crate::storage::tree) fn audit_scope(scope: &EpochScope) -> String {
+    ServerReader::scope(scope).unwrap().text().unwrap().to_owned()
+}
+
+pub(in crate::storage::tree) async fn audit_clear_negative_chunk(store: &mut ServerTree, scope: &EpochScope, identity: Identity) {
+    let encoded = ServerReader::scope(scope).unwrap();
+    let scope = encoded.text().unwrap();
+    store
+        .session
+        .client()
+        .execute(
+            "DELETE FROM public.pn_epoch_package_chunks WHERE scope=$1 AND identity=$2 AND ordinal=-1",
+            &[&scope, &&identity[..]],
+        )
+        .await
+        .unwrap();
+    store.session.client().batch_execute(
+        "ALTER TABLE public.pn_epoch_package_chunks ADD CONSTRAINT pn_epoch_package_chunks_ordinal_check CHECK (ordinal >= 0)"
+    ).await.unwrap();
+}
+
 pub(in crate::storage::tree) async fn trace_fixture(store: &mut ServerTree) {
+    if std::env::var("PN_HOST_STORAGE_READER_TRACE").as_deref() == Ok("audit") {
+        audit_trace_fixture(store).await;
+        return;
+    }
     let f = forks();
     let mut reader = store.reader(allowance()).await.unwrap();
     let encoded = ServerReader::scope(f.main[0].event().0).unwrap();
@@ -675,6 +726,129 @@ pub(in crate::storage::tree) async fn trace_fixture(store: &mut ServerTree) {
         "TRUNCATE pn_epoch_debit_chunks,pn_epoch_result_debits,pn_epoch_debits,pn_epoch_references,pn_epoch_package_chunks,pn_epoch_results,pn_epoch_branches,pn_epoch_scopes"
     ).await.unwrap();
     trace_result_inserts(store, scope, &selected.version).await;
+}
+
+pub(in crate::storage::tree) async fn audit_trace_fixture(store: &mut ServerTree) {
+    let f = forks();
+    let encoded = ServerReader::scope(f.main[0].event().0).unwrap();
+    let scope = encoded.text().unwrap();
+    let root = f.main[0].event().1;
+    let selected = f.main[0]
+        .declarations()
+        .iter()
+        .find(|use_| use_.version.family == Family::Rule)
+        .unwrap();
+    let family = selected.version.family.name();
+    // The complete server controls exercise populated audits. This finite
+    // trace captures each closed statement once with a one-row page.
+    let beginning = true;
+    let page = 1_i64;
+    let ordinal = 1_i64;
+    let zero = 0_i64;
+    let identity = &root[..];
+    let edition = selected.version.edition.as_str();
+    let key = selected.version.key.as_str();
+    let author = "trace-author";
+    let sequence = "1";
+    let act_family = "trace-family";
+    let pages: Vec<(Statement, Vec<StatementParameter<'_>>)> = vec![
+        (
+            Statement::AuditAdmissionGenerations,
+            vec![&beginning, &scope, &ordinal, &page],
+        ),
+        (
+            Statement::AuditAdmissionVersions,
+            vec![&beginning, &family, &key, &edition, &page],
+        ),
+        (
+            Statement::AuditAdmissionClosures,
+            vec![&beginning, &family, &key, &edition, &page],
+        ),
+        (Statement::AuditScopes, vec![&beginning, &scope, &page]),
+        (Statement::AuditResults, vec![&beginning, &scope, &identity, &page]),
+        (Statement::AuditSegments, vec![&beginning, &scope, &identity, &page]),
+        (
+            Statement::AuditResultChunks,
+            vec![&beginning, &scope, &identity, &zero, &page],
+        ),
+        (
+            Statement::AuditReferences,
+            vec![&beginning, &scope, &identity, &zero, &family, &key, &page],
+        ),
+        (
+            Statement::AuditDebits,
+            vec![&beginning, &scope, &identity, &author, &sequence, &act_family, &page],
+        ),
+        (
+            Statement::AuditDebitChunks,
+            vec![&beginning, &scope, &identity, &author, &sequence, &act_family, &zero, &page],
+        ),
+        (
+            Statement::AuditIntroductions,
+            vec![&beginning, &scope, &identity, &author, &sequence, &act_family, &page],
+        ),
+    ];
+    let probes: Vec<(Statement, Vec<StatementParameter<'_>>)> = vec![
+        (Statement::AuditKeyMultiplicityAdmissionGenerations, vec![&scope, &ordinal]),
+        (
+            Statement::AuditKeyMultiplicityAdmissionVersions,
+            vec![&family, &key, &edition],
+        ),
+        (
+            Statement::AuditKeyMultiplicityAdmissionClosures,
+            vec![&family, &key, &edition],
+        ),
+        (Statement::AuditKeyMultiplicityScopes, vec![&scope]),
+        (Statement::AuditKeyMultiplicityResults, vec![&scope, &identity]),
+        (Statement::AuditKeyMultiplicitySegments, vec![&scope, &identity]),
+        (Statement::AuditKeyMultiplicityResultChunks, vec![&scope, &identity, &zero]),
+        (
+            Statement::AuditKeyMultiplicityReferences,
+            vec![&scope, &identity, &zero, &family, &key],
+        ),
+        (
+            Statement::AuditKeyMultiplicityDebits,
+            vec![&scope, &identity, &author, &sequence, &act_family],
+        ),
+        (
+            Statement::AuditKeyMultiplicityDebitChunks,
+            vec![&scope, &identity, &author, &sequence, &act_family, &zero],
+        ),
+        (
+            Statement::AuditKeyMultiplicityIntroductions,
+            vec![&scope, &identity, &author, &sequence, &act_family],
+        ),
+    ];
+    submit_audit_trace(store, pages, probes).await;
+}
+
+async fn submit_audit_trace(
+    store: &mut ServerTree,
+    pages: Vec<(Statement, Vec<StatementParameter<'_>>)>,
+    probes: Vec<(Statement, Vec<StatementParameter<'_>>)>,
+) {
+    let audit = store
+        .session
+        .client
+        .snapshot(store.session.store_requests.clone())
+        .await
+        .unwrap();
+    let _: i64 = audit.query_one(Statement::AuditStoreIdentity, &[]).await.unwrap().get(0);
+    for (statement, parameters) in pages {
+        audit.query(statement, &parameters).await.unwrap();
+    }
+    audit.batch_execute(Statement::AuditVersionsOpen).await.unwrap();
+    audit.query(Statement::AuditVersionsFetchOne, &[]).await.unwrap();
+    audit.query(Statement::AuditVersionsFetchSixtyFour, &[]).await.unwrap();
+    audit.batch_execute(Statement::AuditVersionsClose).await.unwrap();
+    audit.batch_execute(Statement::AuditClosuresOpen).await.unwrap();
+    audit.query(Statement::AuditClosuresFetchOne, &[]).await.unwrap();
+    audit.query(Statement::AuditClosuresFetchSixtyFour, &[]).await.unwrap();
+    audit.batch_execute(Statement::AuditClosuresClose).await.unwrap();
+    for (statement, parameters) in probes {
+        let _: i64 = audit.query_one(statement, &parameters).await.unwrap().get(0);
+    }
+    audit.commit().await.unwrap();
 }
 
 async fn trace_result_inserts(store: &mut ServerTree, scope: &str, version: &super::super::Version) {

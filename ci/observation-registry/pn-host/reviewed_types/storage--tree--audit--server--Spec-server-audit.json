@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::server::Spec",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit/server.rs",
+    "syntax": "struct Spec { relation : & 'static str , fields : & 'static [Field] , key : & 'static [usize] , maximum : usize , scan : Scan , }"
+  }
+}

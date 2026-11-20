@@ -4,6 +4,6 @@
     "item": "storage::tree::audit::SitePart",
     "package": "pn-host",
     "path": "packages/host/src/storage/tree/audit.rs",
-    "syntax": "# [derive (Clone , Copy)] pub (super) enum SitePart < 'a > { Empty , Scope (& 'a EpochScope) , Text (& 'a str , usize) , Identity (Identity) , Decimal (u64) , Integer (u64) , Signed (i64) , Null , }"
+    "syntax": "# [derive (Clone , Copy)] pub (super) enum SitePart < 'a > { Empty , Scope (& 'a EpochScope) , ScopeText (& 'a str) , Text (& 'a str , usize) , Identity (Identity) , RawBytes (& 'a [u8] , usize) , Decimal (u64) , Integer (u64) , Signed (i64) , Null , }"
   }
 }
