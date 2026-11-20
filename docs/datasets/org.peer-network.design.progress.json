@@ -3455,18 +3455,18 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [
-        "packages/documents/tests/integration.rs"
-      ],
+      "elsewhere": [],
       "holds": [],
       "kind": "type",
       "label": "def:graph:authored-act",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::inv:design:units"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -4320,10 +4320,12 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
       "routes": [],
-      "status": "unassigned",
-      "tentative": 0
+      "status": "designed",
+      "tentative": 1
     },
     {
       "bites": [],
@@ -4911,6 +4913,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "ROOT::open:vision:deployment-profile",
         "ROOT::rule:devnet:content-carrier"
       ],
       "routes": [],
@@ -4922,15 +4925,30 @@
       "category": "statement",
       "crate": "pn-records",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:design:dependency-opening-recipe",
+          "record": "ROOT::amend:design:bite-four-close"
+        }
+      ],
       "kind": "invariant check",
       "label": "prop:graph:removable-projection-invariance",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
-      "routes": [],
-      "status": "unassigned",
+      "records": [
+        "GRAPH::def:formation:boundary-title",
+        "ROOT::amend:design:bite-four-close"
+      ],
+      "routes": [
+        {
+          "claim": "GRAPH::claim:formation:scoped-title-requires-complete-authorized-history",
+          "kind": "record-claim",
+          "record": "ROOT::amend:design:bite-four-close",
+          "scope": "ROOT::gate:design:bite-4"
+        }
+      ],
+      "status": "realized",
       "tentative": 0
     },
     {
@@ -4944,10 +4962,12 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
       "routes": [],
-      "status": "unassigned",
-      "tentative": 0
+      "status": "designed",
+      "tentative": 1
     },
     {
       "bites": [],
@@ -4961,26 +4981,41 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::inv:design:units"
+        "ROOT::open:vision:deployment-profile"
       ],
       "routes": [],
       "status": "designed",
-      "tentative": 0
+      "tentative": 1
     },
     {
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:design:dependency-opening-recipe",
+          "record": "ROOT::amend:design:bite-four-close"
+        }
+      ],
       "kind": "invariant check",
       "label": "rem:graph:act-payload-removal-neutrality",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
-      "routes": [],
-      "status": "unassigned",
+      "records": [
+        "GRAPH::def:formation:boundary-title",
+        "ROOT::amend:design:bite-four-close"
+      ],
+      "routes": [
+        {
+          "claim": "GRAPH::claim:formation:scoped-title-requires-complete-authorized-history",
+          "kind": "record-claim",
+          "record": "ROOT::amend:design:bite-four-close",
+          "scope": "ROOT::gate:design:bite-4"
+        }
+      ],
+      "status": "realized",
       "tentative": 0
     },
     {
@@ -5010,6 +5045,7 @@
       "record_routes": [],
       "records": [
         "ROOT::open:design:proposal-carriage",
+        "ROOT::open:vision:deployment-profile",
         "ROOT::rule:devnet:content-carrier"
       ],
       "routes": [],
@@ -6953,10 +6989,12 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
       "routes": [],
-      "status": "unassigned",
-      "tentative": 0
+      "status": "designed",
+      "tentative": 1
     },
     {
       "bites": [],
@@ -6969,10 +7007,12 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
       "routes": [],
-      "status": "unassigned",
-      "tentative": 0
+      "status": "designed",
+      "tentative": 1
     },
     {
       "bites": [],
@@ -6985,41 +7025,30 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
       "routes": [],
-      "status": "unassigned",
-      "tentative": 0
+      "status": "designed",
+      "tentative": 1
     },
     {
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
       "elsewhere": [],
-      "holds": [
-        {
-          "hold": "ROOT::open:design:dependency-opening-recipe",
-          "record": "ROOT::amend:design:bite-four-close"
-        }
-      ],
+      "holds": [],
       "kind": "invariant check",
       "label": "def:graph:act-dependency-tombstone",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "GRAPH::def:formation:boundary-title",
-        "ROOT::amend:design:bite-four-close"
+        "ROOT::open:vision:deployment-profile"
       ],
-      "routes": [
-        {
-          "claim": "GRAPH::claim:formation:scoped-title-requires-complete-authorized-history",
-          "kind": "record-claim",
-          "record": "ROOT::amend:design:bite-four-close",
-          "scope": "ROOT::gate:design:bite-4"
-        }
-      ],
-      "status": "realized",
-      "tentative": 0
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
     },
     {
       "bites": [
@@ -7094,10 +7123,6 @@
         },
         {
           "hold": "ROOT::open:identity:act-realization-admission",
-          "record": "ROOT::amend:identity:act-concealment"
-        },
-        {
-          "hold": "ROOT::open:identity:act-realization-admission",
           "record": "ROOT::amend:identity:act-proposal-admission"
         },
         {
@@ -7133,7 +7158,6 @@
         "RECORDS::def:acts:authentication-disclosure",
         "ROOT::amend:decomposition:act-profile",
         "ROOT::amend:design:publication-field-inventory",
-        "ROOT::amend:identity:act-concealment",
         "ROOT::amend:identity:act-proposal-admission",
         "ROOT::amend:identity:proposal-signature",
         "ROOT::open:identity:act-realization-admission"
@@ -14270,7 +14294,6 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::open:design:verdict-issuance",
         "ROOT::rec:design:atomic-admission-evidence"
       ],
       "routes": [],
@@ -17284,19 +17307,20 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/workload-benchmarks.md",
+        "docs/templates/docs/design/workload-benchmarks.md.j2"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "rem:scalability:boundary-search-cost",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "ROOT::open:design:verdict-issuance"
-      ],
+      "records": [],
       "routes": [],
-      "status": "designed",
-      "tentative": 1
+      "status": "unassigned",
+      "tentative": 0
     },
     {
       "bites": [],
@@ -26247,10 +26271,12 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
       "routes": [],
-      "status": "unassigned",
-      "tentative": 0
+      "status": "designed",
+      "tentative": 1
     },
     {
       "bites": [],
@@ -29073,10 +29099,12 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
       "routes": [],
-      "status": "unassigned",
-      "tentative": 0
+      "status": "designed",
+      "tentative": 1
     },
     {
       "bites": [],
@@ -32678,24 +32706,19 @@
           "record": "ROOT::amend:design:host-operational-declaration"
         },
         {
-          "clause": "Conformance reliance: The published package carries no verdict of a rejected set, and the deployment’s own rejected comparisons are kept outside it.",
+          "clause": "Claimed part: This uses rejection of unresolved binding comparisons and accepted-package separation without assuming issuance or soundness.",
           "record": "ROOT::open:design:rejected-comparison-publication"
         },
         {
-          "clause": "Claimed part: This hold records which declarations and evidence remain missing; it does not assert liveness or plant performance.",
+          "clause": "Claimed part: This hold uses exact declarations and their comparisons without asserting independent soundness.",
           "record": "ROOT::open:design:wall-performance"
-        },
-        {
-          "clause": "Claimed part: This hold names missing declarations and evidence; it asserts neither economic suitability nor controller performance.",
-          "record": "ROOT::open:vision:deployment-profile"
         }
       ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
         "ROOT::amend:design:host-operational-declaration",
-        "ROOT::open:design:wall-performance",
-        "ROOT::open:vision:deployment-profile"
+        "ROOT::open:design:wall-performance"
       ],
       "routes": [],
       "status": "designed",
@@ -32715,16 +32738,8 @@
           "record": "ROOT::amend:design:host-operational-declaration"
         },
         {
-          "clause": "The existence and contents of the declared window are fixed by the public record; actual freeze compliance is a separate clause.",
-          "record": "ROOT::amend:testing:boundary-policy-adaptation"
-        },
-        {
           "clause": "Record order does not attest a duration or message delivery.",
           "record": "ROOT::amend:testing:boundary-policy-announcement"
-        },
-        {
-          "clause": "A target is an operator declaration, not an availability measurement.",
-          "record": "ROOT::amend:testing:boundary-policy-availability"
         },
         {
           "clause": "The denial of an admission right to an unwritten candidate clarifies the publication duty rather than adding a deployment obligation.",
@@ -32741,10 +32756,6 @@
         {
           "clause": "The schedule and certified floor are public mathematical inputs.",
           "record": "ROOT::amend:testing:boundary-policy-floor"
-        },
-        {
-          "clause": "An unanchored timestamp cannot prove that no retarget occurred during a physical interval.",
-          "record": "ROOT::amend:testing:boundary-policy-freeze"
         },
         {
           "clause": "Accepted epochs do not reveal every attempted set.",
@@ -32958,24 +32969,27 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/design/implementation.md",
+        "docs/inputs/deployment-edges.toml",
+        "docs/templates/docs/design/implementation.md.j2"
+      ],
       "holds": [],
       "kind": "type",
       "label": "def:deployment:verdict-certificate",
       "portions": [
         {
-          "clause": "Claimed part: This uses the certificate’s stated enclosure, standard and recomputable outcome to delimit the object of the held route, without claiming its soundness or provenance.",
+          "clause": "Claimed part: This uses the complete supplied support object without asserting soundness or actual presentation.",
           "record": "ROOT::open:design:verdict-issuance"
         }
       ],
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "ROOT::open:design:verdict-issuance"
-      ],
+      "records": [],
       "routes": [],
-      "status": "designed",
-      "tentative": 1
+      "status": "unassigned",
+      "tentative": 0
     },
     {
       "bites": [],
@@ -33028,39 +33042,19 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
-      "holds": [
-        {
-          "hold": "ROOT::open:design:reference-registration-base",
-          "record": "ROOT::open:design:binding-ridge-controller-admission"
-        }
+      "elsewhere": [
+        "ci/design.py"
       ],
+      "holds": [],
       "kind": "policy",
       "label": "post:deployment:verdict-issuance",
-      "portions": [
-        {
-          "clause": "Conformance reliance: The held placement of a rejected controller proposal’s verdict includes whole issuance to the deployment itself, which remains unclaimed and unbuilt.",
-          "record": "ROOT::open:design:binding-ridge-controller-admission"
-        },
-        {
-          "clause": "Conformance reliance: The separation of the held note from issuance rests on the duty to issue the rejecting verdict to the measured party, which is not claimed or implemented.",
-          "record": "ROOT::open:design:rejected-comparison-publication"
-        },
-        {
-          "clause": "Conformance reliance: The open route is required by whole issuance to the measured party with the rejection and unasked; whether issuance occurs is not claimed.",
-          "record": "ROOT::open:design:verdict-issuance"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "ROOT::open:design:binding-ridge-controller-admission",
-        "ROOT::open:design:rejected-comparison-publication",
-        "ROOT::open:design:verdict-issuance"
-      ],
+      "records": [],
       "routes": [],
-      "status": "designed",
-      "tentative": 1
+      "status": "unassigned",
+      "tentative": 0
     },
     {
       "bites": [],
@@ -33072,7 +33066,7 @@
       "label": "post:deployment:rejected-verdicts",
       "portions": [
         {
-          "clause": "Conformance reliance: The held note is constrained by the author choosing any showing and by the absence of a register, which the public record does not establish.",
+          "clause": "Claimed part: This uses completeness and membership of accepted-package evidence, not a private note or presentation duty.",
           "record": "ROOT::open:design:rejected-comparison-publication"
         }
       ],
@@ -33131,13 +33125,20 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "adr/007-crate-decomposition.md",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/design/implementation.md",
+        "docs/inputs/deployment-edges.toml",
+        "docs/templates/adr/007-crate-decomposition.md.j2",
+        "docs/templates/docs/design/implementation.md.j2"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "post:deployment:centralized-monitoring",
       "portions": [
         {
-          "clause": "Claimed part: Only the publication of declarations, monitoring records and reproducible comparison inputs is assigned to packages.",
+          "clause": "Claimed part: The accepted-record scope never waives floor, certification, exact standing or quarantine.",
           "record": "ROOT::amend:decomposition:deployment-evidence"
         },
         {
@@ -33147,24 +33148,19 @@
       ],
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "ROOT::amend:decomposition:deployment-evidence",
-        "ROOT::amend:design:host-operational-declaration"
-      ],
+      "records": [],
       "routes": [],
-      "status": "designed",
+      "status": "unassigned",
       "tentative": 0
     },
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/inputs/deployment-edges.toml"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:certificate-monitoring",
@@ -33179,13 +33175,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:emission-experience",
@@ -33231,6 +33224,7 @@
       "crate": "pn-verification",
       "elsewhere": [
         "adr/017-claim-based-testing.md",
+        "ci/design.py",
         "ci/test_design.py",
         "docs/datasets/org.peer-network.host.profile.json",
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
@@ -33254,31 +33248,31 @@
           "record": "ROOT::amend:design:host-operational-declaration"
         },
         {
-          "clause": "A complete accepted package permits the check; unpublished trials do not supply the inputs to it.",
+          "clause": "A complete accepted package permits the check; unpublished trials do not supply the inputs to it. Supplied structural counts and local benchmark observations remain usable without a courtesy monitoring claim or new acquisition duty.",
           "record": "ROOT::amend:testing:standing-work-complete-projection"
         },
         {
-          "clause": "Recomputing a percentile does not validate acquisition or an omitted population.",
+          "clause": "Recomputing a percentile does not validate acquisition or an omitted population. Supplied structural counts and local benchmark observations remain usable without a courtesy monitoring claim or a duty to acquire or publish the data.",
           "record": "ROOT::amend:testing:standing-work-envelopes"
         },
         {
-          "clause": "A retained residual certificate can be checked separately, but it does not attest how the run obtained it.",
+          "clause": "A retained residual certificate can be checked separately, but it does not attest how the run obtained it. Supplied structural counts and local benchmark observations remain usable without a courtesy monitoring claim or a duty to acquire or publish the data.",
           "record": "ROOT::amend:testing:standing-work-execution"
         },
         {
-          "clause": "This sentence explains the purpose of measurement evidence for the evaluation frontier; it imposes no additional duty.",
+          "clause": "This sentence explains the purpose of measurement evidence for the evaluation frontier; it imposes no additional duty. Supplied structural counts and local benchmark observations remain usable without a courtesy monitoring claim or new acquisition duty.",
           "record": "ROOT::amend:testing:standing-work-frontier"
         },
         {
-          "clause": "The record contains an assertion about the machine, not an independent machine observation.",
+          "clause": "The record contains an assertion about the machine, not an independent machine observation. Supplied structural counts and local benchmark observations remain usable without a courtesy monitoring claim or a duty to acquire or publish the data.",
           "record": "ROOT::amend:testing:standing-work-limiting-load"
         },
         {
-          "clause": "Publishing a process does not prove that it was carried out.",
+          "clause": "Publishing a process does not prove that it was carried out. Supplied structural counts and local benchmark observations remain usable without a courtesy monitoring claim or a duty to acquire or publish the data.",
           "record": "ROOT::amend:testing:standing-work-review"
         },
         {
-          "clause": "Only supplied complete inputs determine these structural quantities.",
+          "clause": "Only supplied complete inputs determine these structural quantities. Supplied structural counts and local benchmark observations remain usable without a courtesy monitoring claim or new acquisition duty.",
           "record": "ROOT::amend:testing:standing-work-structure"
         }
       ],
@@ -33336,24 +33330,22 @@
     {
       "bites": [],
       "category": "statement",
+      "classification_elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
       "crate": "pn-verification",
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
       "label": "post:deployment:calibration-evidence",
-      "portions": [
-        {
-          "clause": "Claimed part: Only the publication of declarations, monitoring records and reproducible comparison inputs is assigned to packages.",
-          "record": "ROOT::amend:decomposition:deployment-evidence"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "ROOT::amend:decomposition:deployment-evidence"
-      ],
+      "records": [],
       "routes": [],
-      "status": "designed",
+      "status": "unassigned",
       "tentative": 0
     },
     {
@@ -33361,6 +33353,7 @@
       "category": "statement",
       "crate": "pn-verification",
       "elsewhere": [
+        "ci/design.py",
         "docs/datasets/org.peer-network.design.questions.json",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/questions.md",
@@ -33406,12 +33399,9 @@
       "category": "statement",
       "crate": "pn-verification",
       "elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.host.profile.json",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/implementation.md",
         "docs/inputs/deployment-edges.toml",
-        "docs/inputs/host-profile.toml",
         "docs/templates/docs/design/implementation.md.j2"
       ],
       "holds": [],
@@ -33423,7 +33413,7 @@
           "record": "ROOT::amend:design:host-operational-declaration"
         },
         {
-          "clause": "finite validation comparisons, with candidate search and availability evidence pending",
+          "clause": "exact input and output agreement for reuse, with the settings that fix replay",
           "record": "ROOT::amend:design:host-operational-declaration"
         }
       ],
@@ -33460,13 +33450,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "fixture",
       "label": "cond:deployment:complete-act-conformance",
@@ -33626,6 +33613,10 @@
           "record": "ROOT::open:identity:host-contribution-option"
         },
         {
+          "clause": "Claimed part: This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
+          "record": "ROOT::open:vision:deployment-profile"
+        },
+        {
           "clause": "Conformance reliance: Actual entropy and private custody cannot be established by form checks.",
           "record": "ROOT::rule:devnet:content-nonce"
         }
@@ -33637,6 +33628,7 @@
         "ROOT::amend:identity:act-content-admission",
         "ROOT::amend:identity:act-proposal-admission",
         "ROOT::open:identity:host-contribution-option",
+        "ROOT::open:vision:deployment-profile",
         "ROOT::rule:devnet:content-nonce"
       ],
       "routes": [],
@@ -33664,12 +33656,17 @@
         {
           "clause": "Conformance reliance: Content hiding depends on actual host salt entropy and custody.",
           "record": "ROOT::amend:identity:act-content-admission"
+        },
+        {
+          "clause": "Claimed part: This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
+          "record": "ROOT::open:vision:deployment-profile"
         }
       ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::amend:identity:act-concealment"
+        "ROOT::amend:identity:act-concealment",
+        "ROOT::open:vision:deployment-profile"
       ],
       "routes": [],
       "status": "held",
@@ -33706,6 +33703,10 @@
           "record": "ROOT::open:identity:host-contribution-option"
         },
         {
+          "clause": "Claimed part: This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
+          "record": "ROOT::open:vision:deployment-profile"
+        },
+        {
           "clause": "Conformance reliance: Sufficient client entropy and private custody remain deployment premises.",
           "record": "ROOT::rule:devnet:content-nonce"
         }
@@ -33715,6 +33716,7 @@
       "records": [
         "ROOT::amend:identity:act-concealment",
         "ROOT::open:identity:host-contribution-option",
+        "ROOT::open:vision:deployment-profile",
         "ROOT::rule:devnet:content-nonce"
       ],
       "routes": [],
@@ -33725,10 +33727,7 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [
-        "adr/020-testing-harness.md",
-        "docs/templates/adr/020-testing-harness.md.j2"
-      ],
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-secret-derived",
@@ -33740,31 +33739,35 @@
       ],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
       "routes": [],
-      "status": "unassigned",
-      "tentative": 0
+      "status": "designed",
+      "tentative": 1
     },
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-unassigned-custody",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
+          "record": "ROOT::open:vision:deployment-profile"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
       "routes": [],
-      "status": "unassigned",
-      "tentative": 0
+      "status": "designed",
+      "tentative": 1
     },
     {
       "bites": [
@@ -34527,7 +34530,7 @@
           "record": "ROOT::amend:design:publication-field-inventory"
         },
         {
-          "clause": "Claimed part: Complete public audit carriage is required, without claiming its external truth.",
+          "clause": "Claimed part: This retains the supplied local disclosure contract, not an epoch duty for a courtesy compilation or its external truth.",
           "record": "ROOT::amend:design:publication-three-inventory"
         },
         {
@@ -34539,7 +34542,7 @@
           "record": "ROOT::dec:design:burn-boundary"
         },
         {
-          "clause": "Claimed part: The requirement trace names the public disclosure portion of the imported burn boundary.",
+          "clause": "Claimed part: The requirement trace names consistency of retained local disclosures, not an audit-standard undertaking or external acquisition truth.",
           "record": "ROOT::req:vision:burn-boundary"
         }
       ],
@@ -34559,13 +34562,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-pointer",
@@ -34580,13 +34580,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-mirror",
@@ -34601,13 +34598,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:realization-obligations-snapshot",
@@ -35550,6 +35544,672 @@
         }
       ],
       "status": "realized",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "docs/design/concept.md",
+        "docs/templates/adr/006-identity-adjudication.md.j2",
+        "docs/templates/docs/design/concept.md.j2"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "def:network:material-classification",
+      "portions": [
+        {
+          "clause": "Premise only: Closure and oracle checks do not depend on courtesy conduct.",
+          "record": "ROOT::open:identity:act-realization-admission"
+        },
+        {
+          "clause": "Premise only: These are the release’s separate material classes, not a conformance claim.",
+          "record": "ROOT::open:vision:deployment-profile"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "none",
+      "label": "def:graph:projection",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-replay",
+      "elsewhere": [
+        "adr/007-crate-decomposition.md",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/design/implementation.md",
+        "docs/inputs/deployment-edges.toml",
+        "docs/templates/adr/007-crate-decomposition.md.j2",
+        "docs/templates/docs/design/implementation.md.j2"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "def:deployment:published-epoch-replay-floor",
+      "portions": [
+        {
+          "clause": "Claimed part: This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.",
+          "record": "ROOT::amend:decomposition:numeric-representation"
+        },
+        {
+          "clause": "Claimed part: This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.",
+          "record": "ROOT::open:design:publication-profile"
+        },
+        {
+          "clause": "Claimed part: This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.",
+          "record": "ROOT::open:design:replay-proof-fields"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "classification_elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "post:deployment:replay-floor-scope",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "ci/design.py",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/inputs/deployment-edges.toml",
+        "docs/templates/adr/006-identity-adjudication.md.j2"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "def:deployment:declared-verifiable-provenance-case",
+      "portions": [
+        {
+          "clause": "Claimed part: This uses the defined burn-destruction scope to distinguish the deployment’s separate author-authority case; it asserts neither case implementation nor an external premise.",
+          "record": "ROOT::open:identity:act-realization-admission"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "none",
+      "label": "def:deployment:provenance-validity-projection",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-replay",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "post:deployment:declared-provenance-replay",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "type",
+      "label": "post:deployment:pinned-provenance-proof-objects",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [
+        2,
+        11
+      ],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::dec:design:burn-boundary"
+        },
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::req:vision:burn-boundary"
+        },
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::verif:design:burn-disclosures"
+        }
+      ],
+      "kind": "policy",
+      "label": "rem:comparator:burn-realization-audit-evidence",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::amend:decomposition:marker-settlement",
+        "ROOT::amend:devnet:marker-settlement",
+        "ROOT::dec:design:burn-boundary",
+        "ROOT::req:vision:burn-boundary",
+        "ROOT::verif:design:burn-disclosures"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-act-authentication",
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-concealment"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        }
+      ],
+      "kind": "policy",
+      "label": "def:graph:courtesy-handshake",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::amend:identity:act-concealment",
+        "ROOT::amend:identity:act-proposal-admission",
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "held",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-act-profile",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "def:graph:requested-publication-intent",
+      "portions": [
+        {
+          "clause": "Premise only: The five request verbs and authenticated receipt need their own body and receipt design.",
+          "record": "ROOT::open:identity:carriage-result-recipe"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-act-profile",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "serialization",
+      "label": "def:graph:dependency-list-order",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "none",
+      "label": "rem:graph:dependency-nonce-concealment",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "none",
+      "label": "gloss:graph:commitment",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "none",
+      "label": "gloss:graph:opening",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "none",
+      "label": "gloss:graph:blinding-value",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "none",
+      "label": "gloss:graph:peek",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "none",
+      "label": "def:graph:holder",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "def:graph:storage",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "def:graph:custodian",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "def:graph:carriage",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 1
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:deployment:wall-calibration-oversight",
+      "portions": [
+        {
+          "clause": "Claimed part: This holds the supplied economic/work comparison declarations without establishing suitability.",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        },
+        {
+          "clause": "Claimed part: This hold names missing floor-comparison declarations without asserting economic suitability.",
+          "record": "ROOT::open:design:wall-performance"
+        },
+        {
+          "clause": "Claimed part: This hold names the optional economic comparison scope without asserting performance.",
+          "record": "ROOT::open:vision:deployment-profile"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::amend:design:host-operational-declaration",
+        "ROOT::open:design:wall-performance",
+        "ROOT::open:vision:deployment-profile"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "ci/design.py",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:deployment:boundary-policy-oversight",
+      "portions": [
+        {
+          "clause": "The predicate compares supplied public declarations; it undertakes neither their acquisition or publication nor actual freeze compliance.",
+          "record": "ROOT::amend:testing:boundary-policy-adaptation"
+        },
+        {
+          "clause": "A supplied target is an operator assertion, not an availability measurement or a duty to acquire or publish that declaration.",
+          "record": "ROOT::amend:testing:boundary-policy-availability"
+        },
+        {
+          "clause": "An unanchored timestamp cannot prove that no retarget occurred during a physical interval.",
+          "record": "ROOT::amend:testing:boundary-policy-freeze"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-verification",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "fixture",
+      "label": "rem:deployment:canonical-encoding-oversight",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:deployment:centralized-monitoring-conduct",
+      "portions": [
+        {
+          "clause": "Claimed part: This assigns supplied observations and declarations, not their empirical truth or review performance.",
+          "record": "ROOT::amend:decomposition:deployment-evidence"
+        },
+        {
+          "clause": "Claimed part: This records supplied monitoring declarations without asserting completed monitoring or review.",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::amend:decomposition:deployment-evidence",
+        "ROOT::amend:design:host-operational-declaration"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::verif:design:title-certificate-cases"
+        }
+      ],
+      "kind": "policy",
+      "label": "rem:deployment:title-certificate-monitoring-courtesies",
+      "portions": [
+        {
+          "clause": "Claimed part: This checks the supplied disagreement/response record, not continuous observation or actual review.",
+          "record": "ROOT::verif:design:title-certificate-cases"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::verif:design:title-certificate-cases"
+      ],
+      "routes": [],
+      "status": "held",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:deployment:certificate-monitoring-courtesies",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:deployment:calibration-publication-conduct",
+      "portions": [
+        {
+          "clause": "Claimed part: This assigns only supplied calibration records and exact comparisons, not acquisition truth or completed review.",
+          "record": "ROOT::amend:decomposition:deployment-evidence"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::amend:decomposition:deployment-evidence"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "ci/design.py",
+        "docs/datasets/org.peer-network.host.profile.json",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/design/implementation.md",
+        "docs/inputs/deployment-edges.toml",
+        "docs/inputs/host-profile.toml",
+        "docs/templates/docs/design/implementation.md.j2"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:deployment:boundary-search-courtesies",
+      "portions": [
+        {
+          "clause": "Claimed part: This records supplied performance observations without establishing their acquisition or runtime truth.",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
       "tentative": 0
     },
     {
@@ -36518,10 +37178,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "70",
+          "exact": "88",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "70",
+          "num": "88",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36532,35 +37192,35 @@
           "exact_digits": 32
         }
       },
-      "total": 70
+      "total": 88
     },
     {
       "category": "total",
-      "designed": 405,
-      "held": 67,
+      "designed": 418,
+      "held": 69,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "405",
+          "exact": "418",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "405",
+          "num": "418",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "67",
+          "exact": "69",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "67",
+          "num": "69",
           "num_exact": true,
           "num_relation": "="
         },
         "realized": {
-          "exact": "35",
+          "exact": "36",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "35",
+          "num": "36",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36573,26 +37233,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "11",
+          "exact": "22",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11",
+          "num": "22",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 364",
+          "exact": "1 384",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 364",
+          "num": "1 384",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "857",
+          "exact": "861",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "857",
+          "num": "861",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36627,23 +37287,23 @@
           "exact_digits": 32
         }
       },
-      "realized": 35,
+      "realized": 36,
       "record_granular": 32,
-      "tentative": 11,
-      "total": 1364,
-      "unassigned": 857
+      "tentative": 22,
+      "total": 1384,
+      "unassigned": 861
     },
     {
       "category": "total",
-      "designed": 14,
+      "designed": 22,
       "held": 0,
       "name": "prose",
       "number_forms": {
         "designed": {
-          "exact": "14",
+          "exact": "22",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "14",
+          "num": "22",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36672,26 +37332,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "6",
+          "exact": "14",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6",
+          "num": "14",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "320",
+          "exact": "329",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "320",
+          "num": "329",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "306",
+          "exact": "307",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "306",
+          "num": "307",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36728,21 +37388,21 @@
       },
       "realized": 0,
       "record_granular": 0,
-      "tentative": 6,
-      "total": 320,
-      "unassigned": 306
+      "tentative": 14,
+      "total": 329,
+      "unassigned": 307
     },
     {
       "category": "crate",
-      "designed": 14,
+      "designed": 22,
       "held": 0,
       "name": "none",
       "number_forms": {
         "designed": {
-          "exact": "14",
+          "exact": "22",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "14",
+          "num": "22",
           "num_exact": true,
           "num_relation": "="
         },
@@ -36771,26 +37431,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "6",
+          "exact": "14",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6",
+          "num": "14",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "320",
+          "exact": "329",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "320",
+          "num": "329",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "306",
+          "exact": "307",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "306",
+          "num": "307",
           "num_exact": true,
           "num_relation": "="
         }
@@ -36827,9 +37487,207 @@
       },
       "realized": 0,
       "record_granular": 0,
-      "tentative": 6,
-      "total": 320,
-      "unassigned": 306
+      "tentative": 14,
+      "total": 329,
+      "unassigned": 307
+    },
+    {
+      "category": "crate",
+      "designed": 0,
+      "held": 1,
+      "name": "pn-act-authentication",
+      "number_forms": {
+        "designed": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "held": {
+          "exact": "1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "realized": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "record_granular": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "tentative": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "total": {
+          "exact": "1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "unassigned": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "designed": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "held": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "realized": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "record_granular": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "tentative": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "total": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "unassigned": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "realized": 0,
+      "record_granular": 0,
+      "tentative": 0,
+      "total": 1,
+      "unassigned": 0
+    },
+    {
+      "category": "crate",
+      "designed": 2,
+      "held": 0,
+      "name": "pn-act-profile",
+      "number_forms": {
+        "designed": {
+          "exact": "2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "held": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "realized": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "record_granular": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "tentative": {
+          "exact": "2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "total": {
+          "exact": "2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "unassigned": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "designed": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "held": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "realized": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "record_granular": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "tentative": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "total": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "unassigned": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "realized": 0,
+      "record_granular": 0,
+      "tentative": 2,
+      "total": 2,
+      "unassigned": 0
     },
     {
       "category": "crate",
@@ -37031,23 +37889,23 @@
     },
     {
       "category": "crate",
-      "designed": 49,
-      "held": 20,
+      "designed": 55,
+      "held": 21,
       "name": "pn-host",
       "number_forms": {
         "designed": {
-          "exact": "49",
+          "exact": "55",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "49",
+          "num": "55",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "20",
+          "exact": "21",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20",
+          "num": "21",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37068,26 +37926,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "4",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "168",
+          "exact": "181",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "168",
+          "num": "181",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "94",
+          "exact": "100",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "94",
+          "num": "100",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37124,9 +37982,9 @@
       },
       "realized": 5,
       "record_granular": 2,
-      "tentative": 4,
-      "total": 168,
-      "unassigned": 94
+      "tentative": 7,
+      "total": 181,
+      "unassigned": 100
     },
     {
       "category": "crate",
@@ -37229,15 +38087,15 @@
     },
     {
       "category": "crate",
-      "designed": 71,
+      "designed": 77,
       "held": 16,
       "name": "pn-records",
       "number_forms": {
         "designed": {
-          "exact": "71",
+          "exact": "77",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "71",
+          "num": "77",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37266,26 +38124,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "1",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "218",
+          "exact": "219",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "218",
+          "num": "219",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "129",
+          "exact": "124",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "129",
+          "num": "124",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37322,21 +38180,21 @@
       },
       "realized": 2,
       "record_granular": 7,
-      "tentative": 1,
-      "total": 218,
-      "unassigned": 129
+      "tentative": 7,
+      "total": 219,
+      "unassigned": 124
     },
     {
       "category": "crate",
-      "designed": 6,
+      "designed": 5,
       "held": 3,
       "name": "pn-replay",
       "number_forms": {
         "designed": {
-          "exact": "6",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37349,10 +38207,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "0",
+          "exact": "1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "0",
+          "num": "1",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37365,26 +38223,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "1",
+          "exact": "0",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1",
+          "num": "0",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "32",
+          "exact": "34",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "32",
+          "num": "34",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "23",
+          "exact": "25",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "23",
+          "num": "25",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37419,11 +38277,11 @@
           "exact_digits": 32
         }
       },
-      "realized": 0,
+      "realized": 1,
       "record_granular": 0,
-      "tentative": 1,
-      "total": 32,
-      "unassigned": 23
+      "tentative": 0,
+      "total": 34,
+      "unassigned": 25
     },
     {
       "category": "crate",
@@ -37464,26 +38322,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "4",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "281",
+          "exact": "282",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "281",
+          "num": "282",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "195",
+          "exact": "196",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "195",
+          "num": "196",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37520,9 +38378,9 @@
       },
       "realized": 8,
       "record_granular": 6,
-      "tentative": 4,
-      "total": 281,
-      "unassigned": 195
+      "tentative": 5,
+      "total": 282,
+      "unassigned": 196
     },
     {
       "category": "kind",
@@ -37860,26 +38718,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "6",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "218",
+          "exact": "219",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "218",
+          "num": "219",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "157",
+          "exact": "158",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "157",
+          "num": "158",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37916,21 +38774,21 @@
       },
       "realized": 5,
       "record_granular": 3,
-      "tentative": 6,
-      "total": 218,
-      "unassigned": 157
+      "tentative": 7,
+      "total": 219,
+      "unassigned": 158
     },
     {
       "category": "kind",
-      "designed": 97,
+      "designed": 98,
       "held": 6,
       "name": "function",
       "number_forms": {
         "designed": {
-          "exact": "97",
+          "exact": "98",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "97",
+          "num": "98",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37959,10 +38817,10 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "0",
+          "exact": "1",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "0",
+          "num": "1",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37975,10 +38833,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "103",
+          "exact": "102",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "103",
+          "num": "102",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38015,21 +38873,21 @@
       },
       "realized": 10,
       "record_granular": 8,
-      "tentative": 0,
+      "tentative": 1,
       "total": 216,
-      "unassigned": 103
+      "unassigned": 102
     },
     {
       "category": "kind",
-      "designed": 141,
+      "designed": 142,
       "held": 23,
       "name": "invariant check",
       "number_forms": {
         "designed": {
-          "exact": "141",
+          "exact": "142",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "141",
+          "num": "142",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38042,10 +38900,10 @@
           "num_relation": "="
         },
         "realized": {
-          "exact": "16",
+          "exact": "17",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "16",
+          "num": "17",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38058,10 +38916,10 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "1",
+          "exact": "3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1",
+          "num": "3",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38074,10 +38932,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "340",
+          "exact": "338",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "340",
+          "num": "338",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38112,23 +38970,23 @@
           "exact_digits": 32
         }
       },
-      "realized": 16,
+      "realized": 17,
       "record_granular": 11,
-      "tentative": 1,
+      "tentative": 3,
       "total": 520,
-      "unassigned": 340
+      "unassigned": 338
     },
     {
       "category": "kind",
-      "designed": 13,
+      "designed": 21,
       "held": 0,
       "name": "none",
       "number_forms": {
         "designed": {
-          "exact": "13",
+          "exact": "21",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "13",
+          "num": "21",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38157,18 +39015,18 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "1",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "346",
+          "exact": "354",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "346",
+          "num": "354",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38213,29 +39071,29 @@
       },
       "realized": 0,
       "record_granular": 0,
-      "tentative": 1,
-      "total": 346,
+      "tentative": 9,
+      "total": 354,
       "unassigned": 333
     },
     {
       "category": "kind",
-      "designed": 55,
-      "held": 21,
+      "designed": 62,
+      "held": 23,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "55",
+          "exact": "62",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "55",
+          "num": "62",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "21",
+          "exact": "23",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "21",
+          "num": "23",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38256,26 +39114,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "8",
+          "exact": "12",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8",
+          "num": "12",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "269",
+          "exact": "287",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "269",
+          "num": "287",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "190",
+          "exact": "199",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "190",
+          "num": "199",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38312,21 +39170,21 @@
       },
       "realized": 3,
       "record_granular": 4,
-      "tentative": 8,
-      "total": 269,
-      "unassigned": 190
+      "tentative": 12,
+      "total": 287,
+      "unassigned": 199
     },
     {
       "category": "kind",
-      "designed": 4,
+      "designed": 8,
       "held": 0,
       "name": "serialization",
       "number_forms": {
         "designed": {
-          "exact": "4",
+          "exact": "8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "8",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38355,26 +39213,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "0",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "0",
-          "num_exact": true,
-          "num_relation": "="
-        },
-        "total": {
-          "exact": "8",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "8",
-          "num_exact": true,
-          "num_relation": "="
-        },
-        "unassigned": {
           "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
           "num": "4",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "total": {
+          "exact": "9",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "9",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "unassigned": {
+          "exact": "1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38411,9 +39269,9 @@
       },
       "realized": 0,
       "record_granular": 0,
-      "tentative": 0,
-      "total": 8,
-      "unassigned": 4
+      "tentative": 4,
+      "total": 9,
+      "unassigned": 1
     },
     {
       "category": "kind",
@@ -38454,26 +39312,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "1",
+          "exact": "0",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1",
+          "num": "0",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "93",
+          "exact": "94",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "93",
+          "num": "94",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "33",
+          "exact": "34",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "33",
+          "num": "34",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38510,9 +39368,9 @@
       },
       "realized": 1,
       "record_granular": 5,
-      "tentative": 1,
-      "total": 93,
-      "unassigned": 33
+      "tentative": 0,
+      "total": 94,
+      "unassigned": 34
     },
     {
       "category": "bite",
@@ -38615,15 +39473,15 @@
     },
     {
       "category": "bite",
-      "designed": 24,
+      "designed": 25,
       "held": 4,
       "name": "2",
       "number_forms": {
         "designed": {
-          "exact": "24",
+          "exact": "25",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "24",
+          "num": "25",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38660,10 +39518,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "35",
+          "exact": "36",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "35",
+          "num": "36",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38709,7 +39567,7 @@
       "realized": 7,
       "record_granular": 0,
       "tentative": 0,
-      "total": 35,
+      "total": 36,
       "unassigned": 0
     },
     {
@@ -39506,15 +40364,15 @@
     },
     {
       "category": "bite",
-      "designed": 56,
+      "designed": 57,
       "held": 27,
       "name": "11",
       "number_forms": {
         "designed": {
-          "exact": "56",
+          "exact": "57",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "56",
+          "num": "57",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39551,10 +40409,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "93",
+          "exact": "94",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "93",
+          "num": "94",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39600,36 +40458,36 @@
       "realized": 9,
       "record_granular": 5,
       "tentative": 0,
-      "total": 93,
+      "total": 94,
       "unassigned": 1
     },
     {
       "category": "bite",
-      "designed": 284,
-      "held": 27,
+      "designed": 304,
+      "held": 29,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "284",
+          "exact": "304",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "284",
+          "num": "304",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "27",
+          "exact": "29",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "27",
+          "num": "29",
           "num_exact": true,
           "num_relation": "="
         },
         "realized": {
-          "exact": "22",
+          "exact": "23",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "22",
+          "num": "23",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39642,26 +40500,26 @@
           "num_relation": "="
         },
         "tentative": {
-          "exact": "17",
+          "exact": "36",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "17",
+          "num": "36",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 492",
+          "exact": "1 520",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 492",
+          "num": "1 520",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 159",
+          "exact": "1 164",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 159",
+          "num": "1 164",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39696,21 +40554,21 @@
           "exact_digits": 32
         }
       },
-      "realized": 22,
+      "realized": 23,
       "record_granular": 21,
-      "tentative": 17,
-      "total": 1492,
-      "unassigned": 1159
+      "tentative": 36,
+      "total": 1520,
+      "unassigned": 1164
     },
     {
       "category": "classification-identities",
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "67",
+          "exact": "62",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "67",
+          "num": "62",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39721,7 +40579,7 @@
           "exact_digits": 32
         }
       },
-      "total": 67
+      "total": 62
     },
     {
       "category": "record-coverage",
@@ -40371,14 +41229,14 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 216,
+      "exact_citing": 215,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "216",
+          "exact": "215",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "216",
+          "num": "215",
           "num_exact": true,
           "num_relation": "="
         },

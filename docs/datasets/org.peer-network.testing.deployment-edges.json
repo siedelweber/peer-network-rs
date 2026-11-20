@@ -211,17 +211,31 @@
     },
     {
       "conditional_on": "",
-      "reason": "Only the publication of declarations, monitoring records and reproducible comparison inputs is assigned to packages.",
-      "relation": "realizes",
-      "source": "ROOT::amend:decomposition:deployment-evidence",
-      "target": "post:deployment:calibration-evidence"
-    },
-    {
-      "conditional_on": "",
-      "reason": "Only the publication of declarations, monitoring records and reproducible comparison inputs is assigned to packages.",
+      "reason": "The accepted-record scope never waives floor, certification, exact standing or quarantine.",
       "relation": "realizes",
       "source": "ROOT::amend:decomposition:deployment-evidence",
       "target": "post:deployment:centralized-monitoring"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This assigns only supplied calibration records and exact comparisons, not acquisition truth or completed review.",
+      "relation": "realizes",
+      "source": "ROOT::amend:decomposition:deployment-evidence",
+      "target": "rem:deployment:calibration-publication-conduct"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This assigns supplied observations and declarations, not their empirical truth or review performance.",
+      "relation": "realizes",
+      "source": "ROOT::amend:decomposition:deployment-evidence",
+      "target": "rem:deployment:centralized-monitoring-conduct"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.",
+      "relation": "realizes",
+      "source": "ROOT::amend:decomposition:numeric-representation",
+      "target": "def:deployment:published-epoch-replay-floor"
     },
     {
       "conditional_on": "",
@@ -323,6 +337,27 @@
     },
     {
       "conditional_on": "",
+      "reason": "This records supplied performance observations without establishing their acquisition or runtime truth.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:host-operational-declaration",
+      "target": "rem:deployment:boundary-search-courtesies"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This records supplied monitoring declarations without asserting completed monitoring or review.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:host-operational-declaration",
+      "target": "rem:deployment:centralized-monitoring-conduct"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This holds the supplied economic/work comparison declarations without establishing suitability.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:host-operational-declaration",
+      "target": "rem:deployment:wall-calibration-oversight"
+    },
+    {
+      "conditional_on": "",
       "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
       "relation": "realizes",
       "source": "ROOT::amend:design:numerical-boundary-audit",
@@ -337,7 +372,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "Complete public audit carriage is required, without claiming its external truth.",
+      "reason": "This retains the supplied local disclosure contract, not an epoch duty for a courtesy compilation or its external truth.",
       "relation": "realizes",
       "source": "ROOT::amend:design:publication-three-inventory",
       "target": "subsec:deployment:realization-obligations"
@@ -707,11 +742,11 @@
       "target": "ROOT::open:design:verdict-issuance"
     },
     {
-      "conditional_on": "post:deployment:verdict-issuance",
-      "reason": "The held placement of a rejected controller proposal’s verdict includes whole issuance to the deployment itself, which remains unclaimed and unbuilt.",
-      "relation": "relies",
+      "conditional_on": "",
+      "reason": "This uses only the explicit non-adoption of issuance, not an external performance or private conduct premise.",
+      "relation": "realizes",
       "source": "ROOT::open:design:binding-ridge-controller-admission",
-      "target": "post:deployment:verdict-issuance"
+      "target": "ROOT::open:vision:deployment-profile"
     },
     {
       "conditional_on": "amend:testing:standing-work-execution",
@@ -750,6 +785,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:publication-profile",
+      "target": "def:deployment:published-epoch-replay-floor"
+    },
+    {
+      "conditional_on": "",
       "reason": "This uses the boundary between the finite implemented scope and the later owned admission hold, without assuming admission or issuance of a rejected verdict.",
       "relation": "realizes",
       "source": "ROOT::open:design:reference-wall-route",
@@ -757,45 +799,45 @@
     },
     {
       "conditional_on": "",
-      "reason": "This records issuance as an undesigned and unbuilt hold; it uses that scope boundary without assuming that any verdict is issued.",
+      "reason": "This uses only the explicit non-adoption of issuance, not an external performance or private conduct premise.",
       "relation": "realizes",
       "source": "ROOT::open:design:rejected-comparison-publication",
-      "target": "ROOT::open:design:verdict-issuance"
+      "target": "ROOT::open:vision:deployment-profile"
     },
     {
-      "conditional_on": "cond:deployment:wall-calibration",
-      "reason": "The published package carries no verdict of a rejected set, and the deployment’s own rejected comparisons are kept outside it.",
-      "relation": "relies",
+      "conditional_on": "",
+      "reason": "This uses rejection of unresolved binding comparisons and accepted-package separation without assuming issuance or soundness.",
+      "relation": "realizes",
       "source": "ROOT::open:design:rejected-comparison-publication",
       "target": "cond:deployment:wall-calibration"
     },
     {
-      "conditional_on": "post:deployment:rejected-verdicts",
-      "reason": "The held note is constrained by the author choosing any showing and by the absence of a register, which the public record does not establish.",
-      "relation": "relies",
+      "conditional_on": "",
+      "reason": "This uses completeness and membership of accepted-package evidence, not a private note or presentation duty.",
+      "relation": "realizes",
       "source": "ROOT::open:design:rejected-comparison-publication",
       "target": "post:deployment:rejected-verdicts"
     },
     {
-      "conditional_on": "post:deployment:verdict-issuance",
-      "reason": "The separation of the held note from issuance rests on the duty to issue the rejecting verdict to the measured party, which is not claimed or implemented.",
-      "relation": "relies",
-      "source": "ROOT::open:design:rejected-comparison-publication",
-      "target": "post:deployment:verdict-issuance"
+      "conditional_on": "",
+      "reason": "This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:replay-proof-fields",
+      "target": "def:deployment:published-epoch-replay-floor"
     },
     {
       "conditional_on": "",
-      "reason": "This uses the certificate’s stated enclosure, standard and recomputable outcome to delimit the object of the held route, without claiming its soundness or provenance.",
+      "reason": "This uses only the explicit non-adoption of issuance, not an external performance or private conduct premise.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:verdict-issuance",
+      "target": "ROOT::open:vision:deployment-profile"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the complete supplied support object without asserting soundness or actual presentation.",
       "relation": "realizes",
       "source": "ROOT::open:design:verdict-issuance",
       "target": "def:deployment:verdict-certificate"
-    },
-    {
-      "conditional_on": "post:deployment:verdict-issuance",
-      "reason": "The open route is required by whole issuance to the measured party with the rejection and unasked; whether issuance occurs is not claimed.",
-      "relation": "relies",
-      "source": "ROOT::open:design:verdict-issuance",
-      "target": "post:deployment:verdict-issuance"
     },
     {
       "conditional_on": "",
@@ -806,10 +848,17 @@
     },
     {
       "conditional_on": "",
-      "reason": "This hold records which declarations and evidence remain missing; it does not assert liveness or plant performance.",
+      "reason": "This hold uses exact declarations and their comparisons without asserting independent soundness.",
       "relation": "realizes",
       "source": "ROOT::open:design:wall-performance",
       "target": "cond:deployment:wall-calibration"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This hold names missing floor-comparison declarations without asserting economic suitability.",
+      "relation": "realizes",
+      "source": "ROOT::open:design:wall-performance",
+      "target": "rem:deployment:wall-calibration-oversight"
     },
     {
       "conditional_on": "",
@@ -824,6 +873,13 @@
       "relation": "realizes",
       "source": "ROOT::open:identity:act-production-concealment",
       "target": "ROOT::amend:identity:authentication-recipe-gate"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the defined burn-destruction scope to distinguish the deployment’s separate author-authority case; it asserts neither case implementation nor an external premise.",
+      "relation": "realizes",
+      "source": "ROOT::open:identity:act-realization-admission",
+      "target": "def:deployment:declared-verifiable-provenance-case"
     },
     {
       "conditional_on": "subsec:deployment:concealment-entropy",
@@ -883,6 +939,27 @@
     },
     {
       "conditional_on": "",
+      "reason": "This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
+      "relation": "realizes",
+      "source": "ROOT::open:vision:deployment-profile",
+      "target": "case:deployment:concealment-entropy-client-generated"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
+      "relation": "realizes",
+      "source": "ROOT::open:vision:deployment-profile",
+      "target": "case:deployment:concealment-entropy-operator-generated"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
+      "relation": "realizes",
+      "source": "ROOT::open:vision:deployment-profile",
+      "target": "case:deployment:concealment-entropy-unassigned-custody"
+    },
+    {
+      "conditional_on": "",
       "reason": "This hold names missing declarations and evidence; it asserts neither economic suitability nor controller performance.",
       "relation": "realizes",
       "source": "ROOT::open:vision:deployment-profile",
@@ -890,10 +967,17 @@
     },
     {
       "conditional_on": "",
-      "reason": "This hold names missing declarations and evidence; it asserts neither economic suitability nor controller performance.",
+      "reason": "This hold names the optional economic comparison scope without asserting performance.",
       "relation": "realizes",
       "source": "ROOT::open:vision:deployment-profile",
-      "target": "cond:deployment:wall-calibration"
+      "target": "rem:deployment:wall-calibration-oversight"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
+      "relation": "realizes",
+      "source": "ROOT::open:vision:deployment-profile",
+      "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "",
@@ -911,7 +995,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "The requirement trace names the public disclosure portion of the imported burn boundary.",
+      "reason": "The requirement trace names consistency of retained local disclosures, not an audit-standard undertaking or external acquisition truth.",
       "relation": "realizes",
       "source": "ROOT::req:vision:burn-boundary",
       "target": "subsec:deployment:realization-obligations"
@@ -1135,6 +1219,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This checks the supplied disagreement/response record, not continuous observation or actual review.",
+      "relation": "realizes",
+      "source": "ROOT::verif:design:title-certificate-cases",
+      "target": "rem:deployment:title-certificate-monitoring-courtesies"
+    },
+    {
+      "conditional_on": "",
       "reason": "The finite encoding fixtures exercise public bytes and comparison, not private entropy or custody.",
       "relation": "realizes",
       "source": "ROOT::verif:identity:authentication-encoding",
@@ -1239,25 +1330,18 @@
       "target": "post:deployment:public-object-replay"
     },
     {
-      "conditional_on": "amend:testing:standing-work-envelopes",
-      "reason": "The measured acceptance-envelope recommendation depends on actual acquisition of the workload and search measurements.",
-      "relation": "relies",
-      "source": "input:org.peer-network.design.inventory:rem:frontiers:priority",
-      "target": "amend:testing:standing-work-envelopes"
-    },
-    {
-      "conditional_on": "cond:deployment:boundary-search-evidence",
-      "reason": "The measured acceptance-envelope recommendation depends on actual acquisition of the workload and search measurements.",
-      "relation": "relies",
+      "conditional_on": "",
+      "reason": "This inventory summary records the exact-reuse comparison evidence required at this closure label, without adopting monitoring conduct.",
+      "relation": "realizes",
       "source": "input:org.peer-network.design.inventory:rem:frontiers:priority",
       "target": "cond:deployment:boundary-search-evidence"
     },
     {
       "conditional_on": "",
-      "reason": "Only the publication part is claimed here; the excluded premise is named separately by its clause.",
+      "reason": "This inventory summary records accepted certificate evidence required for replay, without adopting the separate courtesy monitoring standard.",
       "relation": "realizes",
       "source": "input:org.peer-network.design.inventory:rem:frontiers:priority",
-      "target": "cond:deployment:standing-work"
+      "target": "cond:deployment:certificate-monitoring"
     },
     {
       "conditional_on": "",
@@ -1275,7 +1359,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "This boundary correction requires complete public disclosures rather than another mathematical input.",
+      "reason": "This uses comparison of complete supplied disclosures without adding another mathematical input or undertaking their acquisition or publication.",
       "relation": "realizes",
       "source": "input:org.peer-network.design.questions:Q06",
       "target": "subsec:deployment:realization-obligations"
@@ -1323,18 +1407,18 @@
       "target": "amend:testing:standing-work-envelopes"
     },
     {
-      "conditional_on": "cond:deployment:boundary-search-evidence",
-      "reason": "The resource scope recommendation depends on measured workload and candidate-search behaviour beyond retained finite samples.",
-      "relation": "relies",
-      "source": "input:org.peer-network.host.profile:comparison-resources",
-      "target": "cond:deployment:boundary-search-evidence"
-    },
-    {
       "conditional_on": "",
       "reason": "Only the publication part is claimed here; the excluded premise is named separately by its clause.",
       "relation": "realizes",
       "source": "input:org.peer-network.host.profile:comparison-resources",
       "target": "cond:deployment:standing-work"
+    },
+    {
+      "conditional_on": "rem:deployment:boundary-search-courtesies",
+      "reason": "The resource scope recommendation depends on measured workload and candidate-search behaviour beyond retained finite samples.",
+      "relation": "relies",
+      "source": "input:org.peer-network.host.profile:comparison-resources",
+      "target": "rem:deployment:boundary-search-courtesies"
     },
     {
       "conditional_on": "amend:testing:standing-work-execution",
@@ -1380,7 +1464,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "The requirement trace names the public disclosure portion of the imported burn boundary.",
+      "reason": "The requirement trace names consistency of retained local disclosures, not an audit-standard undertaking or external acquisition truth.",
       "relation": "realizes",
       "source": "input:org.peer-network.vision.traces:burn-boundary",
       "target": "subsec:deployment:realization-obligations"

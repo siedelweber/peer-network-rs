@@ -33,6 +33,7 @@
       "fixture": "burn-disclosures",
       "hold": "External destruction and settlement assurance remain deployment obligations.",
       "labels": [
+        "rem:comparator:burn-realization-audit-evidence",
         "def:comparator:burn-interface",
         "subsec:deployment:realization-obligations",
         "post:comparator:marker-bound-settlement",
@@ -52,7 +53,7 @@
       ],
       "name": "burn-boundary",
       "oracle": "Independent finite-history enumeration of lineage, policy-defined accepted sets and distinct destruction identities, plus a dimensioned cost and disclosure checklist.",
-      "property": "A recognized marker and fixed policy determine one gross snapshot and increment, counting each accepted destruction once; no later observation changes it. Gross monotonicity holds only along the same history, not for debited residual balances. Recognition supplies no liveness guarantee or fifth monetary input.",
+      "property": "A recognized marker and fixed policy determine one gross snapshot and increment, counting each accepted destruction once; no later observation changes it. Gross monotonicity holds only along the same history, not for debited residual balances. Recognition supplies no liveness guarantee or fifth monetary input. The four mathematical burn-interface objects remain separate from this repository’s retained local audit disclosures under ``rem:comparator:burn-realization-audit-evidence``; no audit standard is adopted.",
       "requirements": [
         "burn-boundary"
       ],

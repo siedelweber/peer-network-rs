@@ -64,13 +64,13 @@
       "ambiguity": "The four-object interface coexists with settlement-depth, provenance and conditional operator-bound publication requirements. (def:comparator:burn-interface) (post:comparator:burn-primitive) (subsec:deployment:realization-obligations)",
       "class": "DEFECT",
       "conformance": [
-        "realizes{``subsec:deployment:realization-obligations``; This boundary correction requires complete public disclosures rather than another mathematical input.}"
+        "realizes{``subsec:deployment:realization-obligations``; This uses comparison of complete supplied disclosures without adding another mathematical input or undertaking their acquisition or publication.}"
       ],
       "id": "Q06",
       "instruction": "Your separation of mathematical objects and required evidence is a safe provisional representation, provided none of the required disclosures is omitted. Hold any claim that ``cond:comparator:burn-operator-audit-bound`` introduces a fifth computational input until the boundary wording is corrected.",
       "reading": "Study judgment: Represent the four mathematical objects and separate required public evidence; ask maintainers to confirm the record boundary.",
       "section": "Q06 — Burn disclosure boundary",
-      "status": "**Status: corrected.** The paper preserves four mathematical burn-interface objects and requires settlement, provenance and the conditional operator bound with its proof as public audit evidence rather than additional computational inputs.",
+      "status": "**Status: corrected.** The burn interface has four mathematical objects. Named audit disclosures are a separate courtesy scope; the local carrier retains them without adding a fifth numerical input. Their retention makes no audit-standard claim.",
       "topic": "Burn disclosure boundary"
     },
     {
@@ -115,7 +115,7 @@
       "instruction": "Order-free standing folds are safe. Narrow your provisional “acceptance and recognition” wording: retain authoritative order for formation, but title/conflict recognition uses the specified epoch fold rather than intra-epoch latest-record order.",
       "reading": "Study judgment: Retain authoritative act order for acceptance and recognition while proposing order-free standing folds; do not claim the conflicting prose has been resolved.",
       "section": "Q10 — Order and standing",
-      "status": "**Status: corrected.** Order can affect formation, dependency validity, admission and order-sensitive raw quantities, while dependency-compliant permutations preserve standing for fixed accepted membership, final ledger, epoch title fold and constants, and conflict recognition reads membership and epoch. Network-v0.34.1, ``post:epoch:standing-epoch-set-determinism``, now explicitly names epoch inclusion as the host’s only lever over standing; order, position and intra-epoch placement reach no standing quantity.",
+      "status": "**Status: corrected.** Order can affect formation, dependency validity, admission and order-sensitive raw quantities, while dependency-compliant permutations preserve standing for fixed accepted membership, final ledger, epoch title fold and constants, and conflict recognition reads membership and epoch. Network-v0.35.0, ``post:epoch:standing-epoch-set-determinism``, now explicitly names epoch inclusion as the host’s only lever over standing; order, position and intra-epoch placement reach no standing quantity.",
       "topic": "Order and standing"
     },
     {
@@ -330,7 +330,7 @@
       "instruction": "Your locked-beta reading is safe. Do not expose the proposed sweep as a deployment override or assert beta-independent tensors.",
       "reading": "Study judgment: Treat beta as locked for this edition and do not implement the proposed sweep as a deployment override.",
       "section": "Q31 — Temperature calibration",
-      "status": "**Status: corrected.** Temperature variation is a hypothetical charter change whose published calibration must account for tensor, activation, CAN and damping dependencies, including tensor changes at zero maturity, without overriding the locked operative value.",
+      "status": "**Status: corrected.** Temperature variation is a hypothetical charter change and never overrides the locked operative value. Optional supplied comparisons account for tensor, activation, CAN and damping dependencies, including tensor changes at zero maturity; their retention makes no monitoring-standard claim.",
       "topic": "Temperature calibration"
     },
     {

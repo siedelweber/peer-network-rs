@@ -40,7 +40,7 @@ def validate(rows, inventory, labels):
     if statements != set(inventory):
         raise Refusal('deployment inventory differs: '+str(sorted(statements ^ set(inventory))))
     for row in indexed.values():
-        if row['paper_tag'] != 'network-v0.34.1' or row['classification'] not in CLASSES:
+        if row['paper_tag'] != 'network-v0.35.0' or row['classification'] not in CLASSES:
             raise Refusal('deployment classification or paper edition: '+row['name'])
         if row['evidence_status'] != 'scope-only' or not row['reason']:
             raise Refusal('deployment scope is not execution evidence: '+row['name'])
@@ -234,6 +234,11 @@ def check(root=Path('.'), generate=False):
     rows = carrier['rows']
     units, mints = source_units(root, rows)
     inventory = tomllib.loads((root/'docs/inputs/design-inventory.toml').read_text())['rows']
+    classes = {r['label']: r.get('material_class') for r in inventory}
+    for item in rows:
+        label = item.get('parent', item['name'])
+        if classes.get(label) not in {'closure', 'oracle', 'courtesy', 'mathematics'}:
+            raise Refusal('deployment unresolved paper class: '+label)
     validate(rows, {r['label'] for r in inventory if ':deployment' in r['label']}, mints)
     edges, conditional = project(rows, units)
     reviewed_claims(root, conditional)

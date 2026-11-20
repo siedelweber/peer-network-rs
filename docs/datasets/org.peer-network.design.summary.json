@@ -18,17 +18,17 @@
     },
     {
       "category": "chapter",
-      "count": 92,
+      "count": 93,
       "name": "02 Comparator"
     },
     {
       "category": "chapter",
-      "count": 37,
+      "count": 38,
       "name": "03 Network"
     },
     {
       "category": "chapter",
-      "count": 264,
+      "count": 277,
       "name": "04 Graph"
     },
     {
@@ -103,7 +103,7 @@
     },
     {
       "category": "chapter",
-      "count": 112,
+      "count": 126,
       "name": "Appendix I — Deployment"
     },
     {
@@ -144,7 +144,7 @@
     },
     {
       "category": "totals",
-      "count": 1684,
+      "count": 1713,
       "name": "inventory"
     },
     {
@@ -154,7 +154,7 @@
     },
     {
       "category": "labels",
-      "count": 1650,
+      "count": 1679,
       "name": "explicit"
     },
     {

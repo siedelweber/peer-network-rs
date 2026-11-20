@@ -15,9 +15,10 @@
     },
     {
       "conformance": [
-        "realizes{``subsec:deployment:realization-obligations``; The requirement trace names the public disclosure portion of the imported burn boundary.}"
+        "realizes{``subsec:deployment:realization-obligations``; The requirement trace names consistency of retained local disclosures, not an audit-standard undertaking or external acquisition truth.}"
       ],
       "labels": [
+        "rem:comparator:burn-realization-audit-evidence",
         "def:comparator:burn-interface",
         "subsec:deployment:realization-obligations",
         "post:comparator:marker-bound-settlement",

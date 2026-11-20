@@ -331,7 +331,7 @@
         "realizes{``cond:deployment:boundary-policy``; Only the publication part is claimed here; the excluded premise is named separately by its clause.}",
         "realizes{``cond:deployment:standing-work``; Only the publication part is claimed here; the excluded premise is named separately by its clause.}"
       ],
-      "evidence": "Pending an exact residual target, endpoint grid and structural scope in Actor, act and matrix-entry counts and canonical byte lengths; the declaring build keeps its separate execution guards. The cap and finer-grid comparisons measure whether another proposal moves the candidate; a finite fixture maximum does not establish a live stopping contract.",
+      "evidence": "Pending an exact residual target, endpoint grid and structural scope in Actor, act and matrix-entry counts and canonical byte lengths; the declaring build keeps its separate execution guards. The cap and finer-grid comparisons measure whether another proposal moves the candidate; a finite fixture maximum does not establish a live stopping contract. These are local limits or retained finite measurements, without claiming or adopting the monitoring standard.",
       "name": "stopping",
       "owner": "lane/graph",
       "status": "pending",
@@ -346,7 +346,7 @@
         "relies{``amend:testing:standing-work-execution``; The historical maximum asserts a run measurement whose acquisition and original build locator are not established by the retained number.}",
         "realizes{``cond:deployment:standing-work``; Only the publication part is claimed here; the excluded premise is named separately by its clause.}"
       ],
-      "evidence": "Retained historical build-relative measurement, not a protocol setting. The original measurement build is not identified by this row; the current dependency pin must not be substituted. The fixture envelope doubles the measured production-path replay maximum; it does not include separately bounded fence/preflight work or promise completion outside the measured fixtures.",
+      "evidence": "Retained historical build-relative measurement, not a protocol setting. The original measurement build is not identified by this row; the current dependency pin must not be substituted. The fixture envelope doubles the measured production-path replay maximum; it does not include separately bounded fence/preflight work or promise completion outside the measured fixtures. These are local limits or retained finite measurements, without claiming or adopting the monitoring standard.",
       "margin_multiple": 2,
       "measured_envelope": 436259084,
       "measured_maximum": 218129542,
@@ -400,14 +400,14 @@
       "category": "setting",
       "claim_dependencies": [
         "cond:deployment:standing-work",
-        "cond:deployment:boundary-search-evidence"
+        "rem:deployment:boundary-search-courtesies"
       ],
       "conformance": [
-        "relies{``cond:deployment:boundary-search-evidence``; The resource scope recommendation depends on measured workload and candidate-search behaviour beyond retained finite samples.}",
+        "relies{``rem:deployment:boundary-search-courtesies``; The resource scope recommendation depends on measured workload and candidate-search behaviour beyond retained finite samples.}",
         "relies{``amend:testing:standing-work-envelopes``; The resource scope recommendation depends on measured workload and candidate-search behaviour beyond retained finite samples.}",
         "realizes{``cond:deployment:standing-work``; Only the publication part is claimed here; the excluded premise is named separately by its clause.}"
       ],
-      "evidence": "Pending structural scope in Actor, act and matrix-entry counts and canonical byte lengths. The retained Work observation is historical data with incomplete build provenance, not a pending protocol ceiling. The sweep retains scope and literal-byte refusals; solve/replay counts exclude separately bounded fence, ridge and preflight operations.",
+      "evidence": "Pending structural scope in Actor, act and matrix-entry counts and canonical byte lengths. The retained Work observation is historical data with incomplete build provenance, not a pending protocol ceiling. The sweep retains scope and literal-byte refusals; solve/replay counts exclude separately bounded fence, ridge and preflight operations. These are local limits or retained finite measurements, without claiming or adopting the monitoring standard.",
       "measured_solve_maximum": 409257260,
       "name": "comparison-resources",
       "number_forms": {

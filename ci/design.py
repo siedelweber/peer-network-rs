@@ -308,11 +308,82 @@ def check_rendered_spacing(paths, pending=PENDING_RENDERED_SPACING, *, whole_tre
         raise ValueError('\n'.join(findings))
 
 
+MATERIAL_CLASSES = {'closure', 'oracle', 'courtesy', 'mathematics'}
+MATERIAL_EXCEPTIONS = {
+    'case:deployment:concealment-entropy-client-generated': 'courtesy',
+    'case:deployment:concealment-entropy-operator-generated': 'courtesy',
+    'case:deployment:concealment-entropy-secret-derived': 'courtesy',
+    'case:deployment:concealment-entropy-unassigned-custody': 'courtesy',
+    'case:deployment:realization-obligations-mirror': 'courtesy',
+    'case:deployment:realization-obligations-occlusion': 'courtesy',
+    'case:deployment:realization-obligations-pointer': 'courtesy',
+    'case:deployment:realization-obligations-snapshot': 'courtesy',
+    'case:graph:act-dependency-projection-full': 'courtesy',
+    'case:graph:act-dependency-projection-full-empty': 'courtesy',
+    'case:graph:act-dependency-projection-tombstoned': 'courtesy',
+    'cond:deployment:cadence-maturity': 'courtesy',
+    'cond:deployment:complete-act-conformance': 'courtesy',
+    'cond:deployment:controller-performance': 'courtesy',
+    'cond:deployment:emission-experience': 'courtesy',
+    'cond:deployment:parameter-comparisons': 'courtesy',
+    'cond:deployment:payload-cache-envelope': 'courtesy',
+    'cond:deployment:standing-work': 'courtesy',
+    'cond:deployment:terminal-regression': 'courtesy',
+    'def:graph:act-dependency-tombstone': 'courtesy',
+    'def:graph:act-payload-controller': 'courtesy',
+    'def:graph:act-payload-state': 'courtesy',
+    'def:graph:canonical-erasure-default': 'courtesy',
+    'def:graph:carriage': 'courtesy',
+    'def:graph:courtesy-handshake': 'courtesy',
+    'def:graph:custodian': 'courtesy',
+    'def:graph:dependency-list-order': 'courtesy',
+    'def:graph:holder': 'courtesy',
+    'def:graph:requested-publication-intent': 'courtesy',
+    'def:graph:storage': 'courtesy',
+    'gloss:graph:blinding-value': 'courtesy',
+    'gloss:graph:commitment': 'courtesy',
+    'gloss:graph:opening': 'courtesy',
+    'gloss:graph:peek': 'courtesy',
+    'post:deployment:verdict-issuance': 'courtesy',
+    'rem:comparator:burn-realization-audit-evidence': 'courtesy',
+    'rem:deployment:boundary-policy-oversight': 'courtesy',
+    'rem:deployment:boundary-search-courtesies': 'courtesy',
+    'rem:deployment:calibration-publication-conduct': 'courtesy',
+    'rem:deployment:canonical-encoding-oversight': 'courtesy',
+    'rem:deployment:centralized-monitoring-conduct': 'courtesy',
+    'rem:deployment:certificate-monitoring-courtesies': 'courtesy',
+    'rem:deployment:title-certificate-monitoring-courtesies': 'courtesy',
+    'rem:deployment:wall-calibration-oversight': 'courtesy',
+    'rem:graph:act-payload-custody-phases': 'courtesy',
+    'rem:graph:dependency-nonce-concealment': 'courtesy',
+    'rem:graph:payload-size-not-act-cost': 'courtesy',
+    'subsec:deployment:concealment-entropy': 'courtesy',
+    'subsec:deployment:realization-obligations': 'courtesy',
+    'ver:handshake:tombstoning': 'courtesy',
+    'ver:revision:reduced-head-remains': 'courtesy',
+    'def:deployment:declared-verifiable-provenance-case': 'oracle',
+    'def:deployment:provenance-validity-projection': 'oracle',
+    'post:deployment:declared-provenance-replay': 'oracle',
+    'post:deployment:pinned-provenance-proof-objects': 'oracle',
+}
+
+
+def material_classes(inventory):
+    """Check exact-label classes independently of parent headings and claim scope."""
+    for row in inventory:
+        selected = row.get('material_class')
+        if selected not in MATERIAL_CLASSES:
+            raise ValueError('inventory missing or unknown material class: ' + row['label'])
+        if selected != MATERIAL_EXCEPTIONS.get(row['label'], 'closure'):
+            raise ValueError('inventory exact-label material class: ' + row['label'])
+
+
 def validate():
     # Claim: nonempty release pins cover every current inventory and constants field.
     inventory = data('inventory')
     constants = data('constants')
-    if not (len(inventory) == 1684 and len({row['label'] for row in inventory}) == 1684):
+    material_classes(inventory)
+    if not (len(inventory) == 1713 and len({row['label'] for row in inventory}) == 1713):
         raise ValueError('inventory label census')
     placeholders = [row for row in inventory if re.search(r'^Track\s+.+\s+as a separately addressable\s+', row['statement'])]
     structural = {'section', 'subsection', 'appendix', 'motto'}
@@ -429,15 +500,15 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.34.1'
-CURRENT_INVENTORY_PIN = '2d2eda2ffd709d66970b06636f4acfb8b15e630472f8b282345453c7da3765fd'
-REFRESHED_CONSTANTS_PIN = 'cf2a8e8604c6dbabbca1a72a25e0b3df596f1beb4e19c1cfd566c67ac74322f6'
-RELEASE_QUESTIONS_PIN = '54c08ca063da5efac9744965ea4fddaaa819b48175cf18cf43e641bbd429256e'
+PAPER_TAG = 'network-v0.35.0'
+CURRENT_INVENTORY_PIN = '65b01718c6783b2d8b6abdb9a351c21f5625a93e8db8a599d27c30cf39066fde'
+REFRESHED_CONSTANTS_PIN = 'ad0cc854f3f776cac00bfaea6ad71ce99229a47a97bb27a42e7a28a1d0d46d36'
+RELEASE_QUESTIONS_PIN = '804e80ebf0cb854d30af85645b3d615ddab186b50779947826bb4715a72b67f0'
 
 
 CRATES_PIN = '145b9f7bb25895cfa78adeaf78bc1077f119af6c02949c2062098b7a210675cc'
 BITES_PIN = 'cba90e75dc8ddd40a02821b667e0634719aedeeda88723ac6214f5fba5e98325'
-QUESTIONS_PIN = '4eafbcfbab23c50178eaec7acb69b39749ce7b345841886b2b4f2b20a6aac05b'
+QUESTIONS_PIN = '799b070a82fa69830afcb553f8a08bf40ad1a16d77759de0368d978f212679cf'
 
 def published_correspondence(rows, path=None):
     """Join tagged published quantities to supplied external build values exactly."""
