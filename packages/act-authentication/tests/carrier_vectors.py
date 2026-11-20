@@ -75,10 +75,33 @@ def vectors():
         approval = bytes([16])*64
         closure = canonical([2, header, material, seal, approval, epoch, position, logical_time])
         proof = canonical([2, identity, epoch, position, p, cd, sd, deps])
-        assert len(closure) <= 2097152 and len(proof) <= 262144
+        assert len(closure) <= 2097152 and len(proof) <= 262453
         anchor = dict(identity=identity, epoch=epoch, position=position, p=p.hex(), cd=cd.hex(), authentication='explicit fixture premise, not established')
         rows.append(dict(closure=closure.hex(),proof=proof.hex(),anchor=anchor,approval=approval.hex(),epoch=epoch,position=position,logical_time=logical_time,case=case,body=canonical(body).hex(),header=header.hex(),material=material.hex(),ny=ny.hex(),nd=nd.hex(),payload=payload.hex(),dependencies=deps,sy=sy.hex(),sd=sd.hex(),hy=hy.hex(),hd=hd.hex(),p=p.hex(),cy=cy.hex(),cd=cd.hex(),run=run.hex(),host=host,seal=seal.hex(),messages=[m.hex() for m in messages],preimages=preimages))
-    return dict(refusals=refusals(), absence=[dict(proof='absent', anchor='authenticated', result='UnavailableOpening'),dict(proof='present', anchor='unavailable', result='UnavailableAnchor')], source='Independent Python standard-library framing and hashlib; no Rust, production projection or production helper calls. Public deterministic fixture inputs establish no entropy, signature validity or authority.', rows=rows)
+    return dict(refusals=refusals(), absence=[dict(proof='absent', anchor='authenticated', result='UnavailableOpening'),dict(proof='present', anchor='unavailable', result='UnavailableAnchor')], source='Independent Python standard-library framing and hashlib; no Rust, production projection or production helper calls. Public deterministic fixture inputs establish no entropy, signature validity or authority.', rows=rows, boundaries=boundaries())
+
+
+def boundaries():
+    author = 'pn-devnet-v1/' + '01'*32 + '/' + '02'*32
+    maximum = 2**64-1
+    identity = ['act', author, maximum, 'Registration']
+    assert len(author.encode()) == 142 and len(canonical(identity)) == 171
+    proposal, blinding = bytes(32), bytes(48)
+    rows = []
+    for name, deps, placement, result, construction in (
+        ('maximum-admissible', [['act', author, n, 'Registration'] for n in range(maximum-1024, maximum)], maximum, 'opening-match under fixture anchor', dict(first_sequence=maximum-1024, count=1024)),
+        ('D-byte-limit', [['act', 'x'*262119, 0, 'Registration']], 0, 'Identity', dict(author_fill='x', author_bytes=262119, count=1)),
+        ('D-byte-above', [['act', 'x'*262120, 0, 'Registration']], 0, 'DependenciesBound', dict(author_fill='x', author_bytes=262120, count=1)),
+    ):
+        d = canonical(deps)
+        preimage = b'pn-act-profile/act-dependency/v3\0' + canonical(['PN-dependency-v3', [identity, proposal, blinding, deps]])
+        commitment = hashlib.sha256(preimage).digest()
+        proof = canonical([2, identity, placement, placement, proposal, commitment, blinding, deps])
+        assert len(proof) <= 262453
+        expected_size = {'maximum-admissible':175107, 'D-byte-limit':262144, 'D-byte-above':262145}[name]
+        assert len(d) == expected_size
+        rows.append(dict(name=name, construction=construction, placement=placement, dependency_bytes=len(d), proof_bytes=len(proof), dependency_sha256=hashlib.sha256(d).hexdigest(), proof_sha256=hashlib.sha256(proof).hexdigest(), commitment=commitment.hex(), result=result))
+    return dict(identity=identity, proposal=proposal.hex(), blinding=blinding.hex(), fragment_limit=262453, dependency_limit=262144, fixed_maximum_bytes=309, authority='explicit fixture premise, not established', rows=rows)
 
 
 def refusals():
