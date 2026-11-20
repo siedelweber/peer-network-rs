@@ -12,9 +12,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/lib.rs::ControlPlaneRecord::version",
-    "body": "{ Self :: new (command , ControlPlaneRecordKind :: Version , \"version requested\" , Some (ControlPlaneFields :: Version { version : version . to_string () , }) ,) }",
+    "body": "{ Self :: new (command , ControlPlaneRecordKind :: Version , \"version requested\" , Some (ControlPlaneFields :: Version { version : version . to_string () , build_kind : observation :: BuildKind :: compiled () . name () . to_owned () , }) ,) }",
     "class_decision": "public-cli",
-    "item_premise": "This body inherits the public-cli decision for ControlPlaneRecord::version.",
+    "item_premise": "Current version body retains the public record shape and adds the compiled build kind beside its version value.",
     "assessments": {
       "full_recording": "review-252",
       "secret_flow": "review-002",

@@ -1001,44 +1001,69 @@ fn premise_refusals() -> Result<()> {
     Ok(())
 }
 
-/// Claim: help, version and usage errors are JSON control records with no stdout result.
+/// Claim: An argv usage error is a JSON terminal observation with no stdout result.
 /// ´claim:cli:control-records´
 /// ´test:integration:control-records´
 #[test]
 fn control_records() -> Result<()> {
-    for (argument, status, kind) in [
-        ("--help", 0, "help"),
-        ("--version", 0, "version"),
-        ("--unknown", 2, "usage_error"),
-    ] {
-        let output = Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
-            .arg(argument)
-            .output()?;
-        assert_eq!(output.status.code(), Some(status));
-        assert_eq!(output.stdout, b"");
-        let record: serde_json::Value = serde_json::from_slice(&output.stderr)?;
-        assert_eq!(record["kind"], kind);
-    }
+    let output = Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
+        .arg("--unknown")
+        .output()?;
+    assert_eq!(output.status.code(), Some(2));
+    assert_eq!(output.stdout, b"");
+    let record: serde_json::Value = serde_json::from_slice(&output.stderr)?;
+    assert_eq!(record["kind"], "usage_error");
     Ok(())
 }
 
-/// Claim: a terminal on stdout is refused before a write can change the repository.
-/// ´claim:cli:terminal-refusal´
-/// ´test:integration:terminal-refusal´
+/// Claim: A clean result has the same JSON bytes and zero status on a terminal and a pipe.
+/// ´claim:cli:result-terminal-admission´
+/// ´test:integration:result-terminal-admission´
 #[test]
-fn terminal_refusal() -> Result<()> {
+fn result_terminal_admission() -> Result<()> {
     let directory = fixture()?;
-    fs::write(directory.path().join("docs/result.md"), "stale")?;
-    let script = "import os,pty,subprocess,sys,json\nm,s=pty.openpty()\np=subprocess.run([sys.argv[1],'--root',sys.argv[2],'write'],stdout=s,stderr=subprocess.PIPE)\nos.close(s)\nassert p.returncode==2\nrecords=[json.loads(line) for line in p.stderr.splitlines()]\nassert sum(r.get('kind')=='tty_refusal' for r in records)==1\ntry:\n data=os.read(m,4096)\nexcept OSError:\n data=b''\nassert data==b''\nos.close(m)\n";
-    assert!(
-        Command::new("python3")
-            .args(["-c", script])
-            .arg(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
-            .arg(directory.path())
-            .status()?
-            .success()
-    );
-    assert_eq!(fs::read_to_string(directory.path().join("docs/result.md"))?, "stale");
+    let piped = invoke(directory.path(), "check")?;
+    assert_eq!(piped.status.code(), Some(0));
+    let script = "import os,pty,subprocess,sys,tty\nm,s=pty.openpty()\ntty.setraw(s)\np=subprocess.run([sys.argv[1],'--root',sys.argv[2],'check'],stdout=s,stderr=subprocess.PIPE)\nos.close(s)\ndata=b''\nwhile True:\n try: part=os.read(m,65536)\n except OSError: break\n if not part: break\n data+=part\nos.close(m)\nsys.stdout.buffer.write(data)\nsys.exit(p.returncode)\n";
+    let terminal = Command::new("python3")
+        .args(["-c", script])
+        .arg(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
+        .arg(directory.path())
+        .output()?;
+    assert_eq!(terminal.status.code(), Some(0));
+    assert_eq!(terminal.stdout, piped.stdout);
+    Ok(())
+}
+
+/// Claim: Help and version are whole JSON stdout results at zero under each admitted release policy, including quiet mode.
+/// ´claim:cli:help-version-are-results´
+/// ´test:integration:help-version-are-results´
+#[test]
+fn help_version_are_results() -> Result<()> {
+    let executable = pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap();
+    for argument in ["--help", "--version"] {
+        for mode in ["error", "default", "trace", "off"] {
+            let mut command = Command::new(&executable);
+            command
+                .arg(argument)
+                .env_remove("PN_OBSERVE_LEVEL")
+                .env_remove("PN_OBSERVE_DISABLE");
+            if mode == "off" {
+                command.env("PN_OBSERVE_DISABLE", "1");
+            } else {
+                command.env("PN_OBSERVE_LEVEL", mode);
+            }
+            let result = command.output()?;
+            assert_eq!(result.status.code(), Some(0), "{argument} {mode}");
+            assert!(result.stdout.ends_with(b"\n"));
+            let answer: serde_json::Value = serde_json::from_slice(&result.stdout)?;
+            assert_eq!(answer["kind"], if argument == "--help" { "help" } else { "version" });
+            if argument == "--version" {
+                assert_eq!(answer["fields"]["build_kind"], "release");
+            }
+            assert!(result.stderr.is_empty(), "{argument} {mode}");
+        }
+    }
     Ok(())
 }
 

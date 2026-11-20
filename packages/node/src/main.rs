@@ -33,6 +33,7 @@ enum Command {
 /// Justified: Entry capture must precede all instrumentation; this binary delegates the observed command root, terminal output and exit to the origin runner.
 fn main() -> ExitCode {
     let origin = EntryOrigin::capture();
+    cli_common::select_observation_policy_or_exit("pn");
     cli_common::run_stdout_json_command_from_origin(
         origin,
         "pn",

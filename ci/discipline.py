@@ -377,7 +377,7 @@ def credential_receiver_findings(sources):
         if path == lib:
             code = code.replace('pub use delivery::{AcquisitionError, DeliveryError, DeliveryFailure, PasswordReceiver, VerifierReceiver, acquire_receivers};', '')
         if path == generator:
-            code = re.sub(r'(fn\s+main\s*\(\s*\)\s*->\s*ExitCode\s*\{\s*let\s+receivers\s*=\s*)pn_secret_home::acquire_receivers\(\);', r'\1permitted_entry();', code, count=1)
+            code = re.sub(r'(fn\s+main\s*\(\s*\)\s*->\s*ExitCode\s*\{\s*cli_common::select_observation_policy_or_exit\(\s*\);\s*cli_common::install_json_panic_hook\(\s*\);\s*let\s+receivers\s*=\s*)pn_secret_home::acquire_receivers\(\);', r'\1permitted_entry();', code, count=1)
         if re.search(r'\bacquire_receivers\b', code):
             findings.append(f'{path}: acquisition reference outside the sole first entry or owning tests')
         roles = r'\b(?:PasswordReceiver|VerifierReceiver)\b'
@@ -398,8 +398,9 @@ def credential_receiver_findings(sources):
                     findings.append('receiver derived implementation refuses: '+role)
     if generator in sources:
         entry = re.sub(r'\s+', '', rust_code(sources[generator]))
-        if 'fnmain()->ExitCode{letreceivers=pn_secret_home::acquire_receivers();' not in entry:
-            findings.append('generator acquisition is not the first entry act')
+        prefix = 'fnmain()->ExitCode{cli_common::select_observation_policy_or_exit();cli_common::install_json_panic_hook();letreceivers=pn_secret_home::acquire_receivers();'
+        if prefix not in entry:
+            findings.append('generator acquisition lacks its closed non-descriptor prefix')
     return findings
 
 
@@ -433,8 +434,10 @@ def credential_model_findings(sources, manifest):
     root = pathlib.Path('packages/credential-generator')
     main = root/'src/main.rs'
     findings = []
-    if manifest.get('lib') or manifest.get('features') or manifest.get('package', {}).get('autotests') is not False:
-        findings.append('credential models require a sole binary without library or feature activation')
+    if (manifest.get('lib')
+            or manifest.get('features') != {'debug-observation': ['cli-common/debug-observation']}
+            or manifest.get('package', {}).get('autotests') is not False):
+        findings.append('credential models require a sole binary with only the reviewed observation forwarder')
     if manifest.get('bin') != [{'name': 'pn-credential-generator', 'path': 'src/main.rs'}]:
         findings.append('credential generator target roster differs')
     entry = sources.get(main, '')
@@ -767,11 +770,13 @@ def validate_build_policy(root):
     expected = {"name": "workspace", "channel": "nightly-2026-10-16", "components": ["rustfmt", "clippy"],
                 "rustc_commit": "4ebd258257737d5b7635c116fa7d281627a7e937",
                 "lto": "thin", "codegen_units": 1, "toolchain_gate": "toolchain",
-                "profile_gate": "build-policy", "tests_gate": "discipline-tests"}
+                "profile_gate": "build-policy", "tests_gate": "discipline-tests",
+                "debug_profile": "release-debug", "debug_feature": "debug-observation"}
     if policy != [expected]:
         raise ValueError("rendered build policy must state the enforced workspace policy")
     profiles = manifest.get("profile", {})
     if profiles != {"release": {"lto": "thin", "codegen-units": 1},
+                    "release-debug": {"inherits": "release", "debug": 2, "strip": "none"},
                     "gate": {"inherits": "dev", "opt-level": 1, "debug": 0,
                              "debug-assertions": True, "overflow-checks": True}}:
         raise ValueError("expected reviewed release and gate profiles; dev and test use defaults")
@@ -841,7 +846,16 @@ def main():
         if mode == "nursery":
             print(f"NURSERY-FINDINGS={count} COMMAND-STATUS={result.returncode} ADVISORY=true")
             return 0
-        return result.returncode
+        if result.returncode:
+            return result.returncode
+        for package in ('cli-common', 'pn', 'pn-credential-generator', 'documents'):
+            command = ['cargo', 'clippy', '--offline', '--locked', '--profile', 'gate', '-p', package,
+                       '--all-targets', '--features', 'debug-observation', '--no-deps', '--', '-D', 'warnings']
+            checked = subprocess.run(command, cwd=pathlib.Path.cwd())
+            print(f'FEATURE-CLIPPY package={package} status={checked.returncode}', flush=True)
+            if checked.returncode:
+                return checked.returncode
+        return 0
     if mode == "toolchain":
         revision = git("rev-parse", "HEAD")
         revision.check_returncode()

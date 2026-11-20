@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/observation.rs::observation::RootLease < '_ >::finish",
-    "body": "{ self . operation . finish (outcome , result) ; }",
+    "body": "{ if let Some (operation) = self . operation { operation . finish (outcome , result) ; } }",
     "class_decision": "delivery",
-    "item_premise": "This body is the opt-in origin route for observation::RootLease < '_ >::finish; it lends the existing Command operation its entry start and does not change ordinary runner or delivery paths.",
+    "item_premise": "Current body preserves once-only origin transfer and level-independent accounting; release off creates no delivery machinery or closing publication.",
     "assessments": {
       "full_recording": "origin-full-recording",
       "secret_flow": "origin-secret-flow",

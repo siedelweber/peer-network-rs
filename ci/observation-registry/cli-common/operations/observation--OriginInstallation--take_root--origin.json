@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/observation.rs::observation::OriginInstallation::take_root",
-    "body": "{ self . root . take () . map (| operation | RootLease { operation , _guard : std :: marker :: PhantomData , }) . ok_or (RootAlreadyTaken) }",
+    "body": "{ if self . root_taken { return Err (RootAlreadyTaken) ; } self . root_taken = true ; Ok (RootLease { operation : self . root . take () , _guard : std :: marker :: PhantomData , }) }",
     "class_decision": "delivery",
-    "item_premise": "This body is the opt-in origin route for observation::OriginInstallation::take_root; it lends the existing Command operation its entry start and does not change ordinary runner or delivery paths.",
+    "item_premise": "Current body preserves once-only origin transfer and level-independent accounting; release off creates no delivery machinery or closing publication.",
     "assessments": {
       "full_recording": "origin-full-recording",
       "secret_flow": "origin-secret-flow",

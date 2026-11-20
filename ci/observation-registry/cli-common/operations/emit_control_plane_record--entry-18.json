@@ -12,9 +12,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/lib.rs::emit_control_plane_record",
-    "body": "{ let mut writer = LockedStderrWriter :: locked_stderr () ; write_json_line (& mut writer , record) }",
+    "body": "{ if matches ! (record . kind , ControlPlaneRecordKind :: Help | ControlPlaneRecordKind :: Version) { return emit (record) ; } if observation :: process_policy () == observation :: EmissionPolicy :: Off { return Ok (()) ; } let mut writer = LockedStderrWriter :: locked_stderr () ; write_json_line (& mut writer , record) }",
     "class_decision": "public-cli",
-    "item_premise": "This body inherits the public-cli decision for emit_control_plane_record.",
+    "item_premise": "Current body routes help and version as stdout results, while quiet release omits controlled diagnostics and enabled refusals remain direct.",
     "assessments": {
       "full_recording": "review-266",
       "secret_flow": "review-002",

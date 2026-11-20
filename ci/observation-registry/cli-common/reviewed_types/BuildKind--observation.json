@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::BuildKind",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" The observation kind fixed by the executable's production feature.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum BuildKind { # [doc = \" Fully optimized release without optional observation.\"] Release , # [doc = \" Fully optimized debug with mandatory observation.\"] Debug , }"
+  }
+}

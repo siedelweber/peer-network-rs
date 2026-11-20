@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/observation.rs::observation::RootLease < '_ >::enter_command_scope",
-    "body": "{ let ticket = RootHandoff { observation : Arc :: as_ptr (& self . operation . observation . next_id) as usize , root_id : self . operation . id , } ; let span = with_root_handoff (ticket , | | command_scope_span (command_name)) ; Scope (span . entered ()) }",
+    "body": "{ let Some (operation) = self . operation . as_ref () else { return Scope (tracing :: Span :: none () . entered ()) ; } ; let ticket = RootHandoff { observation : Arc :: as_ptr (& operation . observation . next_id) as usize , root_id : operation . id , } ; let span = with_root_handoff (ticket , | | command_scope_span (command_name)) ; Scope (span . entered ()) }",
     "class_decision": "delivery",
-    "item_premise": "This lease arms a same-thread private ticket only during construction of its command span, then enters the span after disarming; the lease alone owns root completion.",
+    "item_premise": "Current body preserves once-only origin transfer and level-independent accounting; release off creates no delivery machinery or closing publication.",
     "assessments": {
       "full_recording": "origin-full-recording",
       "secret_flow": "origin-secret-flow",

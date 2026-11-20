@@ -16,11 +16,12 @@ struct Args {
     common: cli_common::BaseArgs,
 }
 
-/// Justified: Named acquisition is the first entry act, before output bootstrap; the labelled command records its public inputs and result after the handles are settled.
+/// Justified: Public policy and the panic hook precede named acquisition without opening a descriptor; the labelled command records its inputs after handles settle.
 fn main() -> ExitCode {
+    cli_common::select_observation_policy_or_exit("pn-credential-generator");
+    cli_common::install_json_panic_hook("pn-credential-generator");
     let receivers = pn_secret_home::acquire_receivers();
     let protection = receivers.as_ref().ok().map(|_| Protection::for_credential());
-    cli_common::install_json_panic_hook("pn-credential-generator");
     let args = match cli_common::parse_args_from::<Args, _, _>(std::env::args_os()) {
         Ok(args) => args,
         Err(exit) => {

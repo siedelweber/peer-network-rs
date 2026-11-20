@@ -8,6 +8,9 @@ license.workspace = true
 publish.workspace = true
 version.workspace = true
 
+[features]
+debug-observation = ["cli-common/debug-observation"]
+
 [dependencies]
 clap.workspace = true
 cli-common.workspace = true

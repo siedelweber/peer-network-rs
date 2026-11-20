@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/observation.rs::observation::bootstrap_with_export",
-    "body": "{ let _level = configured_level () ? ; let started = Instant :: now () ; let bridge = if enabled { Some (Arc :: new (crate :: observation_export :: Bridge :: new (config) ?)) } else { None } ; bootstrap_inner (enabled , debug , default_level , bridge , started) }",
+    "body": "{ let policy = configured_policy () ? ; let started = Instant :: now () ; let bridge = if enabled && policy != EmissionPolicy :: Off { Some (Arc :: new (crate :: observation_export :: Bridge :: new (config) ?)) } else { None } ; bootstrap_inner (enabled , debug , default_level , bridge , started) }",
     "class_decision": "delivery",
-    "item_premise": "This body inherits the delivery decision for observation::bootstrap_with_export. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+    "item_premise": "Current body preserves once-only origin transfer and level-independent accounting; release off creates no delivery machinery or closing publication.",
     "assessments": {
       "full_recording": "review-210",
       "secret_flow": "review-002",

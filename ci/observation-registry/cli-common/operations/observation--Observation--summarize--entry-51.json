@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::summarize",
-    "body": "{ if let Some (bridge) = & self . bridge { bridge . flush () ; let failures = bridge . failures . try_lock () . ok () . map (| values | values . clone ()) ; self . emit (json ! ({ \"kind\" : \"export_summary\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"proposal:observe:export\" , \"execution_owner\" : \"CLICOMMON\" , \"lost_exports\" : bridge . lost . load (Ordering :: Relaxed) , \"failures\" : failures })) ; } self . emit (json ! ({ \"kind\" : \"metric_summary\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"conv:observe:metrics\" , \"execution_owner\" : \"CLICOMMON\" , \"metrics\" : self . recorder . snapshot (self . full_trace) }) ,) ; }",
+    "body": "{ if self . error_only { return ; } if let Some (bridge) = & self . bridge { bridge . flush () ; let failures = bridge . failures . try_lock () . ok () . map (| values | values . clone ()) ; self . emit (json ! ({ \"kind\" : \"export_summary\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"proposal:observe:export\" , \"execution_owner\" : \"CLICOMMON\" , \"lost_exports\" : bridge . lost . load (Ordering :: Relaxed) , \"failures\" : failures })) ; } self . emit (json ! ({ \"kind\" : \"metric_summary\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"conv:observe:metrics\" , \"execution_owner\" : \"CLICOMMON\" , \"metrics\" : self . recorder . snapshot (self . full_trace) }) ,) ; }",
     "class_decision": "delivery",
-    "item_premise": "This body inherits the delivery decision for observation::Observation::summarize. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+    "item_premise": "Current body counts events independently of filtering; ERROR is terminal, WARN is recovered, and the error level emits no routine summary.",
     "assessments": {
       "full_recording": "review-188",
       "secret_flow": "review-002",

@@ -97,6 +97,12 @@ suspicious = { level = "deny", priority = -1 }
 lto = "thin"
 codegen-units = 1
 
+# Optimized shipped debug recipe; the feature selects mandatory observation.
+[profile.release-debug]
+inherits = "release"
+debug = 2
+strip = "none"
+
 # Measured separately from ordinary debugging; assertions and checks remain on.
 [profile.gate]
 inherits = "dev"

@@ -449,7 +449,7 @@ fn read_bounded(source: impl Read) -> Result<Vec<u8>, PreparationRefusal> {
 }
 
 fn edition_io_refusal(error: &std::io::Error) -> PreparationRefusal {
-    tracing::warn!(kind = ?error.kind(), os_code = ?error.raw_os_error(), "public edition file I/O refused");
+    tracing::error!(kind = ?error.kind(), os_code = ?error.raw_os_error(), "public edition file I/O refused");
     PreparationRefusal::EditionForm
 }
 
@@ -627,11 +627,11 @@ fn setup_endpoint_with(
     mode: impl FnOnce(&UnixDatagram) -> io::Result<()>,
 ) -> Result<UnixDatagram, Event> {
     let endpoint = create().map_err(|error| {
-        tracing::warn!(reason = "endpoint_create_failed", kind = ?error.kind(), os_code = ?error.raw_os_error());
+        tracing::error!(reason = "endpoint_create_failed", kind = ?error.kind(), os_code = ?error.raw_os_error());
         Event::EndpointSetupFailed { at }
     })?;
     mode(&endpoint).map_err(|error| {
-        tracing::warn!(reason = "endpoint_mode_failed", kind = ?error.kind(), os_code = ?error.raw_os_error());
+        tracing::error!(reason = "endpoint_mode_failed", kind = ?error.kind(), os_code = ?error.raw_os_error());
         Event::EndpointSetupFailed { at }
     })?;
     Ok(endpoint)
@@ -870,7 +870,7 @@ fn run_served(mut prepared: Prepared, context: pn::ExecutionContext) -> Result<V
     let runtime = match runtime {
         Ok(runtime) => runtime,
         Err(error) => {
-            tracing::warn!(reason = "runtime_build_failed", kind = ?error.kind(), os_code = ?error.raw_os_error());
+            tracing::error!(reason = "runtime_build_failed", kind = ?error.kind(), os_code = ?error.raw_os_error());
             let at = elapsed_ns(prepared.clock);
             return fail_served(prepared, context, Event::RuntimeFailure { at });
         }
@@ -885,7 +885,7 @@ fn run_served(mut prepared: Prepared, context: pn::ExecutionContext) -> Result<V
     let (mut signal, stop_after_subscription) = match subscribed {
         Ok(result) => result,
         Err(error) => {
-            tracing::warn!(reason = "signal_subscription_failed", kind = ?error.kind(), os_code = ?error.raw_os_error());
+            tracing::error!(reason = "signal_subscription_failed", kind = ?error.kind(), os_code = ?error.raw_os_error());
             let at = elapsed_ns(prepared.clock);
             return fail_served(prepared, context, Event::RuntimeFailure { at });
         }

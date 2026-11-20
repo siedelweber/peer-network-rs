@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::EmissionPolicy::select",
+    "owner": "CLICOMMON",
+    "signature": "fn select (disable : Option < & OsStr > , level : Option < & OsStr > , kind : BuildKind) -> Result < Self , EmissionConfigurationError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: Pure selection runs before observation installation and cannot record itself.",
+      "witness": "CLICOMMON::claim:cli:build-kind-mode-admission",
+      "boundary": "cli-common::packages/cli-common/src/lib.rs::CliExit::exit_code",
+      "class_decision": "public-cli"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::EmissionPolicy::select",
+    "body": "{ if disable . is_some () && level . is_some () { return Err (EmissionConfigurationError :: ConflictingInputs) ; } if let Some (value) = disable { return match value . to_str () { Some (\"1\") if kind == BuildKind :: Release => Ok (Self :: Off) , Some (\"1\") => Err (EmissionConfigurationError :: DebugCannotDisable) , Some (_) => Err (EmissionConfigurationError :: InvalidDisable) , None => Err (EmissionConfigurationError :: NonUtf8Disable) , } ; } match level . map (OsStr :: to_str) { None | Some (Some (\"default\")) => Ok (Self :: Default) , Some (Some (\"error\")) => Ok (Self :: Error) , Some (Some (\"trace\")) => Ok (Self :: Trace) , Some (Some (_)) => Err (EmissionConfigurationError :: UnknownLevel) , Some (None) => Err (EmissionConfigurationError :: NonUtf8Level) , } }",
+    "class_decision": "public-cli",
+    "item_premise": "This pre-installation policy helper reads public mode inputs or immutable kind state without a private carrier or independent delivery; its terminal diagnostic belongs to the shared command boundary.",
+    "assessments": {
+      "full_recording": "observe-kind-full",
+      "secret_flow": "observe-kind-secret",
+      "exposure_consumers": "observe-kind-exposure"
+    }
+  }
+}

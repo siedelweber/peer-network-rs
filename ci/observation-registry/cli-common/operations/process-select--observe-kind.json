@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::select_process_policy",
+    "owner": "CLICOMMON",
+    "signature": "fn select_process_policy () -> Result < EmissionPolicy , EmissionConfigurationError >",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: Process selection precedes observation installation and cannot record itself.",
+      "witness": "CLICOMMON::claim:cli:build-kind-mode-admission",
+      "boundary": "cli-common::packages/cli-common/src/lib.rs::CliExit::exit_code",
+      "class_decision": "public-cli"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::select_process_policy",
+    "body": "{ if let Some (policy) = PROCESS_POLICY . get () { return Ok (* policy) ; } let disable = std :: env :: var_os (\"PN_OBSERVE_DISABLE\") ; let level = std :: env :: var_os (\"PN_OBSERVE_LEVEL\") ; let selected = EmissionPolicy :: select (disable . as_deref () , level . as_deref () , BuildKind :: compiled ()) ? ; let _installed = PROCESS_POLICY . set (selected) ; Ok (PROCESS_POLICY . get () . copied () . unwrap_or (selected)) }",
+    "class_decision": "public-cli",
+    "item_premise": "This pre-installation policy helper reads public mode inputs or immutable kind state without a private carrier or independent delivery; its terminal diagnostic belongs to the shared command boundary.",
+    "assessments": {
+      "full_recording": "observe-kind-full",
+      "secret_flow": "observe-kind-secret",
+      "exposure_consumers": "observe-kind-exposure"
+    }
+  }
+}

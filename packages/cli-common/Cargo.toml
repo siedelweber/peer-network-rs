@@ -9,6 +9,8 @@ publish.workspace = true
 version.workspace = true
 
 [features]
+# Compiled kind for the optimized debug recipe; observation remains mandatory.
+debug-observation = []
 # Enabled by development dependents only; absent from production builds.
 observation-test-hook = []
 

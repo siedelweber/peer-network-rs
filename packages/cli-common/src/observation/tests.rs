@@ -8,6 +8,129 @@ fn receive<T>(receiver: &mpsc::Receiver<T>, event: &str) -> T {
 
 use super::*;
 
+/// Claim: Compiled release and debug kinds admit only the closed policy table, with presence conflict ahead of value checks.
+/// ´claim:cli:build-kind-mode-admission´
+/// ´test:unit:build-kind-mode-admission´
+#[test]
+fn build_kind_mode_admission() {
+    use std::ffi::OsStr;
+    let setting = |disable: Option<&str>, level: Option<&str>, kind| {
+        EmissionPolicy::select(disable.map(OsStr::new), level.map(OsStr::new), kind)
+    };
+    for kind in [BuildKind::Release, BuildKind::Debug] {
+        assert_eq!(setting(None, None, kind), Ok(EmissionPolicy::Default));
+        for (word, selected) in [
+            ("error", EmissionPolicy::Error),
+            ("default", EmissionPolicy::Default),
+            ("trace", EmissionPolicy::Trace),
+        ] {
+            assert_eq!(setting(None, Some(word), kind), Ok(selected));
+        }
+        for invalid in ["", "off", "TRACE", "0"] {
+            assert_eq!(
+                setting(None, Some(invalid), kind),
+                Err(EmissionConfigurationError::UnknownLevel)
+            );
+        }
+        for invalid in ["", "0", "false", "true", " 1 "] {
+            assert_eq!(
+                setting(Some(invalid), None, kind),
+                Err(EmissionConfigurationError::InvalidDisable)
+            );
+        }
+        assert_eq!(
+            setting(Some("invalid"), Some("invalid"), kind),
+            Err(EmissionConfigurationError::ConflictingInputs)
+        );
+    }
+    assert_eq!(setting(Some("1"), None, BuildKind::Release), Ok(EmissionPolicy::Off));
+    assert_eq!(
+        setting(Some("1"), None, BuildKind::Debug),
+        Err(EmissionConfigurationError::DebugCannotDisable)
+    );
+    #[cfg(unix)]
+    {
+        use std::os::unix::ffi::OsStrExt;
+        let invalid = OsStr::from_bytes(&[255]);
+        assert_eq!(
+            EmissionPolicy::select(Some(invalid), None, BuildKind::Release),
+            Err(EmissionConfigurationError::NonUtf8Disable)
+        );
+        assert_eq!(
+            EmissionPolicy::select(None, Some(invalid), BuildKind::Release),
+            Err(EmissionConfigurationError::NonUtf8Level)
+        );
+        assert_eq!(
+            EmissionPolicy::select(Some(invalid), Some(invalid), BuildKind::Release),
+            Err(EmissionConfigurationError::ConflictingInputs)
+        );
+    }
+}
+
+/// Claim: Valid release off skips the delivery initializer and closing publication, while enabled selection invokes it.
+/// ´claim:cli:disabled-bootstrap-skips-delivery´
+/// ´test:unit:disabled-bootstrap-skips-delivery´
+#[test]
+fn disabled_bootstrap_skips_delivery() {
+    let mut calls = 0;
+    let guard = install_selected(EmissionPolicy::Off, || {
+        calls += 1;
+        Ok(BootstrapGuard(None))
+    })
+    .unwrap();
+    assert_eq!(calls, 0);
+    assert!(guard.0.is_none());
+    drop(guard);
+    let _enabled = install_selected(EmissionPolicy::Default, || {
+        calls += 1;
+        Ok(BootstrapGuard(None))
+    })
+    .unwrap();
+    assert_eq!(calls, 1);
+    let mut installed = OriginInstallation::from_guard(BootstrapGuard(None), json!({"command":"fixture"}));
+    assert!(installed.take_root().is_ok());
+    assert!(matches!(installed.take_root(), Err(RootAlreadyTaken)));
+}
+
+/// Claim: Error filtering delivers terminal errors alone while keeping operation accounting, and default still delivers recovery warnings and summaries.
+/// ´claim:cli:error-emission-is-terminal-only´
+/// ´test:unit:error-emission-is-terminal-only´
+#[test]
+fn error_emission_is_terminal_only() {
+    for error_only in [true, false] {
+        let (mut observation, _clock, capture) = fixture();
+        observation.error_only = error_only;
+        let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
+        tracing::subscriber::with_default(subscriber, || {
+            let operation = observation.operation(OperationKind::Command, json!({"public":"fixture"}));
+            tracing::warn!("recovered condition");
+            tracing::error!("terminal failure");
+            operation.finish(Outcome::Error, json!({"error":"fixture"}));
+        });
+        observation.summarize();
+        if !error_only {
+            observation.final_status();
+        }
+        let rows = records(&observation, &capture);
+        let levels: Vec<_> = rows
+            .iter()
+            .filter_map(|row| row.get("level").and_then(Value::as_str))
+            .collect();
+        assert!(levels.contains(&"ERROR"));
+        if error_only {
+            assert!(!levels.contains(&"WARN"));
+            assert!(!rows.iter().any(|row| matches!(
+                row["kind"].as_str(),
+                Some("metering" | "metric_summary" | "observation_status")
+            )));
+        } else {
+            assert!(levels.contains(&"WARN"));
+            assert!(rows.iter().any(|row| row["kind"] == "metric_summary"));
+        }
+        assert!(observation.recorder.snapshot(false)["declared_series"].is_number());
+    }
+}
+
 /// Claim: The shared monotonic zero covers synchronous prefix time in Bootstrap and Command while emitted UTC stays current.
 /// ´claim:cli:entry-origin-spans-prefix´
 /// ´test:unit:entry-origin-spans-prefix´
@@ -19,8 +142,7 @@ fn entry_origin_spans_prefix() {
     bootstrap.started = Duration::ZERO;
     clock.0.store(400, Ordering::Relaxed);
     bootstrap.finish(Outcome::Success, json!("installed"));
-    let mut installed =
-        OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), json!({"command":"fixture"})).unwrap();
+    let mut installed = OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), json!({"command":"fixture"}));
     clock.0.store(950, Ordering::Relaxed);
     installed.take_root().unwrap().finish(Outcome::Success, json!({"done":true}));
     drop(installed);
@@ -63,8 +185,7 @@ fn entry_origin_is_inert() {
 #[test]
 fn entry_origin_root_once() {
     let (observation, clock, capture) = fixture();
-    let mut installed =
-        OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), json!({"command":"fixture"})).unwrap();
+    let mut installed = OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), json!({"command":"fixture"}));
     let next_id = observation.next_id.load(Ordering::Relaxed);
     clock.0.store(40, Ordering::Relaxed);
     installed.take_root().unwrap().finish(Outcome::Success, json!("done"));
@@ -104,7 +225,7 @@ fn entry_origin_installation_transfer() {
     assert_eq!(calls, 1);
     let next_id = observation.next_id.load(Ordering::Relaxed);
     let lease = installation.take_root().unwrap();
-    assert_eq!(lease.operation.started, Duration::ZERO);
+    assert_eq!(lease.operation.as_ref().unwrap().started, Duration::ZERO);
     assert_eq!(next_id, 2);
     clock.0.store(7000, Ordering::Relaxed);
     lease.finish(Outcome::Success, json!("done"));
@@ -128,7 +249,7 @@ fn entry_origin_adoption_is_private() {
         let (mut observation, clock, capture) = fixture();
         observation.full_trace = trace;
         let mut installation =
-            OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), json!({"command":"fixture"})).unwrap();
+            OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), json!({"command":"fixture"}));
         let lease = installation.take_root().unwrap();
         with_fixture_subscriber(&observation, || {
             let scope = lease.enter_command_scope("fixture");
@@ -140,7 +261,7 @@ fn entry_origin_adoption_is_private() {
                 "rule:observe:spans",
                 execution_owner = "CLICOMMON",
                 source_item = "run_stdout_json_command_from_origin",
-                adopted_root_id = lease.operation.id
+                adopted_root_id = lease.operation.as_ref().unwrap().id
             );
             let entered = forged.enter();
             drop(entered);
@@ -152,7 +273,7 @@ fn entry_origin_adoption_is_private() {
         let (other, _, other_capture) = fixture();
         let ticket = RootHandoff {
             observation: Arc::as_ptr(&observation.next_id) as usize,
-            root_id: lease.operation.id,
+            root_id: lease.operation.as_ref().unwrap().id,
         };
         with_fixture_subscriber(&other, || {
             let span = with_root_handoff(ticket, || command_scope_span("wrong-owner"));
@@ -274,12 +395,21 @@ fn default_emission() {
             panic!("default captured content")
         }
     }
-    assert_eq!(emission_level(None), Ok(false));
-    assert_eq!(emission_level(Some("default")), Ok(false));
-    assert_eq!(emission_level(Some("trace")), Ok(true));
     assert_eq!(
-        emission_level(Some("unknown")),
-        Err(BootstrapError::Configuration(EmissionConfigurationError::UnknownLevel))
+        EmissionPolicy::select(None, None, BuildKind::Release),
+        Ok(EmissionPolicy::Default)
+    );
+    assert_eq!(
+        EmissionPolicy::select(None, Some(std::ffi::OsStr::new("default")), BuildKind::Release),
+        Ok(EmissionPolicy::Default)
+    );
+    assert_eq!(
+        EmissionPolicy::select(None, Some(std::ffi::OsStr::new("trace")), BuildKind::Release),
+        Ok(EmissionPolicy::Trace)
+    );
+    assert_eq!(
+        EmissionPolicy::select(None, Some(std::ffi::OsStr::new("unknown")), BuildKind::Release),
+        Err(EmissionConfigurationError::UnknownLevel)
     );
     let (mut observation, clock, capture) = fixture();
     observation.full_trace = false;
@@ -1748,7 +1878,7 @@ pub(crate) fn fixture() -> (Observation, Arc<ManualClock>, Capture) {
 }
 pub(crate) fn fixture_installation(arguments: Value) -> (OriginInstallation, Observation, Arc<ManualClock>, Capture) {
     let (observation, clock, capture) = fixture();
-    let installation = OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), arguments).unwrap();
+    let installation = OriginInstallation::from_guard(BootstrapGuard(Some(observation.clone())), arguments);
     (installation, observation, clock, capture)
 }
 pub(crate) fn with_fixture_subscriber<T>(observation: &Observation, run: impl FnOnce() -> T) -> T {

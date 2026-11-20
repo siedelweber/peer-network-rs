@@ -2,7 +2,7 @@
 
 use std::ffi::{OsStr, OsString};
 use std::future::Future;
-use std::io::{self, IsTerminal, Write};
+use std::io::{self, Write};
 use std::process::ExitCode;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Mutex, MutexGuard, TryLockError};
@@ -121,7 +121,7 @@ pub enum ControlPlaneFields {
     /// Help text returned by clap or a command-specific renderer.
     Help { text: String },
     /// Version string returned by clap or the command.
-    Version { version: String },
+    Version { version: String, build_kind: String },
     /// Details for an argv parsing or usage error.
     UsageError { exit_code: u8, clap_error_kind: String },
     /// Details for stdout TTY refusal.
@@ -133,6 +133,8 @@ pub enum ControlPlaneFields {
         location: Option<String>,
         #[serde(skip_serializing_if = "Option::is_none")]
         payload: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        backtrace: Option<String>,
     },
 }
 
@@ -219,6 +221,7 @@ impl ControlPlaneRecord {
             "version requested",
             Some(ControlPlaneFields::Version {
                 version: version.to_string(),
+                build_kind: observation::BuildKind::compiled().name().to_owned(),
             }),
         )
     }
@@ -296,6 +299,7 @@ impl ControlPlaneRecord {
                 thread: thread.map(str::to_string),
                 location: location.map(str::to_string),
                 payload: payload.map(str::to_string),
+                backtrace: None,
             }),
         )
     }
@@ -581,7 +585,10 @@ where
         match parse_args_from::<T, _, _>(std::env::args_os()) {
             Ok(args) => args,
             Err(exit) => {
-                let _ignored = emit_control_plane_record(&exit.record);
+                let written = emit_control_plane_record(&exit.record);
+                if written.is_err() && exit.exit == CommandExit::Success {
+                    exit_with(CommandExit::Failure);
+                }
                 exit_with(exit.exit);
             }
         }
@@ -653,6 +660,12 @@ fn debug_name_to_snake_case(name: &str) -> String {
     ret
 )]
 pub fn emit_control_plane_record(record: &ControlPlaneRecord) -> io::Result<()> {
+    if matches!(record.kind, ControlPlaneRecordKind::Help | ControlPlaneRecordKind::Version) {
+        return emit(record);
+    }
+    if observation::process_policy() == observation::EmissionPolicy::Off {
+        return Ok(());
+    }
     let mut writer = LockedStderrWriter::locked_stderr();
     write_json_line(&mut writer, record)
 }
@@ -668,7 +681,6 @@ fn try_emit_control_plane_record(record: &ControlPlaneRecord) -> io::Result<bool
 
 fn write_json_line<W: Write, T: serde::Serialize>(writer: &mut W, value: &T) -> io::Result<()> {
     let json = serde_json::to_string(value)?;
-    tracing::info!(public_json = %json);
     writer.write_all(json.as_bytes())?;
     writer.write_all(b"\n")?;
     writer.flush()
@@ -683,14 +695,36 @@ fn write_json_line<W: Write, T: serde::Serialize>(writer: &mut W, value: &T) -> 
 pub fn install_json_panic_hook(command_name: &str) {
     let command_name = command_name.to_string();
     std::panic::set_hook(Box::new(move |panic_info| {
-        if !PANIC_REPORTED.swap(true, Ordering::SeqCst) {
+        if !PANIC_REPORTED.swap(true, Ordering::SeqCst) && observation::process_policy() != observation::EmissionPolicy::Off {
             let current_thread = std::thread::current();
-            let thread_name = current_thread.name();
             let location = panic_info
                 .location()
                 .map(|location| format!("{}:{}:{}", location.file(), location.line(), location.column()));
-            let payload = panic_payload_message(panic_info);
-            let record = ControlPlaneRecord::panic(&command_name, thread_name, location.as_deref(), payload);
+            let backtrace = match std::env::var("RUST_BACKTRACE") {
+                Ok(value) if value != "0" && !value.is_empty() => {
+                    let captured = std::backtrace::Backtrace::force_capture();
+                    Some(if value == "full" {
+                        format!("{captured:?}")
+                    } else {
+                        captured.to_string()
+                    })
+                }
+                _ => None,
+            };
+            let record = ControlPlaneRecord {
+                schema: CONTROL_PLANE_SCHEMA,
+                command: command_name.clone(),
+                kind: ControlPlaneRecordKind::Panic,
+                message: "unexpected panic".to_owned(),
+                arguments: None,
+                fields: Some(ControlPlaneFields::Panic {
+                    exit_code: CommandExit::Failure.code(),
+                    thread: current_thread.name().map(str::to_owned),
+                    location,
+                    payload: panic_payload_message(panic_info).map(str::to_owned),
+                    backtrace,
+                }),
+            };
             let _ignored = try_emit_control_plane_record(&record);
         }
 
@@ -731,11 +765,8 @@ pub fn exit_with(exit: CommandExit) -> ! {
     ret
 )]
 pub fn stdout_tty_refusal_record(command_name: &str) -> Option<ControlPlaneRecord> {
-    if io::stdout().is_terminal() {
-        Some(ControlPlaneRecord::tty_refusal(command_name))
-    } else {
-        None
-    }
+    let _ = command_name;
+    None
 }
 
 /// Refuse to run if stdout is a terminal (´[ROOT-rec:output:decision]´).
@@ -752,8 +783,21 @@ pub fn stdout_tty_refusal_record(command_name: &str) -> Option<ControlPlaneRecor
     ret
 )]
 pub fn refuse_if_stdout_is_tty(binary_name: &str) {
-    if let Some(record) = stdout_tty_refusal_record(binary_name) {
-        let _ignored = emit_control_plane_record(&record);
+    let _ = binary_name;
+}
+
+/// Select the immutable public observation policy before parsing or output.
+///
+/// This is the executable boundary for invalid selection: the presence conflict
+/// is silent and all other refusals attempt a public usage diagnostic.
+/// Justified: This pre-installation selector emits only the selected direct terminal diagnostic and cannot instrument itself.
+pub fn select_observation_policy_or_exit(command_name: &str) {
+    if let Err(error) = observation::select_process_policy() {
+        if error != observation::EmissionConfigurationError::ConflictingInputs {
+            let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
+            record.message = error.to_string();
+            let _ignored = emit_control_plane_record(&record);
+        }
         exit_with(CommandExit::Usage);
     }
 }
@@ -810,9 +854,12 @@ pub fn try_init_json_tracing_with_debug(
 pub fn emit<T: serde::Serialize>(value: &T) -> io::Result<()> {
     let scope = crate::observation::scope("CLICOMMON", "rule:observe:spans", "emit", &std::any::type_name::<T>());
     let result = {
+        let mut bytes = serde_json::to_vec(value)?;
+        bytes.push(b'\n');
         let stdout = io::stdout();
         let mut out = stdout.lock();
-        write_json_line(&mut out, value)
+        out.write_all(&bytes)?;
+        out.flush()
     };
     scope.finish(&result);
     result
@@ -911,18 +958,27 @@ where
     Prepare: FnOnce() -> OriginPreparation<Context>,
     Run: FnOnce(Context) -> Result<Output, CommandError>,
 {
-    run_stdout_json_command_from_origin_inner(
+    let control_failed = std::cell::Cell::new(false);
+    let result = run_stdout_json_command_from_origin_inner(
         command_name,
         || install_json_panic_hook(command_name),
         prepare,
         || stdout_tty_refusal_record(command_name),
         |arguments| observation::install_from_origin(origin, debug, default_level, arguments).map(Some),
         |record| {
-            let _ignored = emit_control_plane_record(record);
+            if emit_control_plane_record(record).is_err() {
+                control_failed.set(true);
+            }
         },
         emit,
         run,
-    )
+    );
+    if control_failed.get() && result == ExitCode::SUCCESS {
+        tracing::error!("failed to write JSON result to stdout");
+        CommandExit::Failure.exit_code()
+    } else {
+        result
+    }
 }
 
 /// Justified: This entry-origin adapter selects a bounded pre-installation path and hands it to the explicit command root without starting a second operation.

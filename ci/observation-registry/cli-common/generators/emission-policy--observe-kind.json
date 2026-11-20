@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "observation::EmissionPolicy",
+    "kind": "derive",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "expansion_review": "The exact derive syntax and complete containing enum are bound to this admission. Clone, Copy, Debug and equality provide structural public policy values without observing or exposing a private capability.",
+    "class_decision": "public-cli"
+  }
+}

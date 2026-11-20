@@ -77,12 +77,19 @@ def required_packages(root):
             closure = resolve(root,package['name'],bind=False)
             if required.intersection(row['name'] for row in closure):
                 required.add(package['name'])
-    return required
+    selections = {(package, True, ()) for package in required}
+    if 'pn-credential-generator' in required:
+        selections.add(('pn-credential-generator', True, ('debug-observation',)))
+    return selections
 
 
-def resolve(root, package, bind=True):
+def resolve(root, package, bind=True, features=(), default=True):
     command = ['cargo','tree','--offline','--locked','-p',package,'-e','normal,build',
                '--prefix','none','-f','{p}|{f}']
+    if not default:
+        command.append('--no-default-features')
+    if features:
+        command.extend(['--features', ','.join(features)])
     result = subprocess.run(command,cwd=root,text=True,capture_output=True,check=True)
     rows = parse_tree(result.stdout)
     return bind_sources(root,rows) if bind else rows
@@ -104,20 +111,32 @@ def check(root, run_tests=False):
     for path in rows:
         record = json.loads(path.read_text())
         package = record['package']
-        if not isinstance(package,str) or package in declared or set(record) != {'package','closure'} or not isinstance(record['closure'],list):
+        selection = record.get('selection')
+        if (not isinstance(package,str) or set(record) != {'package','selection','closure'}
+                or not isinstance(selection,dict) or set(selection) != {'default','features'}
+                or not isinstance(selection['default'],bool) or not isinstance(selection['features'],list)
+                or selection['features'] != sorted(set(selection['features']))
+                or not all(isinstance(feature,str) for feature in selection['features'])
+                or not isinstance(record['closure'],list)):
             raise ValueError('invalid protected package record')
-        declared.add(package)
+        key = (package,selection['default'],tuple(selection['features']))
+        if key in declared:
+            raise ValueError('duplicate protected package selection')
+        declared.add(key)
         loaded.append(record)
     required = required_packages(root)
     if declared != required:
         raise ValueError('protected package roster differs from required consumers')
     for record in loaded:
         package = record['package']
-        compare(package,record['closure'],resolve(root,package))
-        print('PROTECTED-PACKAGE package='+package+' closure=matched',flush=True)
+        selection = record['selection']
+        features = tuple(selection['features'])
+        compare(package+' features='+','.join(features),record['closure'],resolve(root,package,features=features,default=selection['default']))
+        print('PROTECTED-PACKAGE package='+package+' features='+','.join(features)+' closure=matched',flush=True)
         if run_tests:
-            subprocess.run(['cargo','build','--offline','--locked','--profile','gate','-p',package],cwd=root,check=True)
-            subprocess.run(['cargo','test','--offline','--locked','--profile','gate','-p',package],cwd=root,check=True)
+            args = ['--features',','.join(features)] if features else []
+            subprocess.run(['cargo','build','--offline','--locked','--profile','gate','-p',package,*args],cwd=root,check=True)
+            subprocess.run(['cargo','test','--offline','--locked','--profile','gate','-p',package,*args],cwd=root,check=True)
 
 
 def main():

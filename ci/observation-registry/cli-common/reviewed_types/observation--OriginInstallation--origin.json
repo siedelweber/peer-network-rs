@@ -4,6 +4,6 @@
     "item": "observation::OriginInstallation",
     "package": "cli-common",
     "path": "packages/cli-common/src/observation.rs",
-    "syntax": "# [doc = \" Owns the installed observer and its precreated command root until transfer.\"] pub struct OriginInstallation { root : Option < Operation > , _guard : BootstrapGuard , }"
+    "syntax": "# [doc = \" Owns the installed observer and its precreated command root until transfer.\"] pub struct OriginInstallation { root : Option < Operation > , root_taken : bool , _guard : BootstrapGuard , }"
   }
 }

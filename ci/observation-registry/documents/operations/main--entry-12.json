@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "documents::packages/documents/src/bin/documents-panic-probe.rs::main",
-    "body": "{ documents :: install_panic_hook () ; let _arguments = cli_common :: parse_args_or_exit :: < Arguments > () ; panic ! (\"contract probe\") ; }",
+    "body": "{ cli_common :: select_observation_policy_or_exit (\"documents-panic-probe\") ; documents :: install_panic_hook () ; let _arguments = cli_common :: parse_args_or_exit :: < Arguments > () ; panic ! (\"contract probe\") ; }",
     "class_decision": "public-documents",
-    "item_premise": "This body inherits the public-documents decision for main.",
+    "item_premise": "Current entry selects immutable public policy before parsing or work; the panic probe uses that same selected shared route.",
     "assessments": {
       "full_recording": "review-172",
       "secret_flow": "review-002",

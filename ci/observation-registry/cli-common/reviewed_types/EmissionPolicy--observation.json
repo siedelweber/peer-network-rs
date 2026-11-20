@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "observation::EmissionPolicy",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "syntax": "# [doc = \" Immutable selection made before command output or work.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum EmissionPolicy { # [doc = \" Release observation is deliberately absent.\"] Off , # [doc = \" Deliver terminal errors only.\"] Error , # [doc = \" Deliver ordinary summaries and diagnostics.\"] Default , # [doc = \" Deliver complete public trace content too.\"] Trace , }"
+  }
+}

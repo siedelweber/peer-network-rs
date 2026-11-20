@@ -10,4 +10,6 @@ lto = "thin"
 codegen_units = 1
 toolchain_gate = "toolchain"
 profile_gate = "build-policy"
+debug_profile = "release-debug"
+debug_feature = "debug-observation"
 tests_gate = "discipline-tests"

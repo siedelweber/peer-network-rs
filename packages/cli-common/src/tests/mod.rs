@@ -688,7 +688,7 @@ fn sole_version_carries_caller_metadata() {
             "command": "entry",
             "kind": "version",
             "message": "version requested",
-            "fields": {"type": "version", "version": "package 1.2.3"}
+            "fields": {"type": "version", "version": "package 1.2.3", "build_kind": "release"}
         })
     );
 }
@@ -756,10 +756,11 @@ fn parse_args_from_returns_version_record() {
     assert_eq!(exit.record.command, "fixture-helper");
     assert_eq!(exit.record.kind, ControlPlaneRecordKind::Version);
 
-    let Some(ControlPlaneFields::Version { version }) = exit.record.fields else {
+    let Some(ControlPlaneFields::Version { version, build_kind }) = exit.record.fields else {
         panic!("version record should carry version text");
     };
     assert_eq!(version, "fixture-helper 1.2.3");
+    assert_eq!(build_kind, crate::observation::BuildKind::compiled().name());
 }
 
 /// Claim: An unknown flag returns usage exit 2 and the `unknown_argument` field with the command identity, making parse failure classifiable.

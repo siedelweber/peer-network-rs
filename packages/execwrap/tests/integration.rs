@@ -395,10 +395,10 @@ fn unredirected_streams_pass_through_pipes() {
     assert!(stderr.contains("still-visible"), "stderr was discarded");
 }
 
-/// Help and version are control-plane paths: JSON on stderr, empty
-/// stdout, exit 0. Usage failures exit 2 (´[ROOT-rec:output:decision]´).
+/// Help and version are JSON results on stdout with exit 0.
+/// Usage failures exit 2 (´[ROOT-rec:output:decision]´).
 ///
-/// Claim: `Help` and version exit 0 with empty stdout and a first JSON record naming execwrap; unknown flags, missing separator and missing command exit 2.
+/// Claim: `Help` and version exit 0 with a JSON stdout result naming execwrap; unknown flags, missing separator and missing command exit 2.
 /// ´claim:cli:help-version-and-usage-follow-the-output-contract´
 /// ´test:integration:help-version-and-usage-follow-the-output-contract´
 #[test]
@@ -406,11 +406,10 @@ fn help_version_and_usage_follow_the_output_contract() {
     for flag in ["--help", "--version"] {
         let output = run(&[flag]);
         assert_eq!(output.status.code(), Some(0), "{flag} must exit 0");
-        assert!(output.stdout.is_empty(), "{flag} must not write stdout");
-
-        let stderr = String::from_utf8(output.stderr).expect("stderr is text");
+        assert!(output.stderr.is_empty(), "{flag} must not write diagnostics");
+        let stdout = String::from_utf8(output.stdout).expect("stdout is text");
         let record: serde_json::Value =
-            serde_json::from_str(stderr.lines().next().expect("one record")).expect("stderr record is JSON");
+            serde_json::from_str(stdout.lines().next().expect("one result")).expect("stdout result is JSON");
         assert_eq!(record["command"], "execwrap");
     }
 
@@ -539,9 +538,7 @@ fn observation_preserves_child_results() {
     assert_eq!(enabled.status.code(), disabled.status.code());
     assert_eq!(enabled.status.code(), Some(7));
     assert_eq!(enabled.stdout, b"\xff\0public");
-    let unavailable: serde_json::Value = serde_json::from_slice(&disabled.stderr).unwrap();
-    assert_eq!(unavailable["availability"], "disabled");
-    assert_eq!(unavailable["measurements"], "unavailable");
+    assert!(disabled.stderr.is_empty(), "validly disabled collection has no status row");
     let records: Vec<serde_json::Value> = std::str::from_utf8(&enabled.stderr)
         .unwrap()
         .lines()

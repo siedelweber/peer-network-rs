@@ -12,9 +12,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/lib.rs::emit",
-    "body": "{ let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"emit\" , & std :: any :: type_name :: < T > ()) ; let result = { let stdout = io :: stdout () ; let mut out = stdout . lock () ; write_json_line (& mut out , value) } ; scope . finish (& result) ; result }",
+    "body": "{ let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"emit\" , & std :: any :: type_name :: < T > ()) ; let result = { let mut bytes = serde_json :: to_vec (value) ? ; bytes . push (b'\\n') ; let stdout = io :: stdout () ; let mut out = stdout . lock () ; out . write_all (& bytes) ? ; out . flush () } ; scope . finish (& result) ; result }",
     "class_decision": "public-cli",
-    "item_premise": "This body inherits the public-cli decision for emit.",
+    "item_premise": "Current body serializes a complete public JSON result before one stdout write attempt and reports transport failure without promising physical rollback.",
     "assessments": {
       "full_recording": "review-275",
       "secret_flow": "review-002",

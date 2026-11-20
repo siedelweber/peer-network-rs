@@ -12,9 +12,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/lib.rs::ControlPlaneRecord::panic",
-    "body": "{ Self :: new (command , ControlPlaneRecordKind :: Panic , \"unexpected panic\" , Some (ControlPlaneFields :: Panic { exit_code : CommandExit :: Failure . code () , thread : thread . map (str :: to_string) , location : location . map (str :: to_string) , payload : payload . map (str :: to_string) , }) ,) }",
+    "body": "{ Self :: new (command , ControlPlaneRecordKind :: Panic , \"unexpected panic\" , Some (ControlPlaneFields :: Panic { exit_code : CommandExit :: Failure . code () , thread : thread . map (str :: to_string) , location : location . map (str :: to_string) , payload : payload . map (str :: to_string) , backtrace : None , }) ,) }",
     "class_decision": "public-cli",
-    "item_premise": "This body inherits the public-cli decision for ControlPlaneRecord::panic.",
+    "item_premise": "Current body emits a catchable panic once through the direct terminal route, with optional conventional backtrace and no quiet-release write.",
     "assessments": {
       "full_recording": "review-255",
       "secret_flow": "review-002",

@@ -1087,6 +1087,29 @@ class Processes(unittest.TestCase):
             created[0].join(timeout=1)
             self.assertFalse(created[0].is_alive())
 
+    def test_release_off_stderr(self):
+        """Controlled release-off result, usage, panic and runtime paths leave stderr empty with their unchanged exit classes.
+        ´claim:discipline:release-off-stderr-is-empty´
+        ´test:integration:test-release-off-stderr´
+        """
+        target=Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate'
+        env={key:value for key,value in os.environ.items() if key not in ('PN_OBSERVE_LEVEL','PN_OBSERVE_DISABLE')}
+        env['PN_OBSERVE_DISABLE']='1'
+        with tempfile.TemporaryDirectory() as directory:
+            for command, expected in [
+                ([str(target/'documents'),'--help'],0),
+                ([str(target/'documents'),'--unknown'],2),
+                ([str(target/'documents-panic-probe')],1),
+                ([str(target/'documents'),'--root',directory+'/missing','check'],1),
+            ]:
+                result=run(command,env=env)
+                self.assertEqual(result.returncode,expected,command)
+                self.assertEqual(result.stderr,b'',command)
+                if expected == 0:self.assertTrue(result.stdout.endswith(b'\n'))
+                else:self.assertEqual(result.stdout,b'')
+            conflict=run([str(target/'documents'),'--help'],env=env|{'PN_OBSERVE_LEVEL':'default'})
+            self.assertEqual((conflict.returncode,conflict.stdout,conflict.stderr),(2,b'',b''))
+
     def test_four_mode_results(self):
         """Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit; all enabled modes count the same labelled operations and terminal outcome distributions, default omits only unobserved series, and an unknown level refuses document execution before work.
         ´claim:discipline:four-observation-modes-preserve-command-results´
@@ -1111,7 +1134,10 @@ class Processes(unittest.TestCase):
             artifact=Path('.lane/observation-comparison');artifact.mkdir(exist_ok=True)
             for mode in ('disabled','default','trace','failing-export'):
                 objects=artifact/(mode+'-objects')
-                selected=env | {'PN_OBSERVE_LEVEL':'trace' if mode in ('trace','failing-export') else 'default', 'PN_OBSERVE_ARTIFACT_DIR':str(objects.resolve())}
+                selected={key:value for key,value in env.items() if key not in ('PN_OBSERVE_LEVEL','PN_OBSERVE_DISABLE')}
+                selected['PN_OBSERVE_ARTIFACT_DIR']=str(objects.resolve())
+                if mode=='disabled':selected['PN_OBSERVE_DISABLE']='1'
+                else:selected['PN_OBSERVE_LEVEL']='trace' if mode in ('trace','failing-export') else 'default'
                 result=compare([str(target/'examples/observation_compare'),mode,str(root)],mode,selected,
                                retain_timeout=True)
                 self.assertEqual(result.returncode,0,result.stderr.decode())
@@ -1127,9 +1153,7 @@ class Processes(unittest.TestCase):
                     self.assertEqual(len(summary['instruments'])+(summary['declared_but_unobserved'] if mode=='default' else 0),summary['declared_series'])
                 self.assertNotIn(b'fixture-private-token',result.stdout+result.stderr)
                 if mode=='disabled':
-                    self.assertEqual(len(rows),1)
-                    self.assertEqual(rows[0].get('availability'),'disabled')
-                    self.assertEqual(rows[0].get('kind'),'observation_status')
+                    self.assertEqual(rows,[])
                 elif mode=='default':
                     self.assertFalse(any(row.get('kind') in ('trace','span_envelope') for row in rows))
                     status=next(row for row in rows if row.get('kind')=='observation_status')

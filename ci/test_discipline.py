@@ -357,17 +357,18 @@ class WorkspaceChecks(unittest.TestCase):
             root = Path(directory)
             records = root/'ci/protected-packages'
             records.mkdir(parents=True)
-            (records/'one.json').write_text(json.dumps(dict(package='pn-secret-home', closure=[])))
-            with patch('protected_packages.resolve') as resolve, patch('protected_packages.required_packages',return_value={'pn-secret-home','pn-credential-derivation','pn-credential-generator'}):
+            (records/'one.json').write_text(json.dumps(dict(package='pn-secret-home', selection={'default':True,'features':[]}, closure=[])))
+            required = {('pn-secret-home',True,()),('pn-credential-derivation',True,()),('pn-credential-generator',True,()),('pn-credential-generator',True,('debug-observation',))}
+            with patch('protected_packages.resolve') as resolve, patch('protected_packages.required_packages',return_value=required):
                 resolve.side_effect = AssertionError('roster refuses before resolution')
                 with self.assertRaisesRegex(ValueError, 'protected package roster differs'):
                     check(root, True)
                 resolve.assert_not_called()
-                (records/'two.json').write_text(json.dumps(dict(package='pn-credential-derivation',closure=[])))
+                (records/'two.json').write_text(json.dumps(dict(package='pn-credential-derivation',selection={'default':True,'features':[]},closure=[])))
                 with self.assertRaisesRegex(ValueError, 'protected package roster differs'):
                     check(root)
                 (records/'duplicate.json').write_bytes((records/'one.json').read_bytes())
-                with self.assertRaisesRegex(ValueError, 'invalid protected package record'):
+                with self.assertRaisesRegex(ValueError, 'duplicate protected package selection'):
                     check(root)
                 (records/'duplicate.json').write_text(json.dumps(dict(package='other',closure='invalid')))
                 with self.assertRaisesRegex(ValueError, 'invalid protected package record'):
@@ -379,8 +380,8 @@ class WorkspaceChecks(unittest.TestCase):
         from protected_packages import required_packages, bind_sources
         metadata = dict(workspace_members=['future','generator'],packages=[dict(id='future',name='future-executable',targets=[dict(kind=['bin'])]),dict(id='generator',name='pn-credential-generator',targets=[dict(kind=['bin'])])])
         with patch('protected_packages.subprocess.run',return_value=subprocess.CompletedProcess([],0,json.dumps(metadata))), patch('protected_packages.resolve',return_value=[dict(name='pn-secret-home')]):
-            self.assertIn('future-executable',required_packages(Path('.')), 'every executable with a secret closure is protected')
-            self.assertIn('pn-credential-generator',required_packages(Path('.')), 'present generator requires its protected row')
+            self.assertIn(('future-executable',True,()),required_packages(Path('.')), 'every executable with a secret closure is protected')
+            self.assertIn(('pn-credential-generator',True,()),required_packages(Path('.')), 'present generator requires its protected row')
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root/'Cargo.lock').write_text('[[package]]\nname="x"\nversion="1.0.0"\nsource="registry+https://example.invalid/index"\nchecksum="one"\n')
@@ -456,7 +457,7 @@ class WorkspaceChecks(unittest.TestCase):
             self.assertEqual(result.stdout.count('CREDENTIAL-GUARD-MUTANT '), 5, 'five credential guard witnesses execute')
 
     def test_credential_receiver_census(self):
-        """One foreign-number call at the closed self-targeted acquisition site is required; another call, role slot, target or entry order refuses.
+        """One foreign-number call follows only public policy and hook setup before acquisition; another call, role slot, target or entry order refuses.
         ´claim:discipline:credential-receiver-census-pins-first-entry´
         ´test:integration:test-credential-receiver-census´
         """
@@ -494,9 +495,11 @@ class WorkspaceChecks(unittest.TestCase):
         second = source + '\nfn second(p: &std::os::fd::OwnedFd) { let _ = rustix::process::pidfd_getfd(p, 3, rustix::process::PidfdGetfdFlags::empty()); }\n'
         self.assertTrue(credential_receiver_findings({path: second}), 'second foreign-number use refuses')
         generator = Path('packages/credential-generator/src/main.rs')
-        good = 'fn main() -> ExitCode { let receivers = pn_secret_home::acquire_receivers(); finish(receivers) }'
+        good = 'fn main() -> ExitCode { cli_common::select_observation_policy_or_exit("pn-credential-generator"); cli_common::install_json_panic_hook("pn-credential-generator"); let receivers = pn_secret_home::acquire_receivers(); finish(receivers) }'
         self.assertEqual(credential_receiver_findings({path: source, generator: good}), [])
-        self.assertTrue(credential_receiver_findings({path: source, generator: good.replace('let receivers', 'open_something(); let receivers')}), 'later acquisition refuses')
+        self.assertTrue(credential_receiver_findings({path: source, generator: good.replace('cli_common::install_json_panic_hook("pn-credential-generator"); ', '')}), 'missing policy-aware hook refuses')
+        self.assertTrue(credential_receiver_findings({path: source, generator: good.replace('let receivers', 'open_something(); let receivers')}), 'descriptor opening before acquisition refuses')
+        self.assertTrue(credential_receiver_findings({path: source, generator: good.replace('cli_common::select_observation_policy_or_exit("pn-credential-generator"); ', '')}), 'missing policy selection refuses')
         self.assertTrue(credential_receiver_findings({path: source, generator: good+' fn later() { let _ = pn_secret_home::acquire_receivers(); }'}), 'second generator acquisition reference refuses')
         foreign = Path('packages/other/src/main.rs')
         for reference in ('pn_secret_home::acquire_receivers()', 'use pn_secret_home::acquire_receivers as later;', 'let later = pn_secret_home::acquire_receivers;'):
@@ -1403,6 +1406,7 @@ class SourceDiscipline(unittest.TestCase):
         ´test:integration:test-build-policy´
         """
         manifest = '[workspace]\nmembers=["packages/example"]\n[workspace.package]\n[profile.release]\nlto="thin"\ncodegen-units=1\n'
+        manifest += '[profile.release-debug]\ninherits="release"\ndebug=2\nstrip="none"\n'
         manifest += '[profile.gate]\ninherits="dev"\nopt-level=1\ndebug=0\ndebug-assertions=true\noverflow-checks=true\n'
         member = '[package]\nname="example"\n'
         policy = Path('docs/inputs/build-policy.toml').read_text()
@@ -1418,6 +1422,8 @@ class SourceDiscipline(unittest.TestCase):
                             manifest.replace('debug-assertions=true', 'debug-assertions=false'),
                             manifest.replace('overflow-checks=true', 'overflow-checks=false'),
                             manifest.replace('opt-level=1', 'opt-level=2'), manifest.replace('debug=0', 'debug=2'),
+                            manifest.replace('strip="none"', 'strip="debuginfo"'),
+                            manifest.replace('inherits="release"', 'inherits="dev"'),
                             manifest + '[profile.dev]\nopt-level=1\n', manifest + '[profile.test]\nopt-level=1\n',
                             manifest.replace('[workspace.package]', '[workspace.package]\nrust-version="1.90"')]:
                 (root / 'Cargo.toml').write_text(changed)

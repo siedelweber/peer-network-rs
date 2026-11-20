@@ -4,6 +4,7 @@
 //! envelopes identify (´[ROOT-rule:observe:spans]´) without claiming their work.
 //! Explicit operation contexts account independently of filtered tracing spans.
 
+use std::ffi::OsStr;
 use std::fmt;
 use std::io::{self, Write};
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -44,6 +45,103 @@ pub const DRAIN_BASE_SECONDS: u64 = 1;
 /// Additional exit-drain allowance per queued MiB rounded upward.
 pub const DRAIN_SECONDS_PER_MIB: u64 = 1;
 static GLOBAL: OnceLock<Observation> = OnceLock::new();
+static PROCESS_POLICY: OnceLock<EmissionPolicy> = OnceLock::new();
+
+/// The observation kind fixed by the executable's production feature.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BuildKind {
+    /// Fully optimized release without optional observation.
+    Release,
+    /// Fully optimized debug with mandatory observation.
+    Debug,
+}
+
+impl BuildKind {
+    /// Return the kind compiled into this executable.
+    /// Justified: The compile-time kind is read before observation installation and cannot record itself.
+    #[must_use]
+    pub const fn compiled() -> Self {
+        if cfg!(feature = "debug-observation") {
+            Self::Debug
+        } else {
+            Self::Release
+        }
+    }
+
+    /// Return the stable public spelling.
+    /// Justified: The kind spelling is read by the pre-installation result path and cannot record itself.
+    #[must_use]
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Release => "release",
+            Self::Debug => "debug",
+        }
+    }
+}
+
+/// Immutable selection made before command output or work.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum EmissionPolicy {
+    /// Release observation is deliberately absent.
+    Off,
+    /// Deliver terminal errors only.
+    Error,
+    /// Deliver ordinary summaries and diagnostics.
+    Default,
+    /// Deliver complete public trace content too.
+    Trace,
+}
+
+impl EmissionPolicy {
+    /// Select the policy from the two public inputs and the compiled kind.
+    ///
+    /// # Errors
+    /// Refuses conflicts before spelling checks, then malformed disable and level values.
+    /// Justified: Pure selection runs before observation installation and cannot record itself.
+    pub fn select(disable: Option<&OsStr>, level: Option<&OsStr>, kind: BuildKind) -> Result<Self, EmissionConfigurationError> {
+        if disable.is_some() && level.is_some() {
+            return Err(EmissionConfigurationError::ConflictingInputs);
+        }
+        if let Some(value) = disable {
+            return match value.to_str() {
+                Some("1") if kind == BuildKind::Release => Ok(Self::Off),
+                Some("1") => Err(EmissionConfigurationError::DebugCannotDisable),
+                Some(_) => Err(EmissionConfigurationError::InvalidDisable),
+                None => Err(EmissionConfigurationError::NonUtf8Disable),
+            };
+        }
+        match level.map(OsStr::to_str) {
+            None | Some(Some("default")) => Ok(Self::Default),
+            Some(Some("error")) => Ok(Self::Error),
+            Some(Some("trace")) => Ok(Self::Trace),
+            Some(Some(_)) => Err(EmissionConfigurationError::UnknownLevel),
+            Some(None) => Err(EmissionConfigurationError::NonUtf8Level),
+        }
+    }
+}
+
+/// Read and retain one process policy before any output attempt.
+///
+/// # Errors
+/// Returns a typed usage refusal without installing observation.
+/// Justified: Process selection precedes observation installation and cannot record itself.
+pub fn select_process_policy() -> Result<EmissionPolicy, EmissionConfigurationError> {
+    if let Some(policy) = PROCESS_POLICY.get() {
+        return Ok(*policy);
+    }
+    let disable = std::env::var_os("PN_OBSERVE_DISABLE");
+    let level = std::env::var_os("PN_OBSERVE_LEVEL");
+    let selected = EmissionPolicy::select(disable.as_deref(), level.as_deref(), BuildKind::compiled())?;
+    let _installed = PROCESS_POLICY.set(selected);
+    Ok(PROCESS_POLICY.get().copied().unwrap_or(selected))
+}
+
+/// The selected policy, or default when called by a library-only control.
+/// Justified: The policy accessor serves pre-installation and terminal routes without recursively recording itself.
+#[must_use]
+pub fn process_policy() -> EmissionPolicy {
+    PROCESS_POLICY.get().copied().unwrap_or(EmissionPolicy::Default)
+}
 
 /// Preserve public bytes as tagged UTF-8 or base64 for observation.
 /// Justified: Representation runs inside the labelled observation delivery operation and must not recursively observe itself.
@@ -309,22 +407,24 @@ pub struct RootAlreadyTaken;
 /// Owns the installed observer and its precreated command root until transfer.
 pub struct OriginInstallation {
     root: Option<Operation>,
+    root_taken: bool,
     _guard: BootstrapGuard,
 }
 
 impl OriginInstallation {
     /// Justified: This entry-origin adapter creates the one explicit command root after installation; a span here would create a second operation.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the prefix and root-once controls witness the enclosing operation.
-    pub(crate) fn from_guard(guard: BootstrapGuard, arguments: Value) -> Result<Self, BootstrapError> {
-        let Some(observation) = guard.0.as_ref() else {
-            return Err(ObserverUnavailable::Writer.into());
-        };
-        let mut root = observation.operation(OperationKind::Command, arguments);
-        root.started = Duration::ZERO;
-        Ok(Self {
-            root: Some(root),
+    pub(crate) fn from_guard(guard: BootstrapGuard, arguments: Value) -> Self {
+        let root = guard.0.as_ref().map(|observation| {
+            let mut root = observation.operation(OperationKind::Command, arguments);
+            root.started = Duration::ZERO;
+            root
+        });
+        Self {
+            root,
+            root_taken: false,
             _guard: guard,
-        })
+        }
     }
 
     /// Transfer the command root once. Its lease must finish before this guard drains.
@@ -334,19 +434,20 @@ impl OriginInstallation {
     /// Justified: This entry-origin adapter precedes the adopted command span and transfers ownership of the explicit root without starting another operation.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the root-once control witnesses the enclosing command operation.
     pub fn take_root(&mut self) -> Result<RootLease<'_>, RootAlreadyTaken> {
-        self.root
-            .take()
-            .map(|operation| RootLease {
-                operation,
-                _guard: std::marker::PhantomData,
-            })
-            .ok_or(RootAlreadyTaken)
+        if self.root_taken {
+            return Err(RootAlreadyTaken);
+        }
+        self.root_taken = true;
+        Ok(RootLease {
+            operation: self.root.take(),
+            _guard: std::marker::PhantomData,
+        })
     }
 }
 
 /// Sole completion owner of an origin-rooted command operation.
 pub struct RootLease<'a> {
-    operation: Operation,
+    operation: Option<Operation>,
     _guard: std::marker::PhantomData<&'a OriginInstallation>,
 }
 
@@ -355,15 +456,20 @@ impl RootLease<'_> {
     /// Justified: This entry-origin adapter completes the already started command operation; instrumenting it separately would create another accounting boundary.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the root-once control witnesses completion through the enclosing operation.
     pub fn finish(self, outcome: Outcome, result: Value) {
-        self.operation.finish(outcome, result);
+        if let Some(operation) = self.operation {
+            operation.finish(outcome, result);
+        }
     }
 
     /// Justified: This entry-origin adapter lends the existing root identity to a contextual span without creating another operation.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the runner-order control witnesses child attachment to the enclosing root.
     pub(crate) fn enter_command_scope(&self, command_name: &str) -> Scope {
+        let Some(operation) = self.operation.as_ref() else {
+            return Scope(tracing::Span::none().entered());
+        };
         let ticket = RootHandoff {
-            observation: Arc::as_ptr(&self.operation.observation.next_id) as usize,
-            root_id: self.operation.id,
+            observation: Arc::as_ptr(&operation.observation.next_id) as usize,
+            root_id: operation.id,
         };
         let span = with_root_handoff(ticket, || command_scope_span(command_name));
         Scope(span.entered())
@@ -402,7 +508,7 @@ fn install_from_origin_with(
     ) -> Result<BootstrapGuard, BootstrapError>,
 ) -> Result<OriginInstallation, BootstrapError> {
     let guard = bootstrap(true, debug, default_level, None, origin.started)?;
-    OriginInstallation::from_guard(guard, arguments)
+    Ok(OriginInstallation::from_guard(guard, arguments))
 }
 impl Clock for SystemClock {
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
@@ -483,6 +589,7 @@ pub struct Observation {
     #[cfg(test)]
     drain_wait_observer: Option<SyncSender<Option<Duration>>>,
     full_trace: bool,
+    error_only: bool,
     clock: Arc<dyn Clock>,
     recorder: JsonRecorder,
     next_id: Arc<AtomicU64>,
@@ -666,6 +773,7 @@ impl Delivery {
 }
 
 impl Observation {
+    #[cfg(test)]
     fn with_writer(writer: impl Write + Send + 'static, clock: Arc<dyn Clock>) -> io::Result<Self> {
         Self::with_writer_bridge(writer, clock, None)
     }
@@ -781,6 +889,7 @@ impl Observation {
             #[cfg(test)]
             drain_wait_observer: None,
             full_trace: false,
+            error_only: false,
             clock,
             recorder: bridge
                 .as_ref()
@@ -850,6 +959,7 @@ impl Observation {
     }
 
     #[track_caller]
+    #[cfg(test)]
     fn flush(&self) {
         self.flush_for(Duration::from_millis(100));
     }
@@ -920,6 +1030,9 @@ impl Observation {
 
     #[track_caller]
     fn final_status(&self) {
+        if self.error_only {
+            return;
+        }
         // Exit drainage scales with the outstanding byte charge, up to the
         // declared 64 MiB queue: one second plus one second per charged MiB.
         // The deadline bounds waiting for queued and in-flight publication.
@@ -1019,6 +1132,9 @@ impl Observation {
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub fn summarize(&self) {
+        if self.error_only {
+            return;
+        }
         if let Some(bridge) = &self.bridge {
             bridge.flush();
             let failures = bridge.failures.try_lock().ok().map(|values| values.clone());
@@ -1193,6 +1309,9 @@ pub struct Operation {
 }
 impl Operation {
     fn record(&self, event: &str, mut detail: Value) {
+        if self.observation.error_only {
+            return;
+        }
         if !self.observation.full_trace {
             if !matches!(self.kind, OperationKind::Command) || event != "completion" {
                 return;
@@ -1603,6 +1722,9 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                 operation.work_bytes(bytes);
             }
         }
+        if self.0.error_only && *event.metadata().level() != tracing::Level::ERROR {
+            return;
+        }
         if !self.0.full_trace && !diagnostic {
             return;
         }
@@ -1698,14 +1820,26 @@ pub enum BootstrapError {
 /// Refused values of the executable-owned emission setting.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum EmissionConfigurationError {
+    /// Two explicit selectors cannot be present in one invocation.
+    #[error("PN_OBSERVE_DISABLE conflicts with PN_OBSERVE_LEVEL")]
+    ConflictingInputs,
+    /// Only one exact spelling selects quiet release.
+    #[error("PN_OBSERVE_DISABLE must be 1 when present")]
+    InvalidDisable,
+    /// The disable input is public UTF-8 text.
+    #[error("PN_OBSERVE_DISABLE must be UTF-8: 1")]
+    NonUtf8Disable,
+    /// A debug build always observes terminal errors.
+    #[error("debug observation cannot be disabled")]
+    DebugCannotDisable,
     /// Environment-owned exporter settings bypass secret-owned acquisition.
     #[error("{0} refused; use secret-owned ExportConfig")]
     ExporterEnvironment(String),
     /// Only the two declared emission modes are accepted.
-    #[error("PN_OBSERVE_LEVEL must be default or trace")]
+    #[error("PN_OBSERVE_LEVEL must be error, default or trace")]
     UnknownLevel,
     /// Configuration is text and must not be decoded lossily.
-    #[error("PN_OBSERVE_LEVEL must be UTF-8: default or trace")]
+    #[error("PN_OBSERVE_LEVEL must be UTF-8: error, default or trace")]
     NonUtf8Level,
 }
 
@@ -1758,9 +1892,9 @@ pub fn bootstrap_with_export(
     default_level: tracing::Level,
     config: crate::observation_export::ExportConfig,
 ) -> Result<BootstrapGuard, BootstrapError> {
-    let _level = configured_level()?;
+    let policy = configured_policy()?;
     let started = Instant::now();
-    let bridge = if enabled {
+    let bridge = if enabled && policy != EmissionPolicy::Off {
         Some(Arc::new(crate::observation_export::Bridge::new(config)?))
     } else {
         None
@@ -1768,19 +1902,23 @@ pub fn bootstrap_with_export(
     bootstrap_inner(enabled, debug, default_level, bridge, started)
 }
 
-fn emission_level(value: Option<&str>) -> Result<bool, BootstrapError> {
-    match value {
-        None | Some("default") => Ok(false),
-        Some("trace") => Ok(true),
-        Some(_) => Err(EmissionConfigurationError::UnknownLevel.into()),
+fn configured_policy() -> Result<EmissionPolicy, BootstrapError> {
+    if let Some(policy) = PROCESS_POLICY.get() {
+        return Ok(*policy);
     }
+    let disable = std::env::var_os("PN_OBSERVE_DISABLE");
+    let level = std::env::var_os("PN_OBSERVE_LEVEL");
+    EmissionPolicy::select(disable.as_deref(), level.as_deref(), BuildKind::compiled()).map_err(Into::into)
 }
 
-fn configured_level() -> Result<bool, BootstrapError> {
-    match std::env::var("PN_OBSERVE_LEVEL") {
-        Ok(value) => emission_level(Some(&value)),
-        Err(std::env::VarError::NotPresent) => emission_level(None),
-        Err(std::env::VarError::NotUnicode(_)) => Err(EmissionConfigurationError::NonUtf8Level.into()),
+fn install_selected(
+    policy: EmissionPolicy,
+    initialize: impl FnOnce() -> Result<BootstrapGuard, BootstrapError>,
+) -> Result<BootstrapGuard, BootstrapError> {
+    if policy == EmissionPolicy::Off {
+        Ok(BootstrapGuard(None))
+    } else {
+        initialize()
     }
 }
 
@@ -1792,52 +1930,48 @@ fn bootstrap_inner(
     bridge: Option<Arc<crate::observation_export::Bridge>>,
     started: Instant,
 ) -> Result<BootstrapGuard, BootstrapError> {
-    let level = configured_level()?;
-    if !enabled {
-        let status = Observation::with_writer(StderrSink, Arc::new(SystemClock(Instant::now())))
-            .map_err(|_| ObserverUnavailable::StatusWriter)?;
-        status.emit(json!({"kind":"observation_status","name":"dec:observe:sinks","claim_owner":"ROOT",
-            "claim_label":"dec:observe:sinks","execution_owner":"CLICOMMON","availability":"disabled","measurements":"unavailable"}));
-        status.flush();
-        return Ok(BootstrapGuard(None));
-    }
-    if GLOBAL.get().is_some() {
-        return Err(ObserverUnavailable::ObservationAlreadyInitialized.into());
-    }
-    let evidence_capture = false;
-    #[cfg(feature = "observation-test-hook")]
-    let evidence_capture = evidence_capture || std::env::var_os("PN_OBSERVE_COMPLETE_EVIDENCE").is_some();
-    let mut observation = if evidence_capture {
-        // The finite evidence roster fits these slots and the unchanged byte bound.
-        // Holding the worker until flush makes completeness independent of scheduling.
-        Observation::with_delivery(
-            StderrSink,
-            Arc::new(SystemClock(started)),
-            bridge,
-            EVIDENCE_QUEUE_RECORDS,
-            true,
-        )
-    } else {
-        Observation::with_writer_bridge(StderrSink, Arc::new(SystemClock(started)), bridge)
-    }
-    .map_err(|_| ObserverUnavailable::Writer)?;
-    observation.full_trace = level;
-    // Legacy verbosity arguments do not silently enable payload persistence.
-    tracing_subscriber::registry()
-        .with(AccountingLayer(observation.clone(), None))
-        .try_init()
-        .map_err(|_| ObserverUnavailable::SubscriberAlreadyInitialized)?;
-    metrics::set_global_recorder(observation.recorder.clone()).map_err(|_| ObserverUnavailable::MetricsAlreadyInitialized)?;
-    GLOBAL
-        .set(observation.clone())
-        .map_err(|_| ObserverUnavailable::ObservationAlreadyInitialized)?;
-    let mut operation=observation.operation(OperationKind::Bootstrap,json!({"level":if observation.full_trace {"trace"} else {"default"},"queue_records":observation.queue_records,"record_capacity_bytes":RECORD_LIMIT}));
-    operation.started = Duration::ZERO;
-    operation.finish(
-        Outcome::Success,
-        json!({"subscriber":"accounting_layer","metrics_recorder":"json"}),
-    );
-    Ok(BootstrapGuard(Some(observation)))
+    let policy = configured_policy()?;
+    let selected = if enabled { policy } else { EmissionPolicy::Off };
+    install_selected(selected, || {
+        if GLOBAL.get().is_some() {
+            return Err(ObserverUnavailable::ObservationAlreadyInitialized.into());
+        }
+        let evidence_capture = false;
+        #[cfg(feature = "observation-test-hook")]
+        let evidence_capture = evidence_capture || std::env::var_os("PN_OBSERVE_COMPLETE_EVIDENCE").is_some();
+        let mut observation = if evidence_capture {
+            // The finite evidence roster fits these slots and the unchanged byte bound.
+            // Holding the worker until flush makes completeness independent of scheduling.
+            Observation::with_delivery(
+                StderrSink,
+                Arc::new(SystemClock(started)),
+                bridge,
+                EVIDENCE_QUEUE_RECORDS,
+                true,
+            )
+        } else {
+            Observation::with_writer_bridge(StderrSink, Arc::new(SystemClock(started)), bridge)
+        }
+        .map_err(|_| ObserverUnavailable::Writer)?;
+        observation.full_trace = policy == EmissionPolicy::Trace;
+        observation.error_only = policy == EmissionPolicy::Error;
+        // Legacy verbosity arguments do not silently enable payload persistence.
+        tracing_subscriber::registry()
+            .with(AccountingLayer(observation.clone(), None))
+            .try_init()
+            .map_err(|_| ObserverUnavailable::SubscriberAlreadyInitialized)?;
+        metrics::set_global_recorder(observation.recorder.clone()).map_err(|_| ObserverUnavailable::MetricsAlreadyInitialized)?;
+        GLOBAL
+            .set(observation.clone())
+            .map_err(|_| ObserverUnavailable::ObservationAlreadyInitialized)?;
+        let mut operation=observation.operation(OperationKind::Bootstrap,json!({"level":match policy {EmissionPolicy::Error=>"error",EmissionPolicy::Trace=>"trace",_=>"default"},"queue_records":observation.queue_records,"record_capacity_bytes":RECORD_LIMIT}));
+        operation.started = Duration::ZERO;
+        operation.finish(
+            Outcome::Success,
+            json!({"subscriber":"accounting_layer","metrics_recorder":"json"}),
+        );
+        Ok(BootstrapGuard(Some(observation)))
+    })
 }
 
 struct StderrSink;

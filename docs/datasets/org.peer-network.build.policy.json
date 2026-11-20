@@ -13,6 +13,8 @@
         "rustfmt",
         "clippy"
       ],
+      "debug_feature": "debug-observation",
+      "debug_profile": "release-debug",
       "lto": "thin",
       "name": "workspace",
       "profile_gate": "build-policy",

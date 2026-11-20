@@ -12,9 +12,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/lib.rs::stdout_tty_refusal_record",
-    "body": "{ if io :: stdout () . is_terminal () { Some (ControlPlaneRecord :: tty_refusal (command_name)) } else { None } }",
+    "body": "{ let _ = command_name ; None }",
     "class_decision": "public-cli",
-    "item_premise": "This body inherits the public-cli decision for stdout_tty_refusal_record.",
+    "item_premise": "Current body does not turn terminal attachment into a usage refusal; result publication uses the same ordinary stdout path.",
     "assessments": {
       "full_recording": "review-269",
       "secret_flow": "review-002",

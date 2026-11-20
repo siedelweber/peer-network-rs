@@ -7,25 +7,25 @@
   ],
   "rows": [
     {
-      "exceptions": 94,
-      "generators": 45,
+      "exceptions": 100,
+      "generators": 47,
       "helpers": 3,
       "instrumented": 30,
       "name": "cli-common",
       "number_forms": {
         "exceptions": {
-          "exact": "94",
+          "exact": "100",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "94",
+          "num": "100",
           "num_exact": true,
           "num_relation": "="
         },
         "generators": {
-          "exact": "45",
+          "exact": "47",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "45",
+          "num": "47",
           "num_exact": true,
           "num_relation": "="
         },
@@ -46,10 +46,10 @@
           "num_relation": "="
         },
         "operations": {
-          "exact": "127",
+          "exact": "133",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "127",
+          "num": "133",
           "num_exact": true,
           "num_relation": "="
         }
@@ -76,7 +76,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 127
+      "operations": 133
     },
     {
       "exceptions": 10,

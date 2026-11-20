@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "pn::packages/node/src/main.rs::main",
-    "body": "{ let origin = EntryOrigin :: capture () ; cli_common :: run_stdout_json_command_from_origin (origin , \"pn\" , false , tracing :: Level :: INFO , | | { let preparation_at = Instant :: now () ; let arguments : Vec < OsString > = std :: env :: args_os () . collect () ; let observed = serde_json :: json ! ({ \"arguments\" : arguments . iter () . map (| argument | argument . as_encoded_bytes () . to_vec ()) . collect ::< Vec < _ >> () }) ; match cli_common :: parse_args_from :: < Arguments , _ , _ > (arguments . clone ()) { Ok (Arguments { command }) => process_adapter :: prepare (& command , & arguments , preparation_at) , Err (exit) => OriginPreparation :: Terminal { exit , arguments : observed , } , } } , process_adapter :: run ,) }",
+    "body": "{ let origin = EntryOrigin :: capture () ; cli_common :: select_observation_policy_or_exit (\"pn\") ; cli_common :: run_stdout_json_command_from_origin (origin , \"pn\" , false , tracing :: Level :: INFO , | | { let preparation_at = Instant :: now () ; let arguments : Vec < OsString > = std :: env :: args_os () . collect () ; let observed = serde_json :: json ! ({ \"arguments\" : arguments . iter () . map (| argument | argument . as_encoded_bytes () . to_vec ()) . collect ::< Vec < _ >> () }) ; match cli_common :: parse_args_from :: < Arguments , _ , _ > (arguments . clone ()) { Ok (Arguments { command }) => process_adapter :: prepare (& command , & arguments , preparation_at) , Err (exit) => OriginPreparation :: Terminal { exit , arguments : observed , } , } } , process_adapter :: run ,) }",
     "class_decision": "node-initial-binary",
-    "item_premise": "The binary entry captures origin first, then delegates complete command observation, output and exit to the origin runner while its private adapter drives controller actions.",
+    "item_premise": "Current adapter body retains its controller outcomes and exit statuses while its five terminal failure sites use ERROR; private endpoint and result facts remain in their reviewed forms.",
     "assessments": {
       "full_recording": "node-binary-full-recording",
       "secret_flow": "node-binary-secret-flow",

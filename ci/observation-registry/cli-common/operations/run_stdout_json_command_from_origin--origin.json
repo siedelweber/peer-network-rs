@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/lib.rs::run_stdout_json_command_from_origin",
-    "body": "{ run_stdout_json_command_from_origin_inner (command_name , | | install_json_panic_hook (command_name) , prepare , | | stdout_tty_refusal_record (command_name) , | arguments | observation :: install_from_origin (origin , debug , default_level , arguments) . map (Some) , | record | { let _ignored = emit_control_plane_record (record) ; } , emit , run ,) }",
+    "body": "{ let control_failed = std :: cell :: Cell :: new (false) ; let result = run_stdout_json_command_from_origin_inner (command_name , | | install_json_panic_hook (command_name) , prepare , | | stdout_tty_refusal_record (command_name) , | arguments | observation :: install_from_origin (origin , debug , default_level , arguments) . map (Some) , | record | { if emit_control_plane_record (record) . is_err () { control_failed . set (true) ; } } , emit , run ,) ; if control_failed . get () && result == ExitCode :: SUCCESS { tracing :: error ! (\"failed to write JSON result to stdout\") ; CommandExit :: Failure . exit_code () } else { result } }",
     "class_decision": "public-cli",
-    "item_premise": "This body is the opt-in origin route for run_stdout_json_command_from_origin; it lends the existing Command operation its entry start and does not change ordinary runner or delivery paths.",
+    "item_premise": "Current command body retains the public failure class and delegates result and observation routing to the selected common boundary.",
     "assessments": {
       "full_recording": "origin-full-recording",
       "secret_flow": "origin-secret-flow",

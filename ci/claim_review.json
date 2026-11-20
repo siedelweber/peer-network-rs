@@ -646,8 +646,8 @@
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:credential-receiver-census-pins-first-entry",
       "before": "",
-      "after": "One foreign-number call at the closed self-targeted acquisition site is required; another call, role slot, target or entry order refuses.",
-      "review": "Read the finite startup or protected-delivery fixture and its named assertions; syscall denial and write outcome seams remain explicitly test-only and do not witness installation. The injected inline and file child modules refuse at the non-test module guard, and a duplicate public name refuses with multiplicity retained."
+      "after": "One foreign-number call follows only public policy and hook setup before acquisition; another call, role slot, target or entry order refuses.",
+      "review": "The exact source prefix admits only policy selection and the public panic hook before acquisition; omitted hook, omitted policy or intervening work refuses, beside the retained foreign-call and role checks."
     },
     {
       "operation": "ci::test_discipline.WorkspaceChecks.test_installation_inventory",
@@ -991,7 +991,7 @@
       "claim": "ROOT::claim:discipline:four-observation-modes-preserve-command-results",
       "before": "Claim: Disabled, enabled, selected-out and locally failing-export executions preserve the four-package workload's exact JSON stdout and exit, including canonical bytes, acceptance, document checks and raw child NUL and invalid UTF-8 bytes.",
       "after": "Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit; all enabled modes count the same labelled operations and terminal outcome distributions, default omits only unobserved series, and an unknown level refuses document execution before work.",
-      "review": "Read the fixture and assertions: the comparison now checks completed outcome distributions as well as starts, with identical workload bytes and exit. This is a semantic assertion independent of recorded duration."
+      "review": "The disabled child removes the inherited level and supplies off explicitly; identical public results and enabled evidence are still compared."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_dependency",
@@ -1056,6 +1056,14 @@
       "before": "Claim: Finalized dependency violations, attached times and recurrence evidence agree with observation disabled, at default and at trace, including mismatches, unavailable openings and a cross-epoch predecessor; candidate refusals remain refusals while replay is accounted as success.",
       "after": "Claim: Finalized dependency and parent-placement faults, unchanged published stamps and recomputed-time evidence agree with observation disabled, at default and at trace, including stamp mismatches, propagated unavailable openings and cross-epoch frontier carry; candidate refusals remain refusals while replay is accounted as success.",
       "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_release_off_stderr",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:release-off-stderr-is-empty",
+      "before": "",
+      "after": "Controlled release-off result, usage, panic and runtime paths leave stderr empty with their unchanged exit classes.",
+      "review": "The real documents and panic probe children run with an explicit off selection; a conflict neighbour stays silent and refuses before work."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_timeout_evidence_is_retained",
@@ -1250,6 +1258,14 @@
       "review": "Read the capacity fixture: inject exhausted byte accounting instead of allocating an oversized value, then exercise full and disconnected channels and assert unchanged terminal metrics. No elapsed-time oracle is introduced."
     },
     {
+      "operation": "cli-common::observation::tests::build_kind_mode_admission",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:build-kind-mode-admission",
+      "before": "",
+      "after": "Claim: Compiled release and debug kinds admit only the closed policy table, with presence conflict ahead of value checks.",
+      "review": "The supplied option pairs exercise all table branches, including malformed spelling, non-UTF-8 and the silent conflict priority."
+    },
+    {
       "operation": "cli-common::observation::tests::compaction_branching",
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:compaction-chunks-only-required-nesting",
@@ -1288,6 +1304,14 @@
       "before": "Claim: Default emission never formats operation payloads, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.",
       "after": "Claim: Default emission counts and times nested labelled work without constructing byte payloads or formatting Debug content, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.",
       "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
+    },
+    {
+      "operation": "cli-common::observation::tests::disabled_bootstrap_skips_delivery",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:disabled-bootstrap-skips-delivery",
+      "before": "",
+      "after": "Claim: Valid release off skips the delivery initializer and closing publication, while enabled selection invokes it.",
+      "review": "The counted initializer stays at zero on off and advances on enabled; inert origin root consumption remains once-only."
     },
     {
       "operation": "cli-common::observation::tests::drain_timeout_preserves_loss",
@@ -1344,6 +1368,14 @@
       "before": "",
       "after": "Claim: A EPOCH-labelled compiler operation is counted and timed under its own registered stem at default and trace, and never charged to a different owner.",
       "review": "Read the epoch owner span and its own stem counters, independently of other owner totals."
+    },
+    {
+      "operation": "cli-common::observation::tests::error_emission_is_terminal_only",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:error-emission-is-terminal-only",
+      "before": "",
+      "after": "Claim: Error filtering delivers terminal errors alone while keeping operation accounting, and default still delivers recovery warnings and summaries.",
+      "review": "The same supplied operation under both filters compares delivered levels, summary absence and retained metric accounting."
     },
     {
       "operation": "cli-common::observation::tests::event_wait_caller",
@@ -1978,6 +2010,14 @@
       "review": "The admitted neighbour, each mismatched digest and each false or null effective placement assertion refuse PlacementRefused without measuring permissions."
     },
     {
+      "operation": "documents::integration::control_records",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:cli:control-records",
+      "before": "Claim: help, version and usage errors are JSON control records with no stdout result.",
+      "after": "Claim: An argv usage error is a JSON terminal observation with no stdout result.",
+      "review": "The real executable returns usage status two with one typed JSON stderr diagnostic and no stdout."
+    },
+    {
       "operation": "documents::integration::dataset_mutation",
       "path": "packages/documents/tests/integration.rs",
       "claim": "DOCUMENTS::claim:render:dataset-mutation",
@@ -1994,6 +2034,14 @@
       "review": "Read the finite directed-rounding and rendered-word controls; they establish outward presentation and scoped prose refusals, without certifying authored numeric facts."
     },
     {
+      "operation": "documents::integration::help_version_are_results",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:cli:help-version-are-results",
+      "before": "",
+      "after": "Claim: Help and version are whole JSON stdout results at zero under each admitted release policy, including quiet mode.",
+      "review": "The real documents executable answers each command at error, default, trace and off with a complete line and empty observation stream."
+    },
+    {
       "operation": "documents::integration::number_registry",
       "path": "packages/documents/tests/integration.rs",
       "claim": "DOCUMENTS::claim:render:number-forms-are-exactly-projected",
@@ -2008,6 +2056,14 @@
       "before": "Claim: the committed datasets and documents are current in consecutive read-only checks.",
       "after": "Claim: Two consecutive generate-check and document-check passes report no findings on the repository, checking that committed inputs and outputs form a fixed point.",
       "review": "The existing two full fixed-point passes remain. A private copy of the retained workload input and dataset first passes generation-check, then changing one digit of one retained sample produces exactly StaleDataset. The shared checkout and measured values remain untouched. Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+    },
+    {
+      "operation": "documents::integration::result_terminal_admission",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:cli:result-terminal-admission",
+      "before": "",
+      "after": "Claim: A clean result has the same JSON bytes and zero status on a terminal and a pipe.",
+      "review": "The clean check runs through a real PTY and a pipe, comparing its entire stdout and successful status."
     },
     {
       "operation": "documents::integration::root_markdown_admission",
@@ -2032,6 +2088,14 @@
       "before": "",
       "after": "Claim: A stale tracker emits the exact committed replacement triple without repairing its input or changing the shared tree.",
       "review": "Read the retained assertions and exact scoped controls. The split cases preserve their original predicates; added controls distinguish changed bodies, comparable compile CPU and bounded cache retention without changing functional verdicts."
+    },
+    {
+      "operation": "documents::panic_contract::panic_backtrace_selection",
+      "path": "packages/documents/tests/panic_contract.rs",
+      "claim": "DOCUMENTS::claim:cli:panic-backtrace-selection",
+      "before": "",
+      "after": "Claim: The admitted Rust backtrace setting selects the optional panic member without changing the one-row exit.",
+      "review": "The process probe compares absent and requested backtrace settings without relying on platform frame text."
     },
     {
       "operation": "execwrap::integration::ambiguous_same_path_routing_is_a_usage_failure",
@@ -2070,7 +2134,7 @@
       "path": "packages/execwrap/tests/integration.rs",
       "claim": "EXECWRAP::claim:cli:help-version-and-usage-follow-the-output-contract",
       "before": "help version and usage follow the output contract.",
-      "after": "Claim: `Help` and version exit 0 with empty stdout and a first JSON record naming execwrap; unknown flags, missing separator and missing command exit 2.",
+      "after": "Claim: `Help` and version exit 0 with a JSON stdout result naming execwrap; unknown flags, missing separator and missing command exit 2.",
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
     },
     {

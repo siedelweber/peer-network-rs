@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/observation.rs",
+    "item": "observation::process_policy",
+    "owner": "CLICOMMON",
+    "signature": "fn process_policy () -> EmissionPolicy",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: The policy accessor serves pre-installation and terminal routes without recursively recording itself.",
+      "witness": "CLICOMMON::claim:cli:build-kind-mode-admission",
+      "boundary": "cli-common::packages/cli-common/src/lib.rs::CliExit::exit_code",
+      "class_decision": "public-cli"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/observation.rs::observation::process_policy",
+    "body": "{ PROCESS_POLICY . get () . copied () . unwrap_or (EmissionPolicy :: Default) }",
+    "class_decision": "public-cli",
+    "item_premise": "This pre-installation policy helper reads public mode inputs or immutable kind state without a private carrier or independent delivery; its terminal diagnostic belongs to the shared command boundary.",
+    "assessments": {
+      "full_recording": "observe-kind-full",
+      "secret_flow": "observe-kind-secret",
+      "exposure_consumers": "observe-kind-exposure"
+    }
+  }
+}

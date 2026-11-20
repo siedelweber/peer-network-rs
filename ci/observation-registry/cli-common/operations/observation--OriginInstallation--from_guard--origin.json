@@ -5,7 +5,7 @@
     "path": "packages/cli-common/src/observation.rs",
     "item": "observation::OriginInstallation::from_guard",
     "owner": "CLICOMMON",
-    "signature": "fn from_guard (guard : BootstrapGuard , arguments : Value) -> Result < Self , BootstrapError >",
+    "signature": "fn from_guard (guard : BootstrapGuard , arguments : Value) -> Self",
     "claim": "ROOT::rule:observe:spans",
     "mode": "exception",
     "exception": {
@@ -20,9 +20,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/observation.rs::observation::OriginInstallation::from_guard",
-    "body": "{ let Some (observation) = guard . 0 . as_ref () else { return Err (ObserverUnavailable :: Writer . into ()) ; } ; let mut root = observation . operation (OperationKind :: Command , arguments) ; root . started = Duration :: ZERO ; Ok (Self { root : Some (root) , _guard : guard , }) }",
+    "body": "{ let root = guard . 0 . as_ref () . map (| observation | { let mut root = observation . operation (OperationKind :: Command , arguments) ; root . started = Duration :: ZERO ; root }) ; Self { root , root_taken : false , _guard : guard , } }",
     "class_decision": "delivery",
-    "item_premise": "This body is the opt-in origin route for observation::OriginInstallation::from_guard; it lends the existing Command operation its entry start and does not change ordinary runner or delivery paths.",
+    "item_premise": "Current body preserves once-only origin transfer and level-independent accounting; release off creates no delivery machinery or closing publication.",
     "assessments": {
       "full_recording": "origin-full-recording",
       "secret_flow": "origin-secret-flow",
