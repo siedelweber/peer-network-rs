@@ -284,6 +284,21 @@ class WorkspaceChecks(unittest.TestCase):
             write(root, 'packages/app/src/lib.rs', b'pub fn changed() {}\n')
             code_commit = commit(root)
             self.assertIs(verify(reviewed, code_commit), reviewed)
+            write(root, 'packages/app/NOTICE', b'New notice material.\n')
+            notice_commit = commit(root)
+            with self.assertRaisesRegex(ValueError, 'first-party licence declaration differs'):
+                verify(reviewed, notice_commit)
+            from installation_inventory import first_party_projection, encoded
+            noticed = copy.deepcopy(reviewed)
+            projection = first_party_projection(root, notice_commit, {'version': '0.1.0'}, 'packages/app')
+            self.assertEqual(projection['notice_paths'], ['packages/app/NOTICE'])
+            noticed[('path', 'app@0.1.0')]['review']['declaration_projection'] = projection
+            noticed[('path', 'app@0.1.0')]['review']['declaration_projection_sha256'] = digest(encoded(projection))
+            self.assertIs(verify(noticed, notice_commit), noticed)
+            (root / 'packages/app/NOTICE').unlink()
+            removal_commit = commit(root)
+            with self.assertRaisesRegex(ValueError, 'first-party licence declaration differs'):
+                verify(noticed, removal_commit)
             write(root, 'packages/app/Cargo.toml', b'[package]\nname="app"\nversion="0.1.0"\nlicense="MIT"\n')
             licence_commit = commit(root)
             with self.assertRaisesRegex(ValueError, 'first-party licence declaration differs'):
@@ -1288,6 +1303,19 @@ class HashCitations(unittest.TestCase):
                 placed = establish(repository, family)
         self.assertTrue(placed(bound, ''))
         self.assertFalse(placed('f'*64, ''))
+        from installation_inventory import catalogue as read_catalogue, git as committed_git
+        committed = committed_git(repository, 'rev-parse', 'HEAD').decode().strip()
+        entries = read_catalogue(repository, commit=committed)
+        for source, field, wrong, reason in (
+            ('registry', 'archive_sha256', '0'*64, 'archive checksum differs from lock'),
+            ('git', 'revision', '0'*40, 'Git revision differs from lock'),
+        ):
+            changed = copy.deepcopy(entries)
+            key = next(key for key in changed if key[0] == source)
+            changed[key]['review']['source_identity'][field] = wrong
+            with self.subTest(source=source), patch('installation_inventory.catalogue', return_value=changed):
+                with self.assertRaisesRegex(ValueError, reason):
+                    establish(repository, family)
 
     def test_hash_carrier(self):
         """the complete tracked set includes binary content and hexadecimal pathnames, with read failures surfaced.

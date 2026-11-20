@@ -42707,9 +42707,12 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": [
+            "packages/cli-common/LICENSE-MIT"
+          ]
         },
-        "declaration_projection_sha256": "70b03a7eb4f935c88bd26fcdea2a14501a59abc1b685081a159bcdf17be566c1",
+        "declaration_projection_sha256": "3becb35af64cb94c1526ccb6e5d72a9a6c2c1e88849c669af52bb04192be6082",
         "required_owners": []
       },
       "evidence": [
@@ -42767,9 +42770,10 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": []
         },
-        "declaration_projection_sha256": "e8ea0d45addff75a16904916df1c2ef8af4d3afa41cdf5fc4a01753cb2a2c6e7",
+        "declaration_projection_sha256": "03393c7f02a0d7f444c570a55d6a6c38760069fd20345e7566c063a17a53513d",
         "required_owners": []
       },
       "evidence": [
@@ -43494,9 +43498,12 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": [
+            "packages/execwrap/LICENSE-MIT"
+          ]
         },
-        "declaration_projection_sha256": "0d84fc61c0337d29fa1cb999db5220f654cff6537c403c26886359f4e48efb30",
+        "declaration_projection_sha256": "5e643e3ecc40559abbaf109f2484514b72ff875636e6dbb09a9b653e4465c179",
         "required_owners": []
       },
       "evidence": [
@@ -43554,9 +43561,10 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": []
         },
-        "declaration_projection_sha256": "c407cce9b9a7d3fcf53b363f7d83c0cfff9b810eb43109567b067b1722104982",
+        "declaration_projection_sha256": "01db4742b68426d2758c084297bf3c152c16df6d166846ceddfc24689d8c44d1",
         "required_owners": []
       },
       "evidence": [
@@ -43609,9 +43617,10 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": []
         },
-        "declaration_projection_sha256": "14d9f6837aa702703874fcbcddccacd7b3acbe64aef6c820ed437fd185700827",
+        "declaration_projection_sha256": "d8b67f260bb89c53ad41f8930c9fc4fe94cbf0b737cbc907d221baf977f7ca52",
         "required_owners": []
       },
       "evidence": [
@@ -43664,9 +43673,10 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": []
         },
-        "declaration_projection_sha256": "a5e40ab361e50e64a2307a455d83cdb70214d405a14bc9fdb197a59b1a40fb31",
+        "declaration_projection_sha256": "e26c10d93d7413eea4fc85d43f8924f067cef6a450708538e6a54176781b73d0",
         "required_owners": []
       },
       "evidence": [
@@ -43719,9 +43729,10 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": []
         },
-        "declaration_projection_sha256": "b6a730d23f09884a14cb9d2e99853954591a1c8861c0322b072e89cbf97bae57",
+        "declaration_projection_sha256": "45ed2ef3cec4e1a91892208ba09abc9c01f87c1081c32c1cc4c6386add2f0bf8",
         "required_owners": []
       },
       "evidence": [
@@ -43774,9 +43785,10 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": []
         },
-        "declaration_projection_sha256": "721f8437d11a7e43bfd7e48b0ff30ff8ec8c1dbc008425d705a65f0938cd1919",
+        "declaration_projection_sha256": "a13ce290e93eba10b5ddc9523fa271e9d000d789b48757794f6f39a9926c230d",
         "required_owners": []
       },
       "evidence": [
@@ -43829,9 +43841,12 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": [
+            "packages/graph/NOTICE-DEPENDENCIES"
+          ]
         },
-        "declaration_projection_sha256": "fa842ca498badd21e538f728f92536bc0c677ec33e353a4a05d032d848963a78",
+        "declaration_projection_sha256": "67fbb704293ba88f11e4617ac677fbe50d2081c5371e7e0bb64d3f947930d402",
         "required_owners": []
       },
       "evidence": [
@@ -43884,9 +43899,12 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": [
+            "packages/host/NOTICE-DEPENDENCIES"
+          ]
         },
-        "declaration_projection_sha256": "6511af0057baabe20372789821921f0a2844bb878dbcc97e0a6d72e4120cf443",
+        "declaration_projection_sha256": "34ccc7f359dc4f4fce0ca81b7449c5f5dbfd00d92511765e4245edfe94db49af",
         "required_owners": []
       },
       "evidence": [
@@ -43939,9 +43957,10 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": []
         },
-        "declaration_projection_sha256": "c7dbf37d74388ce6ffacd951b4a3096d632a29645cd50581cbb19a8dfe4793a4",
+        "declaration_projection_sha256": "2cd41846e7cbe722a938fd81bd422aa3221752b8bec6a8b8ae5baf788be6d105",
         "required_owners": []
       },
       "evidence": [
@@ -43994,9 +44013,12 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": [
+            "packages/records/NOTICE-NUMERIC"
+          ]
         },
-        "declaration_projection_sha256": "1218f8ca3d564b91a8bf3988af9a460a7fcec3a7903d7db4b91591c5e780ee59",
+        "declaration_projection_sha256": "6fa6ee033d2e587f6ce47c1417e9eb60a154a3bdae4108d25a3c6e0af7db83bc",
         "required_owners": []
       },
       "evidence": [
@@ -44049,9 +44071,10 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": []
         },
-        "declaration_projection_sha256": "8cb323bdcb672aaf3dd3a7b9a467093a181c59f4138e1ac4182e0cff40d669bd",
+        "declaration_projection_sha256": "e666bbd601af4591ea6a6c1e3b0d7b74ef939fe638324ce8e28f1d74f8b774f7",
         "required_owners": []
       },
       "evidence": [
@@ -44104,9 +44127,10 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": []
         },
-        "declaration_projection_sha256": "95e080e7e80b73a1d5e03186510a05edb2bfd545ee5cf05ab85a42767cad0a0d",
+        "declaration_projection_sha256": "ade811cd852c278070e27e07be8696cc170a3e3c1e24311263984b1ae48df399",
         "required_owners": []
       },
       "evidence": [
@@ -44159,9 +44183,10 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": []
         },
-        "declaration_projection_sha256": "b66b20c0f483bc276e5b0423dcdc3f32c6e63e66dfd93efeaed1a1e84f50cbed",
+        "declaration_projection_sha256": "a7deb495c43d20b5a5222767bbba7667f4a88d2aaf1ac838ddea0273082f5729",
         "required_owners": []
       },
       "evidence": [
@@ -44214,9 +44239,13 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": [
+            "packages/wallet/NOTICE-DEPENDENCIES",
+            "packages/wallet/fuzz/NOTICE-DEPENDENCIES"
+          ]
         },
-        "declaration_projection_sha256": "a09faf854576624fafe4fb9a470e587f2f3fc0d8dd1793d32e3b21dcb2587304",
+        "declaration_projection_sha256": "c76cd4ea2fb8658f66e3fec282c3cbe743c657d0c1a8dd34544f64cb803c1e56",
         "required_owners": []
       },
       "evidence": [
@@ -44269,9 +44298,10 @@
           "workspace_value": "AGPL-3.0-only",
           "resolved": "AGPL-3.0-only",
           "license_file": null,
-          "license_files": []
+          "license_files": [],
+          "notice_paths": []
         },
-        "declaration_projection_sha256": "800a6a283b13472e96e091a9af17136ab4b058855fc863595f9cc2b8328a1378",
+        "declaration_projection_sha256": "49bb8fa60147152d1daadface095839ce6e1ef5c1e38a800ae2722a012bb2a61",
         "required_owners": []
       },
       "evidence": [

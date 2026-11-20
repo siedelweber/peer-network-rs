@@ -601,6 +601,7 @@ def establish(root, rule):
         locked = lock_packages(committed_lock(root, commit))
         if set(entries) != {source_key(package) for package in locked}:
             raise ValueError('hash citations: installation notice identity differs from lock')
+        locked_by_key = {source_key(package): package for package in locked}
         values = set()
         def place(value):
             if isinstance(value, str) and re.fullmatch(r'(?:[0-9a-f]{40}|[0-9a-f]{64})', value):
@@ -619,6 +620,11 @@ def establish(root, rule):
             if set(review) != typed:
                 raise ValueError(f'hash citations: unknown installation review fields: {identity}')
             source_identity = review['source_identity']
+            package = locked_by_key[(source, identity)]
+            if source == 'registry' and source_identity.get('archive_sha256') != package['checksum']:
+                raise ValueError(f'hash citations: installation archive checksum differs from lock: {identity}')
+            if source == 'git' and source_identity.get('revision') != package['source'].rsplit('#', 1)[-1]:
+                raise ValueError(f'hash citations: installation Git revision differs from lock: {identity}')
             for field in ('archive_sha256', 'revision', 'tree', 'tracked_tree'):
                 place(source_identity.get(field))
             place(review.get('member_map_sha256'))

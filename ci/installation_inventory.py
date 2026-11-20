@@ -138,6 +138,18 @@ def path_sources(root, commit, packages):
     return result
 
 
+def first_party_notice_paths(root, commit, path):
+    """A tracked path is notice-named when its final component begins with uppercase LICENSE, LICENCE, NOTICE, COPYING or COPYRIGHT, followed only by end of name or -, _ or ."""
+    names = git(root, 'ls-tree', '-r', '--name-only', '-z', commit, '--', path).split(b'\0')
+    prefix = path.rstrip('/') + '/'
+    stems = ('LICENSE', 'LICENCE', 'NOTICE', 'COPYING', 'COPYRIGHT')
+    return sorted(name for raw in names if raw
+                  if (name := raw.decode('utf-8')).startswith(prefix)
+                  if any(PurePosixPath(name).name == stem or
+                         PurePosixPath(name).name.startswith((stem + '-', stem + '_', stem + '.'))
+                         for stem in stems))
+
+
 def first_party_projection(root, commit, package, path):
     """Bind licence members without binding unrelated first-party code."""
     manifest = tomllib.loads(git(root, 'show', f'{commit}:{path}/Cargo.toml').decode())['package']
@@ -161,7 +173,8 @@ def first_party_projection(root, commit, package, path):
                   'version': package['version'], 'member': 'license',
                   'raw': licence, 'workspace_member': 'workspace.package.license' if inherited else None,
                   'workspace_value': workspace.get('license') if inherited else None,
-                  'resolved': resolved, 'license_file': reference, 'license_files': files}
+                  'resolved': resolved, 'license_file': reference, 'license_files': files,
+                  'notice_paths': first_party_notice_paths(root, commit, path)}
     return projection
 
 
