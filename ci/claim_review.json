@@ -5111,8 +5111,8 @@
       "path": "packages/host/src/storage/tree/audit/server/tests.rs",
       "claim": "HOST::claim:history:tree-audit-server-location",
       "before": "",
-      "after": "Claim: A malformed signed package-chunk ordinal retains its original complete observed key, refuses `CorruptHistory` without inventory, and leaves the repaired fixture auditable.",
-      "review": "The malformed signed ordinal is read from the disposable service and its complete original key is asserted; the typed corruption refusal returns no inventory. After repair, a fresh audit succeeds. The claim names the storage error as a Rust item."
+      "after": "Claim: A malformed signed package-chunk ordinal, an unmapped closure and a debit without its introduction each retain the complete referrer key, refuse `CorruptHistory` without inventory, and leave the repaired fixture auditable.",
+      "review": "The three intact-layout or explicitly damaged states are read from the disposable service; each typed corruption refusal returns no inventory and asserts the complete referrer key. After each repair, a fresh audit succeeds. The claim names the storage error as a Rust item."
     },
     {
       "operation": "pn-host::storage::tree::audit::tests::tree_audit_memory_content",

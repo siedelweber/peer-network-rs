@@ -626,6 +626,125 @@ pub(in crate::storage::tree) async fn audit_clear_negative_chunk(store: &mut Ser
     ).await.unwrap();
 }
 
+pub(in crate::storage::tree) async fn audit_unmapped_closure(store: &mut ServerTree) -> (String, String, String) {
+    let client = store.session.client();
+    let source = client
+        .query_one(
+            "SELECT family,key,edition,opens FROM public.pn_versions WHERE family NOT IN ('rule','constants') ORDER BY family,key,edition LIMIT 1",
+            &[],
+        )
+        .await
+        .unwrap();
+    let family: String = source.get(0);
+    let key: String = source.get(1);
+    let edition: String = source.get(2);
+    let closes: i64 = source.get::<_, i64>(3) + 1;
+    assert_eq!(
+        client
+            .execute(
+                "INSERT INTO public.pn_closures(family,key,edition,closes) VALUES ($1,$2,$3,$4)",
+                &[&family, &key, &edition, &closes],
+            )
+            .await
+            .unwrap(),
+        1
+    );
+    (family, key, edition)
+}
+
+pub(in crate::storage::tree) async fn audit_clear_unmapped_closure(store: &mut ServerTree, key: &(String, String, String)) {
+    assert_eq!(
+        store
+            .session
+            .client()
+            .execute(
+                "DELETE FROM public.pn_closures WHERE family=$1 AND key=$2 AND edition=$3",
+                &[&key.0, &key.1, &key.2],
+            )
+            .await
+            .unwrap(),
+        1
+    );
+}
+
+pub(in crate::storage::tree) async fn audit_debit_without_introduction(
+    store: &mut ServerTree,
+) -> (String, Vec<u8>, String, String, String) {
+    let client = store.session.client();
+    let source = client
+        .query_one(
+            "SELECT scope,origin,author,act_sequence,act_family,writing_boundary,vintage_bytes,vintage_chunks FROM public.pn_epoch_debits ORDER BY scope,origin,author,act_sequence,act_family LIMIT 1",
+            &[],
+        )
+        .await
+        .unwrap();
+    let scope: String = source.get(0);
+    let origin: Vec<u8> = source.get(1);
+    let author: String = source.get(2);
+    let original_sequence: String = source.get(3);
+    let family: String = source.get(4);
+    let sequence = "999".to_owned();
+    let writing_boundary: i64 = source.get(5);
+    let vintage_bytes: i64 = source.get(6);
+    let vintage_chunks: i64 = source.get(7);
+    assert_eq!(
+        client
+            .execute(
+                "INSERT INTO public.pn_epoch_debits VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
+                &[
+                    &scope,
+                    &origin,
+                    &author,
+                    &sequence,
+                    &family,
+                    &writing_boundary,
+                    &vintage_bytes,
+                    &vintage_chunks
+                ],
+            )
+            .await
+            .unwrap(),
+        1
+    );
+    let chunks = client
+        .execute(
+            "INSERT INTO public.pn_epoch_debit_chunks SELECT scope,origin,author,$6,act_family,ordinal,bytes FROM public.pn_epoch_debit_chunks WHERE scope=$1 AND origin=$2 AND author=$3 AND act_sequence=$4 AND act_family=$5",
+            &[&scope, &origin, &author, &original_sequence, &family, &sequence],
+        )
+        .await
+        .unwrap();
+    assert_eq!(chunks, u64::try_from(vintage_chunks).unwrap());
+    (scope, origin, author, sequence, family)
+}
+
+pub(in crate::storage::tree) async fn audit_clear_debit_without_introduction(
+    store: &mut ServerTree,
+    key: &(String, Vec<u8>, String, String, String),
+) {
+    let client = store.session.client();
+    let params: &[&(dyn tokio_postgres::types::ToSql + Sync)] = &[&key.0, &key.1, &key.2, &key.3, &key.4];
+    assert_eq!(
+        client
+            .execute(
+                "DELETE FROM public.pn_epoch_debit_chunks WHERE scope=$1 AND origin=$2 AND author=$3 AND act_sequence=$4 AND act_family=$5",
+                params,
+            )
+            .await
+            .unwrap(),
+        1
+    );
+    assert_eq!(
+        client
+            .execute(
+                "DELETE FROM public.pn_epoch_debits WHERE scope=$1 AND origin=$2 AND author=$3 AND act_sequence=$4 AND act_family=$5",
+                params,
+            )
+            .await
+            .unwrap(),
+        1
+    );
+}
+
 pub(in crate::storage::tree) async fn trace_fixture(store: &mut ServerTree) {
     if std::env::var("PN_HOST_STORAGE_READER_TRACE").as_deref() == Ok("audit") {
         audit_trace_fixture(store).await;

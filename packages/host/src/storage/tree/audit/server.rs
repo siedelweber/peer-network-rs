@@ -1622,7 +1622,7 @@ impl<'a> AuditSource<'a> for ServerSource {
                 let site = history.site(&SPECS[history_at]);
                 meter.visit(site)?;
                 let family = text_cell(history, 0, site, meter)?;
-                if !matches!(family, "rule" | "constants") {
+                if history_at == 6 && !matches!(family, "rule" | "constants") {
                     continue;
                 }
                 let target = (history.text(0), history.text(1), history.text(2));
@@ -1752,6 +1752,34 @@ impl<'a> AuditSource<'a> for ServerSource {
                         return Err(meter.refused(StorageError::CorruptHistory, site));
                     }
                 }
+            }
+        }
+        for (at, header) in self.arena.domains[10].iter().enumerate() {
+            let site = header.site(&SPECS[10]);
+            meter.visit(site)?;
+            self.vintage_bytes(at, meter)?;
+            let key = (
+                header.text(0),
+                header.bytes(1),
+                header.text(2),
+                header.text(3),
+                header.text(4),
+            );
+            meter.visit(site)?;
+            if self.arena.domains[12]
+                .binary_search_by(|introduction| {
+                    (
+                        introduction.text(0),
+                        introduction.bytes(1),
+                        introduction.text(2),
+                        introduction.text(3),
+                        introduction.text(4),
+                    )
+                        .cmp(&key)
+                })
+                .is_err()
+            {
+                return Err(meter.refused(StorageError::CorruptHistory, site));
             }
         }
         Ok(())

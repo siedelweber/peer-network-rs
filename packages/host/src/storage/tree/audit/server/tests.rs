@@ -185,7 +185,7 @@ fn tree_audit_server_cursor() {
     });
 }
 
-/// Claim: A malformed signed package-chunk ordinal retains its original complete observed key, refuses `CorruptHistory` without inventory, and leaves the repaired fixture auditable.
+/// Claim: A malformed signed package-chunk ordinal, an unmapped closure and a debit without its introduction each retain the complete referrer key, refuse `CorruptHistory` without inventory, and leave the repaired fixture auditable.
 /// ´claim:history:tree-audit-server-location´
 /// ´test:unit:tree-audit-server-location´
 #[test]
@@ -226,6 +226,45 @@ fn tree_audit_server_location() {
         assert_eq!(location.key_bytes(1), Some(identity.as_slice()));
         assert_eq!(location.key_integer(2), Some(-1));
         tests::audit_clear_negative_chunk(&mut tree, &scope, identity).await;
+        assert_eq!(tree.audit(allowance, &mut usage).await.unwrap().fields(), before.fields());
+
+        let closure = tests::audit_unmapped_closure(&mut tree).await;
+        let failure = tree.audit(allowance, &mut usage).await.expect_err("unmapped closure refuses");
+        let AuditFailure::Refused {
+            error: crate::storage::tree::Error::Storage(StorageError::CorruptHistory),
+            location,
+        } = failure
+        else {
+            panic!("unmapped closure class and location: {failure:?}");
+        };
+        assert_eq!(location.relation(), Some("pn_closures"));
+        assert_eq!(location.key_len(), 3);
+        assert_eq!(location.key_text(0), Some(closure.0.as_str()));
+        assert_eq!(location.key_text(1), Some(closure.1.as_str()));
+        assert_eq!(location.key_text(2), Some(closure.2.as_str()));
+        tests::audit_clear_unmapped_closure(&mut tree, &closure).await;
+        assert_eq!(tree.audit(allowance, &mut usage).await.unwrap().fields(), before.fields());
+
+        let debit = tests::audit_debit_without_introduction(&mut tree).await;
+        let failure = tree
+            .audit(allowance, &mut usage)
+            .await
+            .expect_err("unintroduced debit refuses");
+        let AuditFailure::Refused {
+            error: crate::storage::tree::Error::Storage(StorageError::CorruptHistory),
+            location,
+        } = failure
+        else {
+            panic!("unintroduced debit class and location: {failure:?}");
+        };
+        assert_eq!(location.relation(), Some("pn_epoch_debits"));
+        assert_eq!(location.key_len(), 5);
+        assert_eq!(location.key_text(0), Some(debit.0.as_str()));
+        assert_eq!(location.key_bytes(1), Some(debit.1.as_slice()));
+        assert_eq!(location.key_text(2), Some(debit.2.as_str()));
+        assert_eq!(location.key_text(3), Some(debit.3.as_str()));
+        assert_eq!(location.key_text(4), Some(debit.4.as_str()));
+        tests::audit_clear_debit_without_introduction(&mut tree, &debit).await;
         assert_eq!(tree.audit(allowance, &mut usage).await.unwrap().fields(), before.fields());
     });
 }
