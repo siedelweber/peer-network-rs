@@ -2,6 +2,8 @@
 
 `cli-common` is the shared scaffolding every command-line tool in this workspace is built on. It implements the command-line output contract (`[ROOT-rec:output:decision]`): what may appear on stdout, what must appear on stderr, which exit classes exist, and what must never be printed at all.
 
+The API descriptions and examples below describe the implemented baseline. The replacement under (`[ROOT-amend:observe:emission-levels]`) and (`[ROOT-dec:output:policy]`) is decided, not implemented: release may disable observation, debug requires it, error delivers terminal errors only, and help/version become stdout results independent of observation, including on terminals. That replacement admits terminal stdout for every command and requires whole-result delivery only with exit zero; implemented TTY helpers, refusal examples and status-three stdout reports below are baseline behavior, not that replacement. The designed dirty-check route keeps status three, emits error detail only on enabled stderr and leaves stdout empty. Current claims and examples do not establish that replacement; the entry prefix, inert root, terminal transport and output controls change together in its implementation cut.
+
 It is infrastructure, not policy about any particular subject. A helper binary receives its subjects as explicit arguments; shared scaffolding parses argv, emits machine-readable records, publishes outputs and records the declared observation labels.
 
 ## The output contract · `sec:clicommon:the-output-contract`

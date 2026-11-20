@@ -1257,7 +1257,7 @@
       "name": "ROOT::dec:output:policy",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/004-command-line-output-contract.md",
-      "premises": "Subprocess witnesses cover help, version, usage, terminal refusal, clean output, findings, runtime errors and public panic diagnostics. Observation adds JSON stderr records while preserving stdout and exit; clean results forbid WARN and ERROR records.",
+      "premises": "Subprocess witnesses cover help, version, usage, terminal refusal, clean output, findings, runtime errors and public panic diagnostics. Observation adds JSON stderr records while preserving stdout and exit; clean results forbid WARN and ERROR records. Terminal refusal and status-three stdout reports are implemented-baseline premises only; universal terminal admission, whole stdout results only on zero, and the observation-kind replacement are decided and unbuilt, with no implementation evidence in this row.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
@@ -2651,7 +2651,7 @@
       "name": "ROOT::gate:output:verification",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/004-command-line-output-contract.md",
-      "premises": "Subprocess witnesses cover help, version, usage, terminal refusal, clean output, findings, runtime errors and public panic diagnostics. Observation adds JSON stderr records while preserving stdout and exit; clean results forbid WARN and ERROR records.",
+      "premises": "Subprocess witnesses cover help, version, usage, terminal refusal, clean output, findings, runtime errors and public panic diagnostics. Observation adds JSON stderr records while preserving stdout and exit; clean results forbid WARN and ERROR records. Terminal refusal and status-three stdout reports are implemented-baseline premises only; universal terminal admission, whole stdout results only on zero, and the observation-kind replacement are decided and unbuilt, with no implementation evidence in this row.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []

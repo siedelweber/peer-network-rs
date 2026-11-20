@@ -13,7 +13,7 @@ The package is both a library and the `execwrap` binary. The binary implements t
 - Relayed and captured child output is **unsanitized child result data** (the child-byte relay exception in (`[ROOT-rec:output:decision]`)). Observation records the full byte payload without rewriting it. In raw routing the result is written byte-for-byte.
 - Wrapper observations include the public program path, full arguments, child pid, results and byte payloads; the observation queue reports loss without changing child results.
 
-`--observation enabled|disabled` selects collection, with enabled as the default. Disabled collection emits one unavailable-status record; neither setting changes child stdout bytes or exit status.
+The implemented `--observation enabled|disabled` selects collection, with enabled as the default, and disabled collection emits one unavailable-status record. Execwrap is a workspace tool, not a shipped executable under the decided, unimplemented replacement (`[ROOT-amend:observe:emission-levels]`): its legacy collection option remains a tool input, the shared disabled bootstrap no longer emits that row, and the shared environment selector governs its own observation without promising a quiet child relay. Child-stream relay, explicit captures and result mapping remain unchanged. Its implemented help/version placement follows the current shared package; the decided stdout replacement follows (`[ROOT-dec:output:policy]`) when implemented.
 
 ## Routing model · `sec:execwrap:routing-model`
 
@@ -91,7 +91,7 @@ preflight_routing(&config).expect("a single target is unambiguous");
 
 ### Root module · `sec:execwrap:root-module`
 
-- `struct RoutingConfig { redirect, redirect_output, redirect_error, redirect_prefixed, notify_on_write, debug, quiet }` — all four targets are `Option<PathBuf>`; the rest are `bool`. `Default` gives no redirection at all, meaning both streams pass through to the parent.
+- `struct RoutingConfig { redirect, redirect_output, redirect_error, redirect_prefixed, notify_on_write, debug }` — all four targets are `Option<PathBuf>`; the rest are `bool`. `Default` gives no redirection at all, meaning both streams pass through to the parent.
 - `RoutingConfig::is_stream_redirected(&self, stream: Stream) -> bool` — true when that stream has a file subscriber.
 - `enum Stream { Stdout, Stderr }` — `label(self) -> &'static str` yields the uppercase name used in diagnostics.
 - `preflight_routing(cfg: &RoutingConfig) -> Result<(), ExecError>` — stat-only validation. Returns `ExecError::AmbiguousRedirection` when one file is configured for multiple routing kinds.
