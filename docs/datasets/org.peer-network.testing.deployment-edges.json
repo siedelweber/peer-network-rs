@@ -22,7 +22,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "This preserves the historical byte scope and successor admission hold, not private opening existence or entropy.",
+      "reason": "This preserves the historical byte scope and implementation hold, not private opening existence or entropy.",
       "relation": "realizes",
       "source": "ACTPROFILE::def:profile:payload",
       "target": "ROOT::amend:identity:act-proposal-admission"
@@ -33,6 +33,13 @@
       "relation": "realizes",
       "source": "ACTPROFILE::def:profile:private-inputs",
       "target": "ROOT::amend:identity:act-concealment"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the admitted bounds, not private entropy or custody.",
+      "relation": "realizes",
+      "source": "ACTPROFILE::def:profile:private-inputs",
+      "target": "ROOT::amend:identity:formation-three"
     },
     {
       "conditional_on": "",
@@ -491,6 +498,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This uses the selected public format and implementation hold, not private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:act-proposal-admission",
+      "target": "ROOT::amend:identity:formation-three"
+    },
+    {
+      "conditional_on": "",
       "reason": "This retains the coordinated new-tag implementation hold, not evidence of private entropy or custody.",
       "relation": "realizes",
       "source": "ROOT::amend:identity:act-proposal-admission",
@@ -533,6 +547,62 @@
     },
     {
       "conditional_on": "",
+      "reason": "This uses the specified public format and held implementation boundary, without asserting private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:body-three-admission",
+      "target": "ROOT::amend:identity:act-proposal-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the specified public format and held implementation boundary, without asserting private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:content-three-admission",
+      "target": "ROOT::amend:identity:formation-three"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the specified public format and held implementation boundary, without asserting private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:dependency-three-admission",
+      "target": "ROOT::amend:identity:formation-three"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the specified public format and held implementation boundary, without asserting private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:formation-three",
+      "target": "ROOT::amend:identity:act-concealment"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the specified public format and held implementation boundary, without asserting private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:formation-three",
+      "target": "ROOT::open:identity:act-production-concealment"
+    },
+    {
+      "conditional_on": "subsec:deployment:concealment-entropy",
+      "reason": "The optional hiding assurance depends on private entropy and custody, not closure binding or supplied-input equality.",
+      "relation": "relies",
+      "source": "ROOT::amend:identity:formation-three",
+      "target": "subsec:deployment:concealment-entropy"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the specified public format and held implementation boundary, without asserting private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:formation-three-roles",
+      "target": "ROOT::amend:identity:authentication-recipe-gate"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the specified public format and held implementation boundary, without asserting private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:header-three-admission",
+      "target": "ROOT::amend:identity:formation-three"
+    },
+    {
+      "conditional_on": "",
       "reason": "The seal authenticates the declared bytes and role, not the truth of host entropy or custody.",
       "relation": "realizes",
       "source": "ROOT::amend:identity:host-seal",
@@ -544,6 +614,13 @@
       "relation": "realizes",
       "source": "ROOT::amend:identity:key-retirement",
       "target": "ROOT::amend:identity:act-proposal-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the specified public format and held implementation boundary, without asserting private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:material-three-admission",
+      "target": "ROOT::amend:identity:formation-three"
     },
     {
       "conditional_on": "",
@@ -565,6 +642,13 @@
       "relation": "realizes",
       "source": "ROOT::amend:identity:proposal-signature",
       "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses the specified public format and held implementation boundary, without asserting private entropy or custody.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:proposal-three-admission",
+      "target": "ROOT::amend:identity:formation-three"
     },
     {
       "conditional_on": "",

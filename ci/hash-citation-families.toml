@@ -64,7 +64,7 @@ producer = "Admitted byte recipes"
 establishment = "defined"
 reader = "interchange-literal"
 definition = "Explicit integer and byte literals implement the admitted public recipes and their malformed-input controls in code; records state those recipes; no bare content identity is admitted."
-paths = ["packages/act-authentication/**/*.rs", "packages/act-authentication/tests/v2_vectors.py", "ci/authentication_vectors.py", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
+paths = ["packages/act-authentication/**/*.rs", "packages/act-authentication/tests/v2_vectors.py", "packages/act-authentication/tests/v3_vectors.py", "ci/authentication_vectors.py", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
 
 [[rows]]
 family = "secret-home-fixture-bytes"
@@ -1258,6 +1258,17 @@ reader = "authentication-v2-fixtures"
 source = "packages/act-authentication/tests/v2-golden.json"
 definition = "The independent route regenerates every committed value without calling Rust or production helpers. Inputs are public deterministic fixtures and establish no entropy, signature validity, membership or authenticated anchor. The material actor key differs from the key named by the author identifier: this is not an author-binding fixture and establishes no content-opening existence."
 paths = ["packages/act-authentication/tests/v2-golden.json"]
+
+[[rows]]
+family = "authentication-version-three-fixtures"
+group = "public authentication encoding fixtures"
+measures = "Independent version-three preimages, commitments, header, material and role messages"
+producer = "Independent Python standard-library framing and SHA-256"
+establishment = "defined"
+reader = "authentication-v3-fixtures"
+source = "packages/act-authentication/tests/v3-golden.json"
+definition = "The independent route regenerates every committed value without calling Rust or production helpers. Inputs are public deterministic fixtures and establish no entropy, signature validity, membership or authenticated anchor. The material actor key differs from the key named by the author identifier: this is not an author-binding fixture and establishes no content-opening existence."
+paths = ["packages/act-authentication/tests/v3-golden.json"]
 
 [[rows]]
 family = "control-schema-vectors"

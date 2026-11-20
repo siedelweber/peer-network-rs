@@ -33605,6 +33605,10 @@
           "record": "ROOT::amend:identity:act-proposal-admission"
         },
         {
+          "clause": "Conformance reliance: The optional hiding assurance depends on private entropy and custody, not closure binding or supplied-input equality.",
+          "record": "ROOT::amend:identity:formation-three"
+        },
+        {
           "clause": "Conformance reliance: Content hiding depends on sufficient private content-nonce entropy and assigned custody.",
           "record": "ROOT::open:identity:act-realization-admission"
         },
@@ -41242,10 +41246,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 760",
+          "exact": "1 769",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 760",
+          "num": "1 769",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41260,7 +41264,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1760
+      "total": 1769
     },
     {
       "category": "record-coverage",

@@ -492,6 +492,7 @@
 | ``ROOT::amend:identity:act-concealment`` | ``subsec:deployment:concealment-entropy`` | subsec:deployment:concealment-entropy |
 | ``ROOT::amend:identity:act-content-admission`` | ``case:deployment:concealment-entropy-operator-generated`` | case:deployment:concealment-entropy-operator-generated |
 | ``ROOT::amend:identity:act-proposal-admission`` | ``case:deployment:concealment-entropy-client-generated`` | case:deployment:concealment-entropy-client-generated |
+| ``ROOT::amend:identity:formation-three`` | ``subsec:deployment:concealment-entropy`` | subsec:deployment:concealment-entropy |
 | ``ROOT::open:design:cross-build-replay`` | ``amend:testing:standing-work-execution`` | amend:testing:standing-work-execution |
 | ``ROOT::open:identity:act-realization-admission`` | ``subsec:deployment:concealment-entropy`` | subsec:deployment:concealment-entropy |
 | ``ROOT::open:identity:host-contribution-option`` | ``ROOT::rule:devnet:content-nonce`` | case:deployment:concealment-entropy-client-generated,subsec:deployment:concealment-entropy |

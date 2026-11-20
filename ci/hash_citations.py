@@ -337,17 +337,19 @@ def establish(root, rule):
         values.add(hashlib.sha256(publication.read_bytes()).hexdigest())
         values.update(hex(number) for number in (reference.ORDER, *reference.GENERATOR))
         return lambda candidate, _line: candidate in values
-    if kind in {"authentication-fixtures", "authentication-encoding-fixtures", "authentication-v2-fixtures"} and standing == "defined":
+    if kind in {"authentication-fixtures", "authentication-encoding-fixtures", "authentication-v2-fixtures", "authentication-v3-fixtures"} and standing == "defined":
         if kind == "authentication-encoding-fixtures":
             from authentication_encoding_vectors import check
         else:
             from authentication_vectors import check
         value = json.loads(relative_file(root, rule['source']).read_text())
-        if kind == "authentication-v2-fixtures":
+        if kind in {"authentication-v2-fixtures", "authentication-v3-fixtures"}:
             import runpy
-            expected = runpy.run_path(str(root/'packages/act-authentication/tests/v2_vectors.py'))['vectors']()
+            edition = 'v3' if kind == 'authentication-v3-fixtures' else 'v2'
+            expected = runpy.run_path(str(root/('packages/act-authentication/tests/'+edition+'_vectors.py')))['vectors']()
             if value != expected:
-                raise ValueError('independent version-two vectors differ')
+                name = 'version-three' if edition == 'v3' else 'version-two'
+                raise ValueError('independent '+name+' vectors differ')
         else:
             check(value)
         # Public daemon transaction bytes and their supplied locator fields are

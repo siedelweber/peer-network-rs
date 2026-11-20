@@ -150,7 +150,7 @@
       "category": "act-fields",
       "fields": [
         "act identifier I, author and family",
-        "structural body B: identifier, author, family, binary/hyper shape, incidence, authored semantic coordinates, protocol references and requested payload/dependency publication states; both hyper-edge projections"
+        "historical body B (v1/v2): identifier, author, family, binary/hyper shape, incidence, authored semantic coordinates, protocol references and requested payload/dependency publication states; both hyper-edge projections; separately selected B3 retains the structural values and retirement point and replaces both request members with opaque signed extension bytes"
       ],
       "name": "act-identity"
     },
