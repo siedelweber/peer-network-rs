@@ -64,7 +64,7 @@ producer = "Admitted byte recipes"
 establishment = "defined"
 reader = "interchange-literal"
 definition = "Explicit integer and byte literals implement the admitted public recipes and their malformed-input controls in code; records state those recipes; no bare content identity is admitted."
-paths = ["packages/act-authentication/**/*.rs", "packages/act-authentication/tests/v2_vectors.py", "packages/act-authentication/tests/v3_vectors.py", "ci/authentication_vectors.py", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
+paths = ["packages/act-authentication/**/*.rs", "packages/act-authentication/tests/v2_vectors.py", "packages/act-authentication/tests/v3_vectors.py", "packages/act-authentication/tests/carrier_vectors.py", "ci/authentication_vectors.py", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
 
 [[rows]]
 family = "secret-home-fixture-bytes"
@@ -1365,3 +1365,14 @@ reader = "controller-carrier-vectors"
 source = "packages/host/tests/data/controller-carriers.json"
 definition = "Regenerate unsorted explicitly selected controller fragments through the existing independent integer generator. The binary64-corpus step checks this reproduction separately from literal accounting. These supplied cases check contextual binding, structural refusal order and endpoint implications, not enclosure soundness, controller execution or publication; no digest identity is assigned."
 paths = ["packages/host/tests/data/controller-carriers.json", "ci/binary64_vectors.py", "packages/host/tests/public/controller.rs"]
+
+[[rows]]
+family = "closure-component-fixtures"
+group = "public authentication encoding fixtures"
+measures = "Independent closure and opening fragments, retained anchor inputs and admitted commitment preimages"
+producer = "Independent Python standard-library framing and SHA-256"
+establishment = "defined"
+reader = "authentication-carrier-fixtures"
+source = "packages/act-authentication/tests/carrier-golden.json"
+definition = "Regenerate the complete fixture from its independent encoder. Patterned signatures and assumed anchors establish no authenticity, authority, entropy or hiding. All residues use previously admitted recipes; the carriers add no hash identity."
+paths = ["packages/act-authentication/tests/carrier-golden.json"]

@@ -554,6 +554,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "These carriers use the admitted public bindings and held implementation boundary, not the private entropy or custody premise.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:closure-components",
+      "target": "ROOT::amend:identity:formation-three"
+    },
+    {
+      "conditional_on": "",
       "reason": "This uses the specified public format and held implementation boundary, without asserting private entropy or custody.",
       "relation": "realizes",
       "source": "ROOT::amend:identity:content-three-admission",

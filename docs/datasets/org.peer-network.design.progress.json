@@ -41246,10 +41246,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 769",
+          "exact": "1 773",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 769",
+          "num": "1 773",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41264,7 +41264,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1769
+      "total": 1773
     },
     {
       "category": "record-coverage",
