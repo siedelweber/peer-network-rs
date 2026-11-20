@@ -122,6 +122,35 @@ fn entry_origin_runner_order() {
         1
     );
     assert_origin_terminal_cases();
+    assert_origin_failed_result();
+}
+
+fn assert_origin_failed_result() {
+    use crate::observation::tests::{fixture_installation, records, with_fixture_subscriber};
+    let (installed, observation, _clock, capture) = fixture_installation(json!({"command":"fixture"}));
+    let exit = with_fixture_subscriber(&observation, || {
+        crate::run_stdout_json_command_from_origin_inner(
+            "fixture",
+            || {},
+            || crate::OriginPreparation::Terminal {
+                exit: crate::CliExit::new(ControlPlaneRecord::help("fixture", "help"), CommandExit::Success),
+                arguments: json!({"command":"fixture"}),
+            },
+            || None,
+            |_| Ok(Some(installed)),
+            |_| Err(io::Error::other("injected stdout failure")),
+            |_: &u8| panic!("terminal emitted stdout"),
+            |()| -> Result<u8, &str> { panic!("terminal ran command") },
+        )
+    });
+    assert_eq!(exit, CommandExit::Failure.exit_code());
+    let rows = records(&observation, &capture);
+    let completion = rows
+        .iter()
+        .find(|row| row["operation"] == "Command" && row["event_kind"] == "completion")
+        .unwrap();
+    assert_eq!(completion["detail"]["outcome"], "error");
+    assert!(rows.iter().any(|row| row["level"] == "ERROR"));
 }
 
 fn assert_origin_terminal_cases() {
@@ -148,7 +177,10 @@ fn assert_origin_terminal_cases() {
                     None
                 },
                 |_| Ok(Some(installed)),
-                |record| selected.borrow_mut().push(record.clone()),
+                |record| {
+                    selected.borrow_mut().push(record.clone());
+                    Ok(())
+                },
                 |_: &u8| panic!("terminal emitted stdout"),
                 |()| -> Result<u8, &str> {
                     command_called.set(true);
@@ -181,7 +213,10 @@ fn assert_origin_terminal_cases() {
             },
             || Some(ControlPlaneRecord::tty_refusal("fixture")),
             |_| Ok(Some(installed)),
-            |record| selected.borrow_mut().push(record.clone()),
+            |record| {
+                selected.borrow_mut().push(record.clone());
+                Ok(())
+            },
             |_: &u8| panic!("TTY emitted stdout"),
             |()| -> Result<u8, &str> { panic!("TTY ran command") },
         )
@@ -218,7 +253,10 @@ fn entry_origin_installation_failure() {
             },
             || panic!("terminal checked TTY"),
             |_| Err(BootstrapError::Configuration(EmissionConfigurationError::UnknownLevel)),
-            |record| emitted.borrow_mut().push(record.clone()),
+            |record| {
+                emitted.borrow_mut().push(record.clone());
+                Ok(())
+            },
             |_: &u8| panic!("configuration emitted stdout"),
             |()| -> Result<u8, &str> { panic!("configuration ran command") },
         );
@@ -242,7 +280,10 @@ fn entry_origin_installation_failure() {
                 ObserverUnavailable::ObservationAlreadyInitialized,
             ))
         },
-        |record| emitted.borrow_mut().push(record.clone()),
+        |record| {
+            emitted.borrow_mut().push(record.clone());
+            Ok(())
+        },
         |_: &u8| panic!("terminal emitted stdout"),
         |()| -> Result<u8, &str> { panic!("terminal ran command") },
     );

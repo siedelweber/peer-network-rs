@@ -1030,9 +1030,6 @@ impl Observation {
 
     #[track_caller]
     fn final_status(&self) {
-        if self.error_only {
-            return;
-        }
         // Exit drainage scales with the outstanding byte charge, up to the
         // declared 64 MiB queue: one second plus one second per charged MiB.
         // The deadline bounds waiting for queued and in-flight publication.
@@ -1047,6 +1044,11 @@ impl Observation {
             + charged.div_ceil(1024 * 1024).min((CAPTURE_LIMIT / (1024 * 1024)) as u64) * DRAIN_SECONDS_PER_MIB)
             * 1000;
         self.flush_for(Duration::from_millis(millis));
+        if self.error_only {
+            let _publication_guard = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+            self.closing.store(true, Ordering::Release);
+            return;
+        }
         let publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
         self.closing.store(true, Ordering::Release);
         let delivered = self.delivered.load(Ordering::Acquire);

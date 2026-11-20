@@ -395,6 +395,7 @@
     "documents::integration::declaration_authority": "Claim: reserved kinds, owners and profile policies propagate from one dataset to both declarations and record 001.",
     "documents::integration::directed_number_displays": "",
     "documents::integration::empty_root": "Claim: absent or empty template roots refuse through the binary with status one.",
+    "documents::integration::error_level_terminal_delivery": "",
     "documents::integration::exhibited_labels": "Claim: exhibiting supplied labels changes only their delimiters and leaves source prose intact.",
     "documents::integration::finding_status": "Claim: stale checking and refreshing both exit three, and refreshing changes the document.",
     "documents::integration::git_required": "Claim: an unavailable Git executable makes the binary's tracked census refuse by name.",

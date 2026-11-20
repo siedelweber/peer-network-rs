@@ -1100,6 +1100,7 @@
         "documents::integration::declaration_authority",
         "documents::integration::directed_number_displays",
         "documents::integration::empty_root",
+        "documents::integration::error_level_terminal_delivery",
         "documents::integration::exhibited_labels",
         "documents::integration::finding_status",
         "documents::integration::git_required",

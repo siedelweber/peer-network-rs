@@ -1623,7 +1623,7 @@
       "claim": "CLICOMMON::claim:cli:entry-origin-runner-order",
       "before": "",
       "after": "Claim: Preparation selects the path before installation, continuation children adopt the sole root, and terminal paths skip command work.",
-      "review": "The controlled subscriber observes preparation, TTY and installation order, child parentage, inclusive durations, one root completion, and help, version, usage and TTY terminal cases."
+      "review": "The supplied origin orders preparation, installation and command work under one root; a failed terminal result write selects failure and ERROR before the root completes."
     },
     {
       "operation": "cli-common::tests::hard_linked_destinations_are_not_treated_as_one_role",
@@ -2034,12 +2034,20 @@
       "review": "Read the finite directed-rounding and rendered-word controls; they establish outward presentation and scoped prose refusals, without certifying authored numeric facts."
     },
     {
+      "operation": "documents::integration::error_level_terminal_delivery",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:cli:error-level-terminal-delivery",
+      "before": "",
+      "after": "Claim: An error-level process drains its terminal error before exit without a summary or status row.",
+      "review": "The real documents process returns runtime status one at the error level and its captured stderr contains the terminal ERROR without a metric or final-status row."
+    },
+    {
       "operation": "documents::integration::help_version_are_results",
       "path": "packages/documents/tests/integration.rs",
       "claim": "DOCUMENTS::claim:cli:help-version-are-results",
       "before": "",
       "after": "Claim: Help and version are whole JSON stdout results at zero under each admitted release policy, including quiet mode.",
-      "review": "The real documents executable answers each command at error, default, trace and off with a complete line and empty observation stream."
+      "review": "The real executable answers help and version at error, default, trace and off with one complete stdout line. A failing stdout sink yields runtime status one and one direct terminal diagnostic when enabled, none when quiet."
     },
     {
       "operation": "documents::integration::number_registry",
@@ -2095,7 +2103,7 @@
       "claim": "DOCUMENTS::claim:cli:panic-backtrace-selection",
       "before": "",
       "after": "Claim: The admitted Rust backtrace setting selects the optional panic member without changing the one-row exit.",
-      "review": "The process probe compares absent and requested backtrace settings without relying on platform frame text."
+      "review": "The process probe compares absent, zero, short, full, empty and non-UTF-8 settings without relying on platform frame text."
     },
     {
       "operation": "execwrap::integration::ambiguous_same_path_routing_is_a_usage_failure",

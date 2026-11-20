@@ -1064,6 +1064,32 @@ fn help_version_are_results() -> Result<()> {
             assert!(result.stderr.is_empty(), "{argument} {mode}");
         }
     }
+    for (mode, expected_records) in [("error", 1), ("off", 0)] {
+        let mut command = Command::new("sh");
+        command
+            .arg("-c")
+            .arg("exec \"$1\" --help > /dev/full")
+            .arg("sh")
+            .arg(&executable)
+            .env_remove("PN_OBSERVE_LEVEL")
+            .env_remove("PN_OBSERVE_DISABLE");
+        if mode == "off" {
+            command.env("PN_OBSERVE_DISABLE", "1");
+        } else {
+            command.env("PN_OBSERVE_LEVEL", mode);
+        }
+        let result = command.output()?;
+        assert_eq!(result.status.code(), Some(1));
+        let rows: Vec<serde_json::Value> = std::str::from_utf8(&result.stderr)?
+            .lines()
+            .map(serde_json::from_str)
+            .collect::<std::result::Result<_, _>>()?;
+        assert_eq!(rows.len(), expected_records);
+        if let Some(row) = rows.first() {
+            assert_eq!(row["kind"], "diagnostic");
+            assert_eq!(row["message"], "failed to write JSON result to stdout");
+        }
+    }
     Ok(())
 }
 
@@ -1160,6 +1186,34 @@ fn runtime_error() -> Result<()> {
     let errors: Vec<_> = records.iter().filter(|record| record["level"] == "ERROR").collect();
     assert_eq!(errors.len(), 1);
     assert!(errors[0].to_string().contains("docs/inputs/items.toml"));
+    Ok(())
+}
+
+/// Claim: An error-level process drains its terminal error before exit without a summary or status row.
+/// ´claim:cli:error-level-terminal-delivery´
+/// ´test:integration:error-level-terminal-delivery´
+#[test]
+fn error_level_terminal_delivery() -> Result<()> {
+    let directory = fixture()?;
+    fs::write(directory.path().join("docs/inputs/items.toml"), "namespace = 'wrong'\n")?;
+    let result = Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
+        .arg("--root")
+        .arg(directory.path())
+        .arg("check")
+        .env_remove("PN_OBSERVE_DISABLE")
+        .env("PN_OBSERVE_LEVEL", "error")
+        .output()?;
+    assert_eq!(result.status.code(), Some(1));
+    assert_eq!(result.stdout, b"");
+    let rows: Vec<serde_json::Value> = std::str::from_utf8(&result.stderr)?
+        .lines()
+        .map(serde_json::from_str)
+        .collect::<std::result::Result<_, _>>()?;
+    assert_eq!(rows.iter().filter(|row| row["level"] == "ERROR").count(), 1);
+    assert!(
+        rows.iter()
+            .all(|row| row["kind"] != "observation_status" && row["kind"] != "metric_summary")
+    );
     Ok(())
 }
 

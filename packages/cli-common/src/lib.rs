@@ -587,6 +587,10 @@ where
             Err(exit) => {
                 let written = emit_control_plane_record(&exit.record);
                 if written.is_err() && exit.exit == CommandExit::Success {
+                    let _ignored = emit_control_plane_record(&ControlPlaneRecord::diagnostic(
+                        &exit.record.command,
+                        "failed to write JSON result to stdout",
+                    ));
                     exit_with(CommandExit::Failure);
                 }
                 exit_with(exit.exit);
@@ -700,8 +704,8 @@ pub fn install_json_panic_hook(command_name: &str) {
             let location = panic_info
                 .location()
                 .map(|location| format!("{}:{}:{}", location.file(), location.line(), location.column()));
-            let backtrace = match std::env::var("RUST_BACKTRACE") {
-                Ok(value) if value != "0" && !value.is_empty() => {
+            let backtrace = match std::env::var_os("RUST_BACKTRACE") {
+                Some(value) if value != "0" => {
                     let captured = std::backtrace::Backtrace::force_capture();
                     Some(if value == "full" {
                         format!("{captured:?}")
@@ -958,27 +962,16 @@ where
     Prepare: FnOnce() -> OriginPreparation<Context>,
     Run: FnOnce(Context) -> Result<Output, CommandError>,
 {
-    let control_failed = std::cell::Cell::new(false);
-    let result = run_stdout_json_command_from_origin_inner(
+    run_stdout_json_command_from_origin_inner(
         command_name,
         || install_json_panic_hook(command_name),
         prepare,
         || stdout_tty_refusal_record(command_name),
         |arguments| observation::install_from_origin(origin, debug, default_level, arguments).map(Some),
-        |record| {
-            if emit_control_plane_record(record).is_err() {
-                control_failed.set(true);
-            }
-        },
+        emit_control_plane_record,
         emit,
         run,
-    );
-    if control_failed.get() && result == ExitCode::SUCCESS {
-        tracing::error!("failed to write JSON result to stdout");
-        CommandExit::Failure.exit_code()
-    } else {
-        result
-    }
+    )
 }
 
 /// Justified: This entry-origin adapter selects a bounded pre-installation path and hands it to the explicit command root without starting a second operation.
@@ -1012,7 +1005,7 @@ where
     Hook: FnOnce(),
     Prepare: FnOnce() -> OriginPreparation<Context>,
     Install: FnOnce(serde_json::Value) -> Result<Option<observation::OriginInstallation>, observation::BootstrapError>,
-    EmitControl: FnMut(&ControlPlaneRecord),
+    EmitControl: FnMut(&ControlPlaneRecord) -> io::Result<()>,
     EmitOutput: FnMut(&Output) -> io::Result<()>,
     Run: FnOnce(Context) -> Result<Output, CommandError>,
     Tty: FnOnce() -> Option<ControlPlaneRecord>,
@@ -1040,7 +1033,7 @@ where
         Err(error @ observation::BootstrapError::Configuration(_)) => {
             let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
             record.message = error.to_string();
-            emit_control(&record);
+            let _ignored = emit_control(&record);
             return CommandExit::Usage.exit_code();
         }
         Err(observation::BootstrapError::Unavailable(_)) => None,
@@ -1053,16 +1046,25 @@ where
     let scope = root.as_ref().map(|lease| lease.enter_command_scope(command_name));
     let (exit, outcome, result) = match prepared {
         OriginPreparation::Terminal { exit, .. } => {
-            let result = serde_json::json!({"record":exit.record,"exit":exit.exit});
-            emit_control(&exit.record);
-            let outcome = if exit.exit == CommandExit::Success {
-                observation::Outcome::Success
-            } else if exit.exit == CommandExit::Usage {
-                observation::Outcome::Refusal
+            let emitted = emit_control(&exit.record);
+            if emitted.is_err() && exit.exit == CommandExit::Success {
+                tracing::error!("failed to write JSON result to stdout");
+                (
+                    CommandExit::Failure.exit_code(),
+                    observation::Outcome::Error,
+                    serde_json::json!({"error":"failed to write JSON result to stdout"}),
+                )
             } else {
-                observation::Outcome::Error
-            };
-            (exit.exit.exit_code(), outcome, result)
+                let result = serde_json::json!({"record":exit.record,"exit":exit.exit});
+                let outcome = if exit.exit == CommandExit::Success {
+                    observation::Outcome::Success
+                } else if exit.exit == CommandExit::Usage {
+                    observation::Outcome::Refusal
+                } else {
+                    observation::Outcome::Error
+                };
+                (exit.exit.exit_code(), outcome, result)
+            }
         }
         OriginPreparation::Continue { context, .. } => match run(context) {
             Ok(output) => match emit_output(&output) {

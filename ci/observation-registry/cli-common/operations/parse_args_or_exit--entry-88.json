@@ -12,9 +12,9 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/lib.rs::parse_args_or_exit",
-    "body": "{ let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"parse_args_or_exit\" , & std :: any :: type_name :: < T > () ,) ; let result = { match parse_args_from :: < T , _ , _ > (std :: env :: args_os ()) { Ok (args) => args , Err (exit) => { let written = emit_control_plane_record (& exit . record) ; if written . is_err () && exit . exit == CommandExit :: Success { exit_with (CommandExit :: Failure) ; } exit_with (exit . exit) ; } } } ; scope . finish (& \"parsed value has a Parser-only representation contract\") ; result }",
+    "body": "{ let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"parse_args_or_exit\" , & std :: any :: type_name :: < T > () ,) ; let result = { match parse_args_from :: < T , _ , _ > (std :: env :: args_os ()) { Ok (args) => args , Err (exit) => { let written = emit_control_plane_record (& exit . record) ; if written . is_err () && exit . exit == CommandExit :: Success { let _ignored = emit_control_plane_record (& ControlPlaneRecord :: diagnostic (& exit . record . command , \"failed to write JSON result to stdout\" ,)) ; exit_with (CommandExit :: Failure) ; } exit_with (exit . exit) ; } } } ; scope . finish (& \"parsed value has a Parser-only representation contract\") ; result }",
     "class_decision": "public-cli",
-    "item_premise": "Current parser body keeps the usage class and directs help or version results through the shared result boundary.",
+    "item_premise": "A failed pre-installation help or version result write attempts one direct terminal diagnostic when enabled, then exits one; quiet release remains silent.",
     "assessments": {
       "full_recording": "review-265",
       "secret_flow": "review-002",

@@ -26,6 +26,12 @@ fn main() -> ExitCode {
         Ok(args) => args,
         Err(exit) => {
             let result = cli_common::emit_control_plane_record(&exit.record);
+            if result.is_err() {
+                let _ignored = cli_common::emit_control_plane_record(&cli_common::ControlPlaneRecord::diagnostic(
+                    "pn-credential-generator",
+                    "failed to write JSON result to stdout",
+                ));
+            }
             return if result.is_ok() {
                 exit.exit.exit_code()
             } else {

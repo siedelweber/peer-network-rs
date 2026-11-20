@@ -1,4 +1,5 @@
 use std::process::Command;
+use std::{ffi::OsString, os::unix::ffi::OsStringExt};
 
 /// Claim: The shared production startup preserves the public panic payload in one JSON diagnostic, with empty stdout and status one.
 /// ´claim:cli:panic-proxy´
@@ -22,13 +23,20 @@ fn panic_proxy() -> documents::Result<()> {
 #[test]
 fn panic_backtrace_selection() -> documents::Result<()> {
     let executable = pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents-panic-probe")).unwrap();
-    for setting in [None, Some("0"), Some("1"), Some("full")] {
+    for setting in [
+        None,
+        Some(OsString::from("0")),
+        Some(OsString::from("1")),
+        Some(OsString::from("full")),
+        Some(OsString::new()),
+        Some(OsString::from_vec(vec![u8::MAX])),
+    ] {
         let mut command = Command::new(&executable);
         command
             .env_remove("PN_OBSERVE_DISABLE")
             .env_remove("PN_OBSERVE_LEVEL")
             .env_remove("RUST_BACKTRACE");
-        if let Some(value) = setting {
+        if let Some(value) = &setting {
             command.env("RUST_BACKTRACE", value);
         }
         let result = command.output()?;
@@ -36,7 +44,10 @@ fn panic_backtrace_selection() -> documents::Result<()> {
         assert_eq!(result.stdout, b"");
         let row: serde_json::Value = serde_json::from_slice(&result.stderr)?;
         assert_eq!(row["kind"], "panic");
-        assert_eq!(row["fields"]["backtrace"].is_string(), matches!(setting, Some("1" | "full")));
+        assert_eq!(
+            row["fields"]["backtrace"].is_string(),
+            setting.as_deref().is_some_and(|value| value != "0")
+        );
     }
     Ok(())
 }
