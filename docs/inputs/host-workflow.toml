@@ -320,7 +320,7 @@ name = "8-l"
 category = "hold"
 owner = "lane/design"
 scope = "both command surfaces"
-evidence = "node/client GraphQL only, start before listener, terminal refusal before effects, exact artifact output, exit outcomes and secret sentinels"
+evidence = "node/client GraphQL only, start before listener, exact artifact output, exit outcomes and secret sentinels"
 hold = "open:design:harness-evidence"
 
 [[rows]]

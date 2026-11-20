@@ -322,7 +322,7 @@
     },
     {
       "category": "hold",
-      "evidence": "node/client GraphQL only, start before listener, terminal refusal before effects, exact artifact output, exit outcomes and secret sentinels",
+      "evidence": "node/client GraphQL only, start before listener, exact artifact output, exit outcomes and secret sentinels",
       "hold": "open:design:harness-evidence",
       "name": "8-l",
       "owner": "lane/design",
