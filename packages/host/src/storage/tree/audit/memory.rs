@@ -3,16 +3,21 @@
 
 use super::super::{MemoryTree, coordinate, unqualified};
 use super::{
-    AuditFailure, AuditMeter, AuditSite, AuditSource, Collected, RawDebit, RawDescriptor, RawExpectedDebit, RawGeneration,
-    RawObservation, RawResult, RawScope, RawSelection, child_location, descriptor_location, generation_slot_location,
-    generation_source_location, placement_location, reference_location, result_index_location, result_location,
-    result_slot_location, scope_location, version_location, vintage_location,
+    AuditFailure, AuditMeter, AuditSite, AuditSource, Collected, RawContent, RawDebit, RawDescriptor, RawExpectedDebit,
+    RawGeneration, RawObservation, RawResult, RawScope, RawSelection, child_location, descriptor_location,
+    generation_slot_location, generation_source_location, placement_location, reference_location, result_index_location,
+    result_location, result_slot_location, scope_location, version_location, vintage_location,
 };
 use crate::admitted_result::position::{Error as PositionError, Representation};
 use crate::storage::StorageError;
 use pn_interchange::{EncodingError, EncodingUsage, Value};
 
 impl<'a> AuditSource<'a> for MemoryTree<'a> {
+    #[doc = "Justified: The memory audit's physical observation relation is inspected through the common audit operation."]
+    fn observation_relation(&self) -> &'static str {
+        "memory.observations"
+    }
+
     #[doc = "Justified: Memory audit adapter work inherits the enclosing metered audit operation."]
     fn check_identity(&self, _meter: &mut AuditMeter) -> Result<(), AuditFailure> {
         Ok(())
@@ -125,14 +130,16 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
                 parent: parent.copied(),
                 depth,
                 segment: node.segment,
-                package: node.input.bytes(),
                 label: node.label,
                 generation: node.generation,
-                selections,
-                selection_order,
-                observations,
-                local,
-                expected_debits,
+                content: RawContent {
+                    package: node.input.bytes(),
+                    selections,
+                    selection_order,
+                    observations,
+                    local,
+                    expected_debits,
+                },
             });
             Ok(())
         })?;
@@ -420,7 +427,7 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
                 .ok()
                 .map(|at| &rows.results[at])
                 .filter(|row| row.segment == *segment && row.depth == *depth);
-            if row.is_none_or(|row| row.local.is_empty()) {
+            if row.is_none_or(|row| row.content.local.is_empty()) {
                 return Err(meter.refused(StorageError::CorruptHistory, site));
             }
             Ok(())
@@ -432,7 +439,7 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
             }
             meter.visit(placement_location(row.scope, row.segment, row.depth, "memory.introductions"))?;
             if self.introductions.get(&(row.scope, row.segment, row.depth)).copied()
-                != (!row.local.is_empty()).then_some(row.identity)
+                != (!row.content.local.is_empty()).then_some(row.identity)
             {
                 return Err(meter.refused(StorageError::CorruptHistory, result_location(row.scope, row.identity)));
             }
@@ -456,7 +463,7 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
             .ok_or_else(|| meter.refused(StorageError::CorruptHistory, result_location(row.scope, row.identity)))?;
         let mut bytes = Vec::new();
         let reserve_location = result_location(row.scope, row.identity);
-        meter.reserve(&mut bytes, row.package.len(), reserve_location)?;
+        meter.reserve(&mut bytes, row.content.package.len(), reserve_location)?;
         for (slot, chunk) in node.chunks.iter().enumerate() {
             let location = result_slot_location(row.scope, row.identity, "pn_epoch_package_chunks", slot);
             meter.visit(location)?;
@@ -466,13 +473,13 @@ impl<'a> AuditSource<'a> for MemoryTree<'a> {
             if bytes
                 .len()
                 .checked_add(chunk.len())
-                .is_none_or(|length| length > row.package.len())
+                .is_none_or(|length| length > row.content.package.len())
             {
                 return Err(meter.refused(StorageError::CorruptHistory, location));
             }
             bytes.extend_from_slice(chunk);
         }
-        if bytes != row.package || node.references.len() != node.input.declarations().len() {
+        if bytes != row.content.package || node.references.len() != node.input.declarations().len() {
             return Err(meter.refused(StorageError::CorruptHistory, result_location(row.scope, row.identity)));
         }
         for (reference, expected) in node.references.iter().zip(node.input.declarations()) {

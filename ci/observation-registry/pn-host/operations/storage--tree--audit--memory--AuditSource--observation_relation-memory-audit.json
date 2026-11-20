@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit/memory.rs",
+    "item": "storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::observation_relation",
+    "owner": "HOST",
+    "signature": "fn observation_relation (& self) -> & 'static str",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: The memory audit's physical observation relation is inspected through the common audit operation.",
+      "witness": "HOST::claim:history:tree-audit-memory-domains",
+      "boundary": "pn-host::packages/host/src/storage/tree.rs::storage::tree::MemoryTree < 'a >::audit",
+      "class_decision": "host-storage"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::observation_relation",
+    "body": "{ \"memory.observations\" }",
+    "class_decision": "host-storage",
+    "item_premise": "The memory adapter supplies its physical observation relation to the bounded common audit comparison.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

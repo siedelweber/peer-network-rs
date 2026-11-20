@@ -727,17 +727,17 @@
       "operations": 67
     },
     {
-      "exceptions": 223,
+      "exceptions": 224,
       "generators": 216,
       "helpers": 0,
       "instrumented": 77,
       "name": "pn-host",
       "number_forms": {
         "exceptions": {
-          "exact": "223",
+          "exact": "224",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "223",
+          "num": "224",
           "num_exact": true,
           "num_relation": "="
         },
@@ -766,10 +766,10 @@
           "num_relation": "="
         },
         "operations": {
-          "exact": "300",
+          "exact": "301",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "300",
+          "num": "301",
           "num_exact": true,
           "num_relation": "="
         }
@@ -796,7 +796,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 300
+      "operations": 301
     },
     {
       "exceptions": 36,

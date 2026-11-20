@@ -178,7 +178,7 @@ fn prospective_counts(
         }
     }
     for row in &rows.results {
-        for version in &row.observations {
+        for version in &row.content.observations {
             total.add(row.key.len(), 7)?;
             total.version(version)?;
         }
@@ -214,12 +214,12 @@ fn prospective_counts(
                 row.key.len(),
                 32,
                 row.parent.map_or(0, |_| 32),
-                row.package.len(),
+                row.content.package.len(),
                 row.label.len(),
             ])?,
             10,
         )?;
-        for selection in &row.selections {
+        for selection in &row.content.selections {
             total.add(32, 3)?;
             total.version(&selection.use_.version)?;
         }
@@ -290,7 +290,7 @@ pub(super) fn materialize(
         .generations
         .iter()
         .map(|generation| generation.versions.len())
-        .chain(rows.results.iter().map(|row| row.observations.len()))
+        .chain(rows.results.iter().map(|row| row.content.observations.len()))
         .try_fold(0usize, |total, count| total.checked_add(count).ok_or_else(count_overflow))?;
     meter.reserve(&mut histories, history_capacity, last_site)?;
     let mut history_rows = Vec::new();
@@ -313,7 +313,7 @@ pub(super) fn materialize(
         }
     }
     for row in &rows.results {
-        for observed in &row.observations {
+        for observed in &row.content.observations {
             history_rows.push((*observed, row.key.as_str(), row.generation, None));
         }
     }
@@ -385,13 +385,13 @@ pub(super) fn materialize(
     for (at, row) in rows.results.iter().enumerate() {
         let site = result_location(row.scope, row.identity);
         let mut selections = Vec::new();
-        meter.reserve(&mut selections, row.selections.len(), site)?;
+        meter.reserve(&mut selections, row.content.selections.len(), site)?;
         let mut order = Vec::new();
-        meter.reserve(&mut order, row.selections.len(), site)?;
-        order.extend(0..row.selections.len());
+        meter.reserve(&mut order, row.content.selections.len(), site)?;
+        order.extend(0..row.content.selections.len());
         order.sort_unstable_by(|&a, &b| {
-            let a = row.selections[a].use_;
-            let b = row.selections[b].use_;
+            let a = row.content.selections[a].use_;
+            let b = row.content.selections[b].use_;
             (a.selected_at, a.version.family.name(), &a.version.key, &a.version.edition).cmp(&(
                 b.selected_at,
                 b.version.family.name(),
@@ -400,7 +400,7 @@ pub(super) fn materialize(
             ))
         });
         for offset in order {
-            let selection = &row.selections[offset];
+            let selection = &row.content.selections[offset];
             let site = reference_location(row.scope, row.identity, selection.use_);
             selections.push(array(
                 [
@@ -442,7 +442,7 @@ pub(super) fn materialize(
                 bytes(&row.identity, meter, site)?,
                 parent,
                 Value::Unsigned(row.depth),
-                bytes(row.package, meter, site)?,
+                bytes(row.content.package, meter, site)?,
                 text(row.label, meter, site)?,
                 Value::Unsigned(row.generation),
                 sequence(&mut selections),

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::RawContent",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "# [doc = \" Borrowed facts used at the depth-ordered semantic turn and during output.\"] # [doc = \" The memory collector reserves these vectors in its existing collection order.\"] pub (super) struct RawContent < 'a > { pub package : & 'a [u8] , pub selections : Vec < RawSelection < 'a > > , pub selection_order : Vec < usize > , pub observations : Vec < & 'a crate :: storage :: Version > , pub local : Vec < RawDebit < 'a > > , pub expected_debits : Vec < RawExpectedDebit < 'a > > , }"
+  }
+}

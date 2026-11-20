@@ -806,9 +806,15 @@ pub(super) struct RawResult<'a> {
     pub parent: Option<Identity>,
     pub depth: u64,
     pub segment: Identity,
-    pub package: &'a [u8],
     pub label: &'a str,
     pub generation: u64,
+    pub content: RawContent<'a>,
+}
+
+/// Borrowed facts used at the depth-ordered semantic turn and during output.
+/// The memory collector reserves these vectors in its existing collection order.
+pub(super) struct RawContent<'a> {
+    pub package: &'a [u8],
     pub selections: Vec<RawSelection<'a>>,
     pub selection_order: Vec<usize>,
     pub observations: Vec<&'a crate::storage::Version>,
@@ -847,6 +853,7 @@ pub(super) trait AuditSource<'a> {
     ) -> Result<(), AuditFailure>;
     fn context(&self, row: &RawResult<'_>, meter: &mut AuditMeter) -> Result<Value, AuditFailure>;
     fn collect_observations(&'a self, meter: &mut AuditMeter) -> Result<Vec<RawObservation<'a>>, AuditFailure>;
+    fn observation_relation(&self) -> &'static str;
     fn check_enumeration(
         &self,
         rows: &Collected<'_>,
@@ -855,7 +862,26 @@ pub(super) trait AuditSource<'a> {
     ) -> Result<(), AuditFailure>;
 }
 
+struct AuditGraph<'a> {
+    rows: Collected<'a>,
+    parents: Vec<Option<usize>>,
+    ranks: Ranks,
+}
+
+struct CheckedAudit<'a> {
+    graph: AuditGraph<'a>,
+    debits: Vec<Vec<RawDebit<'a>>>,
+    contexts: Vec<Option<Value>>,
+}
+
 pub(super) fn reconcile<'a>(source: &'a impl AuditSource<'a>, meter: &mut AuditMeter) -> Result<AuditInventory, AuditFailure> {
+    let graph = prepare_graph(source, meter)?;
+    let checked = check_graph_content(source, graph, meter)?;
+    source.check_enumeration(&checked.graph.rows, &checked.graph.ranks.children, meter)?;
+    finish_audit(checked, meter)
+}
+
+fn prepare_graph<'a>(source: &'a impl AuditSource<'a>, meter: &mut AuditMeter) -> Result<AuditGraph<'a>, AuditFailure> {
     source.check_identity(meter)?;
     let mut rows = source.collect(meter)?;
     rows.generations.sort_unstable_by(|a, b| a.key.cmp(&b.key));
@@ -872,11 +898,29 @@ pub(super) fn reconcile<'a>(source: &'a impl AuditSource<'a>, meter: &mut AuditM
     let segment_order = check_descriptors(source, &mut rows, &parents, meter)?;
     source.check_segments(&rows, &ranks.children, &segment_order, meter)?;
     source.check_reference_index(&rows, meter)?;
-    let (debits, mut contexts) = check_content(source, &rows, &parents, &ranks, meter)?;
+    Ok(AuditGraph { rows, parents, ranks })
+}
+
+fn check_graph_content<'a>(
+    source: &'a impl AuditSource<'a>,
+    graph: AuditGraph<'a>,
+    meter: &mut AuditMeter,
+) -> Result<CheckedAudit<'a>, AuditFailure> {
+    let (debits, contexts) = check_content(source, &graph.rows, &graph.parents, &graph.ranks, meter)?;
     let observations = source.collect_observations(meter)?;
-    check_observations(&rows, &observations, meter)?;
-    source.check_enumeration(&rows, &ranks.children, meter)?;
-    materialize(&rows, &parents, &ranks.children, &debits, &mut contexts, meter)
+    check_observations(&graph.rows, &observations, source.observation_relation(), meter)?;
+    Ok(CheckedAudit { graph, debits, contexts })
+}
+
+fn finish_audit(mut checked: CheckedAudit<'_>, meter: &mut AuditMeter) -> Result<AuditInventory, AuditFailure> {
+    materialize(
+        &checked.graph.rows,
+        &checked.graph.parents,
+        &checked.graph.ranks.children,
+        &checked.debits,
+        &mut checked.contexts,
+        meter,
+    )
 }
 
 fn check_scope_roots(rows: &Collected<'_>, meter: &mut AuditMeter) -> Result<(), AuditFailure> {
@@ -1135,8 +1179,8 @@ fn check_content<'a>(
         meter.visit(location)?;
         let parent = parents[at].map(|i| &rows.results[i]);
         source.check_content(row, parent, meter)?;
-        let mut observed = row.observations.iter();
-        for selection in &row.selections {
+        let mut observed = row.content.observations.iter();
+        for selection in &row.content.selections {
             if !unqualified(selection.use_.version.family) {
                 let site = reference_location(row.scope, row.identity, selection.use_);
                 meter.visit(site)?;
@@ -1151,17 +1195,20 @@ fn check_content<'a>(
         if observed.next().is_some() {
             return Err(meter.refused(StorageError::CorruptHistory, result_location(row.scope, row.identity)));
         }
-        for selection in &row.selections {
+        for selection in &row.content.selections {
             let site = reference_location(row.scope, row.identity, selection.use_);
             meter.visit(site)?;
             let expected_origin = if unqualified(selection.use_.version.family) {
                 let inherited = if let Some(prior) = parent {
                     meter.visit(site)?;
                     prior
+                        .content
                         .selection_order
-                        .binary_search_by(|&index| coordinate(prior.selections[index].use_).cmp(&coordinate(selection.use_)))
+                        .binary_search_by(|&index| {
+                            coordinate(prior.content.selections[index].use_).cmp(&coordinate(selection.use_))
+                        })
                         .ok()
-                        .map(|index| &prior.selections[prior.selection_order[index]])
+                        .map(|index| &prior.content.selections[prior.content.selection_order[index]])
                 } else {
                     None
                 };
@@ -1197,7 +1244,7 @@ fn check_content<'a>(
             let location = result_location(row.scope, row.identity);
             let capacity = inherited
                 .len()
-                .checked_add(row.local.len())
+                .checked_add(row.content.local.len())
                 .ok_or_else(|| meter.refused(StorageError::ReadLimit, location))?;
             meter.reserve(current, capacity, location)?;
             for debit in inherited {
@@ -1214,9 +1261,9 @@ fn check_content<'a>(
             }
         } else {
             let location = result_location(row.scope, row.identity);
-            meter.reserve(&mut debits[at], row.local.len(), location)?;
+            meter.reserve(&mut debits[at], row.content.local.len(), location)?;
         }
-        for debit in &row.local {
+        for debit in &row.content.local {
             {
                 let location = result_location(row.scope, row.identity);
                 meter.visit(location)?;
@@ -1242,17 +1289,17 @@ fn check_content<'a>(
                 return Err(meter.refused(StorageError::CorruptHistory, site));
             }
         }
-        if debits[at].len() != row.expected_debits.len() {
+        if debits[at].len() != row.content.expected_debits.len() {
             return Err(meter.refused(StorageError::CorruptHistory, result_location(row.scope, row.identity)));
         }
-        for (actual, expected) in debits[at].iter().zip(&row.expected_debits) {
+        for (actual, expected) in debits[at].iter().zip(&row.content.expected_debits) {
             let site = debit_location(actual.scope, actual.origin, actual.act, "pn_epoch_result_debits", None);
             meter.visit(site)?;
             if actual.act != expected.act || actual.bytes != expected.bytes {
                 return Err(meter.refused(StorageError::CorruptHistory, site));
             }
         }
-        for selection in &row.selections {
+        for selection in &row.content.selections {
             {
                 let location = result_location(row.scope, row.identity);
                 meter.visit(location)?;
@@ -1269,16 +1316,21 @@ fn check_content<'a>(
     Ok((debits, contexts))
 }
 
-fn check_observations(rows: &Collected<'_>, actual: &[RawObservation<'_>], meter: &mut AuditMeter) -> Result<(), AuditFailure> {
+fn check_observations(
+    rows: &Collected<'_>,
+    actual: &[RawObservation<'_>],
+    relation: &'static str,
+    meter: &mut AuditMeter,
+) -> Result<(), AuditFailure> {
     let capacity = rows.results.iter().try_fold(0usize, |total, row| {
         total
-            .checked_add(row.observations.len())
+            .checked_add(row.content.observations.len())
             .ok_or_else(|| meter.refused(StorageError::ReadLimit, result_location(row.scope, row.identity)))
     })?;
     let mut expected = Vec::new();
     meter.reserve(&mut expected, capacity, AuditSite::NotRead)?;
     for row in &rows.results {
-        for version in &row.observations {
+        for version in &row.content.observations {
             meter.visit(result_location(row.scope, row.identity))?;
             expected.push(RawObservation {
                 family: version.family,
@@ -1290,14 +1342,14 @@ fn check_observations(rows: &Collected<'_>, actual: &[RawObservation<'_>], meter
     }
     expected.sort_unstable_by(|a, b| (a.family, a.key, a.edition).cmp(&(b.family, b.key, b.edition)));
     for pair in expected.windows(2) {
-        let site = version_location(pair[1].family, pair[1].key, pair[1].edition, "memory.observations");
+        let site = version_location(pair[1].family, pair[1].key, pair[1].edition, relation);
         meter.visit(site)?;
         if (pair[0].family, pair[0].key, pair[0].edition) == (pair[1].family, pair[1].key, pair[1].edition) {
             return Err(meter.refused(StorageError::CorruptHistory, site));
         }
     }
     for (index, observed) in actual.iter().enumerate() {
-        let site = version_location(observed.family, observed.key, observed.edition, "memory.observations");
+        let site = version_location(observed.family, observed.key, observed.edition, relation);
         meter.visit(site)?;
         let Some(wanted) = expected.get(index) else {
             return Err(meter.refused(StorageError::CorruptHistory, site));
@@ -1311,7 +1363,7 @@ fn check_observations(rows: &Collected<'_>, actual: &[RawObservation<'_>], meter
     if let Some(missing) = expected.get(actual.len()) {
         return Err(meter.refused(
             StorageError::CorruptHistory,
-            version_location(missing.family, missing.key, missing.edition, "memory.observations"),
+            version_location(missing.family, missing.key, missing.edition, relation),
         ));
     }
     Ok(())

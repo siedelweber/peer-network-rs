@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::audit::AuditGraph",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/audit.rs",
+    "syntax": "struct AuditGraph < 'a > { rows : Collected < 'a > , parents : Vec < Option < usize > > , ranks : Ranks , }"
+  }
+}
