@@ -31,7 +31,7 @@
         "pn-host::packages/host/src/storage/tree/audit.rs::storage::tree::audit::AuditInventory::counts",
         "pn-host::packages/host/src/storage/tree/audit.rs::storage::tree::audit::AuditInventory::fields",
         "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::check_content",
-        "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::check_enumeration",
+        "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::MemoryTree < '_ >::check_enumeration",
         "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::check_identity",
         "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::check_segments",
         "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::check_shapes",

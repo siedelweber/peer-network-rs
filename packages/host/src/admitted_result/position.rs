@@ -383,43 +383,43 @@ impl<'a> PositionFieldView for AdmittedFields<'a> {
     type Marker = &'a burn::RecognizedMarker;
     type Declaration = &'a Declaration;
 
-    /// Justified: Private admitted field access inherits the metered position construction.
+    /// Justified: Private admitted field access inherits observed position construction or retention.
     fn frame_count(&self) -> usize {
         self.0.frames.len()
     }
-    /// Justified: Private admitted field access inherits the metered position construction.
+    /// Justified: Private admitted field access inherits observed position construction or retention.
     fn frame(&self, at: usize) -> Option<Self::Frame> {
         self.0.frames.get(at)
     }
-    /// Justified: Private admitted field access inherits the metered position construction.
+    /// Justified: Private admitted field access inherits observed position construction or retention.
     fn marker_count(&self, frame: Self::Frame) -> usize {
         frame.closure.markers.markers().len()
     }
-    /// Justified: Private admitted field access inherits the metered position construction.
+    /// Justified: Private admitted field access inherits observed position construction or retention.
     fn marker(&self, frame: Self::Frame, at: usize) -> Option<Self::Marker> {
         frame.closure.markers.markers().get(at)
     }
-    /// Justified: Private admitted field access inherits the metered position construction.
+    /// Justified: Private admitted field access inherits observed position construction or retention.
     fn boundary(&self, frame: Self::Frame) -> u64 {
         frame.parameters.boundary
     }
-    /// Justified: Private admitted field access inherits the metered position construction.
+    /// Justified: Private admitted field access inherits observed position construction or retention.
     fn marker_index(&self, marker: Self::Marker) -> u64 {
         marker.identity().index
     }
-    /// Justified: Private admitted field access inherits the metered position construction.
+    /// Justified: Private admitted field access inherits observed position construction or retention.
     fn declaration_count(&self) -> usize {
         self.0.causes.declarations.len()
     }
-    /// Justified: Private admitted field access inherits the metered position construction.
+    /// Justified: Private admitted field access inherits observed position construction or retention.
     fn declaration(&self, at: usize) -> Option<Self::Declaration> {
         self.0.causes.declarations.get(at)
     }
-    /// Justified: Private admitted field access inherits the metered position construction.
+    /// Justified: Private admitted field access inherits observed position construction or retention.
     fn is_genesis(&self, declaration: Self::Declaration) -> bool {
         declaration.id.namespace == "deployment" && declaration.id.name == "genesis"
     }
-    /// Justified: Private admitted field access inherits the metered position construction.
+    /// Justified: Private admitted field access inherits observed position construction or retention.
     fn genesis_at(&self, declaration: Self::Declaration) -> Option<u64> {
         if let DeclarationContent::Deployment { genesis_at } = declaration.content {
             Some(genesis_at)
@@ -427,7 +427,7 @@ impl<'a> PositionFieldView for AdmittedFields<'a> {
             None
         }
     }
-    /// Justified: Private admitted field access inherits the metered position construction.
+    /// Justified: Private admitted field access inherits observed position construction or retention.
     fn policy_genesis_at(&self, frame: Self::Frame) -> u64 {
         frame.marker_policy.genesis_at
     }

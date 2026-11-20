@@ -4,6 +4,6 @@
     "item": "storage::tree::audit::RawResult",
     "package": "pn-host",
     "path": "packages/host/src/storage/tree/audit.rs",
-    "syntax": "pub (super) struct RawResult < 'a > { pub key : String , pub scope : & 'a EpochScope , pub identity : Identity , pub parent : Option < Identity > , pub depth : u64 , pub segment : Identity , pub label : & 'a str , pub generation : u64 , pub content : RawContent < 'a > , }"
+    "syntax": "pub (super) struct RawResult < 'a > { pub key : String , pub scope : & 'a EpochScope , pub identity : Identity , pub parent : Option < Identity > , pub depth : u64 , pub segment : Identity , pub label : & 'a str , pub generation : u64 , pub content : OnceCell < RawContent < 'a > > , }"
   }
 }

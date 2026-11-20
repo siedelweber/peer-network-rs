@@ -1,0 +1,4 @@
+{
+  "section": "named_operations",
+  "value": "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::MemoryTree < '_ >::check_enumeration"
+}

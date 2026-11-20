@@ -12,7 +12,7 @@
     "exception": {
       "rule": "ROOT::rule:observe:spans",
       "kind": "inherited",
-      "justification": "Justified: Private admitted field access inherits the metered position construction.",
+      "justification": "Justified: Private admitted field access inherits observed position construction or retention.",
       "witness": "HOST::claim:history:position-binding",
       "boundary": "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::Position < 'a >::from_package",
       "class_decision": "host-admitted-carrier"
@@ -22,7 +22,7 @@
     "operation": "pn-host::packages/host/src/admitted_result/position.rs::admitted_result::position::<AdmittedFields < 'a > as PositionFieldView>::is_genesis",
     "body": "{ declaration . id . namespace == \"deployment\" && declaration . id . name == \"genesis\" }",
     "class_decision": "host-admitted-carrier",
-    "item_premise": "The private accessor reads one admitted position field under the observed and metered position construction; the common selector alone chooses causal members.",
+    "item_premise": "The private accessor reads one admitted position field under observed position construction or retention; the common selector alone chooses causal members.",
     "assessments": {
       "full_recording": "admitted-carrier-full_recording",
       "secret_flow": "admitted-carrier-secret_flow",

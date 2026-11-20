@@ -5,6 +5,7 @@ use super::{Closure, Error, Generation, Identity, Meter, coordinate, unqualified
 use crate::storage::{DebitVintage, DeclarationUse, EpochScope, ReadBudget, StorageError, Version};
 use pn_interchange::Value;
 use pn_records::ActId;
+use std::cell::OnceCell;
 
 mod memory;
 mod output;
@@ -808,7 +809,13 @@ pub(super) struct RawResult<'a> {
     pub segment: Identity,
     pub label: &'a str,
     pub generation: u64,
-    pub content: RawContent<'a>,
+    pub content: OnceCell<RawContent<'a>>,
+}
+
+impl<'a> RawResult<'a> {
+    fn content(&self) -> &RawContent<'a> {
+        self.content.get().expect("content prepared before semantic inspection")
+    }
 }
 
 /// Borrowed facts used at the depth-ordered semantic turn and during output.
@@ -851,15 +858,17 @@ pub(super) trait AuditSource<'a> {
         parent: Option<&RawResult<'_>>,
         meter: &mut AuditMeter,
     ) -> Result<(), AuditFailure>;
+    fn prepare_content(
+        &'a self,
+        _row: &RawResult<'a>,
+        _parent: Option<&RawResult<'a>>,
+        _meter: &mut AuditMeter,
+    ) -> Result<Option<RawContent<'a>>, AuditFailure> {
+        Ok(None)
+    }
     fn context(&self, row: &RawResult<'_>, meter: &mut AuditMeter) -> Result<Value, AuditFailure>;
     fn collect_observations(&'a self, meter: &mut AuditMeter) -> Result<Vec<RawObservation<'a>>, AuditFailure>;
     fn observation_relation(&self) -> &'static str;
-    fn check_enumeration(
-        &self,
-        rows: &Collected<'_>,
-        children: &[Vec<usize>],
-        meter: &mut AuditMeter,
-    ) -> Result<(), AuditFailure>;
 }
 
 struct AuditGraph<'a> {
@@ -874,7 +883,7 @@ struct CheckedAudit<'a> {
     contexts: Vec<Option<Value>>,
 }
 
-pub(super) fn reconcile<'a>(source: &'a impl AuditSource<'a>, meter: &mut AuditMeter) -> Result<AuditInventory, AuditFailure> {
+pub(super) fn reconcile(source: &super::MemoryTree<'_>, meter: &mut AuditMeter) -> Result<AuditInventory, AuditFailure> {
     let graph = prepare_graph(source, meter)?;
     let checked = check_graph_content(source, graph, meter)?;
     source.check_enumeration(&checked.graph.rows, &checked.graph.ranks.children, meter)?;
@@ -1151,7 +1160,7 @@ type ContentState<'a> = (Vec<Vec<RawDebit<'a>>>, Vec<Option<Value>>);
 // Justified: The depth-ordered content pass keeps origin and debit refusal order visible in one item.
 #[allow(clippy::too_many_lines)]
 fn check_content<'a>(
-    source: &impl AuditSource<'a>,
+    source: &'a impl AuditSource<'a>,
     rows: &Collected<'a>,
     parents: &[Option<usize>],
     ranks: &Ranks,
@@ -1178,9 +1187,14 @@ fn check_content<'a>(
         let location = result_location(row.scope, row.identity);
         meter.visit(location)?;
         let parent = parents[at].map(|i| &rows.results[i]);
+        if let Some(content) = source.prepare_content(row, parent, meter)? {
+            row.content
+                .set(content)
+                .map_err(|_| meter.refused(StorageError::CorruptHistory, location))?;
+        }
         source.check_content(row, parent, meter)?;
-        let mut observed = row.content.observations.iter();
-        for selection in &row.content.selections {
+        let mut observed = row.content().observations.iter();
+        for selection in &row.content().selections {
             if !unqualified(selection.use_.version.family) {
                 let site = reference_location(row.scope, row.identity, selection.use_);
                 meter.visit(site)?;
@@ -1195,20 +1209,20 @@ fn check_content<'a>(
         if observed.next().is_some() {
             return Err(meter.refused(StorageError::CorruptHistory, result_location(row.scope, row.identity)));
         }
-        for selection in &row.content.selections {
+        for selection in &row.content().selections {
             let site = reference_location(row.scope, row.identity, selection.use_);
             meter.visit(site)?;
             let expected_origin = if unqualified(selection.use_.version.family) {
                 let inherited = if let Some(prior) = parent {
                     meter.visit(site)?;
                     prior
-                        .content
+                        .content()
                         .selection_order
                         .binary_search_by(|&index| {
-                            coordinate(prior.content.selections[index].use_).cmp(&coordinate(selection.use_))
+                            coordinate(prior.content().selections[index].use_).cmp(&coordinate(selection.use_))
                         })
                         .ok()
-                        .map(|index| &prior.content.selections[prior.content.selection_order[index]])
+                        .map(|index| &prior.content().selections[prior.content().selection_order[index]])
                 } else {
                     None
                 };
@@ -1244,7 +1258,7 @@ fn check_content<'a>(
             let location = result_location(row.scope, row.identity);
             let capacity = inherited
                 .len()
-                .checked_add(row.content.local.len())
+                .checked_add(row.content().local.len())
                 .ok_or_else(|| meter.refused(StorageError::ReadLimit, location))?;
             meter.reserve(current, capacity, location)?;
             for debit in inherited {
@@ -1261,9 +1275,9 @@ fn check_content<'a>(
             }
         } else {
             let location = result_location(row.scope, row.identity);
-            meter.reserve(&mut debits[at], row.content.local.len(), location)?;
+            meter.reserve(&mut debits[at], row.content().local.len(), location)?;
         }
-        for debit in &row.content.local {
+        for debit in &row.content().local {
             {
                 let location = result_location(row.scope, row.identity);
                 meter.visit(location)?;
@@ -1289,17 +1303,17 @@ fn check_content<'a>(
                 return Err(meter.refused(StorageError::CorruptHistory, site));
             }
         }
-        if debits[at].len() != row.content.expected_debits.len() {
+        if debits[at].len() != row.content().expected_debits.len() {
             return Err(meter.refused(StorageError::CorruptHistory, result_location(row.scope, row.identity)));
         }
-        for (actual, expected) in debits[at].iter().zip(&row.content.expected_debits) {
+        for (actual, expected) in debits[at].iter().zip(&row.content().expected_debits) {
             let site = debit_location(actual.scope, actual.origin, actual.act, "pn_epoch_result_debits", None);
             meter.visit(site)?;
             if actual.act != expected.act || actual.bytes != expected.bytes {
                 return Err(meter.refused(StorageError::CorruptHistory, site));
             }
         }
-        for selection in &row.content.selections {
+        for selection in &row.content().selections {
             {
                 let location = result_location(row.scope, row.identity);
                 meter.visit(location)?;
@@ -1324,13 +1338,13 @@ fn check_observations(
 ) -> Result<(), AuditFailure> {
     let capacity = rows.results.iter().try_fold(0usize, |total, row| {
         total
-            .checked_add(row.content.observations.len())
+            .checked_add(row.content().observations.len())
             .ok_or_else(|| meter.refused(StorageError::ReadLimit, result_location(row.scope, row.identity)))
     })?;
     let mut expected = Vec::new();
     meter.reserve(&mut expected, capacity, AuditSite::NotRead)?;
     for row in &rows.results {
-        for version in &row.content.observations {
+        for version in &row.content().observations {
             meter.visit(result_location(row.scope, row.identity))?;
             expected.push(RawObservation {
                 family: version.family,
