@@ -179,12 +179,12 @@ fn hash(recipe: &str, tag: &str, fields: Vec<SecretValue>) -> Result<SecretSlice
     Ok(protected)
 }
 
-// Caveat: The author proposal blinding value is borrowed to check its forty-byte format and public sequence prefix; the borrow ends at validation and reveals neither its suffix nor a claim of entropy.
+// Caveat: An author blinding value is borrowed to check its forty-byte format and public sequence prefix; the borrow ends at validation and reveals neither its suffix nor a claim of entropy.
 // (´[ROOT-cav:observe:secret-profile-nonce-format]´)
 // Justified: These exact format checks require a temporary slice; production freshness and entropy are separate held duties.
 #[allow(clippy::disallowed_methods)]
-fn author_blinding_value_format(id: &ActId, author_proposal_blinding_value: &SecretSlice<u8>) -> Result<(), ProfileError> {
-    let bytes = author_proposal_blinding_value.expose_secret(/* (´[ROOT-cav:observe:secret-profile-nonce-format]´) */);
+fn author_blinding_value_format(id: &ActId, author_blinding_value: &SecretSlice<u8>) -> Result<(), ProfileError> {
+    let bytes = author_blinding_value.expose_secret(/* (´[ROOT-cav:observe:secret-profile-nonce-format]´) */);
     if bytes.len() != 40 || bytes[..8] != id.sequence.to_be_bytes() {
         return Err(ProfileError::Representation);
     }

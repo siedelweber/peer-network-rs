@@ -483,7 +483,7 @@ The implementation owner is the foundation implementer with repository review. T
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-profile-hash-input` In `packages/act-profile/src/lib.rs`, function `hash`: The protected canonical preimage is borrowed only by SHA-256 update after the public prefix; the borrow ends at update, and the hash's fixed-width output immediately enters a secret carrier with the temporary array erased, without an observation field. Source method: `expose_secret`. Production boundary.
 
-**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-nonce-format` In `packages/act-profile/src/lib.rs`, function `author_blinding_value_format`: The author proposal blinding value is borrowed to check its forty-byte format and public sequence prefix; the borrow ends at validation and reveals neither its suffix nor a claim of entropy. Source method: `expose_secret`. Production boundary.
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-nonce-format` In `packages/act-profile/src/lib.rs`, function `author_blinding_value_format`: An author blinding value is borrowed to check its forty-byte format and public sequence prefix; the borrow ends at validation and reveals neither its suffix nor a claim of entropy. Source method: `expose_secret`. Production boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-profile-salt-format` In `packages/act-profile/src/lib.rs`, function `host_blinding_value_format`: The host blinding value is borrowed only to check its forty-eight-byte format; the borrow ends at len and establishes no allocation, uniqueness or entropy. Source method: `expose_secret`. Production boundary.
 
