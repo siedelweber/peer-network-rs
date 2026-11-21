@@ -1610,6 +1610,14 @@
       "review": "The expected metering vector was written from the base accounting path before its parent lookup changed; the test drives real ordinary parent and child spans and compares their complete metering records. It does not execute the public bootstrap or existing runners."
     },
     {
+      "operation": "cli-common::tests::entry_origin_failed_result",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:entry-origin-failed-result",
+      "before": "",
+      "after": "Claim: A failed terminal result write selects failure and an ERROR before the origin root completes.",
+      "review": "The supplied origin terminal has an injected failed write; the control requires failure exit, ERROR and an error root completion."
+    },
+    {
       "operation": "cli-common::tests::entry_origin_installation_failure",
       "path": "packages/cli-common/src/tests/mod.rs",
       "claim": "CLICOMMON::claim:cli:entry-origin-installation-failure",
@@ -1623,7 +1631,7 @@
       "claim": "CLICOMMON::claim:cli:entry-origin-runner-order",
       "before": "",
       "after": "Claim: Preparation selects the path before installation, continuation children adopt the sole root, and terminal paths skip command work.",
-      "review": "The supplied origin orders preparation, installation and command work under one root; a failed terminal result write selects failure and ERROR before the root completes."
+      "review": "The controlled subscriber observes preparation, TTY and installation order, child parentage, inclusive durations, one root completion, and help, version, usage and TTY terminal cases."
     },
     {
       "operation": "cli-common::tests::hard_linked_destinations_are_not_treated_as_one_role",
@@ -2042,12 +2050,20 @@
       "review": "The real documents process returns runtime status one at the error level and its captured stderr contains the terminal ERROR without a metric or final-status row."
     },
     {
+      "operation": "documents::integration::failed_result_write_is_terminal",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:cli:failed-result-write-is-terminal",
+      "before": "",
+      "after": "Claim: A failed result write exits one and attempts one terminal diagnostic when enabled, none when quiet.",
+      "review": "The real documents process writes help to a failing sink; enabled error mode attempts one diagnostic and quiet release attempts none, both exiting one."
+    },
+    {
       "operation": "documents::integration::help_version_are_results",
       "path": "packages/documents/tests/integration.rs",
       "claim": "DOCUMENTS::claim:cli:help-version-are-results",
       "before": "",
       "after": "Claim: Help and version are whole JSON stdout results at zero under each admitted release policy, including quiet mode.",
-      "review": "The real executable answers help and version at error, default, trace and off with one complete stdout line. A failing stdout sink yields runtime status one and one direct terminal diagnostic when enabled, none when quiet."
+      "review": "The real executable answers help and version at error, default, trace and off with one complete stdout line and success status."
     },
     {
       "operation": "documents::integration::number_registry",
@@ -2103,7 +2119,7 @@
       "claim": "DOCUMENTS::claim:cli:panic-backtrace-selection",
       "before": "",
       "after": "Claim: The admitted Rust backtrace setting selects the optional panic member without changing the one-row exit.",
-      "review": "The process probe compares absent, zero, short, full, empty and non-UTF-8 settings without relying on platform frame text."
+      "review": "The process probe compares absent, zero, short, full, empty and non-UTF-8 settings; full has the alternate Display address-line form without pinning frame contents."
     },
     {
       "operation": "execwrap::integration::ambiguous_same_path_routing_is_a_usage_failure",

@@ -1258,6 +1258,7 @@
         "DOCUMENTS::claim:cli:control-records",
         "DOCUMENTS::claim:cli:result-terminal-admission",
         "DOCUMENTS::claim:cli:help-version-are-results",
+        "DOCUMENTS::claim:cli:failed-result-write-is-terminal",
         "DOCUMENTS::claim:cli:error-level-terminal-delivery",
         "DOCUMENTS::claim:cli:panic-backtrace-selection",
         "DOCUMENTS::claim:cli:clean-result",
@@ -1273,7 +1274,7 @@
       "name": "ROOT::dec:output:policy",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/004-command-line-output-contract.md",
-      "premises": "Subprocess witnesses cover help and version as successful stdout results, usage as an enabled terminal observation, terminal and piped clean results, a drained terminal error at the error level, findings under their still-open documents reading, runtime errors and public panic diagnostics. The shared boundary admits terminal results and filters observation by compiled kind and selected level. Status-three stdout reports remain the implemented documents premise; separately compiled shipped recipe evidence remains owed.",
+      "premises": "Subprocess witnesses cover help and version as successful stdout results, a terminal diagnostic for a failed result sink when enabled, usage as an enabled terminal observation, terminal and piped clean results, a drained terminal error at the error level, findings under their still-open documents reading, runtime errors and public panic diagnostics. The shared boundary admits terminal results and filters observation by compiled kind and selected level. Status-three stdout reports remain the implemented documents premise; separately compiled shipped recipe evidence remains owed.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
@@ -2655,6 +2656,7 @@
         "DOCUMENTS::claim:cli:control-records",
         "DOCUMENTS::claim:cli:result-terminal-admission",
         "DOCUMENTS::claim:cli:help-version-are-results",
+        "DOCUMENTS::claim:cli:failed-result-write-is-terminal",
         "DOCUMENTS::claim:cli:error-level-terminal-delivery",
         "DOCUMENTS::claim:cli:panic-backtrace-selection",
         "DOCUMENTS::claim:cli:clean-result",
@@ -2670,7 +2672,7 @@
       "name": "ROOT::gate:output:verification",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/004-command-line-output-contract.md",
-      "premises": "Subprocess witnesses cover help and version as successful stdout results, usage as an enabled terminal observation, terminal and piped clean results, a drained terminal error at the error level, findings under their still-open documents reading, runtime errors and public panic diagnostics. The shared boundary admits terminal results and filters observation by compiled kind and selected level. Status-three stdout reports remain the implemented documents premise; separately compiled shipped recipe evidence remains owed.",
+      "premises": "Subprocess witnesses cover help and version as successful stdout results, a terminal diagnostic for a failed result sink when enabled, usage as an enabled terminal observation, terminal and piped clean results, a drained terminal error at the error level, findings under their still-open documents reading, runtime errors and public panic diagnostics. The shared boundary admits terminal results and filters observation by compiled kind and selected level. Status-three stdout reports remain the implemented documents premise; separately compiled shipped recipe evidence remains owed.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []

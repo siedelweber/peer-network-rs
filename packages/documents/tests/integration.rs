@@ -1064,6 +1064,15 @@ fn help_version_are_results() -> Result<()> {
             assert!(result.stderr.is_empty(), "{argument} {mode}");
         }
     }
+    Ok(())
+}
+
+/// Claim: A failed result write exits one and attempts one terminal diagnostic when enabled, none when quiet.
+/// ´claim:cli:failed-result-write-is-terminal´
+/// ´test:integration:failed-result-write-is-terminal´
+#[test]
+fn failed_result_write_is_terminal() -> Result<()> {
+    let executable = pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap();
     for (mode, expected_records) in [("error", 1), ("off", 0)] {
         let mut command = Command::new("sh");
         command

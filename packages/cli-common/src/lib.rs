@@ -708,7 +708,7 @@ pub fn install_json_panic_hook(command_name: &str) {
                 Some(value) if value != "0" => {
                     let captured = std::backtrace::Backtrace::force_capture();
                     Some(if value == "full" {
-                        format!("{captured:?}")
+                        format!("{captured:#}")
                     } else {
                         captured.to_string()
                     })

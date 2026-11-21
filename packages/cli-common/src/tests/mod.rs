@@ -122,10 +122,13 @@ fn entry_origin_runner_order() {
         1
     );
     assert_origin_terminal_cases();
-    assert_origin_failed_result();
 }
 
-fn assert_origin_failed_result() {
+/// Claim: A failed terminal result write selects failure and an ERROR before the origin root completes.
+/// ´claim:cli:entry-origin-failed-result´
+/// ´test:crate:entry-origin-failed-result´
+#[test]
+fn entry_origin_failed_result() {
     use crate::observation::tests::{fixture_installation, records, with_fixture_subscriber};
     let (installed, observation, _clock, capture) = fixture_installation(json!({"command":"fixture"}));
     let exit = with_fixture_subscriber(&observation, || {

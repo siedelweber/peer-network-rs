@@ -52,12 +52,12 @@
 | ci::test_observe_syntax | active | integration | ci-python | extended | 1 |
 | ci::test_testkit | active | unit | ci-python | fast | 12 |
 | ci::test_wallet_boundary | active | integration | pn-wallet-rust | service | 11 |
-| cli-common | active | unit | cli-common-rust | fast | 114 |
+| cli-common | active | unit | cli-common-rust | fast | 115 |
 | cli-common-doctests | active | doctest | cli-common-rust | fast | 2 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |
 | cli-common::public | active | public-surface | cli-common-rust | fast | 1 |
 | documents | active | unit | documents-rust | fast | 7 |
-| documents::integration | active | integration | documents-rust | fast | 33 |
+| documents::integration | active | integration | documents-rust | fast | 34 |
 | documents::integration-extended | active | integration | documents-rust | extended | 1 |
 | documents::panic_contract | active | integration | documents-rust | fast | 2 |
 | documents::public | active | public-surface | documents-rust | fast | 1 |

@@ -48,6 +48,15 @@ fn panic_backtrace_selection() -> documents::Result<()> {
             row["fields"]["backtrace"].is_string(),
             setting.as_deref().is_some_and(|value| value != "0")
         );
+        if let Some(backtrace) = row["fields"]["backtrace"].as_str() {
+            let first_line = backtrace.lines().next().unwrap_or_default();
+            if setting.as_deref() == Some(std::ffi::OsStr::new("full")) {
+                assert!(first_line.trim_start().starts_with("0:"));
+                assert!(first_line.contains("0x") && first_line.contains(" - "));
+            } else {
+                assert!(!first_line.contains("0x"));
+            }
+        }
     }
     Ok(())
 }
