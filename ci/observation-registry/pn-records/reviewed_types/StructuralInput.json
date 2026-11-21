@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "StructuralInput",
+    "package": "pn-records",
+    "path": "packages/records/src/lib.rs",
+    "syntax": "# [doc = \" Borrowed structural inputs shared by historical validation and later\"] # [doc = \" complete-opening evidence. `None` is unavailable, never an empty list.\"] struct StructuralInput < 'a > { id : & 'a ActId , body : & 'a StructuralBody , endpoints : Vec < (& 'a PublicReference , & 'a PublicReference) > , dependencies : Option < & 'a [ActId] > , position : Position , logical_time : u64 , }"
+  }
+}

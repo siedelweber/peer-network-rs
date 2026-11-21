@@ -2,11 +2,82 @@
 //! (´def:formation:affinity´)
 
 use petgraph::stable_graph::StableDiGraph;
-use pn_records::{ActId, Layout, PublicReference, Role, SettlementReferences, ValidatedAct, ValidatedHistory};
+use pn_records::{
+    ActId, EdgeId, Layout, PublicReference, Role, SettlementReferences, StructuralBody, ValidatedAct, ValidatedHistory,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-use crate::registration::{self, GroundedNode, RegistrationError, RegistrationProjection, RegistrationVerifier};
+use crate::registration::{self, FamilyError, GroundedNode, RegistrationError, RegistrationProjection, RegistrationVerifier};
+
+/// Borrowed geometry of one act; removal and approval remain with its caller.
+pub(super) struct StructuralView<'a> {
+    id: &'a ActId,
+    body: &'a StructuralBody,
+    legs: Vec<LegView<'a>>,
+    references: &'a [PublicReference],
+    metadata: crate::metadata::ActMetadata,
+}
+
+pub(super) struct LegView<'a> {
+    id: &'a EdgeId,
+    source: &'a PublicReference,
+    target: &'a PublicReference,
+}
+
+impl LegView<'_> {
+    pub(super) fn id(&self) -> &EdgeId {
+        self.id
+    }
+
+    pub(super) fn source(&self) -> &PublicReference {
+        self.source
+    }
+
+    pub(super) fn target(&self) -> &PublicReference {
+        self.target
+    }
+}
+
+impl<'a> StructuralView<'a> {
+    pub(super) fn from_act(act: &'a ValidatedAct) -> Self {
+        Self {
+            id: act.id(),
+            body: act.body(),
+            legs: act
+                .legs()
+                .iter()
+                .map(|leg| LegView {
+                    id: leg.id(),
+                    source: leg.source(),
+                    target: leg.target(),
+                })
+                .collect(),
+            references: act.protocol_references(),
+            metadata: crate::metadata::ActMetadata::from_act(act),
+        }
+    }
+
+    pub(super) fn id(&self) -> &ActId {
+        self.id
+    }
+
+    pub(super) fn body(&self) -> &StructuralBody {
+        self.body
+    }
+
+    pub(super) fn legs(&self) -> &[LegView<'a>] {
+        &self.legs
+    }
+
+    pub(super) fn protocol_references(&self) -> &[PublicReference] {
+        self.references
+    }
+
+    pub(super) fn metadata(&self) -> crate::metadata::ActMetadata {
+        self.metadata
+    }
+}
 
 /// Disjoint grounded, public-name and minted node constructors in this scope.
 /// Type names are exact strings; no normalization or new identity is invented.
@@ -741,7 +812,8 @@ fn checked_project(
             settlement_target(accepts, act.position(), acts, verifier, replay)?;
         }
     }
-    project(act, verifier)
+    let view = StructuralView::from_act(act);
+    project(&view, &|| verifier.approval(act)).map_err(crate::widen_family_error)
 }
 
 fn settlement_target(
@@ -764,12 +836,12 @@ fn settlement_target(
     Ok(())
 }
 
-fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+fn settlement(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<CompleteProjection, FamilyError> {
     let [leg] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let PublicReference::Named { namespace, name } = leg.target() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     if namespace != "addr"
         || act.body().layout != Layout::Binary
@@ -782,7 +854,7 @@ fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
         || act.body().quantities.len() != 4
         || !act.protocol_references().is_empty()
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let comfort = coordinate(act, "comfort.numerator", "comfort.denominator")?;
     let equity = coordinate(act, "equity.numerator", "equity.denominator")?;
@@ -790,7 +862,7 @@ fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
         Some(SettlementReferences::Accept { settles }) if act.id().family == "Accept" => Projection::Accept(AcceptProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            metadata: crate::metadata::ActMetadata::from_act(act),
+            metadata: act.metadata(),
             comfort,
             equity,
             settles: BidIdentity {
@@ -803,7 +875,7 @@ fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
             Projection::Ratify(RatifyProjection {
                 author: act.id().author.clone(),
                 sequence: act.id().sequence,
-                metadata: crate::metadata::ActMetadata::from_act(act),
+                metadata: act.metadata(),
                 comfort,
                 equity,
                 settles: BidIdentity {
@@ -818,10 +890,10 @@ fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
                 },
             })
         }
-        _ => return Err(RegistrationError::Incidence),
+        _ => return Err(FamilyError::Incidence),
     };
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     Ok((
         Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
@@ -830,65 +902,65 @@ fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
     ))
 }
 
-fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+fn project(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<Vec<CompleteProjection>, FamilyError> {
     if act.id().family == "De-invite" {
-        deinvite(act, verifier)
+        deinvite(act, approval)
     } else if act.id().family == "Invitation" {
-        invitation(act, verifier)
+        invitation(act, approval)
     } else if act.id().family == "Reference" {
-        reference(act, verifier)
+        reference(act, approval)
     } else if act.id().family == "Tag" {
-        tag(act, verifier)
+        tag(act, approval)
     } else if act.id().family == "Participant" {
-        participant(act, verifier)
+        participant(act, approval)
     } else if act.id().family == "Review" {
-        review(act, verifier)
+        review(act, approval)
     } else if act.id().family == "Send" {
-        send(act, verifier)
+        send(act, approval)
     } else if act.id().family == "Bid" {
-        bid(act, verifier)
+        bid(act, approval)
     } else {
-        binary(act, verifier).map(|projection| vec![projection])
+        binary(act, approval).map(|projection| vec![projection])
     }
 }
 
-fn binary(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+fn binary(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<CompleteProjection, FamilyError> {
     if matches!(act.id().family.as_str(), "Accept" | "Ratify") {
-        return settlement(act, verifier);
+        return settlement(act, approval);
     }
     if act.id().family == "Registration" {
-        return registration::project(act, verifier)
+        return registration::project_structural(act, approval)
             .map(|(source, target, edge)| (Node::Grounded(source), Node::Grounded(target), Projection::Registration(edge)));
     }
     if act.id().family == "Publish" {
-        return publish(act, verifier);
+        return publish(act, approval);
     }
     if act.id().family == "Rescind" {
-        return rescind(act, verifier);
+        return rescind(act, approval);
     }
     if act.id().family == "Withdraw" {
-        return withdraw(act, verifier);
+        return withdraw(act, approval);
     }
     if act.id().family == "Leave" {
-        return leave(act, verifier);
+        return leave(act, approval);
     }
     if act.id().family == "Join Request" {
-        return join_request(act, verifier);
+        return join_request(act, approval);
     }
     if act.id().family == "Opinion" {
-        return opinion(act, verifier);
+        return opinion(act, approval);
     }
     if act.id().family == "Owner" {
-        return owner(act, verifier);
+        return owner(act, approval);
     }
     if act.id().family != "Affinity" {
-        return Err(RegistrationError::UnsupportedFamily);
+        return Err(FamilyError::UnsupportedFamily);
     }
     let [leg] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let PublicReference::Named { namespace, name } = leg.target() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     if act.body().layout != Layout::Binary
         || leg.id().role != Role::Binary
@@ -901,12 +973,12 @@ fn binary(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Co
         || act.body().quantities.len() != 4
         || !act.protocol_references().is_empty()
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let association = coordinate(act, "association.numerator", "association.denominator")?;
     let attraction = coordinate(act, "attraction.numerator", "attraction.denominator")?;
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     Ok((
         Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
@@ -914,19 +986,19 @@ fn binary(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Co
         Projection::Affinity(AffinityProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            metadata: crate::metadata::ActMetadata::from_act(act),
+            metadata: act.metadata(),
             association,
             attraction,
         }),
     ))
 }
 
-fn publish(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+fn publish(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<CompleteProjection, FamilyError> {
     let [leg] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let PublicReference::Minted(genesis) = leg.target() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     if act.body().layout != Layout::Binary
         || leg.id().role != Role::Binary
@@ -938,14 +1010,14 @@ fn publish(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
         || genesis.family != "Publish"
         || act.body().quantities.len() != 2
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let attachment = coordinate(act, "attachment.numerator", "attachment.denominator")?;
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     Ok((
         Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
@@ -956,7 +1028,7 @@ fn publish(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
         Projection::Publish(PublishProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            metadata: crate::metadata::ActMetadata::from_act(act),
+            metadata: act.metadata(),
             attachment,
             license: act.body().license.map(|pair| LicenseQualifiers {
                 attribution: Coordinate {
@@ -972,12 +1044,12 @@ fn publish(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
     ))
 }
 
-fn owner(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+fn owner(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<CompleteProjection, FamilyError> {
     let [leg] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let PublicReference::Minted(genesis) = leg.target() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     if act.body().layout != Layout::Binary
         || leg.id().role != Role::Binary
@@ -989,14 +1061,14 @@ fn owner(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Com
         || genesis.family != "Owner"
         || act.body().quantities.len() != 2
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let attachment = coordinate(act, "attachment.numerator", "attachment.denominator")?;
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     Ok((
         Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
@@ -1007,13 +1079,13 @@ fn owner(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Com
         Projection::Owner(OwnerProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            metadata: crate::metadata::ActMetadata::from_act(act),
+            metadata: act.metadata(),
             attachment,
         }),
     ))
 }
 
-fn coordinate(act: &ValidatedAct, numerator: &str, denominator: &str) -> Result<Coordinate, RegistrationError> {
+fn coordinate(act: &StructuralView<'_>, numerator: &str, denominator: &str) -> Result<Coordinate, FamilyError> {
     let field = |key| {
         act.body()
             .quantities
@@ -1022,26 +1094,26 @@ fn coordinate(act: &ValidatedAct, numerator: &str, denominator: &str) -> Result<
             .map(|(_, value)| value)
             .filter(|value| value.unit == "one" && value.vintage == 0)
             .map(|value| value.value)
-            .ok_or(RegistrationError::Incidence)
+            .ok_or(FamilyError::Incidence)
     };
     let result = Coordinate {
         numerator: field(numerator)?,
         denominator: field(denominator)?,
     };
     if result.denominator <= 0 || result.numerator.unsigned_abs() > result.denominator.unsigned_abs() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     Ok(result)
 }
 
-fn participant(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+fn participant(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<Vec<CompleteProjection>, FamilyError> {
     let [first, second] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let (a, t) = match (first.id().role, second.id().role) {
         (Role::A, Role::T) => (first, second),
         (Role::T, Role::A) => (second, first),
-        _ => return Err(RegistrationError::Incidence),
+        _ => return Err(FamilyError::Incidence),
     };
     if act.body().layout != Layout::Paired
         || a.source()
@@ -1052,7 +1124,7 @@ fn participant(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resu
         || a.target() != t.source()
         || act.body().quantities.len() != 6
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let origin = chat(a.target())?;
     let destination = chat(t.target())?;
@@ -1060,19 +1132,19 @@ fn participant(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resu
     let responsibility = coordinate(act, "responsibility.numerator", "responsibility.denominator")?;
     let continuity = coordinate(act, "continuity.numerator", "continuity.denominator")?;
     if continuity.numerator < 0 {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     let a_weight = ParticipantProjection {
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: ParticipantRole::A,
-        metadata: crate::metadata::ActMetadata::from_act(act),
+        metadata: act.metadata(),
         interactivity,
         responsibility,
         continuity,
@@ -1091,24 +1163,24 @@ fn participant(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resu
     ])
 }
 
-fn chat(reference: &PublicReference) -> Result<Node, RegistrationError> {
+fn chat(reference: &PublicReference) -> Result<Node, FamilyError> {
     match reference {
         PublicReference::Minted(genesis) if genesis.family == "Participant" => Ok(Node::Chat {
             author: genesis.author.clone(),
             sequence: genesis.sequence,
         }),
-        _ => Err(RegistrationError::Incidence),
+        _ => Err(FamilyError::Incidence),
     }
 }
 
-fn review(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+fn review(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<Vec<CompleteProjection>, FamilyError> {
     let [first, second] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let (a, t) = match (first.id().role, second.id().role) {
         (Role::A, Role::T) => (first, second),
         (Role::T, Role::A) => (second, first),
-        _ => return Err(RegistrationError::Incidence),
+        _ => return Err(FamilyError::Incidence),
     };
     if act.body().layout != Layout::Paired
         || a.source()
@@ -1119,26 +1191,26 @@ fn review(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Ve
         || a.target() != t.source()
         || act.body().quantities.len() != 4
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let middle = passive(a.target())?;
     let target = passive(t.target())?;
     if !matches!(target, Node::Comment { .. }) {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let enthusiasm = coordinate(act, "enthusiasm.numerator", "enthusiasm.denominator")?;
     let effort = coordinate(act, "effort.numerator", "effort.denominator")?;
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     let a_weight = ReviewProjection {
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: ReviewRole::A,
-        metadata: crate::metadata::ActMetadata::from_act(act),
+        metadata: act.metadata(),
         enthusiasm,
         effort,
     };
@@ -1156,7 +1228,7 @@ fn review(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Ve
     ])
 }
 
-fn passive(reference: &PublicReference) -> Result<Node, RegistrationError> {
+fn passive(reference: &PublicReference) -> Result<Node, FamilyError> {
     match reference {
         PublicReference::Named { namespace, name } if namespace == "prof" => {
             Ok(Node::Grounded(GroundedNode::Profile(name.clone())))
@@ -1172,21 +1244,21 @@ fn passive(reference: &PublicReference) -> Result<Node, RegistrationError> {
                 "Review" => Ok(Node::Comment { author, sequence }),
                 "Send" => Ok(Node::Message { author, sequence }),
                 "Bid" => Ok(Node::Offer { author, sequence }),
-                _ => Err(RegistrationError::Incidence),
+                _ => Err(FamilyError::Incidence),
             }
         }
-        _ => Err(RegistrationError::Incidence),
+        _ => Err(FamilyError::Incidence),
     }
 }
 
-fn send(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+fn send(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<Vec<CompleteProjection>, FamilyError> {
     let [first, second] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let (a, t) = match (first.id().role, second.id().role) {
         (Role::A, Role::T) => (first, second),
         (Role::T, Role::A) => (second, first),
-        _ => return Err(RegistrationError::Incidence),
+        _ => return Err(FamilyError::Incidence),
     };
     if act.body().layout != Layout::Paired
         || a.source()
@@ -1197,25 +1269,25 @@ fn send(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<
         || a.target() != t.source()
         || act.body().quantities.len() != 2
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let middle = chat(a.target())?;
     let target = passive(t.target())?;
     if !matches!(target, Node::Message { .. }) {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let importance = coordinate(act, "importance.numerator", "importance.denominator")?;
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     let a_weight = SendProjection {
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: SendRole::A,
-        metadata: crate::metadata::ActMetadata::from_act(act),
+        metadata: act.metadata(),
         importance,
     };
     let t_weight = SendProjection {
@@ -1232,14 +1304,14 @@ fn send(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<
     ])
 }
 
-fn bid(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+fn bid(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<Vec<CompleteProjection>, FamilyError> {
     let [first, second] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let (a, t) = match (first.id().role, second.id().role) {
         (Role::A, Role::T) => (first, second),
         (Role::T, Role::A) => (second, first),
-        _ => return Err(RegistrationError::Incidence),
+        _ => return Err(FamilyError::Incidence),
     };
     if act.body().layout != Layout::Paired
         || a.source()
@@ -1250,7 +1322,7 @@ fn bid(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<C
         || a.target() != t.source()
         || act.body().quantities.len() != 4
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let middle = passive(a.target())?;
     let target = passive(t.target())?;
@@ -1258,21 +1330,21 @@ fn bid(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<C
         || !matches!(target, Node::Offer { .. })
         || t.target() != &PublicReference::Minted(act.id().clone())
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let generosity = coordinate(act, "generosity.numerator", "generosity.denominator")?;
     let urgency = coordinate(act, "urgency.numerator", "urgency.denominator")?;
     if urgency.numerator < 0 || !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     let a_weight = BidProjection {
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: BidRole::A,
-        metadata: crate::metadata::ActMetadata::from_act(act),
+        metadata: act.metadata(),
         generosity,
         urgency,
     };
@@ -1290,9 +1362,9 @@ fn bid(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<C
     ])
 }
 
-fn opinion(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+fn opinion(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<CompleteProjection, FamilyError> {
     let [leg] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let target = passive(leg.target())?;
     if act.body().layout != Layout::Binary
@@ -1304,15 +1376,15 @@ fn opinion(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
             })
         || act.body().quantities.len() != 4
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let polarity = coordinate(act, "polarity.numerator", "polarity.denominator")?;
     let reaction = coordinate(act, "reaction.numerator", "reaction.denominator")?;
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     Ok((
         Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
@@ -1320,16 +1392,16 @@ fn opinion(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
         Projection::Opinion(OpinionProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            metadata: crate::metadata::ActMetadata::from_act(act),
+            metadata: act.metadata(),
             polarity,
             reaction,
         }),
     ))
 }
 
-fn join_request(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+fn join_request(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<CompleteProjection, FamilyError> {
     let [leg] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let target = chat(leg.target())?;
     if act.body().layout != Layout::Binary
@@ -1341,15 +1413,15 @@ fn join_request(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Res
             })
         || act.body().quantities.len() != 4
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let urgency = coordinate(act, "urgency.numerator", "urgency.denominator")?;
     let formality = coordinate(act, "formality.numerator", "formality.denominator")?;
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     Ok((
         Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
@@ -1357,21 +1429,21 @@ fn join_request(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Res
         Projection::JoinRequest(JoinRequestProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            metadata: crate::metadata::ActMetadata::from_act(act),
+            metadata: act.metadata(),
             urgency,
             formality,
         }),
     ))
 }
 
-fn tag(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+fn tag(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<Vec<CompleteProjection>, FamilyError> {
     let [first, second] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let (a, t) = match (first.id().role, second.id().role) {
         (Role::A, Role::T) => (first, second),
         (Role::T, Role::A) => (second, first),
-        _ => return Err(RegistrationError::Incidence),
+        _ => return Err(FamilyError::Incidence),
     };
     if act.body().layout != Layout::Paired
         || a.source()
@@ -1382,26 +1454,26 @@ fn tag(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<C
         || a.target() != t.source()
         || act.body().quantities.len() != 4
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let middle = passive(a.target())?;
     let target = passive(t.target())?;
     if matches!(middle, Node::Offer { .. }) || !matches!(target, Node::Type(_)) {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let relevance = coordinate(act, "relevance.numerator", "relevance.denominator")?;
     let confidence = coordinate(act, "confidence.numerator", "confidence.denominator")?;
     if confidence.numerator < 0 || !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     let a_weight = TagProjection {
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: TagRole::A,
-        metadata: crate::metadata::ActMetadata::from_act(act),
+        metadata: act.metadata(),
         relevance,
         confidence,
     };
@@ -1419,9 +1491,9 @@ fn tag(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<C
     ])
 }
 
-fn leave(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+fn leave(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<CompleteProjection, FamilyError> {
     let [leg] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let target = chat(leg.target())?;
     if act.body().layout != Layout::Binary
@@ -1433,13 +1505,13 @@ fn leave(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Com
             })
         || !act.body().quantities.is_empty()
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     Ok((
         Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
@@ -1447,19 +1519,19 @@ fn leave(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Com
         Projection::Leave(LeaveProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            metadata: crate::metadata::ActMetadata::from_act(act),
+            metadata: act.metadata(),
         }),
     ))
 }
 
-fn reference(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+fn reference(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<Vec<CompleteProjection>, FamilyError> {
     let [first, second] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let (a, t) = match (first.id().role, second.id().role) {
         (Role::A, Role::T) => (first, second),
         (Role::T, Role::A) => (second, first),
-        _ => return Err(RegistrationError::Incidence),
+        _ => return Err(FamilyError::Incidence),
     };
     if act.body().layout != Layout::Paired
         || a.source()
@@ -1470,23 +1542,23 @@ fn reference(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result
         || a.target() != t.source()
         || act.body().quantities.len() != 4
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let middle = passive(a.target())?;
     let target = passive(t.target())?;
     let effort = coordinate(act, "effort.numerator", "effort.denominator")?;
     let enthusiasm = coordinate(act, "enthusiasm.numerator", "enthusiasm.denominator")?;
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     let a_weight = ReferenceProjection {
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: ReferenceRole::A,
-        metadata: crate::metadata::ActMetadata::from_act(act),
+        metadata: act.metadata(),
         effort,
         enthusiasm,
     };
@@ -1504,14 +1576,14 @@ fn reference(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result
     ])
 }
 
-fn invitation(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+fn invitation(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<Vec<CompleteProjection>, FamilyError> {
     let [first, second] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let (a, t) = match (first.id().role, second.id().role) {
         (Role::A, Role::T) => (first, second),
         (Role::T, Role::A) => (second, first),
-        _ => return Err(RegistrationError::Incidence),
+        _ => return Err(FamilyError::Incidence),
     };
     if act.body().layout != Layout::Paired
         || a.source()
@@ -1522,27 +1594,27 @@ fn invitation(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
         || a.target() != t.source()
         || act.body().quantities.len() != 6
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let middle = chat(a.target())?;
     let target = passive(t.target())?;
     if !matches!(target, Node::Grounded(GroundedNode::Profile(_))) {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let urgency = coordinate(act, "urgency.numerator", "urgency.denominator")?;
     let formality = coordinate(act, "formality.numerator", "formality.denominator")?;
     let relevance = coordinate(act, "relevance.numerator", "relevance.denominator")?;
     if relevance.numerator < 0 || !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     let a_weight = InvitationProjection {
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: InvitationRole::A,
-        metadata: crate::metadata::ActMetadata::from_act(act),
+        metadata: act.metadata(),
         urgency,
         formality,
         relevance,
@@ -1561,14 +1633,14 @@ fn invitation(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
     ])
 }
 
-fn deinvite(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+fn deinvite(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<Vec<CompleteProjection>, FamilyError> {
     let [first, second] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let (a, t) = match (first.id().role, second.id().role) {
         (Role::A, Role::T) => (first, second),
         (Role::T, Role::A) => (second, first),
-        _ => return Err(RegistrationError::Incidence),
+        _ => return Err(FamilyError::Incidence),
     };
     if act.body().layout != Layout::Paired
         || a.source()
@@ -1579,24 +1651,24 @@ fn deinvite(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<
         || a.target() != t.source()
         || !act.body().quantities.is_empty()
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     let middle = chat(a.target())?;
     let target = passive(t.target())?;
     if !matches!(target, Node::Grounded(GroundedNode::Profile(_))) {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     let a_weight = DeinviteProjection {
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: DeinviteRole::A,
-        metadata: crate::metadata::ActMetadata::from_act(act),
+        metadata: act.metadata(),
     };
     let t_weight = DeinviteProjection {
         role: DeinviteRole::T,
@@ -1612,13 +1684,13 @@ fn deinvite(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<
     ])
 }
 
-fn withdraw(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+fn withdraw(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<CompleteProjection, FamilyError> {
     let [leg] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let target = passive(leg.target())?;
     if !matches!(target, Node::Offer { .. }) {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     if act.body().layout != Layout::Binary
         || leg.id().role != Role::Binary
@@ -1629,13 +1701,13 @@ fn withdraw(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<
             })
         || !act.body().quantities.is_empty()
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     Ok((
         Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
@@ -1643,18 +1715,18 @@ fn withdraw(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<
         Projection::Withdraw(WithdrawProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            metadata: crate::metadata::ActMetadata::from_act(act),
+            metadata: act.metadata(),
         }),
     ))
 }
 
-fn rescind(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+fn rescind(act: &StructuralView<'_>, approval: &impl Fn() -> bool) -> Result<CompleteProjection, FamilyError> {
     let [leg] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let target = passive(leg.target())?;
     if !matches!(target, Node::Offer { .. }) {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     if act.body().layout != Layout::Binary
         || leg.id().role != Role::Binary
@@ -1665,13 +1737,13 @@ fn rescind(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
             })
         || !act.body().quantities.is_empty()
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
     if !act.protocol_references().is_empty() {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     Ok((
         Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
@@ -1679,7 +1751,7 @@ fn rescind(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
         Projection::Rescind(RescindProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            metadata: crate::metadata::ActMetadata::from_act(act),
+            metadata: act.metadata(),
         }),
     ))
 }

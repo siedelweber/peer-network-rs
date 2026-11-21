@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "formation::LegView",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "pub (super) struct LegView < 'a > { id : & 'a EdgeId , source : & 'a PublicReference , target : & 'a PublicReference , }"
+  }
+}

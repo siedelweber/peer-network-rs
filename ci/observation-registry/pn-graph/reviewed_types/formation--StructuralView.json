@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "formation::StructuralView",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation.rs",
+    "syntax": "# [doc = \" Borrowed geometry of one act; removal and approval remain with its caller.\"] pub (super) struct StructuralView < 'a > { id : & 'a ActId , body : & 'a StructuralBody , legs : Vec < LegView < 'a > > , references : & 'a [PublicReference] , metadata : crate :: metadata :: ActMetadata , }"
+  }
+}

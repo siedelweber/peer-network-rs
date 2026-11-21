@@ -3900,6 +3900,108 @@ fn settlement_inputs() -> Vec<CandidateAct> {
     inputs
 }
 
+#[derive(Debug, Default)]
+struct OrderVerifier {
+    events: std::cell::RefCell<Vec<(&'static str, String, u64)>>,
+    deny_removal: bool,
+}
+
+impl RegistrationVerifier for OrderVerifier {
+    fn approval(&self, act: &ValidatedAct) -> bool {
+        self.events
+            .borrow_mut()
+            .push(("approval", act.id().family.clone(), act.id().sequence));
+        true
+    }
+
+    fn removal(&self, act: &ValidatedAct, _: OpeningKind, _: Position) -> bool {
+        self.events
+            .borrow_mut()
+            .push(("removal", act.id().family.clone(), act.id().sequence));
+        !self.deny_removal
+    }
+}
+
+/// Claim: Historical formation wrappers keep approval and removal callbacks at their direct, settlement-target and final reconstruction sites, with the first refusal selected in the same order.
+/// ´claim:formation:historical-removal-order´
+/// ´test:integration:historical-removal-order´
+#[test]
+fn historical_removal_order() {
+    let mut direct = candidate("Registration", 1);
+    direct.projections.content = Removal::Tombstoned((2, 1));
+    let history = validate_history(&[direct], &names()).unwrap();
+    let verifier = OrderVerifier::default();
+    assert!(project_complete_act(&history.acts()[0], &history, &verifier).is_ok());
+    assert_eq!(
+        verifier.events.into_inner(),
+        vec![("approval", "Registration".into(), 1), ("removal", "Registration".into(), 1)]
+    );
+
+    let mut inputs = settlement_inputs();
+    inputs[0].projections.content = Removal::Tombstoned((2, 1));
+    inputs[2].body.quantities[1].1.value = 0;
+    let history = validate_history(&inputs, &names()).unwrap();
+    let verifier = OrderVerifier {
+        deny_removal: true,
+        ..OrderVerifier::default()
+    };
+    assert_eq!(
+        project_complete_act(&history.acts()[2], &history, &verifier),
+        Err(RegistrationError::UnauthorizedRemoval)
+    );
+    assert_eq!(
+        verifier.events.into_inner(),
+        vec![("approval", "Bid".into(), 8), ("removal", "Bid".into(), 8)]
+    );
+
+    let mut final_only = vec![candidate("Registration", 1), candidate("Registration", 2)];
+    final_only[0].projections.content = Removal::Tombstoned((2, 1));
+    let history = validate_history(&final_only, &names()).unwrap();
+    let verifier = OrderVerifier {
+        deny_removal: true,
+        ..OrderVerifier::default()
+    };
+    assert_eq!(
+        reconstruct(&history, &verifier).unwrap_err(),
+        RegistrationError::UnauthorizedRemoval
+    );
+    assert_eq!(
+        verifier.events.into_inner(),
+        vec![
+            ("approval", "Registration".into(), 1),
+            ("approval", "Registration".into(), 2),
+            ("removal", "Registration".into(), 1)
+        ]
+    );
+
+    final_only[1].projections.dependency = DependencyProjection::Tombstoned((2, 2));
+    let history = validate_history(&final_only, &names()).unwrap();
+    let verifier = OrderVerifier::default();
+    assert!(reconstruct(&history, &verifier).is_ok());
+    assert_eq!(
+        verifier.events.into_inner(),
+        vec![
+            ("approval", "Registration".into(), 1),
+            ("approval", "Registration".into(), 2),
+            ("removal", "Registration".into(), 1),
+            ("removal", "Registration".into(), 2),
+        ]
+    );
+
+    final_only[1].id.family = "Beyond".into();
+    final_only[1].legs[0].id.act = final_only[1].id.clone();
+    let history = validate_history(&final_only, &names()).unwrap();
+    let verifier = OrderVerifier {
+        deny_removal: true,
+        ..OrderVerifier::default()
+    };
+    assert_eq!(
+        reconstruct(&history, &verifier).unwrap_err(),
+        RegistrationError::UnsupportedFamily
+    );
+    assert_eq!(verifier.events.into_inner(), vec![("approval", "Registration".into(), 1)]);
+}
+
 fn bundle_in(
     input: &CandidateAct,
     context: &[CandidateAct],

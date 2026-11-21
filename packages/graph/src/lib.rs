@@ -13,6 +13,18 @@ pub mod formation;
 /// (´def:formation:title-inputs´)
 pub mod title;
 
+// Both historical entry points widen the same five structural meanings.
+fn widen_family_error(error: registration::FamilyError) -> registration::RegistrationError {
+    use registration::{FamilyError, RegistrationError};
+    match error {
+        FamilyError::UnsupportedFamily => RegistrationError::UnsupportedFamily,
+        FamilyError::Incidence => RegistrationError::Incidence,
+        FamilyError::Unapproved => RegistrationError::Unapproved,
+        FamilyError::Capacity => RegistrationError::Capacity,
+        FamilyError::GraphMismatch => RegistrationError::GraphMismatch,
+    }
+}
+
 use std::collections::BTreeSet;
 
 use petgraph::graph::UnGraph;

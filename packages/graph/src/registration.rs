@@ -89,6 +89,17 @@ pub enum RegistrationError {
     GraphMismatch,
 }
 
+/// The five structural outcomes shared by family projection routes.
+/// Removal authorization is deliberately outside this type.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(super) enum FamilyError {
+    UnsupportedFamily,
+    Incidence,
+    Unapproved,
+    Capacity,
+    GraphMismatch,
+}
+
 /// Project one complete Registration under the declared verifier.
 /// The scoped carrier spelling is family Registration with Named addr/prof
 /// endpoints naming its author; fixed parameters have no quantity fields.
@@ -183,11 +194,19 @@ pub(super) fn project(
     act: &ValidatedAct,
     verifier: &impl RegistrationVerifier,
 ) -> Result<CompleteRegistration, RegistrationError> {
+    project_structural(&crate::formation::StructuralView::from_act(act), &|| verifier.approval(act))
+        .map_err(crate::widen_family_error)
+}
+
+pub(super) fn project_structural(
+    act: &crate::formation::StructuralView<'_>,
+    approval: &impl Fn() -> bool,
+) -> Result<CompleteRegistration, FamilyError> {
     if act.id().family != "Registration" {
-        return Err(RegistrationError::UnsupportedFamily);
+        return Err(FamilyError::UnsupportedFamily);
     }
     let [leg] = act.legs() else {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     };
     let named = |namespace: &str| PublicReference::Named {
         namespace: namespace.into(),
@@ -200,10 +219,10 @@ pub(super) fn project(
         || leg.source() != &named("addr")
         || leg.target() != &named("prof")
     {
-        return Err(RegistrationError::Incidence);
+        return Err(FamilyError::Incidence);
     }
-    if !verifier.approval(act) {
-        return Err(RegistrationError::Unapproved);
+    if !approval() {
+        return Err(FamilyError::Unapproved);
     }
     Ok((
         GroundedNode::Actor(act.id().author.clone()),
@@ -211,7 +230,7 @@ pub(super) fn project(
         RegistrationProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            metadata: crate::metadata::ActMetadata::from_act(act),
+            metadata: act.metadata(),
         },
     ))
 }
@@ -257,7 +276,7 @@ pub(super) fn compare_graph<N: PartialEq, E: PartialEq>(
     if matches {
         Ok(())
     } else {
-        Err(RegistrationError::GraphMismatch)
+        Err(crate::widen_family_error(FamilyError::GraphMismatch))
     }
 }
 
@@ -275,7 +294,9 @@ pub(super) fn reconstruct_with<N: Ord + Clone, E>(
         for (source, target, _) in &projections {
             for node in [source, target] {
                 if let std::collections::btree_map::Entry::Vacant(entry) = nodes.entry(node.clone()) {
-                    let index = graph.try_add_node(node.clone()).map_err(|_| RegistrationError::Capacity)?;
+                    let index = graph
+                        .try_add_node(node.clone())
+                        .map_err(|_| crate::widen_family_error(FamilyError::Capacity))?;
                     entry.insert(index);
                 }
             }
@@ -285,7 +306,7 @@ pub(super) fn reconstruct_with<N: Ord + Clone, E>(
             let target = *nodes.get(&target).ok_or(RegistrationError::Incidence)?;
             graph
                 .try_add_edge(source, target, projection)
-                .map_err(|_| RegistrationError::Capacity)?;
+                .map_err(|_| crate::widen_family_error(FamilyError::Capacity))?;
         }
     }
     authorize_removals(&acts, verifier)?;

@@ -656,7 +656,7 @@
     },
     {
       "exceptions": 14,
-      "generators": 68,
+      "generators": 69,
       "helpers": 0,
       "instrumented": 53,
       "name": "pn-graph",
@@ -670,10 +670,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "68",
+          "exact": "69",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "68",
+          "num": "69",
           "num_exact": true,
           "num_relation": "="
         },

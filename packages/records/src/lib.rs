@@ -1208,6 +1208,39 @@ fn precedes(left: (Position, u64), right: (Position, u64)) -> bool {
     left.0 < right.0
 }
 
+/// Borrowed structural inputs shared by historical validation and later
+/// complete-opening evidence. `None` is unavailable, never an empty list.
+struct StructuralInput<'a> {
+    id: &'a ActId,
+    body: &'a StructuralBody,
+    endpoints: Vec<(&'a PublicReference, &'a PublicReference)>,
+    dependencies: Option<&'a [ActId]>,
+    position: Position,
+    logical_time: u64,
+}
+
+impl<'a> StructuralInput<'a> {
+    fn from_candidate(act: &'a CandidateAct) -> Self {
+        let dependencies = match &act.projections.dependency {
+            DependencyProjection::Full(ids) => Some(ids.as_slice()),
+            DependencyProjection::FullEmpty => Some(&[][..]),
+            DependencyProjection::Tombstoned(_) => None,
+        };
+        Self {
+            id: &act.id,
+            body: &act.body,
+            endpoints: act.legs.iter().map(|leg| (&leg.source, &leg.target)).collect(),
+            dependencies,
+            position: (act.finalization_epoch, act.authoritative_position),
+            logical_time: act.logical_time,
+        }
+    }
+
+    fn order(&self) -> (Position, u64) {
+        (self.position, self.logical_time)
+    }
+}
+
 // The complete written set (history plus proposals on admission) must define
 // each epoch's permutation of 1..=m before fault evidence can be replayed.
 fn validate_order<'a>(acts: impl Iterator<Item = (&'a ActId, Position)>) -> Result<(), ValidationError> {
@@ -1239,24 +1272,29 @@ fn validate_order<'a>(acts: impl Iterator<Item = (&'a ActId, Position)>) -> Resu
 }
 
 fn check_times(ordered: &[&CandidateAct]) -> Vec<TimeEvidence> {
+    let views: Vec<_> = ordered.iter().map(|act| StructuralInput::from_candidate(act)).collect();
+    check_times_structural(&views)
+}
+
+fn check_times_structural(ordered: &[StructuralInput<'_>]) -> Vec<TimeEvidence> {
     let mut frontiers: BTreeMap<&PublicReference, RecomputedTime> = BTreeMap::new();
     let mut times: BTreeMap<&ActId, RecomputedTime> = BTreeMap::new();
     let mut evidence = Vec::new();
-    for act in ordered {
-        let endpoints: BTreeSet<_> = act.legs.iter().flat_map(|leg| [&leg.source, &leg.target]).collect();
+    for view in ordered {
+        let endpoints: BTreeSet<_> = view
+            .endpoints
+            .iter()
+            .flat_map(|(source, target)| [*source, *target])
+            .collect();
         let mut missing = BTreeSet::new();
-        let dependencies = match &act.projections.dependency {
-            DependencyProjection::Full(ids) => ids.as_slice(),
-            DependencyProjection::FullEmpty => &[],
-            DependencyProjection::Tombstoned(_) => {
-                missing.insert(act.id.clone());
-                &[]
-            }
-        };
+        let dependencies = view.dependencies.unwrap_or_else(|| {
+            missing.insert(view.id.clone());
+            &[]
+        });
         // Only already replayed acts enter this map, hence absent, self and
         // later parents never enter the maximum. Frontiers survive epoch cuts.
         let inputs = endpoints.iter().filter_map(|endpoint| frontiers.get(endpoint)).chain(
-            act.body
+            view.body
                 .causal_parents()
                 .into_iter()
                 .chain(dependencies)
@@ -1276,9 +1314,9 @@ fn check_times(ordered: &[&CandidateAct]) -> Vec<TimeEvidence> {
             RecomputedTime::Unavailable(missing)
         };
         let verdict = match &recomputed {
-            RecomputedTime::Available(expected) if *expected == u128::from(act.logical_time) => TimeVerdict::Matches,
+            RecomputedTime::Available(expected) if *expected == u128::from(view.logical_time) => TimeVerdict::Matches,
             RecomputedTime::Available(expected) => TimeVerdict::Mismatch {
-                attached: act.logical_time,
+                attached: view.logical_time,
                 expected: *expected,
             },
             RecomputedTime::Unavailable(_) => TimeVerdict::UnavailableOpening,
@@ -1286,9 +1324,9 @@ fn check_times(ordered: &[&CandidateAct]) -> Vec<TimeEvidence> {
         for endpoint in endpoints {
             frontiers.insert(endpoint, recomputed.clone());
         }
-        times.insert(&act.id, recomputed.clone());
+        times.insert(view.id, recomputed.clone());
         evidence.push(TimeEvidence {
-            act: act.id.clone(),
+            act: view.id.clone(),
             verdict,
             recomputed,
         });
@@ -1307,32 +1345,41 @@ fn dependency_violations(
     act: &CandidateAct,
     available: &BTreeMap<&ActId, (Position, u64)>,
 ) -> Result<Vec<DependencyViolation>, ValidationError> {
+    let view = StructuralInput::from_candidate(act);
     let DependencyProjection::Full(dependencies) = &act.projections.dependency else {
         return Ok(Vec::new());
     };
+    dependency_violations_structural(&view, dependencies, available)
+}
+
+fn dependency_violations_structural(
+    view: &StructuralInput<'_>,
+    dependencies: &[ActId],
+    available: &BTreeMap<&ActId, (Position, u64)>,
+) -> Result<Vec<DependencyViolation>, ValidationError> {
     if dependencies.is_empty() {
-        return Err(dependency_error(&act.id, None, DependencyCause::EmptyFull));
+        return Err(dependency_error(view.id, None, DependencyCause::EmptyFull));
     }
     if dependencies.len() > MAX_DEPENDENCIES {
-        return Err(dependency_error(&act.id, None, DependencyCause::TooMany));
+        return Err(dependency_error(view.id, None, DependencyCause::TooMany));
     }
     if dependencies.windows(2).any(|pair| pair[0] >= pair[1]) {
-        return Err(dependency_error(&act.id, None, DependencyCause::NonCanonical));
+        return Err(dependency_error(view.id, None, DependencyCause::NonCanonical));
     }
     let mut violations = Vec::new();
     for dependency in dependencies {
-        let cause = if dependency == &act.id {
+        let cause = if dependency == view.id {
             Some(DependencyCause::SelfDependency)
         } else {
             match available.get(dependency) {
                 None => Some(DependencyCause::Missing),
-                Some(position) if !precedes(*position, order(act)) => Some(DependencyCause::NotEarlier),
+                Some(position) if !precedes(*position, view.order()) => Some(DependencyCause::NotEarlier),
                 Some(_) => None,
             }
         };
         if let Some(cause) = cause {
             violations.push(DependencyViolation {
-                act: act.id.clone(),
+                act: view.id.clone(),
                 dependency: dependency.clone(),
                 cause,
             });
@@ -1356,12 +1403,20 @@ fn parent_faults(
     act: &CandidateAct,
     available: &BTreeMap<&ActId, (Position, u64)>,
 ) -> Result<Vec<ParentPlacementFault>, ValidationError> {
+    let view = StructuralInput::from_candidate(act);
+    parent_faults_structural(&view, available)
+}
+
+fn parent_faults_structural(
+    view: &StructuralInput<'_>,
+    available: &BTreeMap<&ActId, (Position, u64)>,
+) -> Result<Vec<ParentPlacementFault>, ValidationError> {
     let error = |cause| ValidationError::Parent {
-        act: act.id.clone(),
+        act: view.id.clone(),
         parent: None,
         cause,
     };
-    let parents = &act.body.asserted_parents;
+    let parents = &view.body.asserted_parents;
     if parents.len() > MAX_ASSERTED_PARENTS {
         return Err(error(ParentCause::TooMany));
     }
@@ -1369,19 +1424,19 @@ fn parent_faults(
         return Err(error(ParentCause::NonCanonical));
     }
     let mut faults = Vec::new();
-    for parent in act.body.causal_parents() {
-        let cause = if parent == &act.id {
+    for parent in view.body.causal_parents() {
+        let cause = if parent == view.id {
             Some(ParentCause::SelfParent)
         } else {
             match available.get(parent) {
                 None => Some(ParentCause::Missing),
-                Some(target) if !precedes(*target, order(act)) => Some(ParentCause::NotEarlier),
+                Some(target) if !precedes(*target, view.order()) => Some(ParentCause::NotEarlier),
                 Some(_) => None,
             }
         };
         if let Some(cause) = cause {
             faults.push(ParentPlacementFault {
-                act: act.id.clone(),
+                act: view.id.clone(),
                 parent: parent.clone(),
                 cause,
             });

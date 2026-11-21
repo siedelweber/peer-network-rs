@@ -3819,6 +3819,14 @@
       "review": "The released party predicate is implemented under clause (iii) and independently witnessed. The declared public verifier remains an explicit premise; dependency-opening authentication bounds no title result."
     },
     {
+      "operation": "pn-graph::formation::historical_removal_order",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:historical-removal-order",
+      "before": "Claim: Historical formation wrappers keep approval and removal callbacks at their direct, settlement-target and final reconstruction sites, with the first refusal selected in the same order.",
+      "after": "Claim: Historical formation wrappers keep approval and removal callbacks at their direct, settlement-target and final reconstruction sites, with the first refusal selected in the same order.",
+      "review": "Finite historical fixtures record the direct, settlement-target and final authorization positions, sorted removal order and first refusal. The verifier is a supplied test premise, not authenticated authority."
+    },
+    {
       "operation": "pn-graph::formation::invitation_projection",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:invitation-requires-complete-chat-profile-incidence",

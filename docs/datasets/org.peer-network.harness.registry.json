@@ -2707,6 +2707,7 @@
         "pn-graph::formation::minted_node_conformance",
         "pn-graph::formation::settlement_projections",
         "pn-graph::formation::settlement_context",
+        "pn-graph::formation::historical_removal_order",
         "pn-graph::formation::settlement_reconstruction",
         "pn-graph::formation::settlement_partition",
         "pn-graph::formation::title_inputs",

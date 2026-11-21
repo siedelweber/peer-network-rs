@@ -143,7 +143,7 @@
 | pn-graph | active | unit | pn-graph-rust | fast | 1 |
 | pn-graph::bounded-activation-contracts | active | integration | pn-graph-rust | extended | 2 |
 | pn-graph::bounded-power-domain | active | integration | pn-graph-rust | extended | 1 |
-| pn-graph::formation | active | public-surface | pn-graph-rust | fast | 44 |
+| pn-graph::formation | active | public-surface | pn-graph-rust | fast | 45 |
 | pn-graph::integration | active | integration | pn-graph-rust | fast | 1 |
 | pn-graph::numeric | active | public-surface | pn-graph-rust | fast | 20 |
 | pn-graph::properties | active | public-surface | pn-graph-rust | fast | 1 |
