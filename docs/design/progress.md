@@ -1,4 +1,4 @@
-# Specification realization tracker at network-v0.35.0 · `reg:progress:overview`
+# Specification realization tracker at network-v0.36.0 · `reg:progress:overview`
 
 **Convention (Citation coverage)** · `conv:progress:citation-coverage` Under (`rule:testing:public-record-conformance`), this tracker measures inspectable citation coverage, not the share of the specification that is built. Unassigned means no design record makes a whole-statement citation to the statement's exact paper label. Much implemented behaviour is described by records that cite a group of paper statements without naming every label, so unassigned is a citation-coverage gap, not a claim that nothing implements the statement. Realized means an inspectable route from an exact citation to executed evidence in a named scope. Its count cannot stand for implementation completeness: broader references and other implementation evidence lie outside this exact-label join. An exact citation belongs in the sentence that designs or decides the paper statement's operative clause at this layer. The criterion is the same for definitions, axioms, corollaries and other statement kinds; a plain citation claims the whole statement, not merely a neighbouring or selected clause. Shared vocabulary alone is insufficient. Sibling labels, including rejected simplifications, are checked against the same criterion, with uncovered clauses distinguished from adopted ones. A held statement stays held until an unheld record designs its operative clause: a citation covering only part cannot discharge design work retained by held records. When the covered clause has its own label, the record cites that label. Otherwise a portion citation uses the literal opener `portion{`, the statement label in doubled backticks, a semicolon and space, the covered clause in words, and a closing `}`. The clause is nonempty and contains no braces or line breaks. The ordinary label checker retains the existing paper-exhibit boundary; the tracker structural check reads the wrapper, resolves its exact inventory label and refuses malformed wrappers. A portion records partial design, never partial evidence. A record that designs the whole statement cites it plainly even when its witness covers less; the witnessing rule in (`conv:progress:evidence-routes`) governs claim placement, without narrowing the design citation. A portion is attention only, retained with its record and clause in the statement table. It creates no design or evidence route, supplies no bite membership, and cannot lift held or unassigned. A portion in a held record does not hold the row: that record holds the statement only through a plain citation, because a portion claims no design of the whole. A separate plain citation of the same label still has its ordinary whole-statement meaning. This explicit distinction prevents a partial design from discharging the work retained by a hold. A premise citation instead uses `premise{`, the exact statement label in doubled backticks, a semicolon and space, the nonempty reason it is needed, and `}`. It records a reason for attention to the statement, not design of that statement or conformance reliance on an excluded part. The checker validates its syntax and inventory target just as for a portion, excludes it from all design and evidence routes even beside an executed claim, and retains it in the existing attention carrier's portions field with the clause prefixed by Premise only:. A separate plain occurrence still designs the statement on its own merits. This explicit relation lives beside the argument, not in a hand-kept exception list; no language inference guesses whether prose relies on a premise. Citation placement follows the design, never a desired evidence status. Conformance decisions use the companion names relies and realizes, followed by a brace, a doubled-backtick label, a semicolon and space, a nonempty part or reason, and a closing brace. Claim-site comments use matching acute accents instead, retaining the ordinary citation parentheses inside the wrapper so that the claim-site citation reader sees the same target. The shared strict parser refuses malformed wrappers. Relies names the excluded premise and what depends on it; realizes names the claimed part used or realized, or a conditional repository statement used without its marked premise. Neither is a whole-paper realization route merely by being present; paper targets remain scoped attention in this tracker. Premise keeps its existing attention-only meaning. Only explicit relies relations create conditions under (`conv:testing:deployment-dependencies`).
 
@@ -14,13 +14,13 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Classification row identities and their generated copies are reported separately when they are the only exact mentions; they are neither realization citations nor design gaps. Other exact inventory labels in tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 88 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route. 62 further unassigned rows have classification identities only, retained separately in the statement table.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 92 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route. 62 further unassigned rows have classification identities only, retained separately in the statement table.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 384 | 36 | 69 | 418 | 21 | 32 | 861 |
+| implementation | 1 389 | 36 | 69 | 418 | 21 | 32 | 866 |
 | prose | 329 | 0 | 0 | 22 | 13 | 0 | 307 |
 
 ## By crate · `sec:progress:crates`
@@ -32,11 +32,11 @@
 | pn-act-profile | 2 | 0 | 0 | 2 | 2 | 0 | 0 |
 | pn-epoch | 371 | 15 | 8 | 141 | 0 | 13 | 207 |
 | pn-graph | 223 | 5 | 9 | 60 | 0 | 4 | 149 |
-| pn-host | 181 | 5 | 21 | 55 | 7 | 2 | 100 |
+| pn-host | 182 | 5 | 21 | 55 | 7 | 2 | 101 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
-| pn-records | 219 | 2 | 16 | 77 | 6 | 7 | 124 |
-| pn-replay | 34 | 1 | 3 | 5 | 0 | 0 | 25 |
-| pn-verification | 282 | 8 | 9 | 69 | 5 | 6 | 196 |
+| pn-records | 220 | 2 | 16 | 77 | 6 | 7 | 125 |
+| pn-replay | 36 | 1 | 3 | 5 | 0 | 0 | 27 |
+| pn-verification | 283 | 8 | 9 | 69 | 5 | 6 | 197 |
 
 ## Record citation coverage · `sec:progress:record-coverage`
 
@@ -81,7 +81,7 @@
 | 9 | 11 | 1 | 4 | 6 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
 | 11 | 94 | 9 | 27 | 57 | 0 | 5 | 1 |
-| unlinked | 1 520 | 23 | 29 | 304 | 34 | 21 | 1 164 |
+| unlinked | 1 525 | 23 | 29 | 304 | 34 | 21 | 1 169 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -90,13 +90,13 @@
 | certificate | 6 | 0 | 1 | 4 | 0 | 0 | 1 |
 | constant | 4 | 0 | 0 | 2 | 0 | 0 | 2 |
 | data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
-| fixture | 219 | 5 | 6 | 50 | 7 | 3 | 158 |
+| fixture | 220 | 5 | 6 | 50 | 7 | 3 | 159 |
 | function | 216 | 10 | 6 | 98 | 1 | 8 | 102 |
-| invariant check | 520 | 17 | 23 | 142 | 2 | 11 | 338 |
+| invariant check | 521 | 17 | 23 | 142 | 2 | 11 | 339 |
 | none | 354 | 0 | 0 | 21 | 8 | 0 | 333 |
-| policy | 287 | 3 | 23 | 62 | 12 | 4 | 199 |
+| policy | 289 | 3 | 23 | 62 | 12 | 4 | 201 |
 | serialization | 9 | 0 | 0 | 8 | 4 | 0 | 1 |
-| type | 94 | 1 | 9 | 50 | 0 | 5 | 34 |
+| type | 95 | 1 | 9 | 50 | 0 | 5 | 35 |
 
 ## Obligation support · `sec:progress:obligations`
 
@@ -530,7 +530,7 @@
 | ``def:graph:ordering-fraud-proof`` | pn-records; certificate | held | ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:act-profile`` ``ROOT::open:design:dependency-opening-recipe`` ``ROOT::open:identity:act-realization-admission`` | | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:decomposition:act-profile``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:identity:act-production-concealment``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::open:identity:act-realization-admission``; ``ROOT::open:identity:act-realization-admission``<br>| 3 | | ``ROOT::amend:identity:act-stops``; Premise only: the named proof opens a dependency projection and proves a placement violation<br>|
 | ``post:graph:ordering-accountability`` | pn-host; policy | designed | ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:authoritative-history-carrier`` ``ROOT::amend:design:finalized-records-replay`` ``ROOT::open:design:noncompliant-logical-time`` | | ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:finalized-records-replay``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3 | | |
 | ``post:graph:act-authentication-requirements`` | pn-records; policy | held | ``RECORDS::def:acts:authentication-disclosure`` ``ROOT::alg:design:authentication-handoff`` ``ROOT::amend:design:act-envelope-field-inventory`` ``ROOT::dec:crypto:base-library`` | | ``RECORDS::def:acts:authentication-disclosure``; ``RECORDS::verif:acts:authentication-disclosures``<br>| ``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:crypto:dependency-admission``<br>``RECORDS::def:acts:authentication-disclosure``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::alg:design:authentication-handoff``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::amend:design:act-envelope-field-inventory``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::dec:crypto:base-library``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
-| ``itm:graph:act-authentication-requirements-authorship`` | pn-records; policy | unassigned | | | | |  | | |
+| ``itm:graph:act-authentication-requirements-signature-verification`` | pn-records; policy | unassigned | | | | |  | | |
 | ``itm:graph:act-authentication-requirements-proposal-integrity`` | pn-records; policy | unassigned | | | | |  | `adr/020-testing-harness.md` `docs/templates/adr/020-testing-harness.md.j2` | ``ROOT::amend:harness:actor-retry-proposal``; Premise only: substitution of the approved proposal is detectable<br>|
 | ``itm:graph:act-authentication-requirements-transparency`` | pn-records; policy | unassigned | | | | |  | | |
 | ``itm:graph:act-authentication-requirements-approval`` | pn-records; policy | unassigned | | | | |  | | |
@@ -1539,6 +1539,7 @@
 | ``ver:handshake:pre-commitment`` | pn-verification; fixture | unassigned | | | | |  | `adr/006-identity-adjudication.md` `docs/templates/adr/006-identity-adjudication.md.j2` | ``ROOT::amend:identity:act-proposal-admission``; recomputation of the supplied proposal pre-commitment<br>|
 | ``ver:handshake:salting`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:handshake:approval`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:handshake:author-authority`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:handshake:atomicity`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:handshake:ordering`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:handshake:tombstoning`` | pn-verification; fixture | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
@@ -1844,10 +1845,14 @@
 | ``def:graph:projection`` | none; none | unassigned | | | | |  | | |
 | ``def:deployment:published-epoch-replay-floor`` | pn-replay; policy | unassigned | | | | |  | `adr/007-crate-decomposition.md` `docs/datasets/org.peer-network.testing.deployment-edges.json` `docs/design/implementation.md` `docs/inputs/deployment-edges.toml` `docs/templates/adr/007-crate-decomposition.md.j2` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::amend:decomposition:numeric-representation``; Claimed part: This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.<br>``ROOT::open:design:publication-profile``; Claimed part: This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.<br>``ROOT::open:design:replay-proof-fields``; Claimed part: This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.<br>|
 | ``post:deployment:replay-floor-scope`` | pn-host; policy | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
-| ``def:deployment:declared-verifiable-provenance-case`` | pn-host; policy | unassigned | | | | |  | `adr/006-identity-adjudication.md` `ci/design.py` `docs/datasets/org.peer-network.testing.deployment-edges.json` `docs/inputs/deployment-edges.toml` `docs/templates/adr/006-identity-adjudication.md.j2` | ``ROOT::open:identity:act-realization-admission``; Claimed part: This uses the defined burn-destruction scope to distinguish the deployment’s separate author-authority case; it asserts neither case implementation nor an external premise.<br>|
+| ``def:deployment:declared-verifiable-provenance-case`` | pn-host; policy | unassigned | | | | |  | `ci/design.py` | |
 | ``def:deployment:provenance-validity-projection`` | none; none | unassigned | | | | |  | `ci/design.py` | |
 | ``post:deployment:declared-provenance-replay`` | pn-replay; policy | unassigned | | | | |  | `ci/design.py` | |
 | ``post:deployment:pinned-provenance-proof-objects`` | pn-records; type | unassigned | | | | |  | `ci/design.py` | |
+| ``def:deployment:declared-author-authority-case`` | pn-host; policy | unassigned | | | | |  | `adr/006-identity-adjudication.md` `adr/019-development-network.md` `ci/design.py` `docs/datasets/org.peer-network.testing.deployment-edges.json` `docs/inputs/deployment-edges.toml` `docs/templates/adr/006-identity-adjudication.md.j2` `docs/templates/adr/019-development-network.md.j2` | ``ROOT::dec:devnet:author-authority-case``; Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.<br>``ROOT::open:identity:act-realization-admission``; Claimed part: This locates the separate local extension and its held enablement route by comparison with the paper case; it asserts neither that case is bound nor an external premise.<br>``ROOT::rule:identity:author-chain-view``; Claimed part: This compares the recorded-signature and conditional authority scopes; it does not bind the local extension as a paper case or assume external authority.<br>|
+| ``post:deployment:pinned-author-authority-proof-objects`` | pn-records; type | unassigned | | | | |  | `adr/019-development-network.md` `ci/design.py` `docs/datasets/org.peer-network.testing.deployment-edges.json` `docs/inputs/deployment-edges.toml` `docs/templates/adr/019-development-network.md.j2` | ``ROOT::dec:devnet:author-authority-case``; Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.<br>|
+| ``post:deployment:declared-author-authority-replay`` | pn-replay; invariant check | unassigned | | | | |  | `adr/019-development-network.md` `ci/design.py` `docs/datasets/org.peer-network.testing.deployment-edges.json` `docs/inputs/deployment-edges.toml` `docs/templates/adr/019-development-network.md.j2` | ``ROOT::dec:devnet:author-authority-case``; Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.<br>|
+| ``def:deployment:author-authority-validity-projection`` | pn-replay; policy | unassigned | | | | |  | `ci/design.py` | |
 | ``rem:comparator:burn-realization-audit-evidence`` | pn-host; policy | designed | ``ROOT::amend:decomposition:marker-settlement`` ``ROOT::amend:devnet:marker-settlement`` ``ROOT::dec:design:burn-boundary`` ``ROOT::req:vision:burn-boundary`` ``ROOT::verif:design:burn-disclosures`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::verif:design:burn-disclosures``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 11 | | |
 | ``def:graph:courtesy-handshake`` | pn-act-authentication; policy | held | ``ROOT::amend:identity:act-concealment`` ``ROOT::amend:identity:act-proposal-admission`` ``ROOT::open:vision:deployment-profile`` | | | ``ROOT::amend:identity:act-concealment``; ``ROOT::open:identity:act-realization-admission``<br>``ROOT::amend:identity:act-proposal-admission``; ``ROOT::open:identity:act-realization-admission``<br>|  | | |
 | ``def:graph:requested-publication-intent`` | pn-act-profile; policy | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | ``ROOT::open:identity:carriage-result-recipe``; Premise only: The five request verbs and authenticated receipt need their own body and receipt design.<br>|

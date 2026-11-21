@@ -792,6 +792,27 @@
     },
     {
       "conditional_on": "",
+      "reason": "This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
+      "relation": "realizes",
+      "source": "ROOT::dec:devnet:author-authority-case",
+      "target": "def:deployment:declared-author-authority-case"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
+      "relation": "realizes",
+      "source": "ROOT::dec:devnet:author-authority-case",
+      "target": "post:deployment:declared-author-authority-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
+      "relation": "realizes",
+      "source": "ROOT::dec:devnet:author-authority-case",
+      "target": "post:deployment:pinned-author-authority-proof-objects"
+    },
+    {
+      "conditional_on": "",
       "reason": "The public run configuration selects an edition, not its private concealment premise.",
       "relation": "realizes",
       "source": "ROOT::dec:devnet:elements",
@@ -981,10 +1002,10 @@
     },
     {
       "conditional_on": "",
-      "reason": "This uses the defined burn-destruction scope to distinguish the deployment’s separate author-authority case; it asserts neither case implementation nor an external premise.",
+      "reason": "This locates the separate local extension and its held enablement route by comparison with the paper case; it asserts neither that case is bound nor an external premise.",
       "relation": "realizes",
       "source": "ROOT::open:identity:act-realization-admission",
-      "target": "def:deployment:declared-verifiable-provenance-case"
+      "target": "def:deployment:declared-author-authority-case"
     },
     {
       "conditional_on": "subsec:deployment:concealment-entropy",
@@ -1286,6 +1307,13 @@
       "relation": "relies",
       "source": "ROOT::rule:devnet:content-nonce",
       "target": "subsec:deployment:concealment-entropy"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This compares the recorded-signature and conditional authority scopes; it does not bind the local extension as a paper case or assume external authority.",
+      "relation": "realizes",
+      "source": "ROOT::rule:identity:author-chain-view",
+      "target": "def:deployment:declared-author-authority-case"
     },
     {
       "conditional_on": "",

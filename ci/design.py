@@ -365,6 +365,10 @@ MATERIAL_EXCEPTIONS = {
     'def:deployment:provenance-validity-projection': 'oracle',
     'post:deployment:declared-provenance-replay': 'oracle',
     'post:deployment:pinned-provenance-proof-objects': 'oracle',
+    'def:deployment:declared-author-authority-case': 'oracle',
+    'post:deployment:pinned-author-authority-proof-objects': 'oracle',
+    'post:deployment:declared-author-authority-replay': 'oracle',
+    'def:deployment:author-authority-validity-projection': 'oracle',
 }
 
 
@@ -383,7 +387,7 @@ def validate():
     inventory = data('inventory')
     constants = data('constants')
     material_classes(inventory)
-    if not (len(inventory) == 1713 and len({row['label'] for row in inventory}) == 1713):
+    if not (len(inventory) == 1718 and len({row['label'] for row in inventory}) == 1718):
         raise ValueError('inventory label census')
     placeholders = [row for row in inventory if re.search(r'^Track\s+.+\s+as a separately addressable\s+', row['statement'])]
     structural = {'section', 'subsection', 'appendix', 'motto'}
@@ -500,10 +504,10 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.35.0'
-CURRENT_INVENTORY_PIN = '65b01718c6783b2d8b6abdb9a351c21f5625a93e8db8a599d27c30cf39066fde'
-REFRESHED_CONSTANTS_PIN = 'ad0cc854f3f776cac00bfaea6ad71ce99229a47a97bb27a42e7a28a1d0d46d36'
-RELEASE_QUESTIONS_PIN = '804e80ebf0cb854d30af85645b3d615ddab186b50779947826bb4715a72b67f0'
+PAPER_TAG = 'network-v0.36.0'
+CURRENT_INVENTORY_PIN = 'e6d45348a66758af482b534431d61c388e46d368f0a27a1f33a64ee34800da2d'
+REFRESHED_CONSTANTS_PIN = 'e75040c29837662595e5e24610ed05ae6cd8428af0a4eb906199f97ff9d0b45e'
+RELEASE_QUESTIONS_PIN = '703d8519ca698cf45bf61a2bddeb0e2030124a0b3e0cb2ad7aa444a40cb723b2'
 
 
 CRATES_PIN = '145b9f7bb25895cfa78adeaf78bc1077f119af6c02949c2062098b7a210675cc'

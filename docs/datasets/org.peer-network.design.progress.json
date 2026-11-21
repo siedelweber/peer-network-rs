@@ -7463,7 +7463,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
-      "label": "itm:graph:act-authentication-requirements-authorship",
+      "label": "itm:graph:act-authentication-requirements-signature-verification",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -29063,6 +29063,22 @@
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
+      "label": "ver:handshake:author-authority",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-verification",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "fixture",
       "label": "ver:handshake:atomicity",
       "portions": [],
       "record_granular": 0,
@@ -35658,21 +35674,12 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [
-        "adr/006-identity-adjudication.md",
-        "ci/design.py",
-        "docs/datasets/org.peer-network.testing.deployment-edges.json",
-        "docs/inputs/deployment-edges.toml",
-        "docs/templates/adr/006-identity-adjudication.md.j2"
+        "ci/design.py"
       ],
       "holds": [],
       "kind": "policy",
       "label": "def:deployment:declared-verifiable-provenance-case",
-      "portions": [
-        {
-          "clause": "Claimed part: This uses the defined burn-destruction scope to distinguish the deployment’s separate author-authority case; it asserts neither case implementation nor an external premise.",
-          "record": "ROOT::open:identity:act-realization-admission"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -35726,6 +35733,115 @@
       "holds": [],
       "kind": "type",
       "label": "post:deployment:pinned-provenance-proof-objects",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "adr/006-identity-adjudication.md",
+        "adr/019-development-network.md",
+        "ci/design.py",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/inputs/deployment-edges.toml",
+        "docs/templates/adr/006-identity-adjudication.md.j2",
+        "docs/templates/adr/019-development-network.md.j2"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "def:deployment:declared-author-authority-case",
+      "portions": [
+        {
+          "clause": "Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
+          "record": "ROOT::dec:devnet:author-authority-case"
+        },
+        {
+          "clause": "Claimed part: This locates the separate local extension and its held enablement route by comparison with the paper case; it asserts neither that case is bound nor an external premise.",
+          "record": "ROOT::open:identity:act-realization-admission"
+        },
+        {
+          "clause": "Claimed part: This compares the recorded-signature and conditional authority scopes; it does not bind the local extension as a paper case or assume external authority.",
+          "record": "ROOT::rule:identity:author-chain-view"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [
+        "adr/019-development-network.md",
+        "ci/design.py",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/inputs/deployment-edges.toml",
+        "docs/templates/adr/019-development-network.md.j2"
+      ],
+      "holds": [],
+      "kind": "type",
+      "label": "post:deployment:pinned-author-authority-proof-objects",
+      "portions": [
+        {
+          "clause": "Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
+          "record": "ROOT::dec:devnet:author-authority-case"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-replay",
+      "elsewhere": [
+        "adr/019-development-network.md",
+        "ci/design.py",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/inputs/deployment-edges.toml",
+        "docs/templates/adr/019-development-network.md.j2"
+      ],
+      "holds": [],
+      "kind": "invariant check",
+      "label": "post:deployment:declared-author-authority-replay",
+      "portions": [
+        {
+          "clause": "Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
+          "record": "ROOT::dec:devnet:author-authority-case"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-replay",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "def:deployment:author-authority-validity-projection",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -37183,10 +37299,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "88",
+          "exact": "92",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "88",
+          "num": "92",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37197,7 +37313,7 @@
           "exact_digits": 32
         }
       },
-      "total": 88
+      "total": 92
     },
     {
       "category": "total",
@@ -37246,18 +37362,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 384",
+          "exact": "1 389",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 384",
+          "num": "1 389",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "861",
+          "exact": "866",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "861",
+          "num": "866",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37295,8 +37411,8 @@
       "realized": 36,
       "record_granular": 32,
       "tentative": 21,
-      "total": 1384,
-      "unassigned": 861
+      "total": 1389,
+      "unassigned": 866
     },
     {
       "category": "total",
@@ -37939,18 +38055,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "181",
+          "exact": "182",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "181",
+          "num": "182",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "100",
+          "exact": "101",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "100",
+          "num": "101",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37988,8 +38104,8 @@
       "realized": 5,
       "record_granular": 2,
       "tentative": 7,
-      "total": 181,
-      "unassigned": 100
+      "total": 182,
+      "unassigned": 101
     },
     {
       "category": "crate",
@@ -38137,18 +38253,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "219",
+          "exact": "220",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "219",
+          "num": "220",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "124",
+          "exact": "125",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "124",
+          "num": "125",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38186,8 +38302,8 @@
       "realized": 2,
       "record_granular": 7,
       "tentative": 6,
-      "total": 219,
-      "unassigned": 124
+      "total": 220,
+      "unassigned": 125
     },
     {
       "category": "crate",
@@ -38236,18 +38352,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "34",
+          "exact": "36",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "34",
+          "num": "36",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "25",
+          "exact": "27",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "25",
+          "num": "27",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38285,8 +38401,8 @@
       "realized": 1,
       "record_granular": 0,
       "tentative": 0,
-      "total": 34,
-      "unassigned": 25
+      "total": 36,
+      "unassigned": 27
     },
     {
       "category": "crate",
@@ -38335,18 +38451,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "282",
+          "exact": "283",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "282",
+          "num": "283",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "196",
+          "exact": "197",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "196",
+          "num": "197",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38384,8 +38500,8 @@
       "realized": 8,
       "record_granular": 6,
       "tentative": 5,
-      "total": 282,
-      "unassigned": 196
+      "total": 283,
+      "unassigned": 197
     },
     {
       "category": "kind",
@@ -38731,18 +38847,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "219",
+          "exact": "220",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "219",
+          "num": "220",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "158",
+          "exact": "159",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "158",
+          "num": "159",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38780,8 +38896,8 @@
       "realized": 5,
       "record_granular": 3,
       "tentative": 7,
-      "total": 219,
-      "unassigned": 158
+      "total": 220,
+      "unassigned": 159
     },
     {
       "category": "kind",
@@ -38929,18 +39045,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "520",
+          "exact": "521",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "520",
+          "num": "521",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "338",
+          "exact": "339",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "338",
+          "num": "339",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38978,8 +39094,8 @@
       "realized": 17,
       "record_granular": 11,
       "tentative": 2,
-      "total": 520,
-      "unassigned": 338
+      "total": 521,
+      "unassigned": 339
     },
     {
       "category": "kind",
@@ -39127,18 +39243,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "287",
+          "exact": "289",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "287",
+          "num": "289",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "199",
+          "exact": "201",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "199",
+          "num": "201",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39176,8 +39292,8 @@
       "realized": 3,
       "record_granular": 4,
       "tentative": 12,
-      "total": 287,
-      "unassigned": 199
+      "total": 289,
+      "unassigned": 201
     },
     {
       "category": "kind",
@@ -39325,18 +39441,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "94",
+          "exact": "95",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "94",
+          "num": "95",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "34",
+          "exact": "35",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "34",
+          "num": "35",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39374,8 +39490,8 @@
       "realized": 1,
       "record_granular": 5,
       "tentative": 0,
-      "total": 94,
-      "unassigned": 34
+      "total": 95,
+      "unassigned": 35
     },
     {
       "category": "bite",
@@ -40513,18 +40629,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 520",
+          "exact": "1 525",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 520",
+          "num": "1 525",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 164",
+          "exact": "1 169",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 164",
+          "num": "1 169",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40562,8 +40678,8 @@
       "realized": 23,
       "record_granular": 21,
       "tentative": 34,
-      "total": 1520,
-      "unassigned": 1164
+      "total": 1525,
+      "unassigned": 1169
     },
     {
       "category": "classification-identities",
