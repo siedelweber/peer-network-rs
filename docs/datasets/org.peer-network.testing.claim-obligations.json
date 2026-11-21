@@ -3019,14 +3019,15 @@
     },
     {
       "claims": [],
-      "closing_condition": "Specify and witness the authority publication and reader authentication route before public rebuild and executable persistence admission.",
-      "closing_step": "Public rebuild and executable persistence admission",
+      "closing_condition": "Specify and witness the authority publication and reader authentication route before public rebuild and next-publication-version executable persistence. The disposable first read-only version-one fixture instance alone is excepted until the coordinated publication switch, with no authenticated provenance or external judgement-publication claim and no waiver of other admission duties.",
+      "closing_step": "Public rebuild and next-publication-version instance admission",
       "hold": "ROOT::open:testing:obligation-evidence",
       "missing": "Reader authentication of the complete public generation declaration is held; database possession grants no authority.",
       "name": "ROOT::req:storage:generation-authentication",
       "owner": "Deployment declaration authority and host publication implementer",
       "path": "adr/015-durable-storage.md",
       "realizers": [
+        "ROOT::gate:design:bite-8",
         "ROOT::req:storage:judgement-publication"
       ],
       "status": "held",
@@ -3034,14 +3035,16 @@
     },
     {
       "claims": [],
-      "closing_condition": "Specify and witness complete external judgement carriage to rebuild, retaining scope, result identity, required label and its declared ordinal, references, coordinates and origins without changing existing package or recipe bytes, before public rebuild and executable persistence admission.",
-      "closing_step": "Public rebuild and executable persistence admission",
+      "closing_condition": "Specify and witness complete external judgement carriage to rebuild, retaining scope, result identity, required label and its declared ordinal, references, coordinates and origins without changing existing package or recipe bytes, before public rebuild and next-publication-version executable persistence. The disposable first read-only version-one fixture instance alone is excepted until the coordinated publication switch, with no authenticated provenance or external judgement-publication claim and no waiver of other admission duties.",
+      "closing_step": "Public rebuild and next-publication-version instance admission",
       "hold": "ROOT::open:testing:obligation-evidence",
       "missing": "External carrier, source and transport of each required public generation label and complete judgement are held.",
       "name": "ROOT::req:storage:judgement-publication",
       "owner": "Host publication and rebuild implementers and deployment declaration authority",
       "path": "adr/015-durable-storage.md",
-      "realizers": [],
+      "realizers": [
+        "ROOT::gate:design:bite-8"
+      ],
       "status": "held",
       "witnessed_labels": []
     },
