@@ -13854,6 +13854,7 @@
         "EPOCH::def:compiler:standing-cells",
         "ROOT::amend:decomposition:marker-settlement",
         "ROOT::amend:design:bite-five-close",
+        "ROOT::amend:identity:paper-case-boundary",
         "ROOT::dec:design:final-membership",
         "ROOT::dec:design:publication",
         "ROOT::model:design:frozen-epoch",
@@ -35674,12 +35675,21 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [
-        "ci/design.py"
+        "adr/006-identity-adjudication.md",
+        "ci/design.py",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/inputs/deployment-edges.toml",
+        "docs/templates/adr/006-identity-adjudication.md.j2"
       ],
       "holds": [],
       "kind": "policy",
       "label": "def:deployment:declared-verifiable-provenance-case",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This admits a bounded declaration representation and its comparison, not a selected external case or its truth.",
+          "record": "ROOT::amend:identity:paper-case-declaration"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -35758,6 +35768,10 @@
       "kind": "policy",
       "label": "def:deployment:declared-author-authority-case",
       "portions": [
+        {
+          "clause": "Claimed part: This admits a bounded declaration representation and its comparison, not a selected external case or its truth.",
+          "record": "ROOT::amend:identity:paper-case-declaration"
+        },
         {
           "clause": "Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
           "record": "ROOT::dec:devnet:author-authority-case"
@@ -41350,22 +41364,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 215,
+      "exact_citing": 216,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "215",
+          "exact": "216",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "215",
+          "num": "216",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 813",
+          "exact": "1 819",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 813",
+          "num": "1 819",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41380,7 +41394,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1813
+      "total": 1819
     },
     {
       "category": "record-coverage",

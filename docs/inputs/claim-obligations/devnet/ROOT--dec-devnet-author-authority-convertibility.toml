@@ -1,0 +1,11 @@
+name = "ROOT::dec:devnet:author-authority-convertibility"
+witnessed_labels = []
+path = "adr/019-development-network.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:identity:act-realization-admission"
+owner = "Development-profile, identity and publication designers"
+missing = "Reviewed realization of the declaration-member and outcome mappings, complete boundary association and current-account selection; withdrawal and recorded predecessor remain open."
+closing_condition = "Complete the separately admitted publication and evaluator designs, retain the distinction between failed verification and inability to verify, and review scoped evidence for the convertible dispositions without declaring the paper case or weakening local admission."
+closing_step = "Publication theory, authority evaluator and local declaration transition cuts"

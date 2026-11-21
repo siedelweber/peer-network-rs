@@ -631,6 +631,20 @@
     },
     {
       "conditional_on": "",
+      "reason": "This admits a bounded declaration representation and its comparison, not a selected external case or its truth.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:paper-case-declaration",
+      "target": "def:deployment:declared-author-authority-case"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This admits a bounded declaration representation and its comparison, not a selected external case or its truth.",
+      "relation": "realizes",
+      "source": "ROOT::amend:identity:paper-case-declaration",
+      "target": "def:deployment:declared-verifiable-provenance-case"
+    },
+    {
+      "conditional_on": "",
       "reason": "The signature admission selects the exact proposal recipe, not its conditional concealment assurance.",
       "relation": "realizes",
       "source": "ROOT::amend:identity:proposal-signature",
@@ -810,6 +824,13 @@
       "relation": "realizes",
       "source": "ROOT::dec:devnet:author-authority-case",
       "target": "post:deployment:pinned-author-authority-proof-objects"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This preserves the existing enablement hold and its transition-design prerequisite, without asserting a transition, implementation or external authority.",
+      "relation": "realizes",
+      "source": "ROOT::dec:devnet:author-authority-convertibility",
+      "target": "ROOT::open:identity:act-realization-admission"
     },
     {
       "conditional_on": "",

@@ -64,7 +64,7 @@ producer = "Admitted byte recipes"
 establishment = "defined"
 reader = "interchange-literal"
 definition = "Explicit integer and byte literals implement the admitted public recipes and their malformed-input controls in code; records state those recipes; no bare content identity is admitted."
-paths = ["packages/act-authentication/**/*.rs", "packages/act-authentication/tests/v2_vectors.py", "packages/act-authentication/tests/v3_vectors.py", "packages/act-authentication/tests/carrier_vectors.py", "ci/authentication_vectors.py", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
+paths = ["packages/act-authentication/**/*.rs", "packages/act-authentication/tests/v2_vectors.py", "packages/act-authentication/tests/v3_vectors.py", "packages/act-authentication/tests/carrier_vectors.py", "packages/act-authentication/tests/boundary_vectors.py", "ci/authentication_vectors.py", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
 
 [[rows]]
 family = "secret-home-fixture-bytes"
@@ -1376,3 +1376,14 @@ reader = "authentication-carrier-fixtures"
 source = "packages/act-authentication/tests/carrier-golden.json"
 definition = "Regenerate the complete fixture from its independent encoder. Patterned signatures and assumed anchors establish no authenticity, authority, entropy or hiding. All residues use previously admitted recipes; the carriers add no hash identity."
 paths = ["packages/act-authentication/tests/carrier-golden.json"]
+
+[[rows]]
+family = "boundary-component-fixtures"
+group = "public authentication encoding fixtures"
+measures = "Independent declared-case and local authority component encodings"
+producer = "Independent Python standard-library canonical framing"
+establishment = "defined"
+reader = "authentication-boundary-fixtures"
+source = "packages/act-authentication/tests/boundary-golden.json"
+definition = "Regenerate the complete fixture from its independent encoder. Selected synthetic evidence and binding premises establish no consensus, authenticity, authority or finalized inclusion. The component schemas add no hash identity."
+paths = ["packages/act-authentication/tests/boundary-golden.json"]
