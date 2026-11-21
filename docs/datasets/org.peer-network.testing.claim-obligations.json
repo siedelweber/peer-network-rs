@@ -772,6 +772,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "The independently reviewed implementation verifies the carried exact members under the decided Work-free contract and the complete publication admission supplies its vectors and migrations; this disposition alone supplies no conformance claim.",
+      "closing_step": "Exact publication-three verification and consumer migration",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Exact-route final-width and carried-evidence verification, the sole exact empty form at zero and over a point hull, caller-guard exhaustion distinguished as inability, complete publication-three carriage and migration, and independent controls and numerical evidence.",
+      "name": "ROOT::dec:design:epoch-route-disposition",
+      "owner": "Epoch and graph implementers, records and publication owners, with independent evidence reviewers",
+      "path": "docs/design/implementation.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
       "hold": "ROOT::open:testing:obligation-evidence",
@@ -2934,7 +2947,8 @@
       "owner": "Numerical, records and publication implementers with independent dependency, platform and evidence reviewers",
       "path": "docs/design/implementation.md",
       "realizers": [
-        "ROOT::dec:decomposition:numbers"
+        "ROOT::dec:decomposition:numbers",
+        "ROOT::dec:design:epoch-route-disposition"
       ],
       "status": "held",
       "witnessed_labels": []

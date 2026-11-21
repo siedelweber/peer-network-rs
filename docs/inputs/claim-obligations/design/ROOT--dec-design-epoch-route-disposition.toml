@@ -1,0 +1,11 @@
+name = "ROOT::dec:design:epoch-route-disposition"
+witnessed_labels = []
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Epoch and graph implementers, records and publication owners, with independent evidence reviewers"
+missing = "Exact-route final-width and carried-evidence verification, the sole exact empty form at zero and over a point hull, caller-guard exhaustion distinguished as inability, complete publication-three carriage and migration, and independent controls and numerical evidence."
+closing_condition = "The independently reviewed implementation verifies the carried exact members under the decided Work-free contract and the complete publication admission supplies its vectors and migrations; this disposition alone supplies no conformance claim."
+closing_step = "Exact publication-three verification and consumer migration"
