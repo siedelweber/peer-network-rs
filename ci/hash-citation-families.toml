@@ -64,7 +64,7 @@ producer = "Admitted byte recipes"
 establishment = "defined"
 reader = "interchange-literal"
 definition = "Explicit integer and byte literals implement the admitted public recipes and their malformed-input controls in code; records state those recipes; no bare content identity is admitted."
-paths = ["packages/act-authentication/**/*.rs", "packages/act-authentication/tests/v2_vectors.py", "packages/act-authentication/tests/v3_vectors.py", "packages/act-authentication/tests/carrier_vectors.py", "packages/act-authentication/tests/boundary_vectors.py", "ci/authentication_vectors.py", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
+paths = ["packages/act-authentication/**/*.rs", "packages/act-authentication/tests/v2_vectors.py", "packages/act-authentication/tests/v3_vectors.py", "packages/act-authentication/tests/carrier_vectors.py", "packages/act-authentication/tests/boundary_vectors.py", "packages/act-authentication/tests/publication_core_vectors.py", "ci/authentication_vectors.py", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
 
 [[rows]]
 family = "secret-home-fixture-bytes"
@@ -1398,3 +1398,14 @@ reader = "authentication-boundary-fixtures"
 source = "packages/act-authentication/tests/boundary-golden.json"
 definition = "Regenerate the complete fixture from its independent encoder. Selected synthetic evidence and binding premises establish no consensus, authenticity, authority or finalized inclusion. The component schemas add no hash identity."
 paths = ["packages/act-authentication/tests/boundary-golden.json"]
+
+[[rows]]
+family = "publication-core-projection-fixtures"
+group = "public publication projection fixtures"
+measures = "Independent canonical projection, framed SHA-256 values and intrinsic size arithmetic"
+producer = "Independent Python standard-library framing and hashlib"
+establishment = "defined"
+reader = "publication-core-fixtures"
+source = "packages/act-authentication/tests/publication_core-golden.json"
+definition = "Regenerate the whole fixture from public inputs and its independent encoder. Opaque section placeholders and framing witnesses are not documents or identities of the unassigned theory; arithmetic guard rows claim no huge allocation or hash execution."
+paths = ["packages/act-authentication/tests/publication_core-golden.json"]

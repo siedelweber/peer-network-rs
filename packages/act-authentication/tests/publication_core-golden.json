@@ -1,0 +1,195 @@
+{
+  "recipe": "pn-host/publication-core/v1",
+  "source": "Independent Python standard-library encoding and hashlib; opaque section placeholders are not documents of the unassigned theory; no Rust or production helpers.",
+  "rows": [
+    {
+      "name": "absent-annotation",
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "result": "projection fixture only",
+      "core": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "preimage": "706e2d686f73742f7075626c69636174696f6e2d636f72652f763100a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "digest": "dc806f3d096e28d491d8a58908606b397e5edd83137950a254e5776ddf23d136"
+    },
+    {
+      "name": "present-annotation",
+      "input": "aa0078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e018303000002410203410304410405410506410607410708410809a16766697874757265a1666f70617175654a616e6e6f746174696f6e",
+      "result": "projection fixture only",
+      "core": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "preimage": "706e2d686f73742f7075626c69636174696f6e2d636f72652f763100a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "digest": "dc806f3d096e28d491d8a58908606b397e5edd83137950a254e5776ddf23d136"
+    },
+    {
+      "name": "changed-annotation",
+      "input": "aa0078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e018303000002410203410304410405410506410607410708410809a16766697874757265a1666f7061717565476368616e676564",
+      "result": "projection fixture only",
+      "core": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "preimage": "706e2d686f73742f7075626c69636174696f6e2d636f72652f763100a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "digest": "dc806f3d096e28d491d8a58908606b397e5edd83137950a254e5776ddf23d136"
+    }
+  ],
+  "mutations": [
+    {
+      "key": 0,
+      "input": "a90078226f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e780183030000024102034103044104054105064106074107084108",
+      "framing_digest": "650cf2e0ad9fc0e582b76e46e4b921f82971d3e26fa7351908b0af52eb28ecde",
+      "operation_result": "Edition",
+      "scope": "framing sensitivity; coordinate mutations are refused, not identities"
+    },
+    {
+      "key": 1,
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030001024102034103044104054105064106074107084108",
+      "framing_digest": "62ca882a34a4607c7e0000c3437a870077ede231008fa614d8bc92cf794bab9e",
+      "operation_result": "Patch",
+      "scope": "framing sensitivity; coordinate mutations are refused, not identities"
+    },
+    {
+      "key": 2,
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024103034103044104054105064106074107084108",
+      "framing_digest": "fc61ee07beb34ceb6234c8d107ac0a9acbf1f9f1f9033f4bf33389e8bb6eb832",
+      "operation_result": "projection fixture only",
+      "scope": "framing sensitivity; coordinate mutations are refused, not identities"
+    },
+    {
+      "key": 3,
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034102044104054105064106074107084108",
+      "framing_digest": "1105425b307553cde107af497d85cac7370027e7cf436bed9b01cf623d56db26",
+      "operation_result": "projection fixture only",
+      "scope": "framing sensitivity; coordinate mutations are refused, not identities"
+    },
+    {
+      "key": 4,
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044105054105064106074107084108",
+      "framing_digest": "e38cdfb0286f03bfae9e128966566a0081d6446a45549de102d630fa285dfb22",
+      "operation_result": "projection fixture only",
+      "scope": "framing sensitivity; coordinate mutations are refused, not identities"
+    },
+    {
+      "key": 5,
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054104064106074107084108",
+      "framing_digest": "3a70dbde7ac80d5f4e45ca54ac1ed136f204390af10bdac7e7aca2a398f70b70",
+      "operation_result": "projection fixture only",
+      "scope": "framing sensitivity; coordinate mutations are refused, not identities"
+    },
+    {
+      "key": 6,
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064107074107084108",
+      "framing_digest": "bd5e75dae23fef62371bd0c3370642ef93d7ac3c3718d495ee61b4525eec41bc",
+      "operation_result": "projection fixture only",
+      "scope": "framing sensitivity; coordinate mutations are refused, not identities"
+    },
+    {
+      "key": 7,
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074106084108",
+      "framing_digest": "f40bd015987ead91ba514bdf8b39a8ab1d6958b71a31604afccb544ca233a317",
+      "operation_result": "projection fixture only",
+      "scope": "framing sensitivity; coordinate mutations are refused, not identities"
+    },
+    {
+      "key": 8,
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084109",
+      "framing_digest": "f458cbbba1524fdad915c711d5f80acd32e416de8d7ffa6dcff688eb95265746",
+      "operation_result": "projection fixture only",
+      "scope": "framing sensitivity; coordinate mutations are refused, not identities"
+    }
+  ],
+  "refusals": [
+    {
+      "name": "nonminimal-map-head",
+      "input": "b8090078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "result": "Canonical"
+    },
+    {
+      "name": "trailing-byte",
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e018303000002410203410304410405410506410607410708410800",
+      "result": "Canonical"
+    },
+    {
+      "name": "wrong-namespace",
+      "input": "a90078226f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e780183030000024102034103044104054105064106074107084108",
+      "result": "Edition"
+    },
+    {
+      "name": "wrong-major",
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183020000024102034103044104054105064106074107084108",
+      "result": "Edition"
+    },
+    {
+      "name": "wrong-minor",
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030100024102034103044104054105064106074107084108",
+      "result": "Edition"
+    },
+    {
+      "name": "wrong-patch",
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030001024102034103044104054105064106074107084108",
+      "result": "Patch"
+    },
+    {
+      "name": "edition-before-patch",
+      "input": "a90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183020001024102034103044104054105064106074107084108",
+      "result": "Edition"
+    }
+  ],
+  "domains": [
+    {
+      "recipe": "pn-act-profile/act-proposal/v3",
+      "tag": "PN-act-proposal-v3",
+      "preimage": "706e2d6163742d70726f66696c652f6163742d70726f706f73616c2f7633008272504e2d6163742d70726f706f73616c2d763381583fa90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "framing_digest": "9981b6d06c36b3b1e50359f78b498d96107bb1eafe81ecec7f8f69903f1e31da",
+      "scope": "domain witness only; fields are not an act or message"
+    },
+    {
+      "recipe": "pn-act-profile/act-content/v3",
+      "tag": "PN-content-v3",
+      "preimage": "706e2d6163742d70726f66696c652f6163742d636f6e74656e742f763300826d504e2d636f6e74656e742d763381583fa90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "framing_digest": "5e44b179e7aef6b34c93e3ef180985fdfca60e6575d1186b7df9072a856999ad",
+      "scope": "domain witness only; fields are not an act or message"
+    },
+    {
+      "recipe": "pn-act-profile/act-dependency/v3",
+      "tag": "PN-dependency-v3",
+      "preimage": "706e2d6163742d70726f66696c652f6163742d646570656e64656e63792f7633008270504e2d646570656e64656e63792d763381583fa90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "framing_digest": "25f818fb40c87e4ab8cd87a437eaa4b470c7813e2028561e0498abc09c817abb",
+      "scope": "domain witness only; fields are not an act or message"
+    },
+    {
+      "recipe": "pn-act-authentication/host-seal/v1",
+      "tag": "PN-verified-act-v1",
+      "preimage": "706e2d6163742d61757468656e7469636174696f6e2f686f73742d7365616c2f7631008272504e2d76657269666965642d6163742d763181583fa90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "framing_digest": "f64545b321af86887a66906846cdcb35246351607c89b46e442dbbbe8b343ec8",
+      "scope": "domain witness only; fields are not an act or message"
+    },
+    {
+      "recipe": "pn-act-authentication/actor-approval/v1",
+      "tag": "PN-act-approval-v1",
+      "preimage": "706e2d6163742d61757468656e7469636174696f6e2f6163746f722d617070726f76616c2f7631008272504e2d6163742d617070726f76616c2d763181583fa90078216f72672e706565722d6e6574776f726b2e746573742e7075626c69636174696f6e0183030000024102034103044104054105064106074107084108",
+      "framing_digest": "c22aea3714f65129cd76a4dffe57a0cd30415fae4cae387b3e9434902597ebd4",
+      "scope": "domain witness only; fields are not an act or message"
+    }
+  ],
+  "allowances": [
+    {
+      "core_bytes": 2305843009213693922,
+      "prefix_bytes": 28,
+      "preimage_bytes": 2305843009213693950,
+      "maximum_preimage_bytes": 2305843009213693951,
+      "result": "within primitive guard",
+      "scope": "arithmetic only; no allocation or digest of this length"
+    },
+    {
+      "core_bytes": 2305843009213693923,
+      "prefix_bytes": 28,
+      "preimage_bytes": 2305843009213693951,
+      "maximum_preimage_bytes": 2305843009213693951,
+      "result": "within primitive guard",
+      "scope": "arithmetic only; no allocation or digest of this length"
+    },
+    {
+      "core_bytes": 2305843009213693924,
+      "prefix_bytes": 28,
+      "preimage_bytes": 2305843009213693952,
+      "maximum_preimage_bytes": 2305843009213693951,
+      "result": "PreimageBound",
+      "scope": "arithmetic only; no allocation or digest of this length"
+    }
+  ]
+}
