@@ -568,8 +568,8 @@ class Evidence(unittest.TestCase):
         self.assertEqual(set(stages), {'census', 'deployment-claims', 'linter', 'claims', 'design-correspondence', 'observations', 'datasets', 'documents'})
         self.assertEqual(stages['claims'][-2:], ['ci/claims.py', 'registration'])
         self.assertEqual(stages['linter'], ['/deployed/linter', 'check', '--root', '.'])
-        self.assertEqual(stages['datasets'], ['/prepared/gate/documents', 'generate', '--check'])
-        self.assertEqual(stages['documents'], ['/prepared/gate/documents', 'check'])
+        self.assertEqual(stages['datasets'], ['/prepared/gate/documents', 'generate', 'check'])
+        self.assertEqual(stages['documents'], ['/prepared/gate/documents', 'render', 'check'])
         self.prepared_checker_control()
         for level, label in (('unit', 'test:integration:fixture'), ('public-surface', 'test:unit:fixture')):
             control = fixture()
@@ -657,7 +657,7 @@ class Evidence(unittest.TestCase):
                 before = path.read_text()
                 path.write_text(value)
                 diagnostics = []
-                for args in (['--only', 'datasets'], ['--run-checker', 'documents', '--', 'generate', '--check']):
+                for args in (['--only', 'datasets'], ['--run-checker', 'documents', '--', 'generate', 'check']):
                     output = io.StringIO()
                     with patch('sys.argv', ['ci/precheck.py', '--storage-locked', *args]), patch('isolation.storage_entry'), patch('precheck.Path.cwd', return_value=root), patch.dict(os.environ, CARGO_TARGET_DIR=str(target), LINTER_BIN='/fixture/linter'), patch('precheck.prepare_checker', return_value=binary), patch('precheck.subprocess.run', wraps=subprocess.run) as run, redirect_stderr(output), redirect_stdout(io.StringIO()):
                         self.assertEqual(precheck.main(), 2)

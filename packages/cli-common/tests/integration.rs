@@ -17,7 +17,7 @@
 //! | `parse_args_from_wraps_help_as_json_control_record` | shared parser returns JSON help metadata |
 
 use clap::Parser;
-use cli_common::{BaseArgs, CommandExit, ControlPlaneFields, ControlPlaneRecordKind, emit, parse_args_from};
+use cli_common::{BaseArgs, CheckOutputArgs, CommandExit, ControlPlaneFields, ControlPlaneRecordKind, emit, parse_args_from};
 use serde::Serialize;
 
 /// Minimal helper CLI: this fixture exercises the public composition of
@@ -34,6 +34,46 @@ struct FixtureCli {
 struct FixtureHelpCli {
     #[command(flatten)]
     base: BaseArgs,
+}
+
+#[derive(Parser)]
+struct FixtureFileRoles {
+    #[command(flatten)]
+    files: CheckOutputArgs,
+    #[arg(long, conflicts_with = "report")]
+    output: Option<String>,
+}
+
+/// Claim: The renamed reciprocal file pair parses without old aliases, and a dirty check publishes its report without creating a clean stamp.
+/// ´claim:cli:checker-file-role-spellings´
+/// ´test:integration:checker-file-role-spellings´
+#[test]
+fn checker_file_role_spellings() {
+    for args in [
+        vec!["fixture", "--report", "x", "--stamp", "y"],
+        vec!["fixture", "--report-file", "x"],
+        vec!["fixture", "--stamp-file", "y"],
+        vec!["fixture", "--report-file", "x", "--stamp-file", "y", "--output=report"],
+    ] {
+        assert!(FixtureFileRoles::try_parse_from(args).is_err());
+    }
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let report = directory.path().join("report.json");
+    let stamp = directory.path().join("stamp");
+    let parsed = FixtureFileRoles::try_parse_from([
+        "fixture",
+        "--report-file",
+        report.to_str().expect("report path"),
+        "--stamp-file",
+        stamp.to_str().expect("stamp path"),
+    ])
+    .expect("renamed pair");
+    let exit = cli_common::run_document_mode("fixture", false, tracing::Level::INFO, true, false, &parsed.files, || {
+        Ok::<_, std::io::Error>((serde_json::json!({"findings": ["stale"]}), 1))
+    });
+    assert_eq!(exit, std::process::ExitCode::from(3));
+    assert!(report.exists());
+    assert!(!stamp.exists());
 }
 
 /// Claim: With harness-captured stdout, an external caller can emit the fixture payload successfully, checking public sink access without asserting captured byte contents.

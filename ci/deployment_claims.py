@@ -255,7 +255,7 @@ def check(root=Path('.'), generate=False):
         for namespace, expected in ((NAMESPACE, rows), (EDGE_NAMESPACE, edges)):
             dataset = json.loads((root/'docs/datasets'/f'{namespace}.json').read_text())
             if dataset['rows'] != expected:
-                raise Refusal('stale '+namespace+'; run documents generate, then documents write')
+                raise Refusal('stale '+namespace+'; run documents generate write, then documents render write')
     print(f'DEPLOYMENT-CLAIMS edges={len(edges)} reliance={sum(e["relation"]=="relies" for e in edges)} conditional_claims={sum("::claim:" in s for s in conditional)}')
     return conditional
 

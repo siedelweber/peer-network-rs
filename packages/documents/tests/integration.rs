@@ -38,7 +38,7 @@ fn fixture() -> Result<tempfile::TempDir> {
         "{{ row('org.peer-network.test.items', name='alpha').count | number }}\n",
     )?;
     documents::run(directory.path(), Operation::Generate { check: false })?;
-    documents::run(directory.path(), Operation::Write)?;
+    documents::run(directory.path(), Operation::Render { check: false })?;
     git(directory.path(), &["add", "-A"])?;
     Ok(directory)
 }
@@ -98,12 +98,12 @@ fn carrier_number_forms(root: &Path) -> Result<()> {
     let template = root.join("docs/templates/docs/result.md.j2");
     let source = "{% set item = row('org.peer-network.test.items', name='alpha') %}{{ item.text | number_text(item) }}";
     fs::write(&template, source)?;
-    documents::run(root, Operation::Write)?;
+    documents::run(root, Operation::Render { check: false })?;
     let displayed = fs::read_to_string(root.join("docs/result.md"))?;
     fs::write(&input, format!("{original}numeric_text = [\"text\"]\n"))?;
     documents::run(root, Operation::Generate { check: false })?;
     fs::write(&template, "{{ row('org.peer-network.test.items', name='alpha').text }}")?;
-    documents::run(root, Operation::Write)?;
+    documents::run(root, Operation::Render { check: false })?;
     assert_eq!(fs::read_to_string(root.join("docs/result.md"))?, displayed);
     assert_eq!(
         fs::read_to_string(root.join("docs/result.md"))?,
@@ -120,7 +120,7 @@ fn carrier_number_forms(root: &Path) -> Result<()> {
             format!("{{% set item = row('org.peer-network.test.items', name='alpha') %}}{expression}"),
         )?;
         assert!(
-            documents::run(root, Operation::Write)
+            documents::run(root, Operation::Render { check: false })
                 .unwrap_err()
                 .to_string()
                 .contains(refusal)
@@ -149,14 +149,14 @@ fn carrier_number_forms(root: &Path) -> Result<()> {
     documents::run(root, Operation::Generate { check: false })?;
     fs::write(&template, source)?;
     assert!(
-        documents::run(root, Operation::Write)
+        documents::run(root, Operation::Render { check: false })
             .unwrap_err()
             .to_string()
             .contains("reference row")
     );
     fs::write(&input, original)?;
     documents::run(root, Operation::Generate { check: false })?;
-    documents::run(root, Operation::Write)?;
+    documents::run(root, Operation::Render { check: false })?;
     assert_eq!(
         documents::run(root, Operation::Generate { check: true })?.findings,
         Vec::<Finding>::new()
@@ -292,7 +292,7 @@ fn number_registry() -> Result<()> {
         &template,
         "{{ numrel('num:test:third') }}|{{ numrel('num:test:half') }}|{{ numrel('num:test:integer') }}|{{ numval('num:test:decimal', 'exact') }}|{{ numrel('num:test:carry') }}",
     )?;
-    documents::run(root, Operation::Write)?;
+    documents::run(root, Operation::Render { check: false })?;
     assert_eq!(
         fs::read_to_string(root.join("docs/result.md"))?,
         "≈ 0.333|≈ -3|= 1\u{202f}234\u{202f}567|12.345\u{202f}678|≈ 10\u{202f}000"
@@ -305,7 +305,7 @@ fn number_registry() -> Result<()> {
     ] {
         fs::write(&template, text)?;
         assert!(
-            documents::run(root, Operation::Write)
+            documents::run(root, Operation::Render { check: false })
                 .unwrap_err()
                 .to_string()
                 .contains(expected)
@@ -362,13 +362,13 @@ fn directed_number_displays() -> Result<()> {
     let template = root.join("docs/templates/docs/result.md.j2");
     for (id, _, _, _, expected) in cases {
         fs::write(&template, format!("{{{{ numrel('num:test:{id}') }}}}"))?;
-        documents::run(root, Operation::Write)?;
+        documents::run(root, Operation::Render { check: false })?;
         assert_eq!(fs::read_to_string(root.join("docs/result.md"))?, expected);
         fs::write(
             &template,
             format!("{{{{ row('org.peer-network.test.carriers', name='{id}').number_forms.quantity | display('num', true) }}}}"),
         )?;
-        documents::run(root, Operation::Write)?;
+        documents::run(root, Operation::Render { check: false })?;
         assert_eq!(fs::read_to_string(root.join("docs/result.md"))?, expected);
     }
     let path = root.join("docs/datasets/org.peer-network.numbers.registry.json");
@@ -379,7 +379,7 @@ fn directed_number_displays() -> Result<()> {
         changed["rows"][0]["num_relation"] = relation;
         write_dataset(&path, &changed)?;
         assert!(
-            documents::run(root, Operation::Write)
+            documents::run(root, Operation::Render { check: false })
                 .unwrap_err()
                 .to_string()
                 .contains("relation")
@@ -534,7 +534,7 @@ fn stale_rendering() -> Result<()> {
     );
     assert_eq!(fs::read_to_string(&path)?, "stale\n");
     assert_eq!(
-        documents::run(directory.path(), Operation::Write)?.findings,
+        documents::run(directory.path(), Operation::Render { check: false })?.findings,
         [Finding {
             kind: FindingKind::StaleDocument,
             path: "docs/result.md".into()
@@ -561,7 +561,7 @@ fn text_output() -> Result<()> {
         "{{ require(rows('org.peer-network.test.items') | length == 1, 'one input row') }}count = {{ row('org.peer-network.test.items', name='alpha').count | number }}\n",
     )?;
     let output = root.join(".linter/imports/paper.toml");
-    let report = documents::run(root, Operation::Write)?;
+    let report = documents::run(root, Operation::Render { check: false })?;
     assert_eq!(
         report.findings,
         [Finding {
@@ -603,7 +603,7 @@ fn release_premises() -> Result<()> {
         let template = format!("docs/templates/docs/design/{document}.md.j2");
         fs::copy(repository.join(&template), root.join(&template))?;
         documents::run(root, Operation::Generate { check: false })?;
-        documents::run(root, Operation::Write)?;
+        documents::run(root, Operation::Render { check: false })?;
         for (dataset, field, message) in [
             ("inventory", "current_at", "inventory current_at must match publication tag"),
             (
@@ -631,7 +631,7 @@ fn release_premises() -> Result<()> {
                 row[field] = "network-v0.25.2".into();
             }
             write_dataset(&path, &data)?;
-            let result = documents::run(root, Operation::Write);
+            let result = documents::run(root, Operation::Render { check: false });
             assert!(result.is_err());
             assert!(result.err().ok_or("expected refusal")?.to_string().contains(message));
             fs::write(path, original)?;
@@ -680,7 +680,7 @@ fn declaration_authority() -> Result<()> {
         fs::copy(repository.join(path), root.join(path))?;
     }
     documents::run(root, Operation::Generate { check: false })?;
-    documents::run(root, Operation::Write)?;
+    documents::run(root, Operation::Render { check: false })?;
     for (dataset, declaration, needle) in [
         ("reserved", "environments", "newreserved"),
         ("owners", "owners", "EXAMPLE"),
@@ -707,7 +707,7 @@ fn declaration_authority() -> Result<()> {
             }
         }
         write_dataset(&path, &data)?;
-        documents::run(root, Operation::Write)?;
+        documents::run(root, Operation::Render { check: false })?;
         assert!(fs::read_to_string(root.join(format!(".linter/{declaration}.toml")))?.contains(needle));
         assert!(fs::read_to_string(root.join("adr/001-label-calculus.md"))?.contains(needle));
         fs::write(path, original)?;
@@ -716,12 +716,12 @@ fn declaration_authority() -> Result<()> {
     let mut data: serde_json::Value = serde_json::from_str(&fs::read_to_string(&path)?)?;
     data["rows"][0]["root_owner"] = "DOCUMENTS".into();
     write_dataset(&path, &data)?;
-    documents::run(root, Operation::Write)?;
+    documents::run(root, Operation::Render { check: false })?;
     assert!(fs::read_to_string(root.join(".linter/owners.toml"))?.contains("root_owner = \"DOCUMENTS\""));
     assert!(fs::read_to_string(root.join("adr/001-label-calculus.md"))?.contains("declares root owner DOCUMENTS"));
     data["rows"][0]["root_owner"] = "UNDECLARED".into();
     write_dataset(&path, &data)?;
-    let result = documents::run(root, Operation::Write);
+    let result = documents::run(root, Operation::Render { check: false });
     assert!(result.is_err());
     assert!(
         result
@@ -765,14 +765,14 @@ fn protected_outputs() -> Result<()> {
             "[[packages]]\npath = 'vendor/new-member'\n",
         )?;
         fs::write(root.join("docs/templates/GUIDE.md.j2"), "root guide\n")?;
-        documents::run(root, Operation::Write)?;
+        documents::run(root, Operation::Render { check: false })?;
         assert_eq!(fs::read_to_string(root.join("GUIDE.md"))?, "root guide\n");
         let template = root.join("docs/templates").join(format!("{document}.j2"));
         fs::create_dir_all(template.parent().ok_or("template parent")?)?;
         fs::write(template, "overwrite\n")?;
         for operation in [
             Operation::Check,
-            Operation::Write,
+            Operation::Render { check: false },
             Operation::Census,
             Operation::Generate { check: true },
             Operation::Generate { check: false },
@@ -788,7 +788,7 @@ fn protected_outputs() -> Result<()> {
     let root = directory.path();
     fs::create_dir_all(root.join("docs/templates/packages/graph"))?;
     fs::write(root.join("docs/templates/packages/graph/README.md.j2"), "graph guide\n")?;
-    documents::run(root, Operation::Write)?;
+    documents::run(root, Operation::Render { check: false })?;
     assert_eq!(fs::read_to_string(root.join("packages/graph/README.md"))?, "graph guide\n");
     Ok(())
 }
@@ -807,7 +807,7 @@ fn root_markdown_admission() -> Result<()> {
     ] {
         fs::write(root.join("docs/templates").join(format!("{name}.j2")), bytes)?;
     }
-    documents::run(root, Operation::Write)?;
+    documents::run(root, Operation::Render { check: false })?;
     for (name, bytes) in [
         ("README.md", "root readme\n"),
         ("CONTRIBUTING.md", "root contributing\n"),
@@ -850,7 +850,7 @@ fn exhibited_labels() -> Result<()> {
                 "{{{{ 'Study judgment: preserve (def:graph:authored-act) and (def:graph:authored-act-bundle).' | exhibit({labels}) }}}}\n"
             ),
         )?;
-        documents::run(root, Operation::Write)?;
+        documents::run(root, Operation::Render { check: false })?;
         assert_eq!(
             fs::read_to_string(root.join("docs/result.md"))?,
             "Study judgment: preserve (``def:graph:authored-act``) and (``def:graph:authored-act-bundle``).\n"
@@ -879,7 +879,7 @@ fn template_fragments() -> Result<()> {
         root.join("docs/templates/docs/result.md.j2"),
         "{% import 'fragments/macros.j2' as macros %}{% include 'fragments/value.j2' %} {{ macros.literal() }} <markup>\n",
     )?;
-    let report = documents::run(root, Operation::Write)?;
+    let report = documents::run(root, Operation::Render { check: false })?;
     assert_eq!(fs::read_to_string(root.join("docs/result.md"))?, "2 {{ literal }} <markup>\n");
     assert_eq!(report.templates.len(), 1);
     assert_eq!(report.templates[0].datasets, ["org.peer-network.test.items"]);
@@ -905,7 +905,7 @@ fn registry_relation() -> Result<()> {
         "{% set registry = kinds_registry() %}{% for item in registry.counts %}{{ item.measure }}={{ item.count }};{% endfor %}homonyms={{ registry.homonyms | length }}\n",
     )?;
     documents::run(root, Operation::Generate { check: false })?;
-    let report = documents::run(root, Operation::Write)?;
+    let report = documents::run(root, Operation::Render { check: false })?;
     assert_eq!(report.templates[0].datasets, ["org.peer-network.kinds.registry"]);
     assert_eq!(
         fs::read_to_string(root.join("docs/result.md"))?,
@@ -917,7 +917,7 @@ fn registry_relation() -> Result<()> {
     ] {
         fs::write(&input, source)?;
         documents::run(root, Operation::Generate { check: false })?;
-        let error = documents::run(root, Operation::Write).expect_err("invalid registry relation");
+        let error = documents::run(root, Operation::Render { check: false }).expect_err("invalid registry relation");
         assert!(error.to_string().contains(message), "{error}");
     }
     Ok(())
@@ -969,7 +969,7 @@ fn named_refusals() -> Result<()> {
         ),
     ] {
         fs::write(&dataset, text)?;
-        let error = documents::run(directory.path(), Operation::Write).expect_err("invalid envelope");
+        let error = documents::run(directory.path(), Operation::Render { check: false }).expect_err("invalid envelope");
         assert!(error.to_string().contains(field), "{error}");
     }
     Ok(())
@@ -993,7 +993,7 @@ fn premise_refusals() -> Result<()> {
         assert!(error.to_string().contains(expected), "{error}");
     }
     fs::write(&template, "literal {braces} and <markup>\n")?;
-    documents::run(directory.path(), Operation::Write)?;
+    documents::run(directory.path(), Operation::Render { check: false })?;
     assert_eq!(
         fs::read_to_string(directory.path().join("docs/result.md"))?,
         "literal {braces} and <markup>\n"
@@ -1022,9 +1022,9 @@ fn control_records() -> Result<()> {
 #[test]
 fn result_terminal_admission() -> Result<()> {
     let directory = fixture()?;
-    let piped = invoke(directory.path(), "check")?;
+    let piped = invoke(directory.path(), &["render", "check", "--output=report"])?;
     assert_eq!(piped.status.code(), Some(0));
-    let script = "import os,pty,subprocess,sys,tty\nm,s=pty.openpty()\ntty.setraw(s)\np=subprocess.run([sys.argv[1],'--root',sys.argv[2],'check'],stdout=s,stderr=subprocess.PIPE)\nos.close(s)\ndata=b''\nwhile True:\n try: part=os.read(m,65536)\n except OSError: break\n if not part: break\n data+=part\nos.close(m)\nsys.stdout.buffer.write(data)\nsys.exit(p.returncode)\n";
+    let script = "import os,pty,subprocess,sys,tty\nm,s=pty.openpty()\ntty.setraw(s)\np=subprocess.run([sys.argv[1],'--root',sys.argv[2],'render','check','--output=report'],stdout=s,stderr=subprocess.PIPE)\nos.close(s)\ndata=b''\nwhile True:\n try: part=os.read(m,65536)\n except OSError: break\n if not part: break\n data+=part\nos.close(m)\nsys.stdout.buffer.write(data)\nsys.exit(p.returncode)\n";
     let terminal = Command::new("python3")
         .args(["-c", script])
         .arg(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
@@ -1125,23 +1125,23 @@ fn complete_capture(stderr: &[u8]) -> Result<Vec<serde_json::Value>> {
     Ok(records)
 }
 
-fn invoke(root: &Path, operation: &str) -> Result<std::process::Output> {
+fn invoke(root: &Path, operation: &[&str]) -> Result<std::process::Output> {
     Ok(
         Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
             .arg("--root")
             .arg(root)
-            .arg(operation)
+            .args(operation)
             .output()?,
     )
 }
 
-/// Claim: a clean binary check emits exactly one JSON result line and status zero.
+/// Claim: a clean report request emits exactly one JSON result line and status zero.
 /// ´claim:cli:clean-result´
 /// ´test:integration:clean-result´
 #[test]
 fn clean_result() -> Result<()> {
     let directory = fixture()?;
-    let output = invoke(directory.path(), "check")?;
+    let output = invoke(directory.path(), &["render", "check", "--output=report"])?;
     assert_eq!(output.status.code(), Some(0));
     assert!(output.stdout.strip_suffix(b"\n").is_some_and(|line| !line.contains(&b'\n')));
     let report: serde_json::Value = serde_json::from_slice(&output.stdout)?;
@@ -1157,27 +1157,249 @@ fn clean_result() -> Result<()> {
     Ok(())
 }
 
-/// Claim: stale checking and refreshing both exit three, and refreshing changes the document.
-/// ´claim:cli:finding-status´
-/// ´test:integration:finding-status´
+/// Claim: a dirty render check exits three without stdout, while a refreshing render write succeeds.
+/// ´claim:cli:document-mode-exits´
+/// ´test:integration:document-mode-exits´
 #[test]
-fn finding_status() -> Result<()> {
+fn document_mode_exits() -> Result<()> {
     let directory = fixture()?;
     let path = directory.path().join("docs/result.md");
     fs::write(&path, "stale\n")?;
-    for operation in ["check", "write"] {
-        let output = invoke(directory.path(), operation)?;
-        assert_eq!(output.status.code(), Some(3));
-        let report: serde_json::Value = serde_json::from_slice(&output.stdout)?;
-        assert_eq!(
-            report["findings"],
-            serde_json::json!([{"kind": "stale_document", "path": "docs/result.md"}])
-        );
-        assert_eq!(
-            fs::read_to_string(&path)?,
-            if operation == "check" { "stale\n" } else { "2\n" }
-        );
+    for (operation, exit) in [(["render", "check"], 3), (["render", "write"], 0)] {
+        let output = invoke(directory.path(), &operation)?;
+        assert_eq!(output.status.code(), Some(exit));
+        assert_eq!(output.stdout, b"");
+        assert_eq!(fs::read_to_string(&path)?, if exit == 3 { "stale\n" } else { "2\n" });
     }
+    Ok(())
+}
+
+/// Claim: The two check evaluators partition the former aggregate findings and render check retains census validation.
+/// ´claim:cli:document-modes-cover-current-check´
+/// ´test:integration:document-modes-cover-current-check´
+#[test]
+fn document_modes_cover_current_check() -> Result<()> {
+    let directory = fixture()?;
+    let root = directory.path();
+    fs::write(
+        root.join("docs/inputs/items.toml"),
+        "namespace = 'org.peer-network.test.items'\nversion = [1, 0, 0]\n[[rows]]\nname = 'alpha'\ncount = 3\n",
+    )?;
+    fs::write(root.join("docs/result.md"), "stale\n")?;
+    fs::write(
+        root.join("docs/datasets/org.peer-network.test.orphan.json"),
+        "{\"namespace\":\"org.peer-network.test.orphan\",\"version\":[1,0,0],\"rows\":[]}\n",
+    )?;
+    fs::write(root.join("docs/templates/docs/unrendered.txt"), "not a renderable template\n")?;
+    let aggregate = documents::run(root, Operation::Check)?.findings;
+    assert!(aggregate.iter().any(|finding| finding.kind == FindingKind::OrphanDataset));
+    assert!(
+        aggregate
+            .iter()
+            .any(|finding| finding.kind == FindingKind::UnrenderedTemplate)
+    );
+    let mut split = documents::run(root, Operation::Generate { check: true })?.findings;
+    split.extend(documents::run(root, Operation::Render { check: true })?.findings);
+    assert_eq!(split, aggregate);
+    fs::write(root.join("docs/orphan.md"), "unpaired\n")?;
+    git(root, &["add", "docs/orphan.md"])?;
+    assert!(documents::run(root, Operation::Render { check: true }).is_err());
+    Ok(())
+}
+
+/// Claim: Clean checks stay silent at error level; dirty checks deliver the bounded count and hint, while default retains command completion.
+/// ´claim:cli:check-findings-observation´
+/// ´test:integration:check-findings-observation´
+#[test]
+fn check_findings_observation() -> Result<()> {
+    let directory = fixture()?;
+    let root = directory.path();
+    let executable = pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap();
+    for mode in ["render", "generate"] {
+        let clean = Command::new(&executable)
+            .args(["--root", root.to_str().ok_or("root path")?, mode, "check"])
+            .env_remove("PN_OBSERVE_DISABLE")
+            .env("PN_OBSERVE_LEVEL", "error")
+            .output()?;
+        assert_eq!(clean.status.code(), Some(0));
+        assert_eq!(clean.stdout, b"");
+        assert_eq!(clean.stderr, b"");
+    }
+    fs::write(root.join("docs/result.md"), "stale\n")?;
+    for (mode, source) in [
+        ("render", "docs/result.md"),
+        ("generate", "docs/datasets/org.peer-network.test.items.json"),
+    ] {
+        if mode == "generate" {
+            fs::write(root.join(source), "{}\n")?;
+        }
+        let output = Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
+            .args(["--root", root.to_str().ok_or("root path")?, mode, "check"])
+            .env_remove("PN_OBSERVE_DISABLE")
+            .env("PN_OBSERVE_LEVEL", "error")
+            .output()?;
+        assert_eq!(output.status.code(), Some(3));
+        assert_eq!(output.stdout, b"");
+        let rows: Vec<serde_json::Value> = std::str::from_utf8(&output.stderr)?
+            .lines()
+            .map(serde_json::from_str)
+            .collect::<std::result::Result<_, _>>()?;
+        assert_eq!(rows.len(), 1);
+        let line = rows[0].to_string();
+        assert!(line.contains("rerun this command with --output=report"));
+        assert_eq!(rows[0]["fields"]["finding_count"], 1);
+        assert!(!line.contains(source));
+        let default = Command::new(&executable)
+            .args(["--root", root.to_str().ok_or("root path")?, mode, "check"])
+            .env_remove("PN_OBSERVE_DISABLE")
+            .env("PN_OBSERVE_LEVEL", "default")
+            .output()?;
+        assert_eq!(default.status.code(), Some(3));
+        let default_rows: Vec<serde_json::Value> = std::str::from_utf8(&default.stderr)?
+            .lines()
+            .map(serde_json::from_str)
+            .collect::<std::result::Result<_, _>>()?;
+        assert!(
+            default_rows
+                .iter()
+                .any(|row| { row["kind"] == "metering" && row["operation"] == "Command" && row["event_kind"] == "completion" })
+        );
+        let quiet = Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
+            .args(["--root", root.to_str().ok_or("root path")?, mode, "check"])
+            .env_remove("PN_OBSERVE_LEVEL")
+            .env("PN_OBSERVE_DISABLE", "1")
+            .output()?;
+        assert_eq!(quiet.status.code(), Some(3));
+        assert_eq!(quiet.stdout, b"");
+        assert_eq!(quiet.stderr, b"");
+    }
+    Ok(())
+}
+
+/// Claim: A report option returns the complete evaluated result at zero for every mode, including dirty checks and refreshing writes.
+/// ´claim:cli:operation-report-result´
+/// ´test:integration:operation-report-result´
+#[test]
+fn operation_report_result() -> Result<()> {
+    let directory = fixture()?;
+    let root = directory.path();
+    fs::write(root.join("docs/result.md"), "stale\n")?;
+    for (base, mode, expected) in [
+        ("render", "check", "stale_document"),
+        ("render", "write", "stale_document"),
+        ("render", "write", ""),
+        ("generate", "check", ""),
+        ("generate", "write", ""),
+    ] {
+        let output = Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
+            .args(["--root", root.to_str().ok_or("root path")?, base, mode, "--output=report"])
+            .output()?;
+        assert_eq!(output.status.code(), Some(0), "{base} {mode}");
+        let report: serde_json::Value = serde_json::from_slice(&output.stdout)?;
+        if expected.is_empty() {
+            assert!(report["findings"].as_array().is_some_and(Vec::is_empty));
+        } else {
+            assert_eq!(report["findings"][0]["kind"], expected);
+        }
+    }
+    fs::write(root.join("docs/inputs/items.toml"), "invalid = true\n")?;
+    let failure = Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
+        .args([
+            "--root",
+            root.to_str().ok_or("root path")?,
+            "generate",
+            "check",
+            "--output=report",
+        ])
+        .output()?;
+    assert_eq!(failure.status.code(), Some(1));
+    assert_eq!(failure.stdout, b"");
+    Ok(())
+}
+
+/// Claim: Only the selected mode and output spellings parse; census retains its native JSON result.
+/// ´claim:cli:document-surface-selection´
+/// ´test:integration:document-surface-selection´
+#[test]
+fn document_surface_selection() -> Result<()> {
+    let directory = fixture()?;
+    let root = directory.path();
+    let executable = pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap();
+    for args in [
+        vec!["check"],
+        vec!["write"],
+        vec!["generate"],
+        vec!["generate", "--check"],
+        vec!["render", "check", "--output=other"],
+        vec!["census", "--report-file", "x", "--stamp-file", "y"],
+        vec![
+            "installation-check",
+            "tag",
+            "--facts",
+            "missing",
+            "--report-file",
+            "x",
+            "--stamp-file",
+            "y",
+        ],
+    ] {
+        let output = Command::new(&executable).arg("--root").arg(root).args(args).output()?;
+        assert_eq!(output.status.code(), Some(2));
+        assert_eq!(output.stdout, b"");
+    }
+    let report_file = root.join("conflicting-report.json");
+    let stamp_file = root.join("conflicting-stamp");
+    let conflict = Command::new(&executable)
+        .arg("--root")
+        .arg(root)
+        .args(["render", "check", "--output=report", "--report-file"])
+        .arg(&report_file)
+        .arg("--stamp-file")
+        .arg(&stamp_file)
+        .output()?;
+    assert_eq!(conflict.status.code(), Some(2));
+    assert_eq!(conflict.stdout, b"");
+    assert!(!report_file.exists());
+    assert!(!stamp_file.exists());
+    let census = Command::new(&executable).arg("--root").arg(root).arg("census").output()?;
+    assert_eq!(census.status.code(), Some(0));
+    assert!(serde_json::from_slice::<serde_json::Value>(&census.stdout)?["templates"].is_array());
+    let facts = root.join("tag-facts.json");
+    let commit = "a".repeat(40);
+    fs::write(
+        &facts,
+        serde_json::to_vec(&serde_json::json!({
+            "schema": 1,
+            "check": "tag",
+            "commit": commit,
+            "facts": {
+                "tag": "deploy/test-12",
+                "annotated": true,
+                "publisher_key": "publisher-A",
+                "verified_key": "publisher-A",
+                "signature_valid": true,
+                "resolved_commit": commit,
+                "public_main": commit,
+                "ancestor": true
+            }
+        }))?,
+    )?;
+    let native = Command::new(&executable)
+        .arg("--root")
+        .arg(root)
+        .args(["installation-check", "tag", "--facts"])
+        .arg(&facts)
+        .output()?;
+    let selected = Command::new(&executable)
+        .arg("--root")
+        .arg(root)
+        .args(["installation-check", "tag", "--facts"])
+        .arg(&facts)
+        .arg("--output=report")
+        .output()?;
+    assert_eq!(native.status.code(), Some(0));
+    assert_eq!(selected.status.code(), Some(0));
+    assert_eq!(native.stdout, selected.stdout);
     Ok(())
 }
 
@@ -1188,7 +1410,7 @@ fn finding_status() -> Result<()> {
 fn runtime_error() -> Result<()> {
     let directory = fixture()?;
     fs::write(directory.path().join("docs/inputs/items.toml"), "namespace = 'wrong'\n")?;
-    let output = invoke(directory.path(), "check")?;
+    let output = invoke(directory.path(), &["generate", "check"])?;
     assert_eq!(output.status.code(), Some(1));
     assert_eq!(output.stdout, b"");
     let records = complete_capture(&output.stderr)?;
@@ -1208,7 +1430,7 @@ fn error_level_terminal_delivery() -> Result<()> {
     let result = Command::new(pn_testkit::runtime_path(pn_testkit::RuntimePath::Executable("documents")).unwrap())
         .arg("--root")
         .arg(directory.path())
-        .arg("check")
+        .args(["generate", "check"])
         .env_remove("PN_OBSERVE_DISABLE")
         .env("PN_OBSERVE_LEVEL", "error")
         .output()?;
@@ -1236,7 +1458,7 @@ fn empty_root() -> Result<()> {
         if create {
             fs::create_dir_all(directory.path().join("docs/templates"))?;
         }
-        let output = invoke(directory.path(), "check")?;
+        let output = invoke(directory.path(), &["render", "check"])?;
         assert_eq!(output.status.code(), Some(1));
         assert_eq!(output.stdout, b"");
         complete_capture(&output.stderr)?;
@@ -1326,7 +1548,7 @@ fn atomic_refresh() -> Result<()> {
     let previous = directory.path().join("previous.txt");
     fs::write(&path, "previous\n")?;
     fs::hard_link(&path, &previous)?;
-    documents::run(directory.path(), Operation::Write)?;
+    documents::run(directory.path(), Operation::Render { check: false })?;
     assert_eq!(fs::read_to_string(&path)?, "2\n");
     assert_eq!(fs::read_to_string(previous)?, "previous\n");
     Ok(())
@@ -1355,7 +1577,7 @@ fn record_authority() -> Result<()> {
         "namespace = 'org.peer-network.records.index'\nversion = [1,0,0]\n[[rows]]\npath = 'adr/003-templated-documentation.md'\ntitle = 'Revised rendering'\nstatus = 'superseded'\nlabel = 'rec:render:replacement'\nscope = 'Changed scope.'\ndepends_on = ['rec:render:other']\ndoes_not_establish = 'No extra claim.'\n",
     )?;
     documents::run(root, Operation::Generate { check: false })?;
-    documents::run(root, Operation::Write)?;
+    documents::run(root, Operation::Render { check: false })?;
     let rendered = fs::read_to_string(root.join("adr/003-templated-documentation.md"))?;
     assert!(rendered.starts_with("## Revised rendering"));
     assert!(rendered.contains("**Record (Revised rendering)**"));
@@ -1378,8 +1600,11 @@ fn record_authority() -> Result<()> {
 fn io_paths() -> Result<()> {
     for (path, operation) in [
         ("docs/inputs/items.toml", Operation::Check),
-        ("docs/datasets/org.peer-network.test.items.json", Operation::Write),
-        ("docs/templates/docs/result.md.j2", Operation::Write),
+        (
+            "docs/datasets/org.peer-network.test.items.json",
+            Operation::Render { check: false },
+        ),
+        ("docs/templates/docs/result.md.j2", Operation::Render { check: false }),
     ] {
         let directory = fixture()?;
         fs::write(directory.path().join(path), [0xff])?;
@@ -1507,7 +1732,7 @@ fn record_observed_row() -> Result<()> {
         &template,
         "{{ row('org.peer-network.records.index', path='adr/007-example.md').path }}\n",
     )?;
-    documents::run(root, Operation::Write)?;
+    documents::run(root, Operation::Render { check: false })?;
     assert_eq!(documents::run(root, Operation::Check)?.findings, Vec::<Finding>::new());
     Ok(())
 }
@@ -1522,7 +1747,7 @@ fn git_required() -> Result<()> {
         .env("PATH", "")
         .arg("--root")
         .arg(directory.path())
-        .arg("check")
+        .args(["render", "check"])
         .output()?;
     assert_eq!(output.status.code(), Some(1));
     complete_capture(&output.stderr)?;

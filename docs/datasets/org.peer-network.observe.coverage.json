@@ -10,7 +10,7 @@
       "exceptions": 100,
       "generators": 47,
       "helpers": 3,
-      "instrumented": 30,
+      "instrumented": 31,
       "name": "cli-common",
       "number_forms": {
         "exceptions": {
@@ -38,18 +38,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "30",
+          "exact": "31",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "30",
+          "num": "31",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "133",
+          "exact": "134",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "133",
+          "num": "134",
           "num_exact": true,
           "num_relation": "="
         }
@@ -76,11 +76,11 @@
           "exact_digits": 32
         }
       },
-      "operations": 133
+      "operations": 134
     },
     {
       "exceptions": 10,
-      "generators": 20,
+      "generators": 22,
       "helpers": 0,
       "instrumented": 19,
       "name": "documents",
@@ -94,10 +94,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "20",
+          "exact": "22",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20",
+          "num": "22",
           "num_exact": true,
           "num_relation": "="
         },

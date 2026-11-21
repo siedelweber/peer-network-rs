@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Output",
+    "package": "documents",
+    "path": "packages/documents/src/main.rs",
+    "syntax": "# [derive (Clone , Copy , ValueEnum)] enum Output { Report , }"
+  }
+}

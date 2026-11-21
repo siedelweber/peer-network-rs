@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Mode",
+    "package": "documents",
+    "path": "packages/documents/src/main.rs",
+    "syntax": "# [derive (Clone , Copy , ValueEnum)] enum Mode { Check , Write , }"
+  }
+}

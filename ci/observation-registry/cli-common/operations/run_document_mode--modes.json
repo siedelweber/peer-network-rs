@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "run_document_mode",
+    "owner": "CLICOMMON",
+    "signature": "fn run_document_mode < Report , CommandError , Run > (command_name : & str , debug : bool , default_level : tracing :: Level , check : bool , stdout_report : bool , output : & CheckOutputArgs , run : Run ,) -> ExitCode where Report : serde :: Serialize , CommandError : std :: fmt :: Display , Run : FnOnce () -> Result < (Report , usize) , CommandError > ,",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "instrumented",
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::run_document_mode",
+    "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error @ observation :: BootstrapError :: Configuration (_)) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (observation :: BootstrapError :: Unavailable (_)) => None , } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_document_mode\" , & (command_name , debug , default_level , check , stdout_report , output , std :: any :: type_name :: < Run > () ,) ,) ; let result = (| | { if stdout_report && (output . report . is_some () || output . stamp . is_some ()) { let mut record = ControlPlaneRecord :: usage_error (command_name , \"conflicting_output_roles\") ; \"--output=report conflicts with --report-file and --stamp-file\" . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } if output . report . is_some () != output . stamp . is_some () { let mut record = ControlPlaneRecord :: usage_error (command_name , \"incomplete_output_roles\") ; \"--report-file and --stamp-file are reciprocal\" . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } if let (Some (report) , Some (stamp)) = (& output . report , & output . stamp) && let Err (error) = ensure_distinct_outputs (& [(\"report-file\" , report) , (\"stamp-file\" , stamp)]) { let mut record = ControlPlaneRecord :: usage_error (command_name , \"conflicting_output_roles\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } let (report_value , finding_count) = match run () { Ok (value) => value , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; return CommandExit :: Failure . exit_code () ; } } ; let dirty_check = check && finding_count > 0 ; let publication = if stdout_report { emit (& report_value) . map_err (CheckResultError :: from) } else if let (Some (report) , Some (stamp)) = (& output . report , & output . stamp) { write_json_report_if_changed (report , & report_value) . map (| _ | ()) . map_err (CheckResultError :: from) . and_then (| () | { if dirty_check { Ok (()) } else { touch_stamp (stamp) . map_err (CheckResultError :: from) } }) } else { Ok (()) } ; if let Err (error) = publication { tracing :: error ! (error = % error , \"failed to publish the command result\") ; return CommandExit :: Failure . exit_code () ; } if dirty_check && ! stdout_report { tracing :: error ! (finding_count , \"rerun this command with --output=report\") ; ExitCode :: from (3) } else { CommandExit :: Success . exit_code () } }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
+    "class_decision": "public-cli",
+    "item_premise": "The document-mode runner records only public command selection, result publication, count and completion; it handles no private carrier.",
+    "assessments": {
+      "full_recording": "review-279",
+      "secret_flow": "review-002",
+      "exposure_consumers": "review-003"
+    }
+  }
+}

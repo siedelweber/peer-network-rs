@@ -31,10 +31,10 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Operation {
     /// Generate datasets, optionally comparing without writes.
     Generate { check: bool },
-    /// Compare dataset projections and rendered documents without writing.
+    /// Compare or refresh rendered documents using committed datasets.
+    Render { check: bool },
+    /// Aggregate comparison retained as the test oracle for the two check modes.
     Check,
-    /// Refresh differing documents and report them as findings.
-    Write,
     /// Describe template and dataset dependencies.
     Census,
 }
@@ -517,12 +517,16 @@ pub fn run(root: &Path, operation: Operation) -> Result<Report> {
         .filter(|(name, _)| !used.contains(name))
         .map(|(_, path)| path.clone())
         .collect();
-    if matches!(operation, Operation::Check) {
+    if matches!(operation, Operation::Check | Operation::Render { check: true }) {
         census::validate(root, &report.templates, &datasets)?;
     }
     if !matches!(operation, Operation::Census) {
         for (path, bytes) in prepared {
-            if compare(&path, bytes.as_bytes(), matches!(operation, Operation::Write))? {
+            if compare(
+                &path,
+                bytes.as_bytes(),
+                matches!(operation, Operation::Render { check: false }),
+            )? {
                 report.findings.push(Finding {
                     kind: FindingKind::StaleDocument,
                     path: relative(root, &path)?,

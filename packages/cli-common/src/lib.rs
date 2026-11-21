@@ -1206,13 +1206,124 @@ pub struct CheckOutcome<Report> {
     pub clean: bool,
 }
 
+/// Run a document mode with one evaluator and a selected result route.
+/// A completed check with findings has status three only when no stdout
+/// report was requested. A completed write always has status zero.
+pub fn run_document_mode<Report, CommandError, Run>(
+    command_name: &str,
+    debug: bool,
+    default_level: tracing::Level,
+    check: bool,
+    stdout_report: bool,
+    output: &CheckOutputArgs,
+    run: Run,
+) -> ExitCode
+where
+    Report: serde::Serialize,
+    CommandError: std::fmt::Display,
+    Run: FnOnce() -> Result<(Report, usize), CommandError>,
+{
+    install_json_panic_hook(command_name);
+    let _observation_guard = match observation::bootstrap(true, debug, default_level) {
+        Ok(guard) => Some(guard),
+        Err(error @ observation::BootstrapError::Configuration(_)) => {
+            let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
+            record.message = error.to_string();
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
+        }
+        Err(observation::BootstrapError::Unavailable(_)) => None,
+    };
+    let scope = crate::observation::scope(
+        "CLICOMMON",
+        "rule:observe:spans",
+        "run_document_mode",
+        &(
+            command_name,
+            debug,
+            default_level,
+            check,
+            stdout_report,
+            output,
+            std::any::type_name::<Run>(),
+        ),
+    );
+    let result = (|| {
+        if stdout_report && (output.report.is_some() || output.stamp.is_some()) {
+            let mut record = ControlPlaneRecord::usage_error(command_name, "conflicting_output_roles");
+            "--output=report conflicts with --report-file and --stamp-file".clone_into(&mut record.message);
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
+        }
+        if output.report.is_some() != output.stamp.is_some() {
+            let mut record = ControlPlaneRecord::usage_error(command_name, "incomplete_output_roles");
+            "--report-file and --stamp-file are reciprocal".clone_into(&mut record.message);
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
+        }
+        if let (Some(report), Some(stamp)) = (&output.report, &output.stamp)
+            && let Err(error) = ensure_distinct_outputs(&[("report-file", report), ("stamp-file", stamp)])
+        {
+            let mut record = ControlPlaneRecord::usage_error(command_name, "conflicting_output_roles");
+            record.message = error.to_string();
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
+        }
+        let (report_value, finding_count) = match run() {
+            Ok(value) => value,
+            Err(error) => {
+                tracing::error!(error = %error, "command failed");
+                return CommandExit::Failure.exit_code();
+            }
+        };
+        let dirty_check = check && finding_count > 0;
+        let publication = if stdout_report {
+            emit(&report_value).map_err(CheckResultError::from)
+        } else if let (Some(report), Some(stamp)) = (&output.report, &output.stamp) {
+            write_json_report_if_changed(report, &report_value)
+                .map(|_| ())
+                .map_err(CheckResultError::from)
+                .and_then(|()| {
+                    if dirty_check {
+                        Ok(())
+                    } else {
+                        touch_stamp(stamp).map_err(CheckResultError::from)
+                    }
+                })
+        } else {
+            Ok(())
+        };
+        if let Err(error) = publication {
+            tracing::error!(error = %error, "failed to publish the command result");
+            return CommandExit::Failure.exit_code();
+        }
+        if dirty_check && !stdout_report {
+            tracing::error!(finding_count, "rerun this command with --output=report");
+            ExitCode::from(3)
+        } else {
+            CommandExit::Success.exit_code()
+        }
+    })();
+    scope.finish_with(
+        if result == ExitCode::SUCCESS {
+            observation::Outcome::Success
+        } else if result == ExitCode::from(2) || result == ExitCode::from(3) {
+            observation::Outcome::Refusal
+        } else {
+            observation::Outcome::Error
+        },
+        &result,
+    );
+    result
+}
+
 /// Run a checker that produces a JSON report and a verdict.
 /// See (´sec:clicommon:output-roles-and-stamps´) for the checker modes.
 ///
 /// Installs the JSON panic hook and stderr tracing, runs the check, and
 /// publishes the result through [`finish_check_command`] under the
-/// active output mode: direct-mode stdout (refused on a terminal, exit
-/// class 2) or a build-mode report asset plus success stamp. The `run`
+/// active output mode: direct-mode stdout or a build-mode report asset plus
+/// success stamp. Direct publication refuses terminal stdout; the `run`
 /// closure returns a completed verdict even when it found defects. A dirty
 /// verdict publishes its report but leaves the stamp untouched and exits 3.
 /// `Err` is reserved for an incomplete command and exits 1.
@@ -1246,12 +1357,9 @@ where
         &(command_name, debug, default_level, output, std::any::type_name::<Run>()),
     );
     let result = (|| {
-        // Direct mode (no --report/--stamp) refuses terminal stdout *before*
-        // any semantic work: the JSON result would have nowhere safe to go,
-        // so running the check first would be wasted work and could touch
-        // the filesystem on the way. Build mode has an explicit report/stamp
-        // destination and is exempt. `finish_check_command` still performs
-        // its own refusal for direct callers.
+        // A pre-run terminal record, when supplied by the observation policy,
+        // stops direct publication before semantic work. The current policy
+        // supplies none; finish_check_command checks direct publication.
         if output.report.is_none()
             && output.stamp.is_none()
             && let Some(record) = stdout_tty_refusal_record(command_name)
@@ -1411,25 +1519,25 @@ pub fn touch_stamp(path: &std::path::Path) -> io::Result<()> {
 
 /// Output arguments for the checker modes in (´sec:clicommon:output-roles-and-stamps´).
 ///
-/// A checker runs in one of two modes:
+/// The file roles are reciprocal. A caller selects its result route:
 ///
-/// - **direct** — no `--report`/`--stamp`: the JSON result goes to
-///   stdout (refused on a terminal) and no stamp is touched;
-/// - **build** — both `--report` and `--stamp`: the result is published
+/// - **direct** — no `--report-file`/`--stamp-file`: a requested report can go
+///   to stdout and no stamp is touched;
+/// - **build** — both `--report-file` and `--stamp-file`: the result is published
 ///   as an explicit report asset (compare-if-changed), the stamp is
 ///   touched only after a successful report write, and stdout stays
 ///   empty.
 ///
-/// `clap` enforces the reciprocal requirement, so a lone `--report` or
-/// `--stamp` is a usage error before the command runs.
+/// `clap` enforces the reciprocal requirement, so a lone `--report-file` or
+/// `--stamp-file` is a usage error before the command runs.
 #[derive(clap::Args, Debug)]
 pub struct CheckOutputArgs {
     /// Build mode: write the JSON result to this explicit report file.
-    #[arg(long, value_name = "FILE", requires = "stamp")]
+    #[arg(long = "report-file", value_name = "FILE", requires = "stamp")]
     pub report: Option<std::path::PathBuf>,
 
     /// Build mode: touch this success stamp after publishing the report.
-    #[arg(long, value_name = "FILE", requires = "report")]
+    #[arg(long = "stamp-file", value_name = "FILE", requires = "report")]
     pub stamp: Option<std::path::PathBuf>,
 }
 
@@ -1542,13 +1650,13 @@ pub fn ensure_distinct_outputs(roles: &[(&str, &std::path::Path)]) -> Result<(),
 /// Failure publishing a check result through [`finish_check_command`].
 #[derive(Debug, thiserror::Error)]
 pub enum CheckResultError {
-    /// Direct mode refused because stdout is a terminal (exit class 2).
+    /// Direct publication refused because stdout is a terminal (exit class 2).
     #[error("stdout is a terminal; refusing to write result data")]
     TtyRefusal,
 
-    /// Exactly one of `--report`/`--stamp` was supplied. `clap` normally
+    /// Exactly one of `--report-file`/`--stamp-file` was supplied. `clap` normally
     /// prevents this; the variant keeps the finalizer total.
-    #[error("invalid checker output mode: --report and --stamp are all-or-nothing")]
+    #[error("invalid checker output mode: --report-file and --stamp-file are all-or-nothing")]
     InvalidMode,
 
     /// The report could not be published or the stamp could not be

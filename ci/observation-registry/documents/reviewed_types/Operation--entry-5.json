@@ -4,6 +4,6 @@
     "item": "Operation",
     "package": "documents",
     "path": "packages/documents/src/lib.rs",
-    "syntax": "# [doc = \" The requested operation.\"] # [derive (Clone , Copy , Debug)] pub enum Operation { # [doc = \" Generate datasets, optionally comparing without writes.\"] Generate { check : bool } , # [doc = \" Compare dataset projections and rendered documents without writing.\"] Check , # [doc = \" Refresh differing documents and report them as findings.\"] Write , # [doc = \" Describe template and dataset dependencies.\"] Census , }"
+    "syntax": "# [doc = \" The requested operation.\"] # [derive (Clone , Copy , Debug)] pub enum Operation { # [doc = \" Generate datasets, optionally comparing without writes.\"] Generate { check : bool } , # [doc = \" Compare or refresh rendered documents using committed datasets.\"] Render { check : bool } , # [doc = \" Aggregate comparison retained as the test oracle for the two check modes.\"] Check , # [doc = \" Describe template and dataset dependencies.\"] Census , }"
   }
 }

@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use clap::{Parser, Subcommand};
-use cli_common::{BaseArgs, CheckOutcome, CheckOutputArgs};
+use clap::{Parser, Subcommand, ValueEnum};
+use cli_common::{BaseArgs, CheckOutputArgs};
 use documents::Operation;
 
 #[derive(Parser)]
@@ -13,6 +13,9 @@ struct Arguments {
     /// Repository to inspect or update.
     #[arg(long, default_value = ".", global = true)]
     root: PathBuf,
+    /// Return the whole operation report on standard output.
+    #[arg(long, value_enum, global = true)]
+    output: Option<Output>,
     #[command(subcommand)]
     command: Command,
 }
@@ -21,14 +24,18 @@ struct Arguments {
 enum Command {
     /// Project TOML inputs into deterministic JSON datasets.
     Generate {
-        /// Compare without writing files.
-        #[arg(long)]
-        check: bool,
+        #[arg(value_enum)]
+        mode: Mode,
+        #[command(flatten)]
+        files: CheckOutputArgs,
     },
-    /// Compare datasets and rendered documents without writing.
-    Check,
-    /// Refresh documents, reporting changed files as findings.
-    Write,
+    /// Compare or refresh rendered documents.
+    Render {
+        #[arg(value_enum)]
+        mode: Mode,
+        #[command(flatten)]
+        files: CheckOutputArgs,
+    },
     /// List templates, datasets and rendered documents.
     Census,
     /// Check one closed public installation evidence document.
@@ -36,6 +43,17 @@ enum Command {
         #[command(subcommand)]
         check: InstallationCheck,
     },
+}
+
+#[derive(Clone, Copy, ValueEnum)]
+enum Mode {
+    Check,
+    Write,
+}
+
+#[derive(Clone, Copy, ValueEnum)]
+enum Output {
+    Report,
 }
 
 #[derive(Subcommand)]
@@ -63,11 +81,26 @@ fn main() -> ExitCode {
     cli_common::select_observation_policy_or_exit("documents");
     documents::install_panic_hook();
     let arguments = cli_common::parse_args_or_exit::<Arguments>();
-    let operation = match arguments.command {
-        Command::Generate { check } => Operation::Generate { check },
-        Command::Check => Operation::Check,
-        Command::Write => Operation::Write,
-        Command::Census => Operation::Census,
+    let (operation, check, files) = match arguments.command {
+        Command::Generate { mode, files } => (
+            Operation::Generate {
+                check: matches!(mode, Mode::Check),
+            },
+            matches!(mode, Mode::Check),
+            files,
+        ),
+        Command::Render { mode, files } => (
+            Operation::Render {
+                check: matches!(mode, Mode::Check),
+            },
+            matches!(mode, Mode::Check),
+            files,
+        ),
+        Command::Census => {
+            return cli_common::run_stdout_json_command("documents", arguments.base.debug, tracing::Level::INFO, || {
+                documents::run(&arguments.root, Operation::Census)
+            });
+        }
         Command::InstallationCheck { check } => {
             let (selected, facts) = match check {
                 InstallationCheck::Tag { facts } => ("tag", facts),
@@ -79,20 +112,17 @@ fn main() -> ExitCode {
             });
         }
     };
-    cli_common::run_check_command(
+    cli_common::run_document_mode(
         "documents",
         arguments.base.debug,
         tracing::Level::INFO,
-        &CheckOutputArgs {
-            report: None,
-            stamp: None,
-        },
+        check,
+        arguments.output.is_some(),
+        &files,
         || {
             let report = documents::run(&arguments.root, operation)?;
-            Ok::<_, documents::Error>(CheckOutcome {
-                clean: report.findings.is_empty(),
-                report,
-            })
+            let count = report.findings.len();
+            Ok::<_, documents::Error>((report, count))
         },
     )
 }

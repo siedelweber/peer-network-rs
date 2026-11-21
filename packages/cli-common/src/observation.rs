@@ -1621,6 +1621,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                         | "run_no_stdout_command"
                         | "run_no_stdout_command_async"
                         | "run_check_command"
+                        | "run_document_mode"
                         | "execute"
                 )
             );

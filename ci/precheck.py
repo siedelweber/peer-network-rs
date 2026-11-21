@@ -81,8 +81,8 @@ def commands(target, linter):
         ('claims', [sys.executable, '-B', 'ci/claims.py', 'registration']),
         ('design-correspondence', [sys.executable, '-B', 'ci/design.py']),
         ('observations', [sys.executable, '-B', 'ci/observe.py', '--census-binary', str(target/'gate/examples/observe_census')]),
-        ('datasets', [str(target/'gate/documents'), 'generate', '--check']),
-        ('documents', [str(target/'gate/documents'), 'check']),
+        ('datasets', [str(target/'gate/documents'), 'generate', 'check']),
+        ('documents', [str(target/'gate/documents'), 'render', 'check']),
     )
 
 

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "Output",
+    "kind": "derive",
+    "package": "documents",
+    "path": "packages/documents/src/main.rs",
+    "syntax": "# [derive (Clone , Copy , ValueEnum)]",
+    "class_decision": "public-documents",
+    "expansion_review": "This derive admits only the two public mode or result selectors and exposes no private carrier or external effect."
+  }
+}

@@ -654,7 +654,8 @@ def generate(action):
             projection = cancellable([sys.executable, '-B', 'ci/deployment_claims.py', 'generate'], cwd=tree)
             if projection.returncode:
                 return projection.returncode
-        result = cancellable([built_executable(result.stdout), action], cwd=tree,
+        mode = ('generate', 'write') if action == 'generate' else ('render', 'write')
+        result = cancellable([built_executable(result.stdout), *mode], cwd=tree,
                              env=os.environ | {'CARGO_TARGET_DIR':str(target)})
         if result.returncode:
             return result.returncode

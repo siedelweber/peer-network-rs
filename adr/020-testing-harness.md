@@ -2,6 +2,8 @@
 
 ## Testing harness · `sec:harness:record`
 
+**Outstanding harness work** under (`conv:progress:outstanding-work`): the isolation test's barrier socket should bind in a short directory or refuse with a measured path-length message. The informational 1,900 ms isolation-case budget awaits judgment in a calibration invocation with node load recorded. Neither item is a completed control of the documents modes cut.
+
 **Decision (Evidence at several levels)** · `dec:harness:levels` Every first-party crate has unit, crate-level and integration tests from its first implementation bite, including infrastructure, client and test-support crates. Unit tests exercise local invariants beside their code in test modules; external crate-level tests in tests/public.rs exercise only the crate's public surface; tests/integration.rs and its modules under tests/integration/ exercise composition with dependencies, including error and resource boundaries. A dependency-free crate still tests its public boundary with the standard library, serialization or process environment it actually uses, not an invented domain dependency. Binary packages expose their command logic for unit and public-surface tests and exercise process behavior in integration tests. These levels distinguish failures and evidence scope; duplicating an assertion at three sites is not three independent oracles. Vendored packages remain under their existing policy (`dec:lint:policy`).
 
 **Rule (Claims at test sites)** · `rule:harness:claims` Every test follows (`rule:testing:site`): a meaningful gloss, then its authored claim mint or a parenthesised citation to the single existing mint, then its derived test label. Harness-generated cases need a checked generator-to-test mapping; helper names and suite names do not mint claims. A shared suite's first establishing test mints the scoped statement and other implementation runners cite it with their own test labels and declared owner imports. Keep implementation identity, contract edition, test level, input case and execution configuration in results so all supporting executions join under (`rule:testing:results`). Registers, paper exhibition/import, explicit holds and obligation coverage remain (`rec:testing:decision`). A new harness changes how evidence is obtained, not what a passing claim means.
@@ -54,10 +56,10 @@
 | ci::test_wallet_boundary | active | integration | pn-wallet-rust | service | 11 |
 | cli-common | active | unit | cli-common-rust | fast | 115 |
 | cli-common-doctests | active | doctest | cli-common-rust | fast | 2 |
-| cli-common::integration | active | integration | cli-common-rust | fast | 5 |
+| cli-common::integration | active | integration | cli-common-rust | fast | 6 |
 | cli-common::public | active | public-surface | cli-common-rust | fast | 1 |
 | documents | active | unit | documents-rust | fast | 7 |
-| documents::integration | active | integration | documents-rust | fast | 34 |
+| documents::integration | active | integration | documents-rust | fast | 38 |
 | documents::integration-extended | active | integration | documents-rust | extended | 1 |
 | documents::panic_contract | active | integration | documents-rust | fast | 2 |
 | documents::public | active | public-surface | documents-rust | fast | 1 |

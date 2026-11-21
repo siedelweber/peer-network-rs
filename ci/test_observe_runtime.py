@@ -1100,7 +1100,7 @@ class Processes(unittest.TestCase):
                 ([str(target/'documents'),'--help'],0),
                 ([str(target/'documents'),'--unknown'],2),
                 ([str(target/'documents-panic-probe')],1),
-                ([str(target/'documents'),'--root',directory+'/missing','check'],1),
+                ([str(target/'documents'),'--root',directory+'/missing','render','check'],1),
             ]:
                 result=run(command,env=env)
                 self.assertEqual(result.returncode,expected,command)
@@ -1126,9 +1126,9 @@ class Processes(unittest.TestCase):
             (root/'ci/vendor-packages.toml').write_text('schema=1\npackages=[]\n')
             (root/'docs/inputs/items.toml').write_text('namespace="org.peer-network.test.items"\nversion=[1,0,0]\n[[rows]]\nname="alpha"\ncount=2\n')
             (root/'docs/templates/docs/result.md.j2').write_text("{{ row('org.peer-network.test.items', name='alpha').count | number }}\n")
-            for command in (['git','init','--quiet'],[str(target/'documents'),'generate'],[str(target/'documents'),'write'],['git','add','-A']):
+            for command in (['git','init','--quiet'],[str(target/'documents'),'generate','write'],[str(target/'documents'),'render','write'],['git','add','-A']):
                 result=run(command,cwd=root,env=env)
-                self.assertEqual(result.returncode,0 if command[0]=='git' else 3,result.stderr.decode())
+                self.assertEqual(result.returncode,0,result.stderr.decode())
             samples={}
             accounting={}
             artifact=Path('.lane/observation-comparison');artifact.mkdir(exist_ok=True)
@@ -1174,7 +1174,7 @@ class Processes(unittest.TestCase):
             document_runs={}
             document_outcomes={}
             for level in ("default","trace"):
-                result=run([str(target/"documents"),"check"],cwd=root,env=env | {"PN_OBSERVE_LEVEL":level, "PN_OBSERVE_COMPLETE_EVIDENCE":"1"})
+                result=run([str(target/"documents"),"render","check","--output=report"],cwd=root,env=env | {"PN_OBSERVE_LEVEL":level, "PN_OBSERVE_COMPLETE_EVIDENCE":"1"})
                 self.assertEqual(result.returncode,0,result.stderr.decode())
                 document_runs[level]=(result.returncode,result.stdout)
                 (artifact/("documents-"+level+".jsonl")).write_bytes(result.stderr)
@@ -1191,7 +1191,7 @@ class Processes(unittest.TestCase):
             self.assertEqual(report['child_stderr'],list(b'diagnostic'))
             self.assertEqual(report['child_exit'],7)
             self.assertFalse(report['child_loss'])
-            refused=run([str(target/'documents'),'check'],cwd=root,env=env | {'PN_OBSERVE_LEVEL':'unknown'})
+            refused=run([str(target/'documents'),'render','check'],cwd=root,env=env | {'PN_OBSERVE_LEVEL':'unknown'})
             self.assertEqual(refused.returncode,2)
             self.assertEqual(refused.stdout,b'')
             diagnostic=json.loads(refused.stderr)

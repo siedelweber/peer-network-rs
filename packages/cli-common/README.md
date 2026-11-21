@@ -2,7 +2,7 @@
 
 `cli-common` is the shared scaffolding every command-line tool in this workspace is built on. It implements the command-line output contract (`[ROOT-rec:output:decision]`): what may appear on stdout, what must appear on stderr, which exit classes exist, and what must never be printed at all.
 
-The API descriptions and examples below retain historical baseline cases. The shared replacement under (`[ROOT-amend:observe:emission-levels]`) and (`[ROOT-dec:output:policy]`) is implemented in the common boundary: release may disable observation, debug requires it, error delivers terminal errors only, and help/version become stdout results independent of observation, including on terminals. That replacement admits terminal stdout for every command and requires whole-result delivery only with exit zero; TTY refusal examples and status-three stdout reports below are historical baseline behavior; the decided documents modes and report option are still unbuilt. Under (`[ROOT-dec:output:policy]`) check modes without --output=report return three on differences with empty stdout and policy-selected count plus fixed report-option hint. Completed writes return zero; --output=report returns the whole operation report with zero on completion, differences or changes included. The explicit roles become --report-file and --stamp-file with their existing rules. The registered common-boundary controls witness policy selection, inert release off, terminal error filtering and result routing; separately compiled recipe controls remain owed.
+The API descriptions and examples below retain historical baseline cases. The shared replacement under (`[ROOT-amend:observe:emission-levels]`) and (`[ROOT-dec:output:policy]`) is implemented in the common boundary: release may disable observation, debug requires it, error delivers terminal errors only, and help/version become stdout results independent of observation, including on terminals. That replacement admits terminal stdout for every command and requires whole-result delivery only with exit zero; TTY refusal examples and status-three stdout reports below are historical baseline behavior; the documents modes and report option are implemented. Under (`[ROOT-dec:output:policy]`) check modes without --output=report return three on differences with empty stdout and policy-selected count plus fixed report-option hint. Completed writes return zero; --output=report returns the whole operation report with zero on completion, differences or changes included. The explicit roles are --report-file and --stamp-file with their existing rules. The registered common-boundary controls witness policy selection, inert release off, terminal error filtering and result routing; separately compiled recipe controls remain owed.
 
 It is infrastructure, not policy about any particular subject. A helper binary receives its subjects as explicit arguments; shared scaffolding parses argv, emits machine-readable records, publishes outputs and records the declared observation labels.
 
@@ -128,7 +128,7 @@ The crate is a single flat module; `publication` is private and its published it
 - `parse_args_from<T: Parser, I, A>(args: I) -> Result<T, CliExit>` — clap help, version, and usage failures become a `CliExit` rather than clap's own text output. The caller writes the record and returns the exit code.
 - `parse_args_or_exit<T: Parser>() -> T` — the same over process argv, emitting the record and exiting directly.
 - `struct BaseArgs { pub debug: bool }` — flatten into a binary's `Args` with `#[command(flatten)]` to gain `--debug`.
-- `struct CheckOutputArgs { pub report: Option<PathBuf>, pub stamp: Option<PathBuf> }` — the reciprocal `--report` / `--stamp` pair for checker binaries.
+- `struct CheckOutputArgs { pub report: Option<PathBuf>, pub stamp: Option<PathBuf> }` — the reciprocal `--report-file` / `--stamp-file` pair for checker binaries.
 
 ### Full content and secret carriers · `sec:clicommon:redaction`
 
@@ -166,12 +166,12 @@ The opt-in executable entry-origin route under (`[ROOT-amend:observe:entry-origi
 
 A checker runs in one of exactly two modes:
 
-- **direct** (neither `--report` nor `--stamp`): the JSON report goes to stdout, refused on a terminal, and no stamp is touched;
+- **direct** (neither `--report-file` nor `--stamp-file`): the JSON report goes to stdout, refused on a terminal, and no stamp is touched;
 - **build** (both): the report is published compare-if-changed to its explicit path and only then is the stamp touched, so a failed report write never leaves a fresh success stamp. Stdout stays empty.
 
-A completed dirty verdict still publishes its report and exits 3, but never touches the stamp. This describes the implemented checker baseline. The decided, unbuilt documents modes and report option under (`[ROOT-dec:output:policy]`) replace that direct findings route: check modes without the option retain three and empty stdout on differences; report requests and completed writes return zero. The explicit file pair remains reciprocal, keeps stdout empty and stamps only a clean verdict after report publication; report-request success is not a clean-verdict assertion. An incomplete command returns an error, exits 1 and publishes no verdict.
+A completed dirty verdict still publishes its report and exits 3, but never touches the stamp. This describes the implemented checker baseline. The implemented documents modes and report option under (`[ROOT-dec:output:policy]`) replace that direct findings route: check modes without the option retain three and empty stdout on differences; report requests and completed writes return zero. The explicit file pair remains reciprocal, keeps stdout empty and stamps only a clean verdict after report publication; report-request success is not a clean-verdict assertion. An incomplete command returns an error, exits 1 and publishes no verdict.
 
-`clap` enforces the reciprocal requirement, so a lone `--report` or `--stamp` is a usage error before the command runs. The decided, unbuilt spellings are --report-file and --stamp-file, with no old-name aliases; the pair conflicts with --output=report. The API fields and examples above describe the current implementation until the builder changes the parser and its consumers.
+`clap` enforces the reciprocal requirement, so a lone `--report-file` or `--stamp-file` is a usage error before the command runs. The implemented spellings are --report-file and --stamp-file, with no old-name aliases; the pair conflicts with --output=report. The API fields above retain their names while the parser and its consumers use the new flags.
 
 ### Publication · `sec:clicommon:publication`
 

@@ -719,10 +719,10 @@ def tracker_artifacts(root, projection):
     (destination/'manifest.json').unlink(missing_ok=True)
     with workspace(root, 'specification-tracker', source) as (tree, _target):
         (tree/paths[0]).write_text(projection)
-        for action in ('generate', 'write'):
-            result = cancellable([str(binary), '--root', str(tree), action], cwd=tree)
-            if result.returncode not in (0, 3):
-                raise StructuralError('tracker artifact '+action+' failed')
+        for action in (('generate', 'write'), ('render', 'write')):
+            result = cancellable([str(binary), '--root', str(tree), *action], cwd=tree)
+            if result.returncode != 0:
+                raise StructuralError('tracker artifact '+' '.join(action)+' failed')
         for name in paths:
             output = destination/name
             output.parent.mkdir(parents=True, exist_ok=True)
