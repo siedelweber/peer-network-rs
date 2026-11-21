@@ -41,6 +41,7 @@ The table routes to statements of kind `inv` only, at their defining places. A p
 | [Observability](adr/016-observability.md) | Record (`sec:observe:record`) |
 | [Public API](adr/018-public-api.md) | Record (`sec:api:record`) |
 | [Host intranet](adr/022-host-intranet.md) | Record (`sec:intranet:record`) |
+| [Budgeting concept](docs/design/budgeting.md) | Admission and consumption (`sec:budget:admission`) |
 | [Implementation design](docs/design/implementation.md) | Purpose (`sec:design:purpose`); Architecture (`sec:design:architecture`); Records (`sec:design:records`); Graph (`sec:design:graph`); Admission (`sec:design:admission`); Publication (`sec:design:publication`); Observability (`sec:design:observability`) |
 
 **Rule (Invariant routes)** · `rule:foundation:contributing-invariant-routes` A change that mints a statement of kind `inv` in a place not routed by this table adds its route in the same change, so a reader can reach the new statement from this guide. A change that leaves a routed place with no statement of kind `inv` removes that route in the same change, so every route still leads to an invariant statement.

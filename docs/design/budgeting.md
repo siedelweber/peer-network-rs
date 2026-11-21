@@ -1,0 +1,75 @@
+# Budgeting concept · `spec:budget:concept`
+
+## Purpose and standing · `sec:budget:purpose`
+
+**Definition (Contract)** · `def:budget:contract` Budgeting makes permission to retain storage and perform work explicit at its owning boundary. This is a decided concept, not evidence that its composition, process containment or later package forms are implemented. Existing meters retain their implemented scopes and refusals. The concept selects no resource value, representation, public interface or runtime mechanism, under (`def:vision:concept-boundary`).
+
+**Convention (Scope)** · `conv:budget:scope` The repository budgets its own acquisition, structural expansion, allocation requests, retained logical output, finite repeated work, requests and in-flight capacities where an owner defines a checkable charge plan. Each plan states its domain, unit, admission site, ownership, lifetime, refusal, release and exclusions. Mathematical accuracy, economic quotas and engineering time policies retain their distinct meanings rather than becoming spendable storage.
+
+## Vocabulary · `sec:budget:vocabulary`
+
+**Definition (Resource)** · `def:budget:resource` A resource is a named quantity at a named ownership boundary; its unit fixes how that quantity is counted.
+
+**Definition (Bound)** · `def:budget:bound` A bound is a proved or declared maximum on an object or operation, with its evidence class stated.
+
+**Definition (Limit)** · `def:budget:limit` A limit is a restriction on a declared resource or operation; a ceiling is its finite admitted policy maximum. An absent or unlimited setting supplies no finite ceiling or containment. Zero retains the owning contract’s meaning, not an inferred unlimited sentinel.
+
+**Definition (Allowance)** · `def:budget:allowance` An allowance is permission available to one scope under its ceiling.
+
+**Definition (Budget)** · `def:budget:budget` A budget groups allowances and their admission rules; it is not a common resource unit.
+
+**Definition (Envelope)** · `def:budget:envelope` An envelope is a collection of bounds describing a stated operating scope, not a conversion between their units.
+
+**Definition (Admission)** · `def:budget:admission` Admission checks and commits permission before the covered action.
+
+**Definition (Charge)** · `def:budget:charge` A charge records permission consumed under the owner’s declared rule.
+
+**Definition (Reservation)** · `def:budget:reservation` A reservation holds permission for a bounded future action or live capacity until it is consumed or released.
+
+**Definition (Meter)** · `def:budget:meter` A meter enforces an admission and charging rule; usage is its receipt.
+
+**Definition (Cost)** · `def:budget:cost` A cost is measured or derived expenditure under a named scope, not a synonym for a ceiling or a promise of completion.
+
+**Definition (Usage views)** · `def:budget:usage-views` Occupancy describes currently held capacity, cumulative traffic records requests or consumption over a declared scope, and high-water usage records a historical maximum. These views are not interchangeable totals.
+
+## Admission and consumption · `sec:budget:admission`
+
+**Rule (Admit the covered action)** · `rule:budget:admit-covered-action` A budgeted owner admits the declared cost or reservation before the covered action and returns its known usage on every recoverable outcome.
+
+**Argument (Admission)** · `arg:budget:admission` Accounting after an unbounded action cannot refuse it, and a success-only receipt loses failed spend. Checked size arithmetic and fallible admission belong to the owner’s later design; an admitted allocator failure remains distinct from refusal of permission. A recoverable outcome is an answer or refusal returned while the enclosing application can continue; it is not recovery from every allocation or process fault. No receipt is promised after process death.
+
+**Invariant (Consumption survives refusal)** · `inv:budget:consumption-survives-refusal` Within one declared attempt, releasing unused or live-capacity reservations never erases already consumed work or cumulative allocation requests, and retry cannot replenish the enclosing allowance implicitly.
+
+**Argument (Consumption)** · `arg:budget:consumption` A declared attempt is the invocation scope to which an allowance is granted, including any retries that remain within it. A retry repeats work in that same scope after an incomplete or refused outcome; it is not a newly authorized invocation. Cancellation cannot make performed work free. Capacity can become available again without changing consumption history. A refusal followed by a retry would otherwise let one declared attempt spend without bound, so a fresh allowance needs a separately authorized invocation. Existing release of unused delivery reservations remains distinct from refunding work or delivered content.
+
+**Convention (Allocation boundary)** · `conv:budget:allocation-boundary` A covered allocation is admitted before its reservation call; retained ownership fits before publication. A live-capacity replacement covers old and new ownership while both exist. A cumulative allocation-request meter retains requests after buffers are freed. Unknown counts follow a declared growth plan rather than constructing an unbounded object and estimating afterward. Diagnostic construction and cleanup are covered, reserved beforehand or explicitly excluded by the owner’s scope.
+
+## Composition · `sec:budget:composition`
+
+**Convention (Origin and narrowing)** · `conv:budget:origin` Installation owns process containment; a served profile or explicit caller selects request allowances within admitted ceilings. A subordinate owner may narrow its share but cannot raise the caller’s ceiling, replenish an enclosing allowance or borrow permission from another unit. Separate invocations may receive fresh work allowances while retained output and overlapping requests still occupy service capacity. An operational guard does not narrow a mathematical procedure into another answer: an incomplete procedure withholds its result (`rule:design:build-relative-work`).
+
+**Convention (Nested ownership)** · `conv:budget:nested-ownership` Nested work with matching units and ownership shares an explicit account or receives a bounded share reconciled once on every returned outcome. A parent cannot spend a share held by its child; concurrent children require disjoint shares, not copies of remaining permission. Inclusive parent and child charges are not summed as disjoint work. Retained permission follows allocation ownership without duplication; independently equal allocations remain distinct. Refusing new permission preserves prior consumption.
+
+**Convention (Declared scope)** · `conv:budget:declared-scope` Each claimed quantity states its unit, owner and scope; aggregation counts each owned contribution once and never converts a dependency’s cost into a repository claimed quantity. A refusal predicate is checkable only with its declared allowance and, for shared or stateful allowances, the prior and concurrent state against which it was evaluated. Without those deciding public inputs it is a scoped observation, not a conformance claim. An asserted state’s publication does not establish its acquisition truth (`rule:testing:public-record-conformance`), (`rule:design:build-relative-work`), (`rule:observe:metering`).
+
+**Convention (Dependency boundary)** · `conv:budget:dependencies` Pass nrz its own admitted limits and preserve its typed failures and receipts under the declared dependency interface. Its Work is neither repository work nor a public verdict quantity; absence of a dependency ledger is unmetered, not zero. Repository call counts, structural visits and byte lengths require their own record-defined units. A conservative storage reservation around an opaque dependency needs its own derivation and evidence, not a conversion of its cost. The process limit remains protection where no finer complete allocation contract exists (`amend:decomposition:numeric-backend`), (`rule:design:build-relative-work`).
+
+## Outcomes and evidence · `sec:budget:outcomes`
+
+**Convention (Refusal levels)** · `conv:budget:refusal-levels` An input refused within its declared policy is a bounded INFO outcome; recovered capacity exhaustion is a WARN operational condition. ERROR ends normal application operation with nonzero exit, rather than naming every library refusal. Counting and timing remain independent of level filtering; no outcome is promised emitted at every level. These are the existing level distinctions (`rule:observe:sampling`), (`amend:observe:emission-levels`).
+
+**Convention (Incomplete work)** · `conv:budget:incomplete-work` Resource exhaustion supplies no uncomputed mathematical answer under (`rule:design:build-relative-work`) and (`rule:design:observation-budgets`), and loss after an effectful request supplies no proof of no effect under (`amend:storage:admitted-uncertainty`). Existing typed incomplete and unknown outcomes remain distinct; no second interpretation of those outcomes is created here.
+
+**Convention (Observation)** · `conv:budget:observation` Usage flows one way to observation; disabled or lossy reporting cannot grant permission or alter admission. Record the declared unit and scope, admitted and known partial usage, outcome and qualified occupancy, cumulative or high-water measures where available. Inclusive parent time is not disjoint child time, unavailable is not zero, and incomplete delivery is explicit (`rule:observe:metering`), (`inv:observe:noninterference`). Actual memory, elapsed time and dependency costs remain qualified observations rather than public execution truth (`rule:testing:public-record-conformance`).
+
+## Containment and later forms · `sec:budget:containment`
+
+**Convention (First realization)** · `conv:budget:first-realization` The direction for another party’s input is budgeted construction under (`amend:storage:admitted-transaction`). Its first realization is an operating-system memory limit around the whole main executable, set by its launcher or service unit under (`amend:api:health-lifecycle`); exhaustion closes the application and the closure is investigated before an administrator restarts it. This containment and the later budgeted forms are decided, not implemented by this concept. No budgeted form in any package is owed yet, and this documents contract supplies none. The interim route claims no recoverable refusal before carrier construction.
+
+**Convention (Effective containment)** · `conv:budget:effective-containment` The installation establishes the finite effective setting, not merely its configured intention; absent or unlimited settings provide no containment. Whether an application startup check or launch-side evidence establishes that setting belongs to installation design. The existing descriptor check does not establish a memory check. No limit value, enforcement mechanism, scope-membership encoding or new startup interface is selected here (`amend:api:health-lifecycle`), (`amend:api:listener-bounds`).
+
+**Convention (Termination boundary)** · `conv:budget:termination` Process termination may leave no application diagnostic or usage receipt and may leave a request’s effect unknown. Runtime stack overflow, allocation abort and nested-panic abort can bypass the hook under (`amend:observe:emission-levels`); SIGKILL is uncatchable and signal death promises neither cleanup nor a completion under (`amend:api:health-lifecycle`). Existing supervisor termination reporting, administrator restart and mandatory recovery apply. Containment does not promise successful service, protection from all machine faults, or bounds on external services.
+
+**Convention (Later forms)** · `conv:budget:later-forms` Budgeted construction follows this concept through the existing owners, retaining their units and public outcomes. Covered acquisition precedes collection, retaining admission covers its complete declared construction path, and long-lived capacity follows retained ownership rather than resetting per request. Each later design identifies its allocation exclusions and recoverable refusals before claiming coverage. Whole-process containment remains beside finer admission for runtime machinery, allocator behavior, trusted dependencies and faults; local meters do not make it redundant.
+
+**Convention (Exclusions)** · `conv:budget:exclusions` Borrowed input was allocated before a library entry; refusing it there cannot retroactively bound acquisition. Existing trace-formatting, driver and relay exclusions remain under (`rule:observe:privacy`) and (`amend:storage:admitted-reads`). This concept imposes no new nesting bound on canonical documents; (`dec:xchg:nesting-policy`) retains that decision. It supplies no universal allocator wrapper, global fair-share algorithm, admission digest or availability under repeated hostile inputs. It supplies no whole-process graceful recovery, complete allocation census, throughput guarantee, hardware-independent cost, scheduler, eviction policy, new carrier or test. Existing logical audit counts are not actual heap accounting (`amend:storage:tree-audit`). Resource values require their own scoped measurement and admission, not inference from this concept.

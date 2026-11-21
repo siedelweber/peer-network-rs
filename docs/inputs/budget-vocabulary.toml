@@ -1,0 +1,17 @@
+namespace = "org.peer-network.budget.vocabulary"
+version = [1, 0, 0]
+
+rows = [
+  { name = "resource", title = "Resource", text = "A resource is a named quantity at a named ownership boundary; its unit fixes how that quantity is counted." },
+  { name = "bound", title = "Bound", text = "A bound is a proved or declared maximum on an object or operation, with its evidence class stated." },
+  { name = "limit", title = "Limit", text = "A limit is a restriction on a declared resource or operation; a ceiling is its finite admitted policy maximum. An absent or unlimited setting supplies no finite ceiling or containment. Zero retains the owning contract’s meaning, not an inferred unlimited sentinel." },
+  { name = "allowance", title = "Allowance", text = "An allowance is permission available to one scope under its ceiling." },
+  { name = "budget", title = "Budget", text = "A budget groups allowances and their admission rules; it is not a common resource unit." },
+  { name = "envelope", title = "Envelope", text = "An envelope is a collection of bounds describing a stated operating scope, not a conversion between their units." },
+  { name = "admission", title = "Admission", text = "Admission checks and commits permission before the covered action." },
+  { name = "charge", title = "Charge", text = "A charge records permission consumed under the owner’s declared rule." },
+  { name = "reservation", title = "Reservation", text = "A reservation holds permission for a bounded future action or live capacity until it is consumed or released." },
+  { name = "meter", title = "Meter", text = "A meter enforces an admission and charging rule; usage is its receipt." },
+  { name = "cost", title = "Cost", text = "A cost is measured or derived expenditure under a named scope, not a synonym for a ceiling or a promise of completion." },
+  { name = "usage-views", title = "Usage views", text = "Occupancy describes currently held capacity, cumulative traffic records requests or consumption over a declared scope, and high-water usage records a historical maximum. These views are not interchangeable totals." },
+]
