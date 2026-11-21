@@ -1420,7 +1420,7 @@ fn runtime_error() -> Result<()> {
     Ok(())
 }
 
-/// Claim: An error-level process drains its terminal error before exit without a summary or status row.
+/// Claim: In the release kind, an error-level process drains its terminal error before exit without a summary or status row.
 /// ´claim:cli:error-level-terminal-delivery´
 /// ´test:integration:error-level-terminal-delivery´
 #[test]

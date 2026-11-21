@@ -347,6 +347,169 @@ def complete_title_summary(rows, history):
     return expanded(summaries[0])
 
 
+class BuildKinds(unittest.TestCase):
+    """Checks on binaries retained by the package-scoped recipe steps."""
+
+    @staticmethod
+    def binary(package, kind):
+        root = Path(os.environ.get('PN_OBSERVATION_RECIPE_ROOT', '.lane/observation-recipes'))
+        path = root / package / kind / package
+        if not path.is_file():
+            raise AssertionError(f'undeclared or absent recipe artifact: {path}')
+        return str(path.resolve())
+
+    @staticmethod
+    def invoke(package, kind, argument, mode):
+        env = {key: value for key, value in os.environ.items()
+               if key not in ('PN_OBSERVE_LEVEL', 'PN_OBSERVE_DISABLE')}
+        if mode == 'off':
+            env['PN_OBSERVE_DISABLE'] = '1'
+        else:
+            env['PN_OBSERVE_LEVEL'] = mode
+        return subprocess.run([BuildKinds.binary(package, kind), argument],
+                              env=env, capture_output=True, timeout=30, check=False)
+
+    def test_compiled_kind_admission(self):
+        """Off is admitted by each release artifact and refused with an enabled error by each debug artifact; enabled neighbours run.
+        ´claim:discipline:recipe-artifact-compiled-kind-admission´
+        ´test:integration:test-compiled-kind-admission´
+        """
+        for package in ('documents', 'pn', 'pn-credential-generator'):
+            for kind in ('release', 'debug'):
+                off = self.invoke(package, kind, '--help', 'off')
+                expected = 0 if kind == 'release' else 2
+                self.assertEqual(off.returncode, expected, (package, kind))
+                self.assertEqual(bool(off.stdout), kind == 'release', (package, kind))
+                if kind == 'release':
+                    self.assertEqual(off.stderr, b'', package)
+                else:
+                    rows = [json.loads(line) for line in off.stderr.splitlines()]
+                    self.assertEqual(len(rows), 1, package)
+                    self.assertEqual((rows[0]['kind'], rows[0]['fields']['exit_code']),
+                                     ('usage_error', 2), package)
+                enabled = self.invoke(package, kind, '--help', 'error')
+                self.assertEqual((enabled.returncode, enabled.stderr), (0, b''), (package, kind))
+                self.assertTrue(enabled.stdout.endswith(b'\n'), (package, kind))
+
+    def test_version_build_kind(self):
+        """Each recipe artifact's version result names its compiled kind in every admitted mode.
+        ´claim:discipline:recipe-artifact-version-build-kind´
+        ´test:integration:test-version-build-kind´
+        """
+        for package in ('documents', 'pn', 'pn-credential-generator'):
+            for kind in ('release', 'debug'):
+                modes = ('error', 'default', 'trace', 'off') if kind == 'release' else ('error', 'default', 'trace')
+                for mode in modes:
+                    result = self.invoke(package, kind, '--version', mode)
+                    self.assertEqual(result.returncode, 0, (package, kind, mode, result.stderr))
+                    self.assertTrue(result.stdout.endswith(b'\n'), (package, kind, mode))
+                    answer = json.loads(result.stdout)
+                    self.assertEqual(answer['fields']['build_kind'], kind, (package, mode))
+                    self.assertEqual(answer['kind'], 'version', (package, mode))
+
+    def test_failed_help_version_write(self):
+        """A failed help or version result write is a terminal failure for each shipped recipe artifact.
+        ´claim:discipline:recipe-artifact-failed-result-write´
+        ´test:integration:test-failed-help-version-write´
+        """
+        for package in ('documents', 'pn', 'pn-credential-generator'):
+            for kind in ('release', 'debug'):
+                for argument in ('--help', '--version'):
+                    env = {key: value for key, value in os.environ.items()
+                           if key not in ('PN_OBSERVE_LEVEL', 'PN_OBSERVE_DISABLE')}
+                    env['PN_OBSERVE_LEVEL'] = 'error'
+                    result = subprocess.run(['sh', '-c', 'exec "$1" "$2" > /dev/full',
+                                             'sh', self.binary(package, kind), argument],
+                                            env=env, capture_output=True, timeout=30, check=False)
+                    self.assertEqual((result.returncode, result.stdout), (1, b''),
+                                     (package, kind, argument))
+                    rows = [json.loads(line) for line in result.stderr.splitlines()]
+                    self.assertEqual(len(rows), 1, (package, kind, argument, rows))
+                    if package == 'pn':
+                        self.assertEqual(rows[0]['level'], 'ERROR', (package, kind, argument))
+                        message = rows[0]['fields']['message']['content']['data']
+                    else:
+                        self.assertEqual(rows[0]['kind'], 'diagnostic', (package, kind, argument))
+                        message = rows[0]['message']
+                    self.assertEqual(message, 'failed to write JSON result to stdout',
+                                     (package, kind, argument))
+
+    def test_global_report_on_terminal(self):
+        """For a bounded fixture, a shipped documents report is a whole stdout result on a pipe and a terminal.
+        ´claim:discipline:recipe-artifact-global-report-terminal´
+        ´test:integration:test-global-report-on-terminal´
+        """
+        binary = self.binary('documents', 'release')
+        env = {key: value for key, value in os.environ.items()
+               if key not in ('PN_OBSERVE_LEVEL', 'PN_OBSERVE_DISABLE')}
+        env['PN_OBSERVE_DISABLE'] = '1'
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'docs/inputs').mkdir(parents=True)
+            (root / 'docs/templates/docs').mkdir(parents=True)
+            (root / 'ci').mkdir()
+            (root / 'Cargo.toml').write_text('[workspace]\nmembers=[]\n')
+            (root / 'ci/vendor-packages.toml').write_text('schema=1\npackages=[]\n')
+            (root / 'docs/inputs/items.toml').write_text(
+                'namespace="org.peer-network.test.items"\nversion=[1,0,0]\n[[rows]]\nname="alpha"\ncount=2\n')
+            (root / 'docs/templates/docs/result.md.j2').write_text(
+                "{{ row('org.peer-network.test.items', name='alpha').count | number }}\n")
+            subprocess.run(['git', 'init', '--quiet', str(root)], check=True, capture_output=True)
+            command = [binary, '--root', str(root), '--output=report', 'generate', 'check']
+            piped = subprocess.run(command, env=env, capture_output=True, timeout=30, check=False)
+            self.assertEqual((piped.returncode, piped.stderr), (0, b''), piped.stdout)
+            self.assertTrue(piped.stdout.endswith(b'\n'))
+            self.assertLess(len(piped.stdout), 2048)
+            expected = json.loads(piped.stdout)
+            master, slave = os.openpty()
+            try:
+                terminal = subprocess.run(command, env=env, stdout=slave, stderr=subprocess.PIPE,
+                                          timeout=30, check=False)
+                os.close(slave)
+                slave = -1
+                received = bytearray()
+                while True:
+                    try:
+                        chunk = os.read(master, 65536)
+                    except OSError:
+                        break
+                    if not chunk:
+                        break
+                    received.extend(chunk)
+            finally:
+                os.close(master)
+                if slave >= 0:
+                    os.close(slave)
+            self.assertEqual((terminal.returncode, terminal.stderr), (0, b''))
+            self.assertEqual(json.loads(received), expected)
+
+    def test_debug_error_level_terminal_failure(self):
+        """A debug recipe document runtime failure attempts a terminal error at error level.
+        ´claim:discipline:debug-recipe-error-level-terminal-failure´
+        ´test:integration:test-debug-error-level-terminal-failure´
+        """
+        env = {key: value for key, value in os.environ.items()
+               if key not in ('PN_OBSERVE_LEVEL', 'PN_OBSERVE_DISABLE')}
+        env['PN_OBSERVE_LEVEL'] = 'error'
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'docs/inputs').mkdir(parents=True)
+            (root / 'docs/templates/docs').mkdir(parents=True)
+            (root / 'ci').mkdir()
+            (root / 'Cargo.toml').write_text('[workspace]\nmembers=[]\n')
+            (root / 'ci/vendor-packages.toml').write_text('schema=1\npackages=[]\n')
+            (root / 'docs/inputs/items.toml').write_text("namespace = 'wrong'\n")
+            subprocess.run(['git', 'init', '--quiet', str(root)], check=True, capture_output=True)
+            result = subprocess.run([self.binary('documents', 'debug'), '--root', str(root),
+                                     'generate', 'check'], env=env, capture_output=True,
+                                    timeout=30, check=False)
+        self.assertEqual((result.returncode, result.stdout), (1, b''))
+        rows = [json.loads(line) for line in result.stderr.splitlines()]
+        self.assertEqual(sum(row.get('level') == 'ERROR' for row in rows), 1, rows)
+        self.assertFalse(any(row.get('kind') in ('observation_status', 'metric_summary')
+                             for row in rows), rows)
+
+
 class Processes(unittest.TestCase):
     def test_cutoff_capture_interval(self):
         """Claim: With one reserved write at cutoff, either capture endpoint reconciles while missing completed records, excess captures, multiple reservations and inconsistent attempted totals refuse; without a reservation the interval collapses to equality.

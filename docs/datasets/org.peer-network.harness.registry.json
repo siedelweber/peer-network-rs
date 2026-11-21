@@ -189,6 +189,12 @@
       "steps": [
         "design-tests",
         "observation-build",
+        "observation-recipe-documents-release",
+        "observation-recipe-documents-debug",
+        "observation-recipe-pn-release",
+        "observation-recipe-pn-debug",
+        "observation-recipe-generator-release",
+        "observation-recipe-generator-debug",
         "observation-runtime",
         "observation-parser",
         "extended-tests"
@@ -598,6 +604,7 @@
         "ci::test_discipline.HashCitations.test_interchange_literal_boundaries",
         "ci::test_discipline.HashCitations.test_public_git_locator",
         "ci::test_discipline.SourceDiscipline.test_build_policy",
+        "ci::test_discipline.SourceDiscipline.test_observation_recipe_commands",
         "ci::test_discipline.SourceDiscipline.test_cargo_config",
         "ci::test_discipline.SourceDiscipline.test_controlled_stream_boundaries",
         "ci::test_discipline.SourceDiscipline.test_external_test_modules",
@@ -791,6 +798,11 @@
         "ci::test_observe_runtime.Processes.test_title_suite": "calibrated-observe-runtime-title-suite-case"
       },
       "cases": [
+        "ci::test_observe_runtime.BuildKinds.test_compiled_kind_admission",
+        "ci::test_observe_runtime.BuildKinds.test_debug_error_level_terminal_failure",
+        "ci::test_observe_runtime.BuildKinds.test_global_report_on_terminal",
+        "ci::test_observe_runtime.BuildKinds.test_failed_help_version_write",
+        "ci::test_observe_runtime.BuildKinds.test_version_build_kind",
         "ci::test_observe_runtime.Processes.test_burn_entry",
         "ci::test_observe_runtime.Processes.test_cutoff_capture_interval",
         "ci::test_observe_runtime.Processes.test_epoch_inputs",

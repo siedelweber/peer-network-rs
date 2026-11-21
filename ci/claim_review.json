@@ -602,6 +602,14 @@
       "review": "Read the closed configuration refusal and the finite process control as written; neither source identity nor a terminated process supplies an installation witness. The tracked paths override list is separately refused; untracked configuration remains outside this census."
     },
     {
+      "operation": "ci::test_discipline.SourceDiscipline.test_observation_recipe_commands",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:devperf:observation-recipes-have-exact-selections",
+      "before": "",
+      "after": "The recipe step issues the reviewed package, profile and feature command and copies that profile's output.",
+      "review": "The fake subprocess captures six exact package-scoped Cargo invocations. Each successful invocation selects the named profile output and copy destination; mocking does not claim that a retained binary was built."
+    },
+    {
       "operation": "ci::test_discipline.SourceDiscipline.test_runtime_test_paths",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:test-paths-require-runtime-sources",
@@ -960,6 +968,46 @@
       "before": "Claim: Cgroup counters, PSI percentages and memory readings retain their units and start/end deltas, while an absent file or migrated cgroup makes its delta unavailable rather than zero.",
       "after": "Claim: Bash-sampled node-load counters retain units and unavailable readings, PSI stall deltas divide by wall rather than subtracting averages, and the final join keeps a step's own CPU separate; missing or corrupt samples never invent zero work.",
       "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
+    },
+    {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_compiled_kind_admission",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:recipe-artifact-compiled-kind-admission",
+      "before": "",
+      "after": "Off is admitted by each release artifact and refused with an enabled error by each debug artifact; enabled neighbours run.",
+      "review": "Each of six separately registered package-scoped recipe binaries is invoked for off and error-level help. The debug off refusal emits one configuration error before a result, while release off stays quiet and the enabled neighbour completes. This checks compiled admission independently of the version self-report."
+    },
+    {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_debug_error_level_terminal_failure",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:debug-recipe-error-level-terminal-failure",
+      "before": "",
+      "after": "A debug recipe document runtime failure attempts a terminal error at error level.",
+      "review": "The separately built debug documents artifact sees an invalid input namespace in generate check. Status one, empty stdout, exactly one ERROR row and no summary or status row witness terminal delivery at error level."
+    },
+    {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_failed_help_version_write",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:recipe-artifact-failed-result-write",
+      "before": "",
+      "after": "A failed help or version result write is a terminal failure for each shipped recipe artifact.",
+      "review": "Both control results are redirected to a failing OS sink for each separately registered release and debug binary. Each process exits one with one terminal error observation at error level; the node-origin runner uses a trace error while the other entries use a diagnostic. This is a process witness of delivery failure, not a rollback claim for a partially accepted stream."
+    },
+    {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_global_report_on_terminal",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:recipe-artifact-global-report-terminal",
+      "before": "",
+      "after": "For a bounded fixture, a shipped documents report is a whole stdout result on a pipe and a terminal.",
+      "review": "The release documents artifact receives the global report request on a controlled fixture. The pipe result is bounded below the PTY buffer, then the pipe and terminal both complete with status zero, empty stderr and equal whole JSON results."
+    },
+    {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_version_build_kind",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:recipe-artifact-version-build-kind",
+      "before": "",
+      "after": "Each recipe artifact's version result names its compiled kind in every admitted mode.",
+      "review": "Each registered binary supplies a version JSON stdout result for every mode its compiled kind admits, including release/off. The admission control and package-scoped recipe commands establish kind separately from this public field."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_burn_entry",
@@ -2046,8 +2094,8 @@
       "path": "packages/documents/tests/integration.rs",
       "claim": "DOCUMENTS::claim:cli:error-level-terminal-delivery",
       "before": "",
-      "after": "Claim: An error-level process drains its terminal error before exit without a summary or status row.",
-      "review": "The real documents process returns runtime status one at the error level and its captured stderr contains the terminal ERROR without a metric or final-status row."
+      "after": "Claim: In the release kind, an error-level process drains its terminal error before exit without a summary or status row.",
+      "review": "The default-feature gate-profile documents process is the release kind. At error level it returns runtime status one and its stderr has one terminal ERROR without a metric or final-status row."
     },
     {
       "operation": "documents::integration::failed_result_write_is_terminal",

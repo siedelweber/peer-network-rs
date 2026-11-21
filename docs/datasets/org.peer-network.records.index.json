@@ -416,11 +416,17 @@
           ]
         },
         {
-          "inputs": "Cargo input set for examples and instrumentation evidence; ci/host_evidence_build.py and imports; observation declarations and the exact features and profile.",
+          "inputs": "Cargo input set for examples, instrumentation evidence and package-scoped release and debug recipes; ci/discipline.py for the recipe steps, ci/host_evidence_build.py and imports; observation declarations and the exact features and profiles.",
           "name": "observation-build",
-          "outputs": "Example executables and instrumentation artifacts consumed by runtime and syntax checks.",
+          "outputs": "Example executables, six separately registered recipe artifacts and instrumentation artifacts consumed by runtime and syntax checks.",
           "steps": [
             "observation-build",
+            "observation-recipe-documents-release",
+            "observation-recipe-documents-debug",
+            "observation-recipe-pn-release",
+            "observation-recipe-pn-debug",
+            "observation-recipe-generator-release",
+            "observation-recipe-generator-debug",
             "host-observation-build"
           ]
         },
@@ -517,6 +523,12 @@
         "determinism-documents",
         "benchmarks",
         "observation-build",
+        "observation-recipe-documents-release",
+        "observation-recipe-documents-debug",
+        "observation-recipe-pn-release",
+        "observation-recipe-pn-debug",
+        "observation-recipe-generator-release",
+        "observation-recipe-generator-debug",
         "observation-runtime",
         "host-observation-build",
         "host-observation-runtime",

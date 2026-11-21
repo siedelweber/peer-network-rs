@@ -536,6 +536,12 @@ def cargo_delegation(case):
         'rustdoc':'python3 ci/discipline.py rustdoc',
         'benchmarks':'python3 -B ci/benchmarks.py',
         'observation-build':'cargo build --offline --locked --profile gate -p execwrap -p pn-records -p pn-graph -p pn-epoch --features pn-records/test-support --examples',
+        'observation-recipe-documents-release':'python3 -B ci/discipline.py observation-recipe documents release',
+        'observation-recipe-documents-debug':'python3 -B ci/discipline.py observation-recipe documents debug',
+        'observation-recipe-pn-release':'python3 -B ci/discipline.py observation-recipe pn release',
+        'observation-recipe-pn-debug':'python3 -B ci/discipline.py observation-recipe pn debug',
+        'observation-recipe-generator-release':'python3 -B ci/discipline.py observation-recipe pn-credential-generator release',
+        'observation-recipe-generator-debug':'python3 -B ci/discipline.py observation-recipe pn-credential-generator debug',
         'host-observation-build':'python3 -B ci/host_evidence_build.py',
     }
     rows=tomllib.loads((repository/'docs/inputs/build-graph-slices.toml').read_text())['rows']

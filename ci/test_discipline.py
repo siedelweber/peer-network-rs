@@ -22,7 +22,7 @@ import json
 import re
 from unittest.mock import patch
 
-from discipline import cargo_config_findings, exposure_registry_findings, exposure_sites, http_admission_findings, inherits_lints, main, run_clippy, secret_dependency_findings, source_findings, test_sources, validate_build_policy, validate_toolchain
+from discipline import build_observation_recipe, cargo_config_findings, exposure_registry_findings, exposure_sites, http_admission_findings, inherits_lints, main, run_clippy, secret_dependency_findings, source_findings, test_sources, validate_build_policy, validate_toolchain
 from clippy_fixture import crate
 from hash_citations import audit, establish, occurrences
 
@@ -1437,6 +1437,30 @@ class SourceDiscipline(unittest.TestCase):
             (root / 'docs/inputs/build-policy.toml').write_text(policy.replace('"nightly-2026-10-16"', '"stable"'))
             with self.assertRaises(ValueError):
                 validate_build_policy(root)
+
+    def test_observation_recipe_commands(self):
+        """The recipe step issues the reviewed package, profile and feature command and copies that profile's output.
+        ´claim:devperf:observation-recipes-have-exact-selections´
+        ´test:integration:test-observation-recipe-commands´
+        """
+        from types import SimpleNamespace
+        for package in ('documents', 'pn', 'pn-credential-generator'):
+            for kind in ('release', 'debug'):
+                profile = 'release' if kind == 'release' else 'release-debug'
+                expected = ['cargo', 'build', '--offline', '--locked', '--profile', profile,
+                            '-p', package, '--bin', package]
+                if kind == 'debug':
+                    expected.extend(['--features', 'debug-observation'])
+                with patch.dict(os.environ, {'CARGO_TARGET_DIR': '/controlled-target'}), \
+                     patch('discipline.subprocess.run', return_value=SimpleNamespace(returncode=0)) as run, \
+                     patch('discipline.shutil.copy2') as copy, \
+                     patch('discipline.pathlib.Path.unlink'), \
+                     patch('discipline.pathlib.Path.mkdir'):
+                    self.assertEqual(build_observation_recipe(package, kind), 0)
+                run.assert_called_once_with(expected)
+                copy.assert_called_once_with(
+                    Path('/controlled-target') / profile / package,
+                    Path('.lane/observation-recipes') / package / kind / package)
 
     def test_controlled_stream_boundaries(self):
         """controlled stream boundaries admit only their named operation; printing and unrelated items still refuse.

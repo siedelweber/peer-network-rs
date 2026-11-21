@@ -1,6 +1,7 @@
 """Check universal bytes and first-party source disciplines."""
 
 import pathlib
+import shutil
 import json
 import os
 import re
@@ -782,8 +783,39 @@ def validate_build_policy(root):
         raise ValueError("expected reviewed release and gate profiles; dev and test use defaults")
 
 
+OBSERVATION_RECIPES = {
+    "documents": "documents",
+    "pn": "pn",
+    "pn-credential-generator": "pn-credential-generator",
+}
+
+
+def build_observation_recipe(package, kind):
+    """Build one reviewed package selection and retain its declared binary."""
+    if package not in OBSERVATION_RECIPES or kind not in {"release", "debug"}:
+        raise ValueError("unknown observation recipe")
+    profile = "release" if kind == "release" else "release-debug"
+    command = ["cargo", "build", "--offline", "--locked", "--profile", profile,
+               "-p", package, "--bin", OBSERVATION_RECIPES[package]]
+    if kind == "debug":
+        command.extend(["--features", "debug-observation"])
+    destination = pathlib.Path(".lane/observation-recipes") / package / kind / OBSERVATION_RECIPES[package]
+    destination.unlink(missing_ok=True)
+    result = subprocess.run(command)
+    if result.returncode:
+        return result.returncode
+    target = pathlib.Path(os.environ["CARGO_TARGET_DIR"])
+    source = target / profile / OBSERVATION_RECIPES[package]
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source, destination)
+    print(f"OBSERVATION-RECIPE package={package} profile={profile} features={'debug-observation' if kind == 'debug' else 'default'} artifact={destination}", flush=True)
+    return 0
+
+
 def main():
     mode = sys.argv[1]
+    if mode == "observation-recipe":
+        return build_observation_recipe(sys.argv[2], sys.argv[3])
     if mode == "tests":
         from run_tests import main as run_tests
         return run_tests("fast") if os.environ.get("PN_GATE_PARALLEL") == "1" else run_tests()

@@ -216,7 +216,7 @@ title = "Build graph"
 scope = "Meson composition of the existing gate, declared file coverage and verdict-preserving migration slices."
 depends_on = ["rec:toolchain:decision", "rec:lint:decision", "rec:render:decision", "rec:testing:decision", "rec:devperf:decision"]
 does_not_establish = "Independent admission of the completed migration remains held. Every evidence command is delegated; the declared census setup and both service stops deliberately execute outside delegation. Entry sequencing and final report checks use the declared graph. File accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established."
-step_names = ["build-graph", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "test-build", "host-postgresql-start", "wallet-elements-start", "toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "linter-entry-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "vendor-set", "member-lints", "design-correspondence", "design-tests", "linter", "token", "hash-citations", "binary64-corpus", "suppressions", "printing", "tests", "extended-tests", "reference-certificates", "service-tests", "wallet-conformance", "test-evidence", "protected-packages", "cargo-config-measurement", "wallet-elements-stop", "fmt", "test-budgets", "clippy", "nursery-advisory", "minimal", "rustdoc", "datasets", "documents", "determinism-datasets", "determinism-documents", "benchmarks", "observation-build", "observation-runtime", "host-observation-build", "host-observation-runtime", "observation-parser", "host-postgresql-stop", "observation-syntax", "harness-matrix", "claim-evidence"]
+step_names = ["build-graph", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "test-build", "host-postgresql-start", "wallet-elements-start", "toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "linter-entry-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "vendor-set", "member-lints", "design-correspondence", "design-tests", "linter", "token", "hash-citations", "binary64-corpus", "suppressions", "printing", "tests", "extended-tests", "reference-certificates", "service-tests", "wallet-conformance", "test-evidence", "protected-packages", "cargo-config-measurement", "wallet-elements-stop", "fmt", "test-budgets", "clippy", "nursery-advisory", "minimal", "rustdoc", "datasets", "documents", "determinism-datasets", "determinism-documents", "benchmarks", "observation-build", "observation-recipe-documents-release", "observation-recipe-documents-debug", "observation-recipe-pn-release", "observation-recipe-pn-debug", "observation-recipe-generator-release", "observation-recipe-generator-debug", "observation-runtime", "host-observation-build", "host-observation-runtime", "observation-parser", "host-postgresql-stop", "observation-syntax", "harness-matrix", "claim-evidence"]
 
 [[rows.step_groups]]
 name = "policy"
@@ -280,9 +280,9 @@ outputs = "Benchmark artifacts and measurements; comparison findings never becom
 
 [[rows.step_groups]]
 name = "observation-build"
-steps = ["observation-build", "host-observation-build"]
-inputs = "Cargo input set for examples and instrumentation evidence; ci/host_evidence_build.py and imports; observation declarations and the exact features and profile."
-outputs = "Example executables and instrumentation artifacts consumed by runtime and syntax checks."
+steps = ["observation-build", "observation-recipe-documents-release", "observation-recipe-documents-debug", "observation-recipe-pn-release", "observation-recipe-pn-debug", "observation-recipe-generator-release", "observation-recipe-generator-debug", "host-observation-build"]
+inputs = "Cargo input set for examples, instrumentation evidence and package-scoped release and debug recipes; ci/discipline.py for the recipe steps, ci/host_evidence_build.py and imports; observation declarations and the exact features and profiles."
+outputs = "Example executables, six separately registered recipe artifacts and instrumentation artifacts consumed by runtime and syntax checks."
 
 [[rows.step_groups]]
 name = "observation-runtime"

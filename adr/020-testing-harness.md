@@ -45,12 +45,12 @@
 | ci::test_claims | active | unit | ci-python | fast | 26 |
 | ci::test_design | active | integration | ci-python | extended | 12 |
 | ci::test_devperf | active | unit | ci-python | fast | 71 |
-| ci::test_discipline | active | integration | ci-python | fast | 40 |
+| ci::test_discipline | active | integration | ci-python | fast | 41 |
 | ci::test_harness | active | unit | ci-python | fast | 16 |
 | ci::test_host_runtime | active | integration | pn-host-postgresql | service | 17 |
 | ci::test_linter_entry | active | integration | ci-composition-services | service | 25 |
 | ci::test_observe | active | unit | ci-python | fast | 13 |
-| ci::test_observe_runtime | active | integration | ci-python | extended | 17 |
+| ci::test_observe_runtime | active | integration | ci-python | extended | 22 |
 | ci::test_observe_syntax | active | integration | ci-python | extended | 1 |
 | ci::test_testkit | active | unit | ci-python | fast | 12 |
 | ci::test_wallet_boundary | active | integration | pn-wallet-rust | service | 11 |

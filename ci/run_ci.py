@@ -73,6 +73,8 @@ def isolated_suite(module, name, marker, logs, root, source, tree, target):
     env[marker] = '1'
     env['PN_CI_ISOLATED'] = module
     env['PN_GATE_BUILD_TARGET'] = str(Path(os.environ['CARGO_TARGET_DIR']).resolve())
+    if module == 'test_observe_runtime':
+        env['PN_OBSERVATION_RECIPE_ROOT'] = str(root/'.lane/observation-recipes')
     if module == 'test_host_runtime':
         env['PN_HOST_TEST_ROOT'] = str(tree/'.lane/pg')
     try:

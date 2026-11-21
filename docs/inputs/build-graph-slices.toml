@@ -182,6 +182,36 @@ slice = 3
 reason = "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing."
 
 [[rows]]
+name = "observation-recipe-documents-release"
+slice = 3
+reason = "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing."
+
+[[rows]]
+name = "observation-recipe-documents-debug"
+slice = 3
+reason = "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing."
+
+[[rows]]
+name = "observation-recipe-pn-release"
+slice = 3
+reason = "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing."
+
+[[rows]]
+name = "observation-recipe-pn-debug"
+slice = 3
+reason = "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing."
+
+[[rows]]
+name = "observation-recipe-generator-release"
+slice = 3
+reason = "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing."
+
+[[rows]]
+name = "observation-recipe-generator-debug"
+slice = 3
+reason = "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing."
+
+[[rows]]
 name = "observation-runtime"
 slice = 4
 reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."

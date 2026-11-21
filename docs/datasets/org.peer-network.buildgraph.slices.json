@@ -187,6 +187,36 @@
       "slice": 3
     },
     {
+      "name": "observation-recipe-documents-release",
+      "reason": "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "observation-recipe-documents-debug",
+      "reason": "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "observation-recipe-pn-release",
+      "reason": "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "observation-recipe-pn-debug",
+      "reason": "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "observation-recipe-generator-release",
+      "reason": "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "observation-recipe-generator-debug",
+      "reason": "Package-scoped compiled recipe artifact; retain its exact profile, feature selection and nonverdict timing.",
+      "slice": 3
+    },
+    {
       "name": "observation-runtime",
       "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
       "slice": 4
