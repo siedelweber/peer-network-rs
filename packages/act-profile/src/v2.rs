@@ -1,8 +1,8 @@
-//! Independent-nonce proposal and supplied-opening recipes.
+//! Independent author blinding-value proposal and supplied-opening recipes.
 //! (´def:profile:version-two´)
 use super::{
-    ContentRequest, DependencyIds, DependencyOpening, DependencyRequest, ProfileError, array, dependencies, hash, identifier,
-    nonce_format, payload_length, public, publish, salt_format, valid_id,
+    ContentRequest, DependencyIds, DependencyOpening, DependencyRequest, ProfileError, array, author_blinding_value_format,
+    dependencies, hash, host_blinding_value_format, identifier, payload_length, public, publish, valid_id,
 };
 use pn_interchange::{Bytes, SecretValue, Value};
 use pn_records::ActId;
@@ -29,7 +29,7 @@ pub struct ProposalBody {
 #[derive(Debug)]
 pub struct ContentPair {
     pub payload: SecretSlice<u8>,
-    pub nonce: SecretSlice<u8>,
+    pub author_content_blinding_value: SecretSlice<u8>,
 }
 
 /// Opaque, secret-owned content pre-digest supplied on the proposal path.
@@ -200,7 +200,7 @@ pub fn content_pair_matches(
 
 /// Compute hY while retaining it in a secret carrier.
 /// # Errors
-/// Refuses malformed identity, nonce format or payload bounds.
+/// Refuses malformed identity, author blinding-value format or payload bounds.
 /// (´def:profile:version-two´)
 #[tracing::instrument(
     name = "def:profile:version-two",
@@ -216,7 +216,7 @@ pub fn content_pre_digest(id: &ActId, pair: &ContentPair) -> Result<ContentPreDi
     if !valid_id(id) {
         return Err(ProfileError::Representation);
     }
-    nonce_format(id, &pair.nonce)?;
+    author_blinding_value_format(id, &pair.author_content_blinding_value)?;
     payload_length(&pair.payload)?;
     Ok(ContentPreDigest {
         act: id.clone(),
@@ -225,7 +225,7 @@ pub fn content_pre_digest(id: &ActId, pair: &ContentPair) -> Result<ContentPreDi
             "PN-content-pre-v2",
             vec![
                 public(identifier(id)),
-                SecretValue::Bytes(pair.nonce.clone()),
+                SecretValue::Bytes(pair.author_content_blinding_value.clone()),
                 SecretValue::Bytes(pair.payload.clone()),
             ],
         )?,
@@ -234,7 +234,7 @@ pub fn content_pre_digest(id: &ActId, pair: &ContentPair) -> Result<ContentPreDi
 
 /// Recompute P without inspecting or requiring an optional content pair.
 /// # Errors
-/// Refuses malformed body, hY scope, dependency nonce/list or request mismatch.
+/// Refuses malformed body, hY scope, author dependency blinding value/list or request mismatch.
 /// # Panics
 /// Panics only if an i64 cannot fit the wider interchange integer domain.
 /// (´def:profile:version-two´)
@@ -251,12 +251,12 @@ pub fn content_pre_digest(id: &ActId, pair: &ContentPair) -> Result<ContentPreDi
 pub fn proposal_commitment(
     body: &ProposalBody,
     content: &ContentPreDigest,
-    nonce: &SecretSlice<u8>,
+    author_dependency_blinding_value: &SecretSlice<u8>,
     list: &SecretBox<DependencyIds>,
 ) -> Result<ProposalCommitment, ProfileError> {
     let projected = body_projection(body)?;
     let id = &body.structural.id;
-    nonce_format(id, nonce)?;
+    author_blinding_value_format(id, author_dependency_blinding_value)?;
     let (dependencies, count) = dependencies(list, Some(id))?;
     if body.structural.dependency == DependencyRequest::FullEmpty && count != 0 {
         return Err(ProfileError::Representation);
@@ -265,7 +265,11 @@ pub fn proposal_commitment(
     let dependency = hash(
         PROPOSAL_RECIPE,
         "PN-dependency-pre-v2",
-        vec![public(identifier(id)), SecretValue::Bytes(nonce.clone()), dependencies],
+        vec![
+            public(identifier(id)),
+            SecretValue::Bytes(author_dependency_blinding_value.clone()),
+            dependencies,
+        ],
     )?;
     let digest = hash(
         PROPOSAL_RECIPE,
@@ -278,7 +282,7 @@ pub fn proposal_commitment(
     })
 }
 
-/// Compute the Actor's P from independently supplied content/dependency nonces.
+/// Compute the Actor's P from independently supplied content/dependency blinding values.
 /// No entropy, freshness or generation claim follows from supplied values.
 /// # Errors
 /// Refuses the proposal and content-pair representation bounds.
@@ -298,19 +302,19 @@ pub fn proposal_commitment(
 pub fn computed_proposal_commitment(
     body: &ProposalBody,
     pair: &ContentPair,
-    dependency_nonce: &SecretSlice<u8>,
+    author_dependency_blinding_value: &SecretSlice<u8>,
     list: &SecretBox<DependencyIds>,
 ) -> Result<ComputedProposalCommitment, ProfileError> {
     if body.structural.content == ContentRequest::FullEmpty && payload_length(&pair.payload)? != 0 {
         return Err(ProfileError::Representation);
     }
     let content = content_pre_digest(&body.structural.id, pair)?;
-    proposal_commitment(body, &content, dependency_nonce, list).map(ComputedProposalCommitment)
+    proposal_commitment(body, &content, author_dependency_blinding_value, list).map(ComputedProposalCommitment)
 }
 
 /// Form `C_Y` from opaque hY, identically with or without content carriage.
 /// # Errors
-/// Refuses malformed identity, salt, hY or a non-v2 proposal recipe.
+/// Refuses malformed identity, host blinding value, hY or a non-v2 proposal recipe.
 /// (´def:profile:version-two´)
 #[tracing::instrument(
     name = "def:profile:version-two",
@@ -325,17 +329,17 @@ pub fn computed_proposal_commitment(
 pub fn content_commitment(
     id: &ActId,
     proposal: &ProposalCommitment,
-    salt: &SecretSlice<u8>,
+    host_content_blinding_value: &SecretSlice<u8>,
     content: &ContentPreDigest,
 ) -> Result<ContentCommitment, ProfileError> {
-    salt_format(salt)?;
+    host_blinding_value_format(host_content_blinding_value)?;
     let digest = hash(
         CONTENT_RECIPE,
         "PN-content-v2",
         vec![
             public(identifier(id)),
             anchor(proposal)?,
-            SecretValue::Bytes(salt.clone()),
+            SecretValue::Bytes(host_content_blinding_value.clone()),
             received(id, content)?,
         ],
     )?;
@@ -364,22 +368,22 @@ pub fn content_matches_supplied_commitment(
     id: &ActId,
     proposal: &ProposalCommitment,
     recorded: &ContentCommitment,
-    salt: &SecretSlice<u8>,
+    host_content_blinding_value: &SecretSlice<u8>,
     pair: &ContentPair,
 ) -> Result<(), ProfileError> {
     if recorded.recipe != CONTENT_RECIPE {
         return Err(ProfileError::Recipe);
     }
     let content = content_pre_digest(id, pair)?;
-    if content_commitment(id, proposal, salt, &content)? != *recorded {
+    if content_commitment(id, proposal, host_content_blinding_value, &content)? != *recorded {
         return Err(ProfileError::Mismatch);
     }
     Ok(())
 }
 
-/// Form `C_D` from the canonical dependency list with its supplied host salt.
+/// Form `C_D` from the canonical dependency list with its supplied host dependency blinding value.
 /// # Errors
-/// Refuses malformed identity, salt, list or a non-v2 proposal recipe.
+/// Refuses malformed identity, host blinding value, list or a non-v2 proposal recipe.
 /// (´def:profile:version-two´)
 #[tracing::instrument(
     name = "def:profile:version-two",
@@ -394,13 +398,13 @@ pub fn content_matches_supplied_commitment(
 pub fn dependency_commitment(
     id: &ActId,
     proposal: &ProposalCommitment,
-    salt: &SecretSlice<u8>,
+    host_dependency_blinding_value: &SecretSlice<u8>,
     list: &SecretBox<DependencyIds>,
 ) -> Result<DependencyCommitment, ProfileError> {
     if !valid_id(id) {
         return Err(ProfileError::Representation);
     }
-    salt_format(salt)?;
+    host_blinding_value_format(host_dependency_blinding_value)?;
     let (list, _) = dependencies(list, None)?;
     let digest = hash(
         DEPENDENCY_RECIPE,
@@ -408,7 +412,7 @@ pub fn dependency_commitment(
         vec![
             public(identifier(id)),
             anchor(proposal)?,
-            SecretValue::Bytes(salt.clone()),
+            SecretValue::Bytes(host_dependency_blinding_value.clone()),
             list,
         ],
     )?;
@@ -441,7 +445,13 @@ pub fn dependencies_match_supplied_commitment(
     if recorded.recipe != DEPENDENCY_RECIPE {
         return Err(ProfileError::Recipe);
     }
-    if dependency_commitment(&opening.act, proposal, &opening.salt, &opening.dependencies)? != *recorded {
+    if dependency_commitment(
+        &opening.act,
+        proposal,
+        &opening.host_dependency_blinding_value,
+        &opening.dependencies,
+    )? != *recorded
+    {
         return Err(ProfileError::Mismatch);
     }
     Ok(())

@@ -2374,7 +2374,7 @@
       "path": "packages/act-authentication/tests/encoding/v2_cases.rs",
       "claim": "ACTAUTH::claim:authentication:version-two-dependency-proof",
       "before": "",
-      "after": "Conformance and robustness: three-part dependency openings match supplied\nanchors for zero, two and 1024 dependencies; changed parts do not match.\nNeither private nonce is an opening input or an authenticity conclusion.",
+      "after": "Conformance and robustness: three-part dependency openings match supplied\nanchors for zero, two and 1024 dependencies; changed parts do not match.\nNeither private author blinding value is an opening input or an authenticity conclusion.",
       "review": "The opening contains only I,D,S_D; tests compare against independently generated P,C_D, change each opening component and refuse a substituted proposal recipe. Supplied anchors are not authenticated."
     },
     {

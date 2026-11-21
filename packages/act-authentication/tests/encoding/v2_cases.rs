@@ -26,7 +26,7 @@ fn dependencies(row: &serde_json::Value) -> pn_act_profile::DependencyIds {
 fn pair(row: &serde_json::Value) -> profile::ContentPair {
     profile::ContentPair {
         payload: field(row, "payload").into(),
-        nonce: field(row, "ny").into(),
+        author_content_blinding_value: field(row, "ny").into(),
     }
 }
 
@@ -84,9 +84,9 @@ fn golden_values() {
         assert_eq!(profile::content_pair_matches(body, &opaque, None), Ok(false));
         assert_eq!(profile::content_pair_matches(body, &opaque, Some(&pair(row))), Ok(true));
         let mut bad_pair = pair(row);
-        let mut nonce = field(row, "ny");
-        nonce[39] ^= 1;
-        bad_pair.nonce = nonce.into();
+        let mut author_content_blinding_value = field(row, "ny");
+        author_content_blinding_value[39] ^= 1;
+        bad_pair.author_content_blinding_value = author_content_blinding_value.into();
         assert_eq!(
             profile::content_pair_matches(body, &opaque, Some(&bad_pair)),
             Err(pn_act_profile::ProfileError::Mismatch)
@@ -212,7 +212,7 @@ fn refusals() {
 
 /// Conformance and robustness: three-part dependency openings match supplied
 /// anchors for zero, two and 1024 dependencies; changed parts do not match.
-/// Neither private nonce is an opening input or an authenticity conclusion.
+/// Neither private author blinding value is an opening input or an authenticity conclusion.
 /// ´claim:authentication:version-two-dependency-proof´
 /// ´test:integration:dependency-proof´
 #[test]
@@ -224,7 +224,7 @@ fn dependency_proof() {
         let mut opening = pn_act_profile::DependencyOpening {
             act: parts.body.structural.id.clone(),
             dependencies: Box::new(dependencies(row)).into(),
-            salt: field(row, "sd").into(),
+            host_dependency_blinding_value: field(row, "sd").into(),
         };
         let check = |o: &pn_act_profile::DependencyOpening| {
             profile::dependencies_match_supplied_commitment(o, &parts.commitments.proposal, &parts.commitments.dependency)
@@ -233,11 +233,11 @@ fn dependency_proof() {
         opening.act.sequence ^= 1;
         assert_eq!(check(&opening), Err(pn_act_profile::ProfileError::Mismatch));
         opening.act = parts.body.structural.id.clone();
-        let mut salt = field(row, "sd");
-        salt[0] ^= 1;
-        opening.salt = salt.into();
+        let mut host_dependency_blinding_value = field(row, "sd");
+        host_dependency_blinding_value[0] ^= 1;
+        opening.host_dependency_blinding_value = host_dependency_blinding_value.into();
         assert_eq!(check(&opening), Err(pn_act_profile::ProfileError::Mismatch));
-        opening.salt = field(row, "sd").into();
+        opening.host_dependency_blinding_value = field(row, "sd").into();
         let mut ids = dependencies(row);
         if ids.0.is_empty() {
             ids.0.push(parts.body.structural.id.clone());

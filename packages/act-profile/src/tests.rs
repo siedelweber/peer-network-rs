@@ -14,12 +14,12 @@ fn secret(bytes: &[u8]) -> SecretSlice<u8> {
 fn list(ids: Vec<ActId>) -> SecretBox<DependencyIds> {
     SecretBox::new(Box::new(DependencyIds(ids)))
 }
-fn nonce(sequence: u64) -> SecretSlice<u8> {
+fn author_blinding_value(sequence: u64) -> SecretSlice<u8> {
     let mut bytes = sequence.to_be_bytes().to_vec();
     bytes.extend(0..32);
     secret(&bytes)
 }
-fn salt(counter: u128, start: u8) -> SecretSlice<u8> {
+fn host_blinding_value(counter: u128, start: u8) -> SecretSlice<u8> {
     let mut bytes = counter.to_be_bytes().to_vec();
     bytes.extend(start..start + 32);
     secret(&bytes)
@@ -122,7 +122,7 @@ fn fixed_recipes_and_controls() {
             .unwrap()
     };
     let proposal_body = body("Registration");
-    let proposal_nonce = nonce(2);
+    let author_proposal_blinding_value = author_blinding_value(2);
     let payload = secret(b"fixture private aggregate");
     let dependency_ids = list(vec![id(1, "Registration")]);
     let hy = hash(
@@ -130,7 +130,7 @@ fn fixed_recipes_and_controls() {
         "PN-content-pre-v1",
         vec![
             public(identifier(&proposal_body.id)),
-            SecretValue::Bytes(proposal_nonce.clone()),
+            SecretValue::Bytes(author_proposal_blinding_value.clone()),
             SecretValue::Bytes(payload.clone()),
         ],
     )
@@ -140,70 +140,170 @@ fn fixed_recipes_and_controls() {
         "PN-dependency-pre-v1",
         vec![
             public(identifier(&proposal_body.id)),
-            SecretValue::Bytes(proposal_nonce.clone()),
+            SecretValue::Bytes(author_proposal_blinding_value.clone()),
             dependencies(&dependency_ids, None).unwrap().0,
         ],
     )
     .unwrap();
     assert!(fixture_digest(&hy, expected("content-pre")));
     assert!(fixture_digest(&hd, expected("dependency-pre")));
-    let proposal = proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids).unwrap();
+    let proposal = proposal_commitment(&proposal_body, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap();
     assert_eq!(hex(&proposal.bytes), expected("proposal"));
-    let sy = salt(1, 32);
-    let sd = salt(2, 64);
-    let cy = content_commitment(&proposal_body.id, &proposal, &sy, &payload).unwrap();
+    let host_content_blinding_value = host_blinding_value(1, 32);
+    let host_dependency_blinding_value = host_blinding_value(2, 64);
+    let cy = content_commitment(&proposal_body.id, &proposal, &host_content_blinding_value, &payload).unwrap();
     assert_eq!(hex(&cy.bytes), expected("content"));
-    let cd = dependency_commitment(&proposal_body.id, &proposal, &sd, &dependency_ids).unwrap();
+    let cd = dependency_commitment(&proposal_body.id, &proposal, &host_dependency_blinding_value, &dependency_ids).unwrap();
     assert_eq!(hex(&cd.bytes), expected("dependency"));
-    assert!(proposal_matches_supplied_commitment(&proposal_body, &proposal, &proposal_nonce, &payload, &dependency_ids).is_ok());
-    assert!(content_matches_supplied_commitment(&proposal_body.id, &proposal, &cy, &sy, &payload).is_ok());
-    assert!(dependencies_match_supplied_commitment(&proposal_body.id, &proposal, &cd, &sd, &dependency_ids).is_ok());
-    assert!(content_matches_supplied_commitment(&proposal_body.id, &proposal, &cy, &sd, &payload).is_err());
-    assert!(content_matches_supplied_commitment(&proposal_body.id, &proposal, &cy, &sy, &secret(b"other")).is_err());
-    assert!(dependencies_match_supplied_commitment(&id(3, "Registration"), &proposal, &cd, &sd, &dependency_ids).is_err());
-    assert!(dependencies_match_supplied_commitment(&proposal_body.id, &proposal, &cd, &sy, &dependency_ids).is_err());
-    assert!(dependencies_match_supplied_commitment(&proposal_body.id, &proposal, &cd, &sd, &list(Vec::new())).is_err());
-    let fabricated = ProposalCommitment {
-        recipe: PROPOSAL_RECIPE.into(),
-        bytes: [19; 32],
-    };
-    assert!(dependencies_match_supplied_commitment(&proposal_body.id, &fabricated, &cd, &sd, &dependency_ids).is_err());
-    let replacement = dependency_commitment(&proposal_body.id, &fabricated, &sd, &dependency_ids).unwrap();
-    assert!(dependencies_match_supplied_commitment(&proposal_body.id, &fabricated, &replacement, &sd, &dependency_ids).is_ok());
+    assert!(
+        proposal_matches_supplied_commitment(
+            &proposal_body,
+            &proposal,
+            &author_proposal_blinding_value,
+            &payload,
+            &dependency_ids
+        )
+        .is_ok()
+    );
+    assert!(
+        content_matches_supplied_commitment(&proposal_body.id, &proposal, &cy, &host_content_blinding_value, &payload).is_ok()
+    );
+    assert!(
+        dependencies_match_supplied_commitment(
+            &proposal_body.id,
+            &proposal,
+            &cd,
+            &host_dependency_blinding_value,
+            &dependency_ids
+        )
+        .is_ok()
+    );
+    fixed_recipe_refusals(
+        &proposal_body,
+        &proposal,
+        &cy,
+        &cd,
+        &host_content_blinding_value,
+        &host_dependency_blinding_value,
+        &dependency_ids,
+    );
     representation_controls();
     retained_field_controls();
 }
 
+fn fixed_recipe_refusals(
+    proposal_body: &ProposalBody,
+    proposal: &ProposalCommitment,
+    cy: &ContentCommitment,
+    cd: &DependencyCommitment,
+    host_content_blinding_value: &SecretSlice<u8>,
+    host_dependency_blinding_value: &SecretSlice<u8>,
+    dependency_ids: &SecretBox<DependencyIds>,
+) {
+    let payload = secret(b"fixture private aggregate");
+    assert!(
+        content_matches_supplied_commitment(&proposal_body.id, proposal, cy, host_dependency_blinding_value, &payload).is_err()
+    );
+    assert!(
+        content_matches_supplied_commitment(
+            &proposal_body.id,
+            proposal,
+            cy,
+            host_content_blinding_value,
+            &secret(b"other")
+        )
+        .is_err()
+    );
+    assert!(
+        dependencies_match_supplied_commitment(
+            &id(3, "Registration"),
+            proposal,
+            cd,
+            host_dependency_blinding_value,
+            dependency_ids
+        )
+        .is_err()
+    );
+    assert!(
+        dependencies_match_supplied_commitment(&proposal_body.id, proposal, cd, host_content_blinding_value, dependency_ids)
+            .is_err()
+    );
+    assert!(
+        dependencies_match_supplied_commitment(
+            &proposal_body.id,
+            proposal,
+            cd,
+            host_dependency_blinding_value,
+            &list(Vec::new())
+        )
+        .is_err()
+    );
+    let fabricated = ProposalCommitment {
+        recipe: PROPOSAL_RECIPE.into(),
+        bytes: [19; 32],
+    };
+    assert!(
+        dependencies_match_supplied_commitment(
+            &proposal_body.id,
+            &fabricated,
+            cd,
+            host_dependency_blinding_value,
+            dependency_ids
+        )
+        .is_err()
+    );
+    let replacement =
+        dependency_commitment(&proposal_body.id, &fabricated, host_dependency_blinding_value, dependency_ids).unwrap();
+    assert!(
+        dependencies_match_supplied_commitment(
+            &proposal_body.id,
+            &fabricated,
+            &replacement,
+            host_dependency_blinding_value,
+            dependency_ids
+        )
+        .is_ok()
+    );
+}
+
 fn representation_controls() {
     let proposal_body = body("Registration");
-    let proposal_nonce = nonce(2);
+    let author_proposal_blinding_value = author_blinding_value(2);
     let payload = secret(b"fixture private aggregate");
     let dependency_ids = list(vec![id(1, "Registration")]);
-    let proposal = proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids).unwrap();
-    let sd = salt(2, 64);
-    let sy = salt(1, 32);
+    let proposal = proposal_commitment(&proposal_body, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap();
+    let host_dependency_blinding_value = host_blinding_value(2, 64);
+    let host_content_blinding_value = host_blinding_value(1, 32);
     let mut wrong = proposal.clone();
     wrong.recipe.push_str("-other");
-    assert!(dependency_commitment(&proposal_body.id, &wrong, &sd, &dependency_ids).is_err());
-    assert!(proposal_commitment(&proposal_body, &nonce(3), &payload, &dependency_ids).is_err());
+    assert!(dependency_commitment(&proposal_body.id, &wrong, &host_dependency_blinding_value, &dependency_ids).is_err());
+    assert!(proposal_commitment(&proposal_body, &author_blinding_value(3), &payload, &dependency_ids).is_err());
     assert!(proposal_commitment(&proposal_body, &secret(&[0; 39]), &payload, &dependency_ids).is_err());
     assert!(content_commitment(&proposal_body.id, &proposal, &secret(&[0; 47]), &payload).is_err());
     assert!(content_commitment(&proposal_body.id, &proposal, &secret(&[0; 49]), &payload).is_err());
     assert!(
         proposal_commitment(
             &proposal_body,
-            &proposal_nonce,
+            &author_proposal_blinding_value,
             &payload,
             &list(vec![proposal_body.id.clone()])
         )
         .is_err()
     );
-    assert!(dependency_commitment(&proposal_body.id, &proposal, &sd, &list(vec![proposal_body.id.clone()])).is_ok());
     assert!(
         dependency_commitment(
             &proposal_body.id,
             &proposal,
-            &sd,
+            &host_dependency_blinding_value,
+            &list(vec![proposal_body.id.clone()])
+        )
+        .is_ok()
+    );
+    assert!(
+        dependency_commitment(
+            &proposal_body.id,
+            &proposal,
+            &host_dependency_blinding_value,
             &list(vec![id(1, "Registration"), id(1, "Registration")])
         )
         .is_err()
@@ -212,25 +312,77 @@ fn representation_controls() {
         dependency_commitment(
             &proposal_body.id,
             &proposal,
-            &sd,
+            &host_dependency_blinding_value,
             &list(vec![id(3, "Registration"), id(1, "Registration")])
         )
         .is_err()
     );
+    representation_bounds(
+        &proposal_body,
+        &proposal,
+        &host_content_blinding_value,
+        &host_dependency_blinding_value,
+    );
+    let mut empty = proposal_body.clone();
+    empty.content = ContentRequest::FullEmpty;
+    empty.dependency = DependencyRequest::FullEmpty;
+    assert!(proposal_commitment(&empty, &author_proposal_blinding_value, &secret(b""), &list(Vec::new())).is_ok());
+    assert!(proposal_commitment(&empty, &author_proposal_blinding_value, &payload, &dependency_ids).is_err());
+    family_controls();
+}
+
+fn representation_bounds(
+    proposal_body: &ProposalBody,
+    proposal: &ProposalCommitment,
+    host_content_blinding_value: &SecretSlice<u8>,
+    host_dependency_blinding_value: &SecretSlice<u8>,
+) {
     // Records' family order is lexical, unlike CBOR's encoded text-length order.
     let affinity = id(1, "Affinity");
     let bid = id(1, "Bid");
     assert!(affinity < bid);
     assert!(identifier(&affinity).to_canonical_bytes() > identifier(&bid).to_canonical_bytes());
-    assert!(dependency_commitment(&proposal_body.id, &proposal, &sd, &list(vec![affinity.clone(), bid.clone()])).is_ok());
-    assert!(dependency_commitment(&proposal_body.id, &proposal, &sd, &list(vec![bid, affinity])).is_err());
-    assert!(content_commitment(&proposal_body.id, &proposal, &sy, &secret(&vec![42; 65_536])).is_ok());
-    assert!(content_commitment(&proposal_body.id, &proposal, &sy, &secret(&vec![42; 65_537])).is_err());
     assert!(
         dependency_commitment(
             &proposal_body.id,
-            &proposal,
-            &sd,
+            proposal,
+            host_dependency_blinding_value,
+            &list(vec![affinity.clone(), bid.clone()])
+        )
+        .is_ok()
+    );
+    assert!(
+        dependency_commitment(
+            &proposal_body.id,
+            proposal,
+            host_dependency_blinding_value,
+            &list(vec![bid, affinity])
+        )
+        .is_err()
+    );
+    assert!(
+        content_commitment(
+            &proposal_body.id,
+            proposal,
+            host_content_blinding_value,
+            &secret(&vec![42; 65_536])
+        )
+        .is_ok()
+    );
+    assert!(
+        content_commitment(
+            &proposal_body.id,
+            proposal,
+            host_content_blinding_value,
+            &secret(&vec![42; 65_537])
+        )
+        .is_err()
+    );
+    assert!(
+        dependency_commitment(
+            &proposal_body.id,
+            proposal,
+            host_dependency_blinding_value,
             &list((0..1024).map(|i| id(i, "Registration")).collect())
         )
         .is_ok()
@@ -238,22 +390,16 @@ fn representation_controls() {
     assert!(
         dependency_commitment(
             &proposal_body.id,
-            &proposal,
-            &sd,
+            proposal,
+            host_dependency_blinding_value,
             &list((0..1025).map(|i| id(i, "Registration")).collect())
         )
         .is_err()
     );
-    let mut empty = proposal_body.clone();
-    empty.content = ContentRequest::FullEmpty;
-    empty.dependency = DependencyRequest::FullEmpty;
-    assert!(proposal_commitment(&empty, &proposal_nonce, &secret(b""), &list(Vec::new())).is_ok());
-    assert!(proposal_commitment(&empty, &proposal_nonce, &payload, &dependency_ids).is_err());
-    family_controls();
 }
 
 fn family_controls() {
-    let proposal_nonce = nonce(2);
+    let author_proposal_blinding_value = author_blinding_value(2);
     let payload = secret(b"fixture private aggregate");
     let dependency_ids = list(vec![id(1, "Registration")]);
     for family in [
@@ -279,23 +425,23 @@ fn family_controls() {
     ] {
         let candidate = body(family);
         assert!(
-            proposal_commitment(&candidate, &proposal_nonce, &payload, &dependency_ids).is_ok(),
+            proposal_commitment(&candidate, &author_proposal_blinding_value, &payload, &dependency_ids).is_ok(),
             "{family}"
         );
         let mut changed = candidate.clone();
         changed.legs[0].id.role = Role::T;
-        assert!(proposal_commitment(&changed, &proposal_nonce, &payload, &dependency_ids).is_err());
+        assert!(proposal_commitment(&changed, &author_proposal_blinding_value, &payload, &dependency_ids).is_err());
         let t = (candidate.body.layout == Layout::Paired).then(|| secret(b""));
         assert!(render_payload(family, &payload, t.as_ref()).is_ok());
         if !candidate.body.quantities.is_empty() {
-            let original = proposal_commitment(&candidate, &proposal_nonce, &payload, &dependency_ids).unwrap();
+            let original = proposal_commitment(&candidate, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap();
             let mut equivalent = candidate.clone();
             for (_, q) in &mut equivalent.body.quantities {
                 q.value *= 2;
             }
             assert_ne!(
                 original,
-                proposal_commitment(&equivalent, &proposal_nonce, &payload, &dependency_ids).unwrap()
+                proposal_commitment(&equivalent, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap()
             );
         }
     }
@@ -309,62 +455,53 @@ fn family_controls() {
 
 fn retained_field_controls() {
     let proposal_body = body("Registration");
-    let proposal_nonce = nonce(2);
+    let author_proposal_blinding_value = author_blinding_value(2);
     let payload = secret(b"fixture private aggregate");
     let dependency_ids = list(vec![id(1, "Registration")]);
-    let proposal = proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids).unwrap();
-    let sy = salt(1, 32);
-    let sd = salt(2, 64);
-    let mut typed = proposal_body.clone();
-    typed.legs[0].target = named("name", &"a".repeat(1024));
-    assert!(proposal_commitment(&typed, &proposal_nonce, &payload, &dependency_ids).is_ok());
-    typed.legs[0].target = named("name", &"a".repeat(1025));
-    assert!(proposal_commitment(&typed, &proposal_nonce, &payload, &dependency_ids).is_err());
-    let mut parents = proposal_body.clone();
-    parents.body.asserted_parents = (100..1124).map(|proposal_nonce| id(proposal_nonce, "Registration")).collect();
-    assert!(proposal_commitment(&parents, &proposal_nonce, &payload, &dependency_ids).is_ok());
-    parents.body.asserted_parents.push(id(1124, "Registration"));
-    assert!(proposal_commitment(&parents, &proposal_nonce, &payload, &dependency_ids).is_err());
+    let proposal = proposal_commitment(&proposal_body, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap();
+    let host_content_blinding_value = host_blinding_value(1, 32);
+    let host_dependency_blinding_value = host_blinding_value(2, 64);
+    retained_identity_bounds(&proposal_body, &author_proposal_blinding_value, &payload, &dependency_ids);
     let mut changed = proposal_body.clone();
     changed.content = ContentRequest::Reduced;
     assert_ne!(
         proposal,
-        proposal_commitment(&changed, &proposal_nonce, &payload, &dependency_ids).unwrap()
+        proposal_commitment(&changed, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap()
     );
     changed = proposal_body.clone();
     changed.dependency = DependencyRequest::Tombstoned;
     assert_ne!(
         proposal,
-        proposal_commitment(&changed, &proposal_nonce, &payload, &dependency_ids).unwrap()
+        proposal_commitment(&changed, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap()
     );
     changed = proposal_body.clone();
     changed.body.asserted_parents = vec![id(1, "Registration")];
     assert_ne!(
         proposal,
-        proposal_commitment(&changed, &proposal_nonce, &payload, &dependency_ids).unwrap()
+        proposal_commitment(&changed, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap()
     );
     changed = proposal_body.clone();
     changed.legs[0].target = named("name", "different typed endpoint");
     assert_ne!(
         proposal,
-        proposal_commitment(&changed, &proposal_nonce, &payload, &dependency_ids).unwrap()
+        proposal_commitment(&changed, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap()
     );
     changed = proposal_body.clone();
     changed.protocol_references.push(named("name", "unsupported"));
-    assert!(proposal_commitment(&changed, &proposal_nonce, &payload, &dependency_ids).is_err());
+    assert!(proposal_commitment(&changed, &author_proposal_blinding_value, &payload, &dependency_ids).is_err());
     changed = proposal_body.clone();
     changed.body.layout = Layout::Paired;
-    assert!(proposal_commitment(&changed, &proposal_nonce, &payload, &dependency_ids).is_err());
+    assert!(proposal_commitment(&changed, &author_proposal_blinding_value, &payload, &dependency_ids).is_err());
     let mut accept = body("Accept");
-    let prior = proposal_commitment(&accept, &proposal_nonce, &payload, &dependency_ids).unwrap();
+    let prior = proposal_commitment(&accept, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap();
     accept.body.settlement = Some(pn_records::SettlementReferences::Accept { settles: id(9, "Bid") });
     assert_ne!(
         prior,
-        proposal_commitment(&accept, &proposal_nonce, &payload, &dependency_ids).unwrap()
+        proposal_commitment(&accept, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap()
     );
     let mut publish = body("Publish");
     publish.legs[0].target = PublicReference::Minted(publish.id.clone());
-    assert!(proposal_commitment(&publish, &proposal_nonce, &payload, &dependency_ids).is_err());
+    assert!(proposal_commitment(&publish, &author_proposal_blinding_value, &payload, &dependency_ids).is_err());
     let degree = pn_records::LicenseDegree {
         numerator: 1,
         denominator: 2,
@@ -373,25 +510,64 @@ fn retained_field_controls() {
         attribution: degree,
         provenance: degree,
     });
-    let licensed = proposal_commitment(&publish, &proposal_nonce, &payload, &dependency_ids).unwrap();
+    let licensed = proposal_commitment(&publish, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap();
     publish.body.license.as_mut().unwrap().attribution = pn_records::LicenseDegree {
         numerator: 2,
         denominator: 4,
     };
     assert_ne!(
         licensed,
-        proposal_commitment(&publish, &proposal_nonce, &payload, &dependency_ids).unwrap()
+        proposal_commitment(&publish, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap()
     );
     publish.body.license.as_mut().unwrap().provenance.denominator = 0;
-    assert!(proposal_commitment(&publish, &proposal_nonce, &payload, &dependency_ids).is_err());
-    let mut bad_content = content_commitment(&proposal_body.id, &proposal, &sy, &payload).unwrap();
+    assert!(proposal_commitment(&publish, &author_proposal_blinding_value, &payload, &dependency_ids).is_err());
+    let mut bad_content = content_commitment(&proposal_body.id, &proposal, &host_content_blinding_value, &payload).unwrap();
     bad_content.recipe.push('x');
-    assert!(content_matches_supplied_commitment(&proposal_body.id, &proposal, &bad_content, &sy, &payload).is_err());
-    let mut wrong_dependencies = dependency_commitment(&proposal_body.id, &proposal, &sd, &dependency_ids).unwrap();
+    assert!(
+        content_matches_supplied_commitment(
+            &proposal_body.id,
+            &proposal,
+            &bad_content,
+            &host_content_blinding_value,
+            &payload
+        )
+        .is_err()
+    );
+    let mut wrong_dependencies =
+        dependency_commitment(&proposal_body.id, &proposal, &host_dependency_blinding_value, &dependency_ids).unwrap();
     wrong_dependencies.recipe.push('x');
     assert!(
-        dependencies_match_supplied_commitment(&proposal_body.id, &proposal, &wrong_dependencies, &sd, &dependency_ids).is_err()
+        dependencies_match_supplied_commitment(
+            &proposal_body.id,
+            &proposal,
+            &wrong_dependencies,
+            &host_dependency_blinding_value,
+            &dependency_ids
+        )
+        .is_err()
     );
+    canonical_substrate_controls();
+}
+
+fn retained_identity_bounds(
+    proposal_body: &ProposalBody,
+    author_proposal_blinding_value: &SecretSlice<u8>,
+    payload: &SecretSlice<u8>,
+    dependency_ids: &SecretBox<DependencyIds>,
+) {
+    let mut typed = proposal_body.clone();
+    typed.legs[0].target = named("name", &"a".repeat(1024));
+    assert!(proposal_commitment(&typed, author_proposal_blinding_value, payload, dependency_ids).is_ok());
+    typed.legs[0].target = named("name", &"a".repeat(1025));
+    assert!(proposal_commitment(&typed, author_proposal_blinding_value, payload, dependency_ids).is_err());
+    let mut parents = proposal_body.clone();
+    parents.body.asserted_parents = (100..1124).map(|sequence| id(sequence, "Registration")).collect();
+    assert!(proposal_commitment(&parents, author_proposal_blinding_value, payload, dependency_ids).is_ok());
+    parents.body.asserted_parents.push(id(1124, "Registration"));
+    assert!(proposal_commitment(&parents, author_proposal_blinding_value, payload, dependency_ids).is_err());
+}
+
+fn canonical_substrate_controls() {
     // Public substrate controls: no external profile envelope decoder is admitted.
     // A hostile claimed length is refused from a short slice before collections
     // can be sized by it; alternate preferred heads cannot change recipe bytes.
@@ -433,33 +609,43 @@ fn capture_timing(name: &str, value: &serde_json::Value) {
 fn captured_recipe(recipe: &str) {
     let total_started = std::time::Instant::now();
     let proposal_body = body("Registration");
-    let proposal_nonce = nonce(2);
+    let author_proposal_blinding_value = author_blinding_value(2);
     let payload = secret(b"fixture private aggregate");
     let dependency_ids = list(vec![id(1, "Registration")]);
-    let sy = salt(1, 32);
-    let sd = salt(2, 64);
+    let host_content_blinding_value = host_blinding_value(1, 32);
+    let host_dependency_blinding_value = host_blinding_value(2, 64);
     // Prepare the supplied anchor before capture; each child captures one
     // complete recipe so its burst fits even when the writer is not scheduled.
-    let anchor =
-        (recipe != "proposal").then(|| proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids).unwrap());
+    let anchor = (recipe != "proposal")
+        .then(|| proposal_commitment(&proposal_body, &author_proposal_blinding_value, &payload, &dependency_ids).unwrap());
     let prepared = total_started.elapsed();
     let capture_started = std::time::Instant::now();
     let guard = cli_common::init_json_tracing(tracing::Level::TRACE).unwrap();
     let bytes = match recipe {
         "proposal" => {
-            proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids)
+            proposal_commitment(&proposal_body, &author_proposal_blinding_value, &payload, &dependency_ids)
                 .unwrap()
                 .bytes
         }
         "content" => {
-            content_commitment(&proposal_body.id, anchor.as_ref().unwrap(), &sy, &payload)
-                .unwrap()
-                .bytes
+            content_commitment(
+                &proposal_body.id,
+                anchor.as_ref().unwrap(),
+                &host_content_blinding_value,
+                &payload,
+            )
+            .unwrap()
+            .bytes
         }
         "dependency" => {
-            dependency_commitment(&proposal_body.id, anchor.as_ref().unwrap(), &sd, &dependency_ids)
-                .unwrap()
-                .bytes
+            dependency_commitment(
+                &proposal_body.id,
+                anchor.as_ref().unwrap(),
+                &host_dependency_blinding_value,
+                &dependency_ids,
+            )
+            .unwrap()
+            .bytes
         }
         _ => panic!("unknown capture recipe"),
     };
@@ -716,8 +902,8 @@ fn attach_anchor(act: &mut pn_records::CandidateAct, ids: Vec<ActId>) {
         recipe: PROPOSAL_RECIPE.into(),
         bytes: [29; 32],
     };
-    let content = content_commitment(&act.id, &proposal, &salt(1, 32), &secret(b"")).unwrap();
-    let dependency = dependency_commitment(&act.id, &proposal, &salt(2, 64), &list(ids)).unwrap();
+    let content = content_commitment(&act.id, &proposal, &host_blinding_value(1, 32), &secret(b"")).unwrap();
+    let dependency = dependency_commitment(&act.id, &proposal, &host_blinding_value(2, 64), &list(ids)).unwrap();
     act.commitments = Some(pn_records::commitments::ActCommitments {
         proposal,
         content,
@@ -734,7 +920,7 @@ fn opened(
         history,
         &DependencyOpenings(vec![DependencyOpening {
             act: act.clone(),
-            salt: salt(2, 64),
+            host_dependency_blinding_value: host_blinding_value(2, 64),
             dependencies: list(ids),
         }]),
     )
@@ -768,7 +954,7 @@ fn opened_replay() {
             &retained,
             &DependencyOpenings(vec![DependencyOpening {
                 act: target.clone(),
-                salt: secret(&[0; 47]),
+                host_dependency_blinding_value: secret(&[0; 47]),
                 dependencies: list(vec![dependency.clone()])
             }])
         )
@@ -896,7 +1082,7 @@ fn proposal_projection_vectors() {
             }
             (secret(b"fixture private aggregate"), list(vec![id(1, "Registration")]))
         };
-        let result = proposal_commitment(&candidate, &nonce(2), &payload, &dependencies).unwrap();
+        let result = proposal_commitment(&candidate, &author_blinding_value(2), &payload, &dependencies).unwrap();
         let vector_name = format!("proposal-{name}");
         let expected = fixture["vectors"]
             .as_array()

@@ -19,6 +19,9 @@ fn corpus() -> serde_json::Value {
 fn field(row: &serde_json::Value, name: &str) -> Vec<u8> {
     hex(row[name].as_str().unwrap())
 }
+fn legacy_author_proposal_blinding_value(row: &serde_json::Value) -> Vec<u8> {
+    field(row, "nonce")
+}
 fn computed(row: &serde_json::Value, body: &pn_act_profile::ProposalBody) -> pn_act_profile::ComputedProposalCommitment {
     let dependencies = row["dependencies"]
         .as_array()
@@ -32,7 +35,7 @@ fn computed(row: &serde_json::Value, body: &pn_act_profile::ProposalBody) -> pn_
         .collect();
     pn_act_profile::computed_proposal_commitment(
         body,
-        &field(row, "nonce").into(),
+        &legacy_author_proposal_blinding_value(row).into(),
         &field(row, "payload").into(),
         &Box::new(pn_act_profile::DependencyIds(dependencies)).into(),
     )
@@ -88,7 +91,7 @@ fn canonical_header_material() {
             .collect();
         let proposal = pn_act_profile::proposal_commitment(
             &header.parts().body,
-            &field(row, "nonce").into(),
+            &legacy_author_proposal_blinding_value(row).into(),
             &field(row, "payload").into(),
             &Box::new(pn_act_profile::DependencyIds(dependencies)).into(),
         )

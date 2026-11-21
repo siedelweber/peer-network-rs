@@ -179,23 +179,23 @@ fn hash(recipe: &str, tag: &str, fields: Vec<SecretValue>) -> Result<SecretSlice
     Ok(protected)
 }
 
-// Caveat: The proposal nonce is borrowed to check its forty-byte format and public sequence prefix; the borrow ends at validation and reveals neither its suffix nor a claim of entropy.
+// Caveat: The author proposal blinding value is borrowed to check its forty-byte format and public sequence prefix; the borrow ends at validation and reveals neither its suffix nor a claim of entropy.
 // (´[ROOT-cav:observe:secret-profile-nonce-format]´)
 // Justified: These exact format checks require a temporary slice; production freshness and entropy are separate held duties.
 #[allow(clippy::disallowed_methods)]
-fn nonce_format(id: &ActId, nonce: &SecretSlice<u8>) -> Result<(), ProfileError> {
-    let bytes = nonce.expose_secret(/* (´[ROOT-cav:observe:secret-profile-nonce-format]´) */);
+fn author_blinding_value_format(id: &ActId, author_proposal_blinding_value: &SecretSlice<u8>) -> Result<(), ProfileError> {
+    let bytes = author_proposal_blinding_value.expose_secret(/* (´[ROOT-cav:observe:secret-profile-nonce-format]´) */);
     if bytes.len() != 40 || bytes[..8] != id.sequence.to_be_bytes() {
         return Err(ProfileError::Representation);
     }
     Ok(())
 }
-// Caveat: The host salt is borrowed only to check its forty-eight-byte format; the borrow ends at len and establishes no allocation, uniqueness or entropy.
+// Caveat: The host blinding value is borrowed only to check its forty-eight-byte format; the borrow ends at len and establishes no allocation, uniqueness or entropy.
 // (´[ROOT-cav:observe:secret-profile-salt-format]´)
 // Justified: The private container has no length accessor, and no content is copied for this check.
 #[allow(clippy::disallowed_methods)]
-fn salt_format(salt: &SecretSlice<u8>) -> Result<(), ProfileError> {
-    if salt.expose_secret(/* (´[ROOT-cav:observe:secret-profile-salt-format]´) */).len() != 48 {
+fn host_blinding_value_format(host_blinding_value: &SecretSlice<u8>) -> Result<(), ProfileError> {
+    if host_blinding_value.expose_secret(/* (´[ROOT-cav:observe:secret-profile-salt-format]´) */).len() != 48 {
         return Err(ProfileError::Representation);
     }
     Ok(())
@@ -452,7 +452,7 @@ pub fn body_projection(input: &ProposalBody) -> Result<Value, ProfileError> {
 /// Compute the Actor proposal, retaining both pre-digests only in secret carriers.
 /// Authored integer pairs are committed exactly, never reduced as rationals.
 /// # Errors
-/// Refuses profile shape, request/opening disagreement, bounds or nonce format.
+/// Refuses profile shape, request/opening disagreement, bounds or author blinding-value format.
 /// # Panics
 /// Panics only if an i64 fails to fit the interchange integer domain, which its
 /// constructor's declared range cannot arrange.
@@ -469,12 +469,12 @@ pub fn body_projection(input: &ProposalBody) -> Result<Value, ProfileError> {
 )]
 pub fn proposal_commitment(
     body: &ProposalBody,
-    nonce: &SecretSlice<u8>,
+    author_proposal_blinding_value: &SecretSlice<u8>,
     payload: &SecretSlice<u8>,
     list: &SecretBox<DependencyIds>,
 ) -> Result<ProposalCommitment, ProfileError> {
     let projected = body_projection(body)?;
-    nonce_format(&body.id, nonce)?;
+    author_blinding_value_format(&body.id, author_proposal_blinding_value)?;
     let ylen = payload_length(payload)?;
     let (d, dlen) = dependencies(list, Some(&body.id))?;
     if matches!(body.content, ContentRequest::FullEmpty) && ylen != 0
@@ -489,14 +489,18 @@ pub fn proposal_commitment(
         "PN-content-pre-v1",
         vec![
             public(identifier(&body.id)),
-            SecretValue::Bytes(nonce.clone()),
+            SecretValue::Bytes(author_proposal_blinding_value.clone()),
             SecretValue::Bytes(payload.clone()),
         ],
     )?;
     let dependency = hash(
         PROPOSAL_RECIPE,
         "PN-dependency-pre-v1",
-        vec![public(identifier(&body.id)), SecretValue::Bytes(nonce.clone()), d],
+        vec![
+            public(identifier(&body.id)),
+            SecretValue::Bytes(author_proposal_blinding_value.clone()),
+            d,
+        ],
     )?;
     let result = hash(
         PROPOSAL_RECIPE,
@@ -551,18 +555,18 @@ impl ComputedProposalCommitment {
 )]
 pub fn computed_proposal_commitment(
     body: &ProposalBody,
-    nonce: &SecretSlice<u8>,
+    author_proposal_blinding_value: &SecretSlice<u8>,
     payload: &SecretSlice<u8>,
     list: &SecretBox<DependencyIds>,
 ) -> Result<ComputedProposalCommitment, ProfileError> {
-    proposal_commitment(body, nonce, payload, list).map(ComputedProposalCommitment)
+    proposal_commitment(body, author_proposal_blinding_value, payload, list).map(ComputedProposalCommitment)
 }
 
 /// Compute the content residue from supplied private opening material.
 /// No authenticity, producer authority or entropy follows from this computation.
 /// (´def:profile:recipes´)
 /// # Errors
-/// Refuses unsupported identity/recipe, salt format and payload bounds.
+/// Refuses unsupported identity/recipe, host blinding-value format and payload bounds.
 #[tracing::instrument(
     name = "amend:decomposition:act-profile",
     fields(
@@ -576,13 +580,13 @@ pub fn computed_proposal_commitment(
 pub fn content_commitment(
     id: &ActId,
     p: &ProposalCommitment,
-    salt: &SecretSlice<u8>,
+    host_content_blinding_value: &SecretSlice<u8>,
     payload: &SecretSlice<u8>,
 ) -> Result<ContentCommitment, ProfileError> {
     if !valid_id(id) {
         return Err(ProfileError::Representation);
     }
-    salt_format(salt)?;
+    host_blinding_value_format(host_content_blinding_value)?;
     payload_length(payload)?;
     let digest = hash(
         CONTENT_RECIPE,
@@ -590,7 +594,7 @@ pub fn content_commitment(
         vec![
             public(identifier(id)),
             proposal_anchor(p)?,
-            SecretValue::Bytes(salt.clone()),
+            SecretValue::Bytes(host_content_blinding_value.clone()),
             SecretValue::Bytes(payload.clone()),
         ],
     )?;
@@ -618,13 +622,13 @@ pub fn content_commitment(
 pub fn dependency_commitment(
     id: &ActId,
     p: &ProposalCommitment,
-    salt: &SecretSlice<u8>,
+    host_dependency_blinding_value: &SecretSlice<u8>,
     list: &SecretBox<DependencyIds>,
 ) -> Result<DependencyCommitment, ProfileError> {
     if !valid_id(id) {
         return Err(ProfileError::Representation);
     }
-    salt_format(salt)?;
+    host_blinding_value_format(host_dependency_blinding_value)?;
     let (list, _) = dependencies(list, None)?;
     let digest = hash(
         DEPENDENCY_RECIPE,
@@ -632,7 +636,7 @@ pub fn dependency_commitment(
         vec![
             public(identifier(id)),
             proposal_anchor(p)?,
-            SecretValue::Bytes(salt.clone()),
+            SecretValue::Bytes(host_dependency_blinding_value.clone()),
             list,
         ],
     )?;
@@ -661,13 +665,13 @@ pub fn content_matches_supplied_commitment(
     id: &ActId,
     p: &ProposalCommitment,
     recorded: &ContentCommitment,
-    salt: &SecretSlice<u8>,
+    host_content_blinding_value: &SecretSlice<u8>,
     payload: &SecretSlice<u8>,
 ) -> Result<(), ProfileError> {
     if recorded.recipe != CONTENT_RECIPE {
         return Err(ProfileError::Recipe);
     }
-    if content_commitment(id, p, salt, payload)? != *recorded {
+    if content_commitment(id, p, host_content_blinding_value, payload)? != *recorded {
         return Err(ProfileError::Mismatch);
     }
     Ok(())
@@ -692,13 +696,13 @@ pub fn dependencies_match_supplied_commitment(
     id: &ActId,
     p: &ProposalCommitment,
     recorded: &DependencyCommitment,
-    salt: &SecretSlice<u8>,
+    host_dependency_blinding_value: &SecretSlice<u8>,
     list: &SecretBox<DependencyIds>,
 ) -> Result<(), ProfileError> {
     if recorded.recipe != DEPENDENCY_RECIPE {
         return Err(ProfileError::Recipe);
     }
-    if dependency_commitment(id, p, salt, list)? != *recorded {
+    if dependency_commitment(id, p, host_dependency_blinding_value, list)? != *recorded {
         return Err(ProfileError::Mismatch);
     }
     Ok(())
@@ -723,14 +727,14 @@ pub fn dependencies_match_supplied_commitment(
 pub fn proposal_matches_supplied_commitment(
     body: &ProposalBody,
     recorded: &ProposalCommitment,
-    nonce: &SecretSlice<u8>,
+    author_proposal_blinding_value: &SecretSlice<u8>,
     payload: &SecretSlice<u8>,
     list: &SecretBox<DependencyIds>,
 ) -> Result<(), ProfileError> {
     if recorded.recipe != PROPOSAL_RECIPE {
         return Err(ProfileError::Recipe);
     }
-    if proposal_commitment(body, nonce, payload, list)? != *recorded {
+    if proposal_commitment(body, author_proposal_blinding_value, payload, list)? != *recorded {
         return Err(ProfileError::Mismatch);
     }
     Ok(())
@@ -742,7 +746,7 @@ pub fn proposal_matches_supplied_commitment(
 #[derive(Debug)]
 pub struct DependencyOpening {
     pub act: ActId,
-    pub salt: SecretSlice<u8>,
+    pub host_dependency_blinding_value: SecretSlice<u8>,
     pub dependencies: SecretBox<DependencyIds>,
 }
 
@@ -776,7 +780,7 @@ impl pn_records::commitments::DependencyOpener for DependencyOpenings {
             act.id(),
             &anchor.proposal,
             &anchor.dependency,
-            &supplied.salt,
+            &supplied.host_dependency_blinding_value,
             &supplied.dependencies,
         )
         .map_err(|e| match e {
@@ -788,7 +792,7 @@ impl pn_records::commitments::DependencyOpener for DependencyOpenings {
     }
 }
 
-// Caveat: A successfully matched dependency opening releases its complete list to records for public fault assessment and recurrence; the borrow ends after cloning that explicitly opened list and releases no nonce, salt or payload.
+// Caveat: A successfully matched dependency opening releases its complete list to records for public fault assessment and recurrence; the borrow ends after cloning that explicitly opened list and releases no author or host blinding value or payload.
 // (´[ROOT-cav:observe:secret-profile-opened-dependencies]´)
 // Justified: Public replay must inspect the opened identifiers, and this boundary is called only after comparison with the retained residue succeeds.
 #[allow(clippy::disallowed_methods)]

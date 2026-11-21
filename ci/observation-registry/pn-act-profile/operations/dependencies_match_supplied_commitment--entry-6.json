@@ -5,14 +5,14 @@
     "path": "packages/act-profile/src/lib.rs",
     "item": "dependencies_match_supplied_commitment",
     "owner": "ACTPROFILE",
-    "signature": "fn dependencies_match_supplied_commitment (id : & ActId , p : & ProposalCommitment , recorded : & DependencyCommitment , salt : & SecretSlice < u8 > , list : & SecretBox < DependencyIds > ,) -> Result < () , ProfileError >",
+    "signature": "fn dependencies_match_supplied_commitment (id : & ActId , p : & ProposalCommitment , recorded : & DependencyCommitment , host_dependency_blinding_value : & SecretSlice < u8 > , list : & SecretBox < DependencyIds > ,) -> Result < () , ProfileError >",
     "claim": "ROOT::amend:decomposition:act-profile",
     "mode": "instrumented",
     "shape": "shape-act-profile"
   },
   "review": {
     "operation": "pn-act-profile::packages/act-profile/src/lib.rs::dependencies_match_supplied_commitment",
-    "body": "{ if recorded . recipe != DEPENDENCY_RECIPE { return Err (ProfileError :: Recipe) ; } if dependency_commitment (id , p , salt , list) ? != * recorded { return Err (ProfileError :: Mismatch) ; } Ok (()) }",
+    "body": "{ if recorded . recipe != DEPENDENCY_RECIPE { return Err (ProfileError :: Recipe) ; } if dependency_commitment (id , p , host_dependency_blinding_value , list) ? != * recorded { return Err (ProfileError :: Mismatch) ; } Ok (()) }",
     "class_decision": "act-profile-private",
     "item_premise": "The typed operation retains its public carrier or secret-container boundary; opening publication is explicit and never authenticates the retained anchor.",
     "assessments": {

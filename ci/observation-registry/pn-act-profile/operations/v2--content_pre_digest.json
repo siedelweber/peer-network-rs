@@ -12,9 +12,9 @@
   },
   "review": {
     "operation": "pn-act-profile::packages/act-profile/src/v2.rs::v2::content_pre_digest",
-    "body": "{ if ! valid_id (id) { return Err (ProfileError :: Representation) ; } nonce_format (id , & pair . nonce) ? ; payload_length (& pair . payload) ? ; Ok (ContentPreDigest { act : id . clone () , bytes : hash (PROPOSAL_RECIPE , \"PN-content-pre-v2\" , vec ! [public (identifier (id)) , SecretValue :: Bytes (pair . nonce . clone ()) , SecretValue :: Bytes (pair . payload . clone ()) ,] ,) ? , }) }",
+    "body": "{ if ! valid_id (id) { return Err (ProfileError :: Representation) ; } author_blinding_value_format (id , & pair . author_content_blinding_value) ? ; payload_length (& pair . payload) ? ; Ok (ContentPreDigest { act : id . clone () , bytes : hash (PROPOSAL_RECIPE , \"PN-content-pre-v2\" , vec ! [public (identifier (id)) , SecretValue :: Bytes (pair . author_content_blinding_value . clone ()) , SecretValue :: Bytes (pair . payload . clone ()) ,] ,) ? , }) }",
     "class_decision": "act-profile-private",
-    "item_premise": "The public body, identity and final commitments are recorded completely. Content pairs, both nonces, salts, dependency lists and pre-digests stay in secrecy carriers with redacted Debug; only the admitted final residues, representation refusals and explicit carriage-equality result leave their inventoried boundaries. No entropy, freshness or authority is inferred.",
+    "item_premise": "The public body, identity and final commitments are recorded completely. Content pairs, both author blinding values and host blinding values, dependency lists and pre-digests stay in secrecy carriers with redacted Debug; only the admitted final residues, representation refusals and explicit carriage-equality result leave their inventoried boundaries. No entropy, freshness or authority is inferred.",
     "assessments": {
       "full_recording": "act-profile-review",
       "secret_flow": "act-profile-review",
