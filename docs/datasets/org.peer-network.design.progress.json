@@ -3793,13 +3793,20 @@
       "crate": "pn-records",
       "elsewhere": [
         "docs/datasets/org.peer-network.design.questions.json",
+        "docs/design/author-token.md",
         "docs/design/questions.md",
-        "docs/inputs/design-questions.toml"
+        "docs/inputs/design-questions.toml",
+        "docs/templates/docs/design/author-token.md.j2"
       ],
       "holds": [],
       "kind": "type",
       "label": "def:graph:registration",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: Registration anchors an existing pair rather than creating its identity",
+          "record": "ROOT::conv:author:qualification"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -7437,7 +7444,12 @@
       ],
       "kind": "policy",
       "label": "post:graph:act-authentication-requirements",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Premise only: recorded signatures are checked without relating the record's signature-to-key map to its author-to-act map",
+          "record": "ROOT::conv:author:paper"
+        }
+      ],
       "record_granular": 1,
       "record_routes": [
         {
@@ -35760,9 +35772,11 @@
         "adr/019-development-network.md",
         "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/design/author-token.md",
         "docs/inputs/deployment-edges.toml",
         "docs/templates/adr/006-identity-adjudication.md.j2",
-        "docs/templates/adr/019-development-network.md.j2"
+        "docs/templates/adr/019-development-network.md.j2",
+        "docs/templates/docs/design/author-token.md.j2"
       ],
       "holds": [],
       "kind": "policy",
@@ -35771,6 +35785,10 @@
         {
           "clause": "Claimed part: This admits a bounded declaration representation and its comparison, not a selected external case or its truth.",
           "record": "ROOT::amend:identity:paper-case-declaration"
+        },
+        {
+          "clause": "Claimed part: This compares the paper case with the separate local extension without binding that case or asserting external authority.",
+          "record": "ROOT::conv:author:paper"
         },
         {
           "clause": "Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
@@ -41376,10 +41394,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 819",
+          "exact": "1 852",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 819",
+          "num": "1 852",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41394,7 +41412,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1819
+      "total": 1852
     },
     {
       "category": "record-coverage",

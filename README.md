@@ -8,6 +8,8 @@
 
 **Section (design)** · `sec:foundation:area-design` If the implementation design fails, locally correct crates can disagree on public inputs, numerical verdicts or replay and cannot establish the concept as a whole. The design (`spec:design:implementation`) fixes contracts, mechanisms and the evidence required before their claims are implemented.
 
+**Section (author)** · `sec:foundation:area-author` Identity, token control and signing delegation have different authority. The author-token concept (`spec:author:concept`) explains their relation in an epoch, with qualification, retirement and implementation holds at their existing owners.
+
 **Section (budget)** · `sec:foundation:area-budget` If resource admission loses its units, scope or consumed work, a refusal can hide expenditure or grant permission twice. The budgeting concept (`spec:budget:concept`) states the decided allocation and work contract, its process-containment stage and the implementations still owed.
 
 **Section (vision)** · `sec:foundation:area-vision` If the implementation concept fails, later packages can satisfy local contracts without delivering a complete, publicly recomputable epoch result. The concept (`spec:vision:concept`) states the purpose, obligations, boundaries, verification and phases of the whole implementation.

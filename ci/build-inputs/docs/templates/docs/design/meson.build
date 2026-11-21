@@ -3,6 +3,7 @@
 local_inputs = [
   ['docs/templates/docs/design/workload-benchmarks.md.j2', 'linter,design-correspondence,claim-tests,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
   ['ci/build-inputs/docs/templates/docs/design/meson.build', 'build-graph', ''],
+  ['docs/templates/docs/design/author-token.md.j2', 'linter,design-correspondence,claim-tests,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
   ['docs/templates/docs/design/budgeting.md.j2', 'linter,design-correspondence,claim-tests,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
   ['docs/templates/docs/design/concept.md.j2', 'linter,design-correspondence,claim-tests,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
   ['docs/templates/docs/design/implementation.md.j2', 'linter,design-correspondence,claim-tests,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],

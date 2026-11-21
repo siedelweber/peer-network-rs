@@ -722,6 +722,27 @@
     },
     {
       "conditional_on": "",
+      "reason": "This preserves the enablement hold without asserting its implementation, custody or private entropy.",
+      "relation": "realizes",
+      "source": "ROOT::conv:author:holds",
+      "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This retains the implementation hold for the described signature and authority routes, without asserting their enablement.",
+      "relation": "realizes",
+      "source": "ROOT::conv:author:paper",
+      "target": "ROOT::open:identity:act-realization-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This compares the paper case with the separate local extension without binding that case or asserting external authority.",
+      "relation": "realizes",
+      "source": "ROOT::conv:author:paper",
+      "target": "def:deployment:declared-author-authority-case"
+    },
+    {
+      "conditional_on": "",
       "reason": "The construction uses the defined counter and sequence formats, not an inference that format establishes entropy.",
       "relation": "realizes",
       "source": "ROOT::dec:crypto:authentication-custody",
