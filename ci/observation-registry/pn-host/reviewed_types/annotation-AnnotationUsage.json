@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::annotations::AnnotationUsage",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/annotations.rs",
+    "syntax": "# [doc = \" Counters retained even when validation refuses.\"] # [derive (Default , Debug)] pub struct AnnotationUsage { # [doc = \" Reservations made by the canonical walker.\"] pub canonical : CanonicalUsage , # [doc = \" Bytes admitted by the shared reservation callback.\"] pub reserved_bytes : usize , # [doc = \" Bytes admitted for transient namespace-name validation.\"] pub visitor_bytes : usize , # [doc = \" Completed canonical items observed by the reader.\"] pub visited_items : usize , }"
+  }
+}

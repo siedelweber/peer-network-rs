@@ -4851,6 +4851,30 @@
       "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
     },
     {
+      "operation": "pn-host::public::annotations::annotation_caller_budget",
+      "path": "packages/host/tests/public/annotations.rs",
+      "claim": "HOST::claim:host:annotation-caller-budget",
+      "before": "",
+      "after": "Claim: A caller budget below the map's length returns operational unavailability before traversal.",
+      "review": "The input is canonical and within the trial public ceiling. The caller budget is one byte short; refusal is Unavailable and both item and reservation counters remain zero."
+    },
+    {
+      "operation": "pn-host::public::annotations::annotation_map_size_boundary",
+      "path": "packages/host/tests/public/annotations.rs",
+      "claim": "HOST::claim:host:annotation-map-size-boundary",
+      "before": "",
+      "after": "Claim: The exact trial map ceiling admits the map and a one-byte-larger canonical map refuses before traversal.",
+      "review": "The exact map returns its original bytes after traversal. A canonical byte-string payload grows the map by one byte; AnnotationSize occurs with zero item and reservation counts."
+    },
+    {
+      "operation": "pn-host::public::annotations::annotation_opaque_skip",
+      "path": "packages/host/tests/public/annotations.rs",
+      "claim": "HOST::claim:host:annotation-opaque-skip",
+      "before": "",
+      "after": "Claim: Canonical outer maps accept opaque byte payloads without decoding them and refuse malformed framing.",
+      "review": "The opaque payload contains invalid nested CBOR but is accepted as bytes. Truncation, a non-byte value, an invalid namespace, an invalid field atom, duplicate keys and reversed keys each refuse as Framing."
+    },
+    {
       "operation": "pn-host::public::authentication_disconnect",
       "path": "packages/host/tests/public.rs",
       "claim": "HOST::claim:host:authentication-disconnect-retains-no-reachability",

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::annotations::AnnotationLimits",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/annotations.rs",
+    "syntax": "# [doc = \" Explicit trial ceilings; no field selects a publication profile.\"] # [derive (Clone , Copy , Debug)] pub struct AnnotationLimits { # [doc = \" Maximum complete encoded map bytes.\"] pub map_bytes : usize , # [doc = \" This consumer's available input-byte budget.\"] pub caller_bytes : usize , # [doc = \" Canonical walker's cumulative reservation ceiling.\"] pub allocation_bytes : usize , # [doc = \" This reader's cumulative namespace-name allocation budget.\"] pub visitor_bytes : usize , }"
+  }
+}

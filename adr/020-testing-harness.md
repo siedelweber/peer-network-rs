@@ -170,7 +170,7 @@
 | pn-host::credential-launch | active | integration | pn-host-rust | service | 8 |
 | pn-host::declaration-census | active | public-surface | pn-host-rust | extended | 1 |
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 14 |
-| pn-host::public | active | public-surface | pn-host-rust | fast | 23 |
+| pn-host::public | active | public-surface | pn-host-rust | fast | 26 |
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |
 | pn-host::storage-tree | active | integration | pn-host-postgresql | service | 23 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |

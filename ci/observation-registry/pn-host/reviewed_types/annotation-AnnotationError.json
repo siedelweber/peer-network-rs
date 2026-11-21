@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::annotations::AnnotationError",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/annotations.rs",
+    "syntax": "# [doc = \" The fragment's refusal classes, separate from core verification.\"] # [derive (Debug)] pub enum AnnotationError { # [doc = \" The complete map exceeds the supplied map allowance.\"] AnnotationSize , # [doc = \" This consumer's byte or allocation budget cannot complete the read.\"] Unavailable , # [doc = \" Canonical syntax or the annotation-map shape is invalid.\"] Framing , }"
+  }
+}

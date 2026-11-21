@@ -1,5 +1,7 @@
 //! Canonical test-publication bytes carry disclosures, never admission authority.
 //! (´[ROOT-amend:design:nested-publication-fields]´)
+/// Isolated, bounded annotation-map traversal; no publication edition selects it yet.
+pub mod annotations;
 mod backend_budget;
 mod backend_enclosure_derivative;
 mod backend_enclosure_exp;

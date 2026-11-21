@@ -3,6 +3,8 @@ use pn_host::{Configuration, Refusal, Session};
 use std::io::Read;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
+#[path = "public/annotations.rs"]
+mod annotations;
 #[path = "public/binary64.rs"]
 mod binary64;
 #[path = "public/comparison.rs"]

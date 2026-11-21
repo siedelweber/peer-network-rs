@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::annotations::State",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/annotations.rs",
+    "syntax": "# [derive (Default)] struct State { error : Option < AnnotationError > , outer_key : bool , inner_key : bool , namespaces : u64 , fields : u64 , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::annotations::AnnotationMap",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/annotations.rs",
+    "syntax": "# [doc = \" A validated borrowed map with no entry index or owned payload.\"] # [derive (Debug)] pub struct AnnotationMap < 'a > { bytes : & 'a [u8] , }"
+  }
+}

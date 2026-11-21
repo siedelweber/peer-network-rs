@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "There is no secret exit, external recipient or logging accessor. The caller budget is checked before the shared walker and visitor.",
+    "negative_probe": "HOST::claim:host:annotation-caller-budget"
+  },
+  "name": "host-annotation-fragment-exposure_consumers"
+}

@@ -1,0 +1,15 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "host-annotation-fragment",
+    "status": "reviewer-confirmed",
+    "premises": "This isolated reader accepts public untrusted annotation bytes and explicit finite budgets. The canonical interchange walker validates syntax and reserves under the caller ceiling before map-shape checks; the host visitor reads only names and byte-string framing. No private input, producer state, version selector, core verification or I/O enters these bodies. Public input and structural result are recorded at the three public boundaries; no content is promoted to admission authority.",
+    "membership": {
+      "explicit": [
+        "pn-host::packages/host/src/publication/annotations.rs::publication::annotations::AnnotationMap < '_ >::as_bytes",
+        "pn-host::packages/host/src/publication/annotations.rs::publication::annotations::read_annotation_map",
+        "pn-host::packages/host/src/publication/annotations.rs::publication::annotations::skip_annotation_map"
+      ]
+    }
+  }
+}
