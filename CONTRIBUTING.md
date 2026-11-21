@@ -4,7 +4,7 @@ Use this guide to find the repository's working rules, label forms and invariant
 
 ## Editing and checking a change · `sec:foundation:contributing-work`
 
-Edit prose in `docs/templates` and repeated facts in `docs/inputs`, then generate the datasets and render the documents; review and commit the generated files together with their sources (`rule:foundation:editing`). The [README's editing rule](README.md) gives the commands and their exit meanings, including the write that reports refreshed files and the subsequent check that must pass. This guide is a literal template for a root Markdown document, rendered under (`dec:render:policy`) and (`cor:render:tradeoffs`).
+Edit prose in `docs/templates` and repeated facts in `docs/inputs`, then generate the datasets and render the documents; review and commit the generated files together with their sources (`rule:foundation:editing`). The [README's editing rule](README.md) distinguishes the implemented commands and exits from the decided, unbuilt generate/render modes and report option; a completed report request is not evidence of a clean check. This guide is a literal template for a root Markdown document, rendered under (`dec:render:policy`) and (`cor:render:tradeoffs`).
 
 Run `python3 -B ci/precheck.py` before the full gate, using the gate environment and explicitly prepared checker executables: it checks registrations and structural correspondence without compiling or executing tests (`rule:buildgraph:registration-precheck`). A new tracked file needs its build-graph declaration, and its labels and citations must fit the declared owners and inventories; follow the [build-graph record](adr/024-build-graph.md) for the complete registration checks.
 

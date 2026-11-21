@@ -1274,7 +1274,7 @@
       "name": "ROOT::dec:output:policy",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/004-command-line-output-contract.md",
-      "premises": "Subprocess witnesses cover help and version as successful stdout results, a terminal diagnostic for a failed result sink when enabled, usage as an enabled terminal observation, terminal and piped clean results, a drained terminal error at the error level, findings under their still-open documents reading, runtime errors and public panic diagnostics. The shared boundary admits terminal results and filters observation by compiled kind and selected level. Status-three stdout reports remain the implemented documents premise; separately compiled shipped recipe evidence remains owed.",
+      "premises": "Subprocess witnesses cover help and version as successful stdout results, a terminal diagnostic for a failed result sink when enabled, usage as an enabled terminal observation, terminal and piped clean results, a drained terminal error at the error level, findings under the implemented status-three stdout baseline, runtime errors and public panic diagnostics. The shared boundary admits terminal results and filters observation by compiled kind and selected level. Status-three stdout reports remain the implemented documents premise; the decided modes and report-option replacement has no implementation evidence in this row, and separately compiled shipped recipe evidence remains owed.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
@@ -2672,7 +2672,7 @@
       "name": "ROOT::gate:output:verification",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/004-command-line-output-contract.md",
-      "premises": "Subprocess witnesses cover help and version as successful stdout results, a terminal diagnostic for a failed result sink when enabled, usage as an enabled terminal observation, terminal and piped clean results, a drained terminal error at the error level, findings under their still-open documents reading, runtime errors and public panic diagnostics. The shared boundary admits terminal results and filters observation by compiled kind and selected level. Status-three stdout reports remain the implemented documents premise; separately compiled shipped recipe evidence remains owed.",
+      "premises": "Subprocess witnesses cover help and version as successful stdout results, a terminal diagnostic for a failed result sink when enabled, usage as an enabled terminal observation, terminal and piped clean results, a drained terminal error at the error level, findings under the implemented status-three stdout baseline, runtime errors and public panic diagnostics. The shared boundary admits terminal results and filters observation by compiled kind and selected level. Status-three stdout reports remain the implemented documents premise; the decided modes and report-option replacement has no implementation evidence in this row, and separately compiled shipped recipe evidence remains owed.",
       "realizers": [],
       "status": "scoped-supported",
       "witnessed_labels": []
