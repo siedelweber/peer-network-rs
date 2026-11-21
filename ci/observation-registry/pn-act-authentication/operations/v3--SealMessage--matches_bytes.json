@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "item": "v3::SealMessage::matches_bytes",
+    "owner": "ACTAUTH",
+    "signature": "fn matches_bytes (& self , expected : & [u8]) -> bool",
+    "claim": "ACTAUTH::def:authentication:version-three",
+    "mode": "instrumented",
+    "shape": "shape-wallet"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/v3.rs::v3::SealMessage::matches_bytes",
+    "body": "{ self . 0 . as_slice () == expected }",
+    "class_decision": "authentication-public",
+    "item_premise": "Public seal-role bytes are compared exactly with supplied public expected bytes.",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    }
+  }
+}

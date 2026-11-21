@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::content_matches_supplied_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn content_matches_supplied_commitment (id : & ActId , proposal : & ProposalCommitment , recorded_content : & ContentCommitment , host_content_blinding_value : & SecretSlice < u8 > , content_pair : Option < & ContentPair > ,) -> Result < OpeningComparison , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::content_matches_supplied_commitment",
+    "body": "{ if proposal . recipe != PROPOSAL_RECIPE || recorded_content . recipe != CONTENT_RECIPE { return Err (ProfileError :: Recipe) ; } if ! valid_id (id) { return Err (ProfileError :: Representation) ; } if let Some (pair) = content_pair { check_author (id , & pair . author_content_blinding_value) ? ; } check_host (host_content_blinding_value) ? ; let Some (pair) = content_pair else { return Ok (OpeningComparison :: Unavailable) ; } ; let content = content_pre_digest (id , pair) ? ; let computed = content_from_checked (id , proposal , host_content_blinding_value , SecretValue :: Bytes (content . bytes)) ? ; if computed != * recorded_content { return Err (ProfileError :: Content) ; } Ok (OpeningComparison :: Matches) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "An optional protected content pair is reduced against a public C_Y; absence and equality are distinct outcomes without authenticating the anchor.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

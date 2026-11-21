@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::body_projection",
+    "owner": "ACTPROFILE",
+    "signature": "fn body_projection (body : & ProposalBody) -> Result < Value , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::body_projection",
+    "body": "{ let value = structural_value (body) ; if value . canonical_len () > BODY_LIMIT { return Err (ProfileError :: Bound) ; } validate_body (body) ? ; Ok (value) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The typed B3 body has public structural fields; the canonical projection is public and establishes shape only.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

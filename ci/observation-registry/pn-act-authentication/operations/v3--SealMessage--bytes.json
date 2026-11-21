@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "item": "v3::SealMessage::bytes",
+    "owner": "ACTAUTH",
+    "signature": "fn bytes (& self) -> & [u8 ; 32]",
+    "claim": "ACTAUTH::def:authentication:version-three",
+    "mode": "instrumented",
+    "shape": "shape-wallet"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/v3.rs::v3::SealMessage::bytes",
+    "body": "{ & self . 0 }",
+    "class_decision": "authentication-public",
+    "item_premise": "Immutable public seal-role bytes are returned without signing.",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    }
+  }
+}

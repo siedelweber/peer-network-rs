@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "item": "v3::decode_header",
+    "owner": "ACTAUTH",
+    "signature": "fn decode_header (input : & [u8]) -> Result < VerifiedHeader , EncodingError >",
+    "claim": "ACTAUTH::def:authentication:version-three",
+    "mode": "instrumented",
+    "shape": "shape-wallet"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/v3.rs::v3::decode_header",
+    "body": "{ let value = canonical (input , HEADER_LIMIT) ? ; let Value :: Map (map) = & value else { return Err (EncodingError :: Shape) ; } ; let fields : Vec < _ > = map . iter () . collect () ; if fields . len () != 9 || fields . iter () . zip (0_u64 ..) . any (| ((key , _) , index) | * * key != Value :: Unsigned (index)) { return Err (EncodingError :: Shape) ; } let field = | index : usize | fields [index] . 1 ; if ! matches ! (field (0) , Value :: Text (namespace) if namespace . as_str () == HEADER_NAMESPACE) { return Err (EncodingError :: Edition) ; } if field (1) != & array ([Value :: Unsigned (3) , Value :: Unsigned (0) , Value :: Unsigned (0)]) { return Err (EncodingError :: Edition) ; } let body = profile :: body_from_projection (field (2)) . map_err (EncodingError :: Profile) ? ; let proposal = ProposalCommitment { recipe : profile :: PROPOSAL_RECIPE . into () , bytes : read_pair (field (3) , profile :: PROPOSAL_RECIPE) ? , } ; let actor_signature = fixed (field (4)) ? ; let content = ContentCommitment { recipe : profile :: CONTENT_RECIPE . into () , bytes : read_pair (field (5) , profile :: CONTENT_RECIPE) ? , } ; let dependency = DependencyCommitment { recipe : profile :: DEPENDENCY_RECIPE . into () , bytes : read_pair (field (6) , profile :: DEPENDENCY_RECIPE) ? , } ; let content_edition = string (field (7)) ? . to_owned () ; if content_edition != \"3\" { return Err (EncodingError :: ContentEdition) ; } let dependency_edition = string (field (8)) ? . to_owned () ; if dependency_edition != \"3\" { return Err (EncodingError :: DependencyEdition) ; } let parts = HeaderParts { body , commitments : ActCommitments { proposal , content , dependency , } , actor_signature , content_edition , dependency_edition , } ; if header_value (& parts) ? != value { return Err (EncodingError :: Shape) ; } Ok (VerifiedHeader { parts , bytes : input . to_vec () , }) }",
+    "class_decision": "authentication-public",
+    "item_premise": "Supplied public header bytes produce checked major-three fields; no signature or authority is established.",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    }
+  }
+}

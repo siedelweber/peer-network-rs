@@ -3,25 +3,25 @@ use super::{ContentRequest, DependencyRequest, ProfileError, ProposalBody, body_
 use pn_interchange::Value;
 use pn_records::{ActId, CandidateLeg, Layout, PublicReference, Role, StructuralBody};
 use pn_records::{EdgeId, LicenseDegree, LicenseQualifiers, Quantity, SettlementReferences};
-fn items(v: &Value) -> Result<&[Value], ProfileError> {
+pub(super) fn items(v: &Value) -> Result<&[Value], ProfileError> {
     match v {
         Value::Array(a) => Ok(a.as_slice()),
         _ => Err(ProfileError::Representation),
     }
 }
-fn string(v: &Value) -> Result<&str, ProfileError> {
+pub(super) fn string(v: &Value) -> Result<&str, ProfileError> {
     match v {
         Value::Text(t) => Ok(t.as_str()),
         _ => Err(ProfileError::Representation),
     }
 }
-fn unsigned(v: &Value) -> Result<u64, ProfileError> {
+pub(super) fn unsigned(v: &Value) -> Result<u64, ProfileError> {
     match v {
         Value::Unsigned(n) => Ok(*n),
         _ => Err(ProfileError::Representation),
     }
 }
-fn signed(v: &Value) -> Result<i64, ProfileError> {
+pub(super) fn signed(v: &Value) -> Result<i64, ProfileError> {
     let n = match v {
         Value::Unsigned(n) => i128::from(*n),
         Value::Negative(n) => n.get(),
@@ -29,7 +29,7 @@ fn signed(v: &Value) -> Result<i64, ProfileError> {
     };
     n.try_into().map_err(|_| ProfileError::Representation)
 }
-fn id(v: &Value) -> Result<ActId, ProfileError> {
+pub(super) fn id(v: &Value) -> Result<ActId, ProfileError> {
     let [tag, author, sequence, family] = items(v)? else {
         return Err(ProfileError::Representation);
     };
@@ -42,7 +42,7 @@ fn id(v: &Value) -> Result<ActId, ProfileError> {
         family: string(family)?.into(),
     })
 }
-fn rrole(v: &Value) -> Result<Role, ProfileError> {
+pub(super) fn rrole(v: &Value) -> Result<Role, ProfileError> {
     match string(v)? {
         "binary" => Ok(Role::Binary),
         "A" => Ok(Role::A),
@@ -50,7 +50,7 @@ fn rrole(v: &Value) -> Result<Role, ProfileError> {
         _ => Err(ProfileError::Representation),
     }
 }
-fn rref(v: &Value) -> Result<PublicReference, ProfileError> {
+pub(super) fn rref(v: &Value) -> Result<PublicReference, ProfileError> {
     let a = items(v)?;
     match a {
         [tag, ..] if string(tag)? == "act" => Ok(PublicReference::Act(id(v)?)),
@@ -66,7 +66,7 @@ fn rref(v: &Value) -> Result<PublicReference, ProfileError> {
         _ => Err(ProfileError::Representation),
     }
 }
-fn degree(v: &Value) -> Result<LicenseDegree, ProfileError> {
+pub(super) fn degree(v: &Value) -> Result<LicenseDegree, ProfileError> {
     let [n, d] = items(v)? else {
         return Err(ProfileError::Representation);
     };

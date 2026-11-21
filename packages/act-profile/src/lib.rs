@@ -4,6 +4,7 @@
 
 mod projection;
 pub mod v2;
+pub mod v3;
 pub use projection::body_from_projection;
 
 use pn_interchange::{Array, Bytes, SecretValue, Text, Value};
@@ -162,13 +163,28 @@ fn role(role: Role) -> &'static str {
     }
 }
 
+fn hash(recipe: &str, tag: &str, fields: Vec<SecretValue>) -> Result<SecretSlice<u8>, ProfileError> {
+    hash_with_limits(recipe, tag, fields, 2_097_152, 2_097_152)
+}
+
 // Caveat: The protected canonical preimage is borrowed only by SHA-256 update after the public prefix; the borrow ends at update, and the hash's fixed-width output immediately enters a secret carrier with the temporary array erased, without an observation field.
 // (´[ROOT-cav:observe:secret-profile-hash-input]´)
 // Justified: The admitted hash accepts a byte slice, so its single update borrows the protected encoding without an ordinary copy.
 #[allow(clippy::disallowed_methods)]
-fn hash(recipe: &str, tag: &str, fields: Vec<SecretValue>) -> Result<SecretSlice<u8>, ProfileError> {
+fn hash_with_limits(
+    recipe: &str,
+    tag: &str,
+    fields: Vec<SecretValue>,
+    encoded_value_limit: usize,
+    allocation_limit: usize,
+) -> Result<SecretSlice<u8>, ProfileError> {
     let value = SecretValue::Array(vec![public(text(tag)), SecretValue::Array(fields)]);
-    let bytes = value.to_secret_canonical_bytes(2_097_152).map_err(|_| ProfileError::Bound)?;
+    let bytes = value
+        .to_secret_canonical_bytes(allocation_limit)
+        .map_err(|_| ProfileError::Bound)?;
+    if secret_length(&bytes) > encoded_value_limit {
+        return Err(ProfileError::Bound);
+    }
     let mut h = Sha256::new();
     h.update(recipe.as_bytes());
     h.update([0]);
@@ -200,16 +216,23 @@ fn host_blinding_value_format(host_blinding_value: &SecretSlice<u8>) -> Result<(
     }
     Ok(())
 }
-// Caveat: Protected bytes are borrowed only to enforce the payload bound, original empty-state request or exact content-pre-digest width; the borrow ends with the length check and no byte content is observed.
-// (´[ROOT-cav:observe:secret-profile-payload-length]´)
-// Justified: The protected container's length is needed before projection allocation; only the permitted size and empty predicate leave this borrow.
-#[allow(clippy::disallowed_methods)]
 fn payload_length(payload: &SecretSlice<u8>) -> Result<usize, ProfileError> {
-    let len = payload.expose_secret(/* (´[ROOT-cav:observe:secret-profile-payload-length]´) */).len();
+    let len = secret_length(payload);
     if len > 65_536 {
         return Err(ProfileError::Bound);
     }
     Ok(len)
+}
+
+// Caveat: Protected bytes are borrowed only for a bound, the empty-state request or an exact width check; the borrow ends with the length check and no byte content is observed.
+// (´[ROOT-cav:observe:secret-profile-payload-length]´)
+// Justified: The secret carrier has no public length operation, while the admitted bounds require its size.
+#[allow(clippy::disallowed_methods)]
+fn secret_length<T>(bytes: &SecretBox<T>) -> usize
+where
+    T: Zeroize + AsRef<[u8]> + ?Sized,
+{
+    bytes.expose_secret(/* (´[ROOT-cav:observe:secret-profile-payload-length]´) */).as_ref().len()
 }
 
 // Caveat: The dependency list is borrowed for identifier validation, strict records ordering and projection into private canonical fields; its borrow ends before encoding and no ordinary Value contains its identifiers.

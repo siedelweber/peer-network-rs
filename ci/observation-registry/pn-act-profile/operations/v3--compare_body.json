@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::compare_body",
+    "owner": "ACTPROFILE",
+    "signature": "fn compare_body (body : & ProposalBody , expected_body : & ProposalBody) -> Result < () , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::compare_body",
+    "body": "{ body_projection (body) ? ; body_projection (expected_body) ? ; if body != expected_body { return Err (ProfileError :: Body) ; } Ok (()) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "Both B3 bodies are public; this reports exact structural equality, not an authenticated opening.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

@@ -97,8 +97,8 @@ The implemented follow-up adds entry_origin_installation_transfer (the shared in
 | documents | 29 | 19 | 10 | 0 | 22 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
 | pn | 34 | 24 | 10 | 0 | 29 |
-| pn-act-authentication | 35 | 35 | 0 | 0 | 20 |
-| pn-act-profile | 26 | 23 | 3 | 0 | 11 |
+| pn-act-authentication | 51 | 51 | 0 | 0 | 28 |
+| pn-act-profile | 42 | 39 | 3 | 0 | 17 |
 | pn-credential-derivation | 6 | 4 | 2 | 0 | 1 |
 | pn-credential-generator | 6 | 1 | 5 | 0 | 2 |
 | pn-epoch | 98 | 74 | 24 | 0 | 149 |
@@ -481,13 +481,13 @@ The implementation owner is the foundation implementer with repository review. T
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-interchange-fixture-equality` In `packages/interchange/src/encode.rs`, function `fixture_equal`: The fixed-vector encoded result is borrowed solely for equality with the fixture's public expected encoding; the borrow ends at the comparison and no borrowed bytes enter tracing. Source method: `expose_secret`. Fixture-only boundary.
 
-**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-hash-input` In `packages/act-profile/src/lib.rs`, function `hash`: The protected canonical preimage is borrowed only by SHA-256 update after the public prefix; the borrow ends at update, and the hash's fixed-width output immediately enters a secret carrier with the temporary array erased, without an observation field. Source method: `expose_secret`. Production boundary.
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-hash-input` In `packages/act-profile/src/lib.rs`, function `hash_with_limits`: The protected canonical preimage is borrowed only by SHA-256 update after the public prefix; the borrow ends at update, and the hash's fixed-width output immediately enters a secret carrier with the temporary array erased, without an observation field. Source method: `expose_secret`. Production boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-profile-nonce-format` In `packages/act-profile/src/lib.rs`, function `author_blinding_value_format`: An author blinding value is borrowed to check its forty-byte format and public sequence prefix; the borrow ends at validation and reveals neither its suffix nor a claim of entropy. Source method: `expose_secret`. Production boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-profile-salt-format` In `packages/act-profile/src/lib.rs`, function `host_blinding_value_format`: The host blinding value is borrowed only to check its forty-eight-byte format; the borrow ends at len and establishes no allocation, uniqueness or entropy. Source method: `expose_secret`. Production boundary.
 
-**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-payload-length` In `packages/act-profile/src/lib.rs`, function `payload_length`: Protected bytes are borrowed only to enforce the payload bound, original empty-state request or exact content-pre-digest width; the borrow ends with the length check and no byte content is observed. Source method: `expose_secret`. Production boundary.
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-payload-length` In `packages/act-profile/src/lib.rs`, function `secret_length`: Protected bytes are borrowed only for a bound, the empty-state request or an exact width check; the borrow ends with the length check and no byte content is observed. Source method: `expose_secret`. Production boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-profile-dependency-projection` In `packages/act-profile/src/lib.rs`, function `dependencies`: The dependency list is borrowed for identifier validation, strict records ordering and projection into private canonical fields; its borrow ends before encoding and no ordinary Value contains its identifiers. Source method: `expose_secret`. Production boundary.
 

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "item": "v3::encode_material",
+    "owner": "ACTAUTH",
+    "signature": "fn encode_material (material : & AuthenticationMaterial , context : & MaterialContext) -> Result < Vec < u8 > , EncodingError >",
+    "claim": "ACTAUTH::def:authentication:version-three",
+    "mode": "instrumented",
+    "shape": "shape-wallet"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/v3.rs::v3::encode_material",
+    "body": "{ let bytes = material_value (material) . to_canonical_bytes () ; if bytes . len () > MATERIAL_LIMIT { return Err (EncodingError :: Bound) ; } check_material (material , context) ? ; Ok (bytes) }",
+    "class_decision": "authentication-public",
+    "item_premise": "Public selected material and context produce canonical disclosure bytes; no key authority is established.",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    }
+  }
+}

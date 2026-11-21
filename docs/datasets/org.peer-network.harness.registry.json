@@ -1800,13 +1800,28 @@
       "budget": "pure-suite",
       "cases": [
         "pn-act-authentication::verification::tests::membership_order",
-        "pn-act-authentication::verification::tests::verification_length_order"
+        "pn-act-authentication::verification::tests::verification_length_order",
+        "pn-act-authentication::v3::tests::header_bytes_guard"
       ],
       "implementation": "pn-act-authentication-rust",
       "kind": "suite",
       "level": "unit",
       "name": "pn-act-authentication",
       "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "doctest::packages/act-authentication/src/v3.rs - v3::ProposalMessage [example 1]",
+        "doctest::packages/act-authentication/src/v3.rs - v3::ProposalMessage [example 2]"
+      ],
+      "implementation": "pn-act-authentication-rust",
+      "kind": "suite",
+      "level": "doctest",
+      "name": "pn-act-authentication-doctests",
+      "runner": "doctest",
       "status": "active",
       "tier": "fast"
     },
@@ -1820,7 +1835,13 @@
         "pn-act-authentication::encoding::v2_cases::header_domain_refusals",
         "pn-act-authentication::encoding::canonical_header_material",
         "pn-act-authentication::encoding::role_messages",
-        "pn-act-authentication::encoding::header_comparison"
+        "pn-act-authentication::encoding::header_comparison",
+        "pn-act-authentication::encoding::v3_cases::header_values",
+        "pn-act-authentication::encoding::v3_cases::header_order",
+        "pn-act-authentication::encoding::v3_cases::material_values",
+        "pn-act-authentication::encoding::v3_cases::material_order",
+        "pn-act-authentication::encoding::v3_cases::roles_values",
+        "pn-act-authentication::encoding::v3_cases::roles_order"
       ],
       "implementation": "pn-act-authentication-rust",
       "kind": "suite",
@@ -1872,7 +1893,16 @@
         "pn-act-profile::tests::commitment_trace_privacy",
         "pn-act-profile::tests::fixed_recipes_and_controls",
         "pn-act-profile::tests::proposal_projection_vectors",
-        "pn-act-profile::tests::opened_replay"
+        "pn-act-profile::tests::opened_replay",
+        "pn-act-profile::v3::tests::body_values",
+        "pn-act-profile::v3::tests::body_order",
+        "pn-act-profile::v3::tests::proposal_values",
+        "pn-act-profile::v3::tests::proposal_order",
+        "pn-act-profile::v3::tests::content_values",
+        "pn-act-profile::v3::tests::content_order",
+        "pn-act-profile::v3::tests::dependency_values",
+        "pn-act-profile::v3::tests::dependency_order",
+        "pn-act-profile::v3::courtesy::tests::payload_bound"
       ],
       "implementation": "pn-act-profile-rust",
       "kind": "suite",

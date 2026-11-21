@@ -7,16 +7,32 @@
     "membership": {
       "explicit": [
         "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyIds as Zeroize>::zeroize",
-        "pn-act-profile::packages/act-profile/src/lib.rs::proposal_commitment",
+        "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyIds as std :: fmt :: Debug>::fmt",
+        "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::open",
+        "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::targets",
         "pn-act-profile::packages/act-profile/src/lib.rs::content_commitment",
-        "pn-act-profile::packages/act-profile/src/lib.rs::dependency_commitment",
         "pn-act-profile::packages/act-profile/src/lib.rs::content_matches_supplied_commitment",
         "pn-act-profile::packages/act-profile/src/lib.rs::dependencies_match_supplied_commitment",
+        "pn-act-profile::packages/act-profile/src/lib.rs::dependency_commitment",
+        "pn-act-profile::packages/act-profile/src/lib.rs::proposal_commitment",
         "pn-act-profile::packages/act-profile/src/lib.rs::proposal_matches_supplied_commitment",
-        "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::targets",
-        "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::open",
         "pn-act-profile::packages/act-profile/src/lib.rs::render_payload",
-        "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyIds as std :: fmt :: Debug>::fmt"
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::ComputedProposalCommitment::as_recorded",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::body_from_projection",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::body_projection",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::compare_body",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::computed_proposal_commitment",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::computed_proposal_matches_supplied_commitment",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::content_commitment",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::content_matches_supplied_commitment",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::content_pre_digest",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::courtesy::check_payload_bound",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::decode_body",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::dependencies_match_supplied_commitment",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::dependency_commitment",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::encode_body",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::proposal_commitment",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::proposal_matches_supplied_commitment"
       ]
     }
   }

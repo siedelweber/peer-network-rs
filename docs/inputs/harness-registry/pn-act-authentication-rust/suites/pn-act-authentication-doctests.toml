@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-act-authentication-doctests"
+status = "active"
+runner = "doctest"
+level = "doctest"
+implementation = "pn-act-authentication-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["doctest::packages/act-authentication/src/v3.rs - v3::ProposalMessage [example 1]", "doctest::packages/act-authentication/src/v3.rs - v3::ProposalMessage [example 2]"]

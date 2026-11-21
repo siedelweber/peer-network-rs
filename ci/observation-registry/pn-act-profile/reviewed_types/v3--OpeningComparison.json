@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::OpeningComparison",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "syntax": "# [doc = \" Comparison with a supplied opening, or its absence.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum OpeningComparison { Unavailable , Matches , }"
+  }
+}

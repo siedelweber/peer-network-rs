@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::AuthenticationMaterial",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "syntax": "# [doc = \" Public material selected by an independent run and host context.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AuthenticationMaterial { pub run : [u8 ; 32] , pub actor_key : [u8 ; 32] , pub host_identity : String , pub host_key : [u8 ; 32] , }"
+  }
+}

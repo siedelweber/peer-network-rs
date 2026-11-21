@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::ProposalMessage",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "syntax": "# [doc = \" V3 proposal role bytes, never convertible to an earlier verifier's role.\"] # [doc = \"\"] # [doc = \" ```compile_fail\"] # [doc = \" fn old_verifier(_: &pn_act_authentication::ProposalMessage) {}\"] # [doc = \" fn check(message: &pn_act_authentication::v3::ProposalMessage) {\"] # [doc = \"     old_verifier(message);\"] # [doc = \" }\"] # [doc = \" ```\"] # [doc = \"\"] # [doc = \" ```compile_fail\"] # [doc = \" fn expect_proposal(_: &pn_act_authentication::v3::ProposalMessage) {}\"] # [doc = \" fn check(message: &pn_act_authentication::v3::SealMessage) {\"] # [doc = \"     expect_proposal(message);\"] # [doc = \" }\"] # [doc = \" ```\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct ProposalMessage ([u8 ; 32]) ;"
+  }
+}

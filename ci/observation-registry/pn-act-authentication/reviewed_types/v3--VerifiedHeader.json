@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::VerifiedHeader",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "syntax": "# [doc = \" Encoding-checked header; “verified” does not mean a signature was checked.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct VerifiedHeader { parts : HeaderParts , bytes : Vec < u8 > , }"
+  }
+}

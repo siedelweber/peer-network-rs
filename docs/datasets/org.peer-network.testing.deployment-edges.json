@@ -8,6 +8,13 @@
   "rows": [
     {
       "conditional_on": "",
+      "reason": "These pure producers and comparison consumers implement only the admitted representation, without production selection or authority.",
+      "relation": "realizes",
+      "source": "ACTAUTH::def:authentication:version-three",
+      "target": "ROOT::amend:identity:formation-three"
+    },
+    {
+      "conditional_on": "",
       "reason": "This scopes legacy evidence and retains the new-tag implementation hold, without proving private entropy.",
       "relation": "realizes",
       "source": "ACTAUTH::rec:authentication:encoding-evidence",
@@ -54,6 +61,13 @@
       "relation": "realizes",
       "source": "ACTPROFILE::def:profile:recipes",
       "target": "ROOT::amend:identity:act-proposal-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "These pure producers and comparison consumers implement only the admitted representation, without production selection or authority.",
+      "relation": "realizes",
+      "source": "ACTPROFILE::def:profile:version-three",
+      "target": "ROOT::amend:identity:formation-three"
     },
     {
       "conditional_on": "",

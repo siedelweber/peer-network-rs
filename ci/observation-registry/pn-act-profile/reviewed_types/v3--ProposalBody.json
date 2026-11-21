@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::ProposalBody",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "syntax": "# [doc = \" Exact authored third body. Request fields do not exist in this edition.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ProposalBody { pub id : ActId , pub retirement_point : [u8 ; 32] , pub body : StructuralBody , pub legs : Vec < CandidateLeg > , pub protocol_references : Vec < PublicReference > , pub signed_extension : Vec < u8 > , }"
+  }
+}

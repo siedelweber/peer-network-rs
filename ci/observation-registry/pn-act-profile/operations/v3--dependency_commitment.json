@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::dependency_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn dependency_commitment (id : & ActId , proposal : & ProposalCommitment , host_dependency_blinding_value : & SecretSlice < u8 > , dependencies : & SecretBox < DependencyIds > ,) -> Result < DependencyCommitment , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::dependency_commitment",
+    "body": "{ if proposal . recipe != PROPOSAL_RECIPE { return Err (ProfileError :: Recipe) ; } if ! valid_id (id) { return Err (ProfileError :: Representation) ; } check_host (host_dependency_blinding_value) ? ; let dependencies = dependency_projection (dependencies) ? ; let digest = frame_hash (DEPENDENCY_RECIPE , \"PN-dependency-v3\" , vec ! [public (identifier (id)) , public (Value :: Bytes (Bytes :: from (proposal . bytes . to_vec ()))) , SecretValue :: Bytes (host_dependency_blinding_value . clone ()) , dependencies ,] ,) ? ; Ok (DependencyCommitment { recipe : DEPENDENCY_RECIPE . into () , bytes : publish (& digest) . map_err (| _ | ProfileError :: Dependency) ? , }) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The protected dependency list stays inside its carrier; the final C_D is public and records only the supplied-input reduction.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

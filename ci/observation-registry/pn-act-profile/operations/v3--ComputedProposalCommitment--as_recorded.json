@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::ComputedProposalCommitment::as_recorded",
+    "owner": "ACTPROFILE",
+    "signature": "fn as_recorded (& self) -> & ProposalCommitment",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::ComputedProposalCommitment::as_recorded",
+    "body": "{ & self . 0 }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The opaque computed capability yields its public P residue without exposing an opening or proving a signature.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

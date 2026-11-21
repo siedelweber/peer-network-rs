@@ -2498,6 +2498,54 @@
       "review": "The assertions require exact refusals for a missing retirement field, unsupported header and material editions, every missing header key and conflicting original identity or retirement data. Existing v1 and v2 decoders reject the other edition."
     },
     {
+      "operation": "pn-act-authentication::encoding::v3_cases::header_order",
+      "path": "packages/act-authentication/tests/encoding/v3_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:version-three-header-refusal-order",
+      "before": "Header byte, field and adjacent-overlap refusals preserve the admitted order.",
+      "after": "Header byte, field and adjacent-overlap refusals preserve the admitted order.",
+      "review": "The selected v3 case asserts the listed malformed/substituted inputs and jointly violated guards return the admission's first cause; unreachable guards are labelled as guard-level evidence."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::v3_cases::header_values",
+      "path": "packages/act-authentication/tests/encoding/v3_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:version-three-header-values",
+      "before": "Three independent canonical headers agree with the selected pure producer and comparator.",
+      "after": "Three independent canonical headers agree with the selected pure producer and comparator.",
+      "review": "The selected v3 case asserts independent admitted values agree with the explicitly selected producer and comparison consumer; supplied valid openings and exact authored values are the premises."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::v3_cases::material_order",
+      "path": "packages/act-authentication/tests/encoding/v3_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:version-three-material-refusal-order",
+      "before": "Material refuses first on shape, edition, run, host and header version.",
+      "after": "Material refuses first on shape, edition, run, host and header version.",
+      "review": "The selected v3 case asserts the listed malformed/substituted inputs and jointly violated guards return the admission's first cause; unreachable guards are labelled as guard-level evidence."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::v3_cases::material_values",
+      "path": "packages/act-authentication/tests/encoding/v3_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:version-three-material-values",
+      "before": "Three material values agree under independently selected run and host contexts.",
+      "after": "Three material values agree under independently selected run and host contexts.",
+      "review": "The selected v3 case asserts independent admitted values agree with the explicitly selected producer and comparison consumer; supplied valid openings and exact authored values are the premises."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::v3_cases::roles_order",
+      "path": "packages/act-authentication/tests/encoding/v3_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:version-three-roles-refusal-order",
+      "before": "Role framing refuses invalid material and major-version context first.",
+      "after": "Role framing refuses invalid material and major-version context first.",
+      "review": "The selected v3 case asserts invalid recipe/material context refuses at the admitted first cause before a role value is formed. Cross-role byte inequality belongs to roles_values; it is a boolean equality outcome, not a new protocol cause."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::v3_cases::roles_values",
+      "path": "packages/act-authentication/tests/encoding/v3_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:version-three-roles-values",
+      "before": "Three independently framed role messages agree without asserting signatures.",
+      "after": "Three independently framed role messages agree without asserting signatures.",
+      "review": "The selected v3 case asserts independent role bytes agree, and substituting another role's expected bytes compares unequal, under valid admitted inputs; no signature claim."
+    },
+    {
       "operation": "pn-act-authentication::public::asset_identifiers",
       "path": "packages/act-authentication/tests/public.rs",
       "claim": "ACTAUTH::claim:authentication:asset-identifiers-match-daemon",
@@ -2546,6 +2594,14 @@
       "review": "Read the retained independent publication and explicit typed refusals. Thread-local counters sit at actual called boundaries. The finite assertions distinguish publication validity, wrapper admission, association and parsing order; they claim no complete act verification."
     },
     {
+      "operation": "pn-act-authentication::v3::tests::header_bytes_guard",
+      "path": "packages/act-authentication/src/v3.rs",
+      "claim": "ACTAUTH::claim:authentication:version-three-header-byte-guard",
+      "before": "The private final byte guard has equal and unequal canonical operands.",
+      "after": "The private final byte guard has equal and unequal canonical operands.",
+      "review": "The selected v3 case asserts equal/different canonical operands establish the final private equality guard, not a reachable public first refusal."
+    },
+    {
       "operation": "pn-act-authentication::verification::tests::membership_order",
       "path": "packages/act-authentication/src/verification/tests.rs",
       "claim": "ACTAUTH::claim:authentication:membership-parses-before-hashing",
@@ -2592,6 +2648,78 @@
       "before": "",
       "after": "Claim: Independently authored proposal vectors bind both layouts, every reference constructor, signed and nonnegative exact pairs, both license states, all settlement states and all content and dependency request states.",
       "review": "Read the exact vector comparisons and corruption refusals, redacting dependency Debug, complete capture accounting and public-route positive. Protected-input privacy is a construction property of secrecy types and labelled exits; no trace absence search is evidence. The independent reader shares neither the production projection nor encoder."
+    },
+    {
+      "operation": "pn-act-profile::v3::courtesy::tests::payload_bound",
+      "path": "packages/act-profile/src/v3.rs",
+      "claim": "ACTPROFILE::claim:profile:version-three-carriage-bound-is-separate",
+      "before": "Carriage rejects 65,537 while formation accepts it.",
+      "after": "Carriage rejects 65,537 while formation accepts it.",
+      "review": "The selected v3 case asserts 65,536/65,537 distinguish the carriage bound while formation accepts both; no service claim."
+    },
+    {
+      "operation": "pn-act-profile::v3::tests::body_order",
+      "path": "packages/act-profile/src/v3/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:version-three-body-refusal-order",
+      "before": "B3 rejects malformed bytes and field substitutions in its admitted order.",
+      "after": "B3 rejects malformed bytes and field substitutions in its admitted order.",
+      "review": "The selected v3 case asserts the listed malformed/substituted inputs and jointly violated guards return the admission's first cause; unreachable guards are labelled as guard-level evidence."
+    },
+    {
+      "operation": "pn-act-profile::v3::tests::body_values",
+      "path": "packages/act-profile/src/v3/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:version-three-body-values",
+      "before": "Independent B3 bytes round-trip through both selected paths and bind the independent residues.",
+      "after": "Independent B3 bytes round-trip through both selected paths and bind the independent residues.",
+      "review": "The selected v3 case round-trips independent B3 bytes through decoding, encoding and projection, while independently recorded residues bind the values; it does not originate typed authored inputs."
+    },
+    {
+      "operation": "pn-act-profile::v3::tests::content_order",
+      "path": "packages/act-profile/src/v3/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:version-three-content-refusal-order",
+      "before": "Content checks recipes and present formats before the absence branch.",
+      "after": "Content checks recipes and present formats before the absence branch.",
+      "review": "The selected v3 case asserts the listed malformed/substituted inputs and jointly violated guards return the admission's first cause; unreachable guards are labelled as guard-level evidence."
+    },
+    {
+      "operation": "pn-act-profile::v3::tests::content_values",
+      "path": "packages/act-profile/src/v3/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:version-three-content-values",
+      "before": "Content residue agrees with independent values and absence is explicit.",
+      "after": "Content residue agrees with independent values and absence is explicit.",
+      "review": "The selected v3 case asserts independent admitted values agree with the explicitly selected producer and comparison consumer; supplied valid openings and exact authored values are the premises."
+    },
+    {
+      "operation": "pn-act-profile::v3::tests::dependency_order",
+      "path": "packages/act-profile/src/v3/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:version-three-dependency-refusal-order",
+      "before": "Dependency recipes precede absence, then malformed D precedes equality.",
+      "after": "Dependency recipes precede absence, then malformed D precedes equality.",
+      "review": "The selected v3 case asserts the listed malformed/substituted inputs and jointly violated guards return the admission's first cause; unreachable guards are labelled as guard-level evidence."
+    },
+    {
+      "operation": "pn-act-profile::v3::tests::dependency_values",
+      "path": "packages/act-profile/src/v3/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:version-three-dependency-values",
+      "before": "Complete D and `C_D` agree with independent empty and nonempty anchors.",
+      "after": "Complete D and `C_D` agree with independent empty and nonempty anchors.",
+      "review": "The selected v3 case asserts independent admitted values agree with the explicitly selected producer and comparison consumer; supplied valid openings and exact authored values are the premises."
+    },
+    {
+      "operation": "pn-act-profile::v3::tests::proposal_order",
+      "path": "packages/act-profile/src/v3/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:version-three-proposal-refusal-order",
+      "before": "Proposal recipe and supplied opening defects precede reduction and equality.",
+      "after": "Proposal recipe and supplied opening defects precede reduction and equality.",
+      "review": "The selected v3 case asserts the listed malformed/substituted inputs and jointly violated guards return the admission's first cause; unreachable guards are labelled as guard-level evidence."
+    },
+    {
+      "operation": "pn-act-profile::v3::tests::proposal_values",
+      "path": "packages/act-profile/src/v3/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:version-three-proposal-values",
+      "before": "Full and host proposal routes reproduce all three independent residues.",
+      "after": "Full and host proposal routes reproduce all three independent residues.",
+      "review": "The selected v3 case asserts independent admitted values agree with the explicitly selected producer and comparison consumer; supplied valid openings and exact authored values are the premises."
     },
     {
       "operation": "pn-credential-derivation::tests::bounds_and_representations",

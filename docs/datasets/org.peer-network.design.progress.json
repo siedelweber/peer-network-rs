@@ -40884,40 +40884,6 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "11",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "11",
-          "num_exact": true,
-          "num_relation": "="
-        }
-      },
-      "numeric_display": {
-        "exact_citing": {
-          "display": "exact",
-          "exact_digits": 32
-        },
-        "total": {
-          "display": "exact",
-          "exact_digits": 32
-        }
-      },
-      "total": 11
-    },
-    {
-      "category": "record-coverage",
-      "exact_citing": 0,
-      "name": "pn-act-profile",
-      "number_forms": {
-        "exact_citing": {
-          "exact": "0",
-          "exact_exact": true,
-          "exact_relation": "=",
-          "num": "0",
-          "num_exact": true,
-          "num_relation": "="
-        },
-        "total": {
           "exact": "12",
           "exact_exact": true,
           "exact_relation": "=",
@@ -40937,6 +40903,40 @@
         }
       },
       "total": 12
+    },
+    {
+      "category": "record-coverage",
+      "exact_citing": 0,
+      "name": "pn-act-profile",
+      "number_forms": {
+        "exact_citing": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "total": {
+          "exact": "13",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "13",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "exact_citing": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "total": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "total": 13
     },
     {
       "category": "record-coverage",

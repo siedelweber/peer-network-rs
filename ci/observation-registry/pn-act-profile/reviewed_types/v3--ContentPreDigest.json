@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::ContentPreDigest",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "syntax": "# [doc = \" An opaque received pre-digest with its asserted `ActId` association.\"] # [derive (Debug)] pub struct ContentPreDigest { pub act : ActId , pub bytes : SecretSlice < u8 > , }"
+  }
+}

@@ -48,8 +48,8 @@
 | documents | 11 | 0 |
 | execwrap | 62 | 0 |
 | pn | 15 | 0 |
-| pn-act-authentication | 11 | 0 |
-| pn-act-profile | 12 | 0 |
+| pn-act-authentication | 12 | 0 |
+| pn-act-profile | 13 | 0 |
 | pn-credential-derivation | 7 | 0 |
 | pn-credential-generator | 9 | 0 |
 | pn-epoch | 55 | 19 |

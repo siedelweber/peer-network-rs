@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::ProfileError",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "syntax": "# [doc = \" A third-formation refusal, without translating an earlier edition's causes.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ProfileError { # [error (\"unsupported commitment recipe\")] Recipe , # [error (\"formation bound exceeded\")] Bound , # [error (\"noncanonical body encoding\")] Canonical , # [error (\"invalid body shape\")] BodyShape , # [error (\"proposal body differs\")] Body , # [error (\"invalid blinding value\")] Blinding , # [error (\"invalid dependency list\")] Dependencies , # [error (\"invalid content pre-digest\")] ContentPreDigest , # [error (\"invalid representation\")] Representation , # [error (\"proposal commitment differs\")] Proposal , # [error (\"content commitment differs\")] Content , # [error (\"dependency commitment differs\")] Dependency , }"
+  }
+}

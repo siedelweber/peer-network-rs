@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::SealMessage",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "syntax": "# [doc = \" V3 host seal role bytes.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct SealMessage ([u8 ; 32]) ;"
+  }
+}

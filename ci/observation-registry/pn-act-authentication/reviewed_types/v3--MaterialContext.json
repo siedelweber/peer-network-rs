@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::MaterialContext",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "syntax": "# [doc = \" Independently selected expectations for the public material.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct MaterialContext { pub selected_run : [u8 ; 32] , pub act : ActId , pub expected_host : String , pub header_version : [u64 ; 3] , }"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "v3::HeaderParts",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "kind": "derive",
+    "class_decision": "authentication-public",
+    "expansion_review": "Generated traits operate on public canonical representation and digest values only; they create no signature verification or authority verdict."
+  }
+}

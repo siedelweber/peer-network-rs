@@ -43,21 +43,21 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-act-authentication"
-operations = 35
-instrumented = 35
+operations = 51
+instrumented = 51
 exceptions = 0
 helpers = 0
-generators = 20
+generators = 28
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 
 [[rows]]
 name = "pn-act-profile"
-operations = 26
-instrumented = 23
+operations = 42
+instrumented = 39
 exceptions = 3
 helpers = 0
-generators = 11
+generators = 17
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 

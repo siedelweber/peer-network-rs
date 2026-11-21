@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::body_from_projection",
+    "owner": "ACTPROFILE",
+    "signature": "fn body_from_projection (value : & Value) -> Result < ProposalBody , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::body_from_projection",
+    "body": "{ if value . canonical_len () > BODY_LIMIT { return Err (ProfileError :: Bound) ; } let body = parse_body (value) ? ; validate_body (& body) ? ; if structural_value (& body) != * value { return Err (ProfileError :: BodyShape) ; } Ok (body) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The supplied B3 projection is public; checked structure returns a typed body without authenticating its author.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

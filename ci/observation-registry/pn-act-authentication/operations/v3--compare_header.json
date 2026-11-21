@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "item": "v3::compare_header",
+    "owner": "ACTAUTH",
+    "signature": "fn compare_header (input : & [u8] , expected : & HeaderParts) -> Result < () , EncodingError >",
+    "claim": "ACTAUTH::def:authentication:version-three",
+    "mode": "instrumented",
+    "shape": "shape-wallet"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/v3.rs::v3::compare_header",
+    "body": "{ let actual = decode_header (input) ? ; profile :: compare_body (& actual . parts . body , & expected . body) . map_err (| cause | { if cause == profile :: ProfileError :: Body { EncodingError :: Body } else { EncodingError :: Profile (cause) } }) ? ; if actual . parts . commitments . proposal != expected . commitments . proposal { return Err (EncodingError :: Proposal) ; } if actual . parts . commitments . content != expected . commitments . content { return Err (EncodingError :: Content) ; } if actual . parts . commitments . dependency != expected . commitments . dependency { return Err (EncodingError :: Dependency) ; } if actual . parts . actor_signature != expected . actor_signature { return Err (EncodingError :: ActorSignature) ; } if actual . parts . content_edition != expected . content_edition { return Err (EncodingError :: ContentEdition) ; } if actual . parts . dependency_edition != expected . dependency_edition { return Err (EncodingError :: DependencyEdition) ; } compare_header_bytes (input , & encode_header (expected) ? . bytes) }",
+    "class_decision": "authentication-public",
+    "item_premise": "Supplied public header bytes are compared with independently expected public fields in the recorded order.",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    }
+  }
+}

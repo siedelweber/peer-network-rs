@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::proposal_matches_supplied_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn proposal_matches_supplied_commitment (body : & ProposalBody , recorded_proposal : & ProposalCommitment , content_pre_digest : & ContentPreDigest , author_dependency_blinding_value : & SecretSlice < u8 > , dependencies : & SecretBox < DependencyIds > ,) -> Result < () , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::proposal_matches_supplied_commitment",
+    "body": "{ if recorded_proposal . recipe != PROPOSAL_RECIPE { return Err (ProfileError :: Recipe) ; } let computed = proposal_commitment (body , content_pre_digest , author_dependency_blinding_value , dependencies) ? ; if computed != * recorded_proposal { return Err (ProfileError :: Proposal) ; } Ok (()) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The received hY and D remain protected; a supplied public P is compared with a recomputed public P, without authenticating an anchor.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

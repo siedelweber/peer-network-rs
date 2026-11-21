@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::HeaderParts",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "syntax": "# [doc = \" Public B3, residues and signing-boundary fields, without authority.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct HeaderParts { pub body : profile :: ProposalBody , pub commitments : ActCommitments , pub actor_signature : [u8 ; 64] , pub content_edition : String , pub dependency_edition : String , }"
+  }
+}

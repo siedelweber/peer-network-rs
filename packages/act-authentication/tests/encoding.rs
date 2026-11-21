@@ -4,6 +4,8 @@ use std::collections::BTreeSet;
 
 #[path = "encoding/v2_cases.rs"]
 mod v2_cases;
+#[path = "encoding/v3_cases.rs"]
+mod v3_cases;
 
 fn hex(text: &str) -> Vec<u8> {
     text.as_bytes()

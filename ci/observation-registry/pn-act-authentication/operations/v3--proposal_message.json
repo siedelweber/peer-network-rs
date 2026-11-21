@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "item": "v3::proposal_message",
+    "owner": "ACTAUTH",
+    "signature": "fn proposal_message (proposal : & profile :: ComputedProposalCommitment) -> ProposalMessage",
+    "claim": "ACTAUTH::def:authentication:version-three",
+    "mode": "instrumented",
+    "shape": "shape-wallet"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/v3.rs::v3::proposal_message",
+    "body": "{ ProposalMessage (proposal . as_recorded () . bytes) }",
+    "class_decision": "authentication-public",
+    "item_premise": "A computed v3 proposal capability yields public proposal-role bytes; no signature is made.",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    }
+  }
+}

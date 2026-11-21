@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::ComputedProposalCommitment",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "syntax": "# [doc = \" The Actor's computed P, constructible only from the complete opening.\"] # [derive (Debug)] pub struct ComputedProposalCommitment (ProposalCommitment) ;"
+  }
+}

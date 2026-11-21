@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::computed_proposal_matches_supplied_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn computed_proposal_matches_supplied_commitment (body : & ProposalBody , recorded_proposal : & ProposalCommitment , content_pair : & ContentPair , author_dependency_blinding_value : & SecretSlice < u8 > , dependencies : & SecretBox < DependencyIds > ,) -> Result < () , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::computed_proposal_matches_supplied_commitment",
+    "body": "{ if recorded_proposal . recipe != PROPOSAL_RECIPE { return Err (ProfileError :: Recipe) ; } let computed = computed_proposal_commitment (body , content_pair , author_dependency_blinding_value , dependencies) ? ; if computed . as_recorded () != recorded_proposal { return Err (ProfileError :: Proposal) ; } Ok (()) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The full private openings remain protected; the public P comparison is a verdict, not authority or custody evidence.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "item": "v3::decode_material",
+    "owner": "ACTAUTH",
+    "signature": "fn decode_material (input : & [u8] , context : & MaterialContext) -> Result < AuthenticationMaterial , EncodingError >",
+    "claim": "ACTAUTH::def:authentication:version-three",
+    "mode": "instrumented",
+    "shape": "shape-wallet"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/v3.rs::v3::decode_material",
+    "body": "{ let value = canonical (input , MATERIAL_LIMIT) ? ; let [edition , run , actor_key , host_identity , host_key] = items (& value) ? else { return Err (EncodingError :: Shape) ; } ; let edition = string (edition) ? ; let result = AuthenticationMaterial { run : fixed (run) ? , actor_key : fixed (actor_key) ? , host_identity : string (host_identity) ? . into () , host_key : fixed (host_key) ? , } ; if edition != AUTHENTICATION_EDITION { return Err (EncodingError :: Edition) ; } check_material (& result , context) ? ; Ok (result) }",
+    "class_decision": "authentication-public",
+    "item_premise": "Supplied public material bytes are checked against an independently supplied run, act, host and version context.",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    }
+  }
+}

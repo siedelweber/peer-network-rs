@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "v3::OpeningComparison",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "kind": "derive",
+    "class_decision": "act-profile-private",
+    "expansion_review": "Generated traits preserve redacted secret carrier Debug and public residue values; they create no secret accessor, signing route or authority verdict."
+  }
+}

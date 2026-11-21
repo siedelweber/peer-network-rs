@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::proposal_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn proposal_commitment (body : & ProposalBody , content_pre_digest : & ContentPreDigest , author_dependency_blinding_value : & SecretSlice < u8 > , dependencies : & SecretBox < DependencyIds > ,) -> Result < ProposalCommitment , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::proposal_commitment",
+    "body": "{ let projected = body_projection (body) ? ; let content = received (& body . id , content_pre_digest , ProfileError :: ContentPreDigest) ? ; check_author (& body . id , author_dependency_blinding_value) ? ; let dependency = dependency_projection (dependencies) ? ; proposal_from_checked (body , projected , content , author_dependency_blinding_value , dependency) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The received hY and dependency opening remain protected; the final P is public and establishes supplied-input reduction only.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::ApprovalMessage",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "syntax": "# [doc = \" V3 Actor approval role bytes.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct ApprovalMessage ([u8 ; 32]) ;"
+  }
+}

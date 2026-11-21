@@ -6,6 +6,6 @@ level = "unit"
 implementation = "pn-act-profile-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-act-profile::tests::commitment_trace_privacy", "pn-act-profile::tests::fixed_recipes_and_controls", "pn-act-profile::tests::proposal_projection_vectors", "pn-act-profile::tests::opened_replay"]
+cases = ["pn-act-profile::tests::commitment_trace_privacy", "pn-act-profile::tests::fixed_recipes_and_controls", "pn-act-profile::tests::proposal_projection_vectors", "pn-act-profile::tests::opened_replay", "pn-act-profile::v3::tests::body_values", "pn-act-profile::v3::tests::body_order", "pn-act-profile::v3::tests::proposal_values", "pn-act-profile::v3::tests::proposal_order", "pn-act-profile::v3::tests::content_values", "pn-act-profile::v3::tests::content_order", "pn-act-profile::v3::tests::dependency_values", "pn-act-profile::v3::tests::dependency_order", "pn-act-profile::v3::courtesy::tests::payload_bound"]
 case_budgets = { "pn-act-profile::tests::commitment_trace_privacy" = "calibrated-act-profile-commitment-trace-privacy-case" }
 case_budget_reasons = { "pn-act-profile::tests::commitment_trace_privacy" = "The complete recipe and observation-mode matrix retains independent child collectors, authenticated artifact expansion, fixed digests and zero-loss accounting." }

@@ -130,9 +130,73 @@ def refusals():
     )]
 
 
+def refusal_vectors():
+    """Independent, declarative substitutions on the admitted public operands."""
+    cases = []
+    def add(name, owner, change, expected, base_case=3, scope='public'):
+        cases.append(dict(name=name, owner=owner, base_case=base_case,
+                          change=change, expected=expected, scope=scope))
+    for name, change, expected in (
+        ('body-trailing', {'body_bytes': 'append 00'}, 'Canonical'),
+        ('body-nonpreferred', {'body_bytes': 'replace first array head by longer form'}, 'Canonical'),
+        ('body-short', {'body_bytes': 'truncate final byte'}, 'Canonical'),
+        ('body-shape', {'body': 'remove extension member'}, 'BodyShape'),
+        ('body-extension-type', {'body[9]': 'text rather than bytes'}, 'BodyShape'),
+        ('body-author', {'body[0].author': 'foreign run'}, 'BodyShape'),
+        ('body-retirement', {'body[1]': '31 bytes'}, 'BodyShape'),
+        ('body-legs', {'body[3]': 'remove required leg'}, 'BodyShape'),
+        ('body-quantity', {'body[4][0].denominator': 0}, 'BodyShape'),
+        ('body-parent-order', {'body[6]': 'descending ids'}, 'BodyShape'),
+        ('body-protocols', {'body[7]': ['unexpected']}, 'BodyShape'),
+        ('body-settlement', {'body[8]': ['Accept']}, 'BodyShape'),
+        ('body-authored-pair', {'expected.body.quantity': '2/4 instead of 1/2'}, 'Body'),
+    ): add(name, 'B3', change, expected)
+    add('body-bound-and-shape', 'B3', {'body[9]': 'extension+1', 'body[0].family': 'unknown'}, 'Bound', scope='overlap')
+    for name, change, expected in (
+        ('proposal-recipe-body', {'P.recipe': 'v2', 'body[9]': 'extension+1'}, 'Recipe'),
+        ('proposal-ny', {'N_Y': '39 bytes'}, 'Blinding'),
+        ('proposal-nd', {'N_D': '41 bytes'}, 'Blinding'),
+        ('proposal-hy-width', {'hY': '31 bytes'}, 'ContentPreDigest'),
+        ('proposal-hy-act', {'hY.act': 'different sequence'}, 'ContentPreDigest'),
+        ('proposal-d-count', {'D': '1025 distinct identifiers'}, 'Dependencies'),
+        ('proposal-d-order', {'D': 'descending identifiers'}, 'Dependencies'),
+        ('proposal-p', {'expected.P': 'flip first byte'}, 'Proposal'),
+    ): add(name, 'proposal/v3', change, expected)
+    add('proposal-nd-before-y', 'proposal/v3', {'N_D': '39 bytes', 'Y': 'one above preimage limit'}, 'Blinding', scope='overlap')
+    for name, change, expected in (
+        ('content-recipe-absent', {'C_Y.recipe': 'v2', 'opening': None}, 'Recipe'),
+        ('content-sy-absent', {'S_Y': '47 bytes', 'opening': None}, 'Blinding'),
+        ('content-ny-sy', {'N_Y': '39 bytes', 'S_Y': '47 bytes'}, 'Blinding'),
+        ('content-residue', {'expected.C_Y': 'flip first byte'}, 'Content'),
+        ('dependency-recipe-absent', {'C_D.recipe': 'v2', 'opening': None}, 'Recipe'),
+        ('dependency-sd', {'S_D': '49 bytes'}, 'Blinding'),
+        ('dependency-duplicate', {'D': 'duplicate identifier'}, 'Dependencies'),
+        ('dependency-residue', {'expected.C_D': 'flip first byte'}, 'Dependency'),
+    ): add(name, 'opening', change, expected)
+    for name, owner, change, expected in (
+        ('header-namespace', 'header', {'key0': 'foreign namespace'}, 'Edition'),
+        ('header-version', 'header', {'key1': [2, 0, 0]}, 'Edition'),
+        ('header-recipe', 'header', {'key3.recipe': 'v2'}, 'Recipe'),
+        ('header-signature', 'header', {'key4': '63 bytes'}, 'Shape'),
+        ('header-body-proposal', 'header', {'key2': 'invalid B3', 'key3.recipe': 'v2'}, 'BodyShape'),
+        ('header-proposal-content', 'header', {'expected.P': 'different', 'expected.C_Y': 'different'}, 'Proposal'),
+        ('material-edition', 'material', {'edition': 'v2'}, 'Edition'),
+        ('material-run-host', 'material', {'selected_run': 'foreign', 'expected_host': 'foreign'}, 'Run'),
+        ('material-host-version', 'material', {'expected_host': 'foreign', 'header_version': [2, 0, 0]}, 'Host'),
+        ('material-version', 'material', {'header_version': [2, 0, 0]}, 'Edition'),
+        ('roles-material', 'roles', {'expected_host': 'foreign'}, 'Host'),
+    ): add(name, owner, change, expected)
+    encoded = json.dumps(cases, sort_keys=True, separators=(',', ':')).encode()
+    return dict(source='Independent named substitutions on admitted public fixture operands; no package output or signature proof.',
+                cases=cases, cases_sha256=hashlib.sha256(encoded).hexdigest())
+
+
 if __name__ == '__main__':
-    expected = vectors()
-    if len(sys.argv) == 3 and sys.argv[1] == '--write':
-        Path(sys.argv[2]).write_text(json.dumps(expected, indent=2)+'\n')
+    if len(sys.argv) == 3 and sys.argv[1] == '--write-refusals':
+        Path(sys.argv[2]).write_text(json.dumps(refusal_vectors(), indent=2)+'\n')
+    elif len(sys.argv) == 3 and sys.argv[1] == '--check-refusals':
+        assert json.loads(Path(sys.argv[2]).read_text()) == refusal_vectors(), 'independent version-three refusals differ'
+    elif len(sys.argv) == 3 and sys.argv[1] == '--write':
+        Path(sys.argv[2]).write_text(json.dumps(vectors(), indent=2)+'\n')
     else:
-        assert json.load(sys.stdin) == expected, 'independent version-three vectors differ'
+        assert json.load(sys.stdin) == vectors(), 'independent version-three vectors differ'

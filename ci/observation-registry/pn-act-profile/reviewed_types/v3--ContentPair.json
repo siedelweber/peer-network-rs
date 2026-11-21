@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::ContentPair",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "syntax": "# [doc = \" A supplied content opening; protected bytes have no public accessor.\"] # [derive (Debug)] pub struct ContentPair { pub payload : SecretSlice < u8 > , pub author_content_blinding_value : SecretSlice < u8 > , }"
+  }
+}

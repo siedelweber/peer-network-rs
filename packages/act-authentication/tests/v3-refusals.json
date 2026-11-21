@@ -1,0 +1,453 @@
+{
+  "source": "Independent named substitutions on admitted public fixture operands; no package output or signature proof.",
+  "cases": [
+    {
+      "name": "body-trailing",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body_bytes": "append 00"
+      },
+      "expected": "Canonical",
+      "scope": "public"
+    },
+    {
+      "name": "body-nonpreferred",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body_bytes": "replace first array head by longer form"
+      },
+      "expected": "Canonical",
+      "scope": "public"
+    },
+    {
+      "name": "body-short",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body_bytes": "truncate final byte"
+      },
+      "expected": "Canonical",
+      "scope": "public"
+    },
+    {
+      "name": "body-shape",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body": "remove extension member"
+      },
+      "expected": "BodyShape",
+      "scope": "public"
+    },
+    {
+      "name": "body-extension-type",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body[9]": "text rather than bytes"
+      },
+      "expected": "BodyShape",
+      "scope": "public"
+    },
+    {
+      "name": "body-author",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body[0].author": "foreign run"
+      },
+      "expected": "BodyShape",
+      "scope": "public"
+    },
+    {
+      "name": "body-retirement",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body[1]": "31 bytes"
+      },
+      "expected": "BodyShape",
+      "scope": "public"
+    },
+    {
+      "name": "body-legs",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body[3]": "remove required leg"
+      },
+      "expected": "BodyShape",
+      "scope": "public"
+    },
+    {
+      "name": "body-quantity",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body[4][0].denominator": 0
+      },
+      "expected": "BodyShape",
+      "scope": "public"
+    },
+    {
+      "name": "body-parent-order",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body[6]": "descending ids"
+      },
+      "expected": "BodyShape",
+      "scope": "public"
+    },
+    {
+      "name": "body-protocols",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body[7]": [
+          "unexpected"
+        ]
+      },
+      "expected": "BodyShape",
+      "scope": "public"
+    },
+    {
+      "name": "body-settlement",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body[8]": [
+          "Accept"
+        ]
+      },
+      "expected": "BodyShape",
+      "scope": "public"
+    },
+    {
+      "name": "body-authored-pair",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "expected.body.quantity": "2/4 instead of 1/2"
+      },
+      "expected": "Body",
+      "scope": "public"
+    },
+    {
+      "name": "body-bound-and-shape",
+      "owner": "B3",
+      "base_case": 3,
+      "change": {
+        "body[9]": "extension+1",
+        "body[0].family": "unknown"
+      },
+      "expected": "Bound",
+      "scope": "overlap"
+    },
+    {
+      "name": "proposal-recipe-body",
+      "owner": "proposal/v3",
+      "base_case": 3,
+      "change": {
+        "P.recipe": "v2",
+        "body[9]": "extension+1"
+      },
+      "expected": "Recipe",
+      "scope": "public"
+    },
+    {
+      "name": "proposal-ny",
+      "owner": "proposal/v3",
+      "base_case": 3,
+      "change": {
+        "N_Y": "39 bytes"
+      },
+      "expected": "Blinding",
+      "scope": "public"
+    },
+    {
+      "name": "proposal-nd",
+      "owner": "proposal/v3",
+      "base_case": 3,
+      "change": {
+        "N_D": "41 bytes"
+      },
+      "expected": "Blinding",
+      "scope": "public"
+    },
+    {
+      "name": "proposal-hy-width",
+      "owner": "proposal/v3",
+      "base_case": 3,
+      "change": {
+        "hY": "31 bytes"
+      },
+      "expected": "ContentPreDigest",
+      "scope": "public"
+    },
+    {
+      "name": "proposal-hy-act",
+      "owner": "proposal/v3",
+      "base_case": 3,
+      "change": {
+        "hY.act": "different sequence"
+      },
+      "expected": "ContentPreDigest",
+      "scope": "public"
+    },
+    {
+      "name": "proposal-d-count",
+      "owner": "proposal/v3",
+      "base_case": 3,
+      "change": {
+        "D": "1025 distinct identifiers"
+      },
+      "expected": "Dependencies",
+      "scope": "public"
+    },
+    {
+      "name": "proposal-d-order",
+      "owner": "proposal/v3",
+      "base_case": 3,
+      "change": {
+        "D": "descending identifiers"
+      },
+      "expected": "Dependencies",
+      "scope": "public"
+    },
+    {
+      "name": "proposal-p",
+      "owner": "proposal/v3",
+      "base_case": 3,
+      "change": {
+        "expected.P": "flip first byte"
+      },
+      "expected": "Proposal",
+      "scope": "public"
+    },
+    {
+      "name": "proposal-nd-before-y",
+      "owner": "proposal/v3",
+      "base_case": 3,
+      "change": {
+        "N_D": "39 bytes",
+        "Y": "one above preimage limit"
+      },
+      "expected": "Blinding",
+      "scope": "overlap"
+    },
+    {
+      "name": "content-recipe-absent",
+      "owner": "opening",
+      "base_case": 3,
+      "change": {
+        "C_Y.recipe": "v2",
+        "opening": null
+      },
+      "expected": "Recipe",
+      "scope": "public"
+    },
+    {
+      "name": "content-sy-absent",
+      "owner": "opening",
+      "base_case": 3,
+      "change": {
+        "S_Y": "47 bytes",
+        "opening": null
+      },
+      "expected": "Blinding",
+      "scope": "public"
+    },
+    {
+      "name": "content-ny-sy",
+      "owner": "opening",
+      "base_case": 3,
+      "change": {
+        "N_Y": "39 bytes",
+        "S_Y": "47 bytes"
+      },
+      "expected": "Blinding",
+      "scope": "public"
+    },
+    {
+      "name": "content-residue",
+      "owner": "opening",
+      "base_case": 3,
+      "change": {
+        "expected.C_Y": "flip first byte"
+      },
+      "expected": "Content",
+      "scope": "public"
+    },
+    {
+      "name": "dependency-recipe-absent",
+      "owner": "opening",
+      "base_case": 3,
+      "change": {
+        "C_D.recipe": "v2",
+        "opening": null
+      },
+      "expected": "Recipe",
+      "scope": "public"
+    },
+    {
+      "name": "dependency-sd",
+      "owner": "opening",
+      "base_case": 3,
+      "change": {
+        "S_D": "49 bytes"
+      },
+      "expected": "Blinding",
+      "scope": "public"
+    },
+    {
+      "name": "dependency-duplicate",
+      "owner": "opening",
+      "base_case": 3,
+      "change": {
+        "D": "duplicate identifier"
+      },
+      "expected": "Dependencies",
+      "scope": "public"
+    },
+    {
+      "name": "dependency-residue",
+      "owner": "opening",
+      "base_case": 3,
+      "change": {
+        "expected.C_D": "flip first byte"
+      },
+      "expected": "Dependency",
+      "scope": "public"
+    },
+    {
+      "name": "header-namespace",
+      "owner": "header",
+      "base_case": 3,
+      "change": {
+        "key0": "foreign namespace"
+      },
+      "expected": "Edition",
+      "scope": "public"
+    },
+    {
+      "name": "header-version",
+      "owner": "header",
+      "base_case": 3,
+      "change": {
+        "key1": [
+          2,
+          0,
+          0
+        ]
+      },
+      "expected": "Edition",
+      "scope": "public"
+    },
+    {
+      "name": "header-recipe",
+      "owner": "header",
+      "base_case": 3,
+      "change": {
+        "key3.recipe": "v2"
+      },
+      "expected": "Recipe",
+      "scope": "public"
+    },
+    {
+      "name": "header-signature",
+      "owner": "header",
+      "base_case": 3,
+      "change": {
+        "key4": "63 bytes"
+      },
+      "expected": "Shape",
+      "scope": "public"
+    },
+    {
+      "name": "header-body-proposal",
+      "owner": "header",
+      "base_case": 3,
+      "change": {
+        "key2": "invalid B3",
+        "key3.recipe": "v2"
+      },
+      "expected": "BodyShape",
+      "scope": "public"
+    },
+    {
+      "name": "header-proposal-content",
+      "owner": "header",
+      "base_case": 3,
+      "change": {
+        "expected.P": "different",
+        "expected.C_Y": "different"
+      },
+      "expected": "Proposal",
+      "scope": "public"
+    },
+    {
+      "name": "material-edition",
+      "owner": "material",
+      "base_case": 3,
+      "change": {
+        "edition": "v2"
+      },
+      "expected": "Edition",
+      "scope": "public"
+    },
+    {
+      "name": "material-run-host",
+      "owner": "material",
+      "base_case": 3,
+      "change": {
+        "selected_run": "foreign",
+        "expected_host": "foreign"
+      },
+      "expected": "Run",
+      "scope": "public"
+    },
+    {
+      "name": "material-host-version",
+      "owner": "material",
+      "base_case": 3,
+      "change": {
+        "expected_host": "foreign",
+        "header_version": [
+          2,
+          0,
+          0
+        ]
+      },
+      "expected": "Host",
+      "scope": "public"
+    },
+    {
+      "name": "material-version",
+      "owner": "material",
+      "base_case": 3,
+      "change": {
+        "header_version": [
+          2,
+          0,
+          0
+        ]
+      },
+      "expected": "Edition",
+      "scope": "public"
+    },
+    {
+      "name": "roles-material",
+      "owner": "roles",
+      "base_case": 3,
+      "change": {
+        "expected_host": "foreign"
+      },
+      "expected": "Host",
+      "scope": "public"
+    }
+  ],
+  "cases_sha256": "07d3ab4d69bbf3efcfb83495de146d7cb3ed2579a31b9a3acaf3bf570cbe9019"
+}

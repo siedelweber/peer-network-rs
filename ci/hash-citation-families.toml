@@ -1271,6 +1271,17 @@ definition = "The independent route regenerates every committed value without ca
 paths = ["packages/act-authentication/tests/v3-golden.json"]
 
 [[rows]]
+family = "authentication-version-three-refusals"
+group = "public authentication encoding fixtures"
+measures = "Independent third-formation named substitutions and expected refusal causes, with the canonical case-list digest"
+producer = "Independent Python standard-library substitution roster"
+establishment = "defined"
+reader = "authentication-v3-refusals"
+source = "packages/act-authentication/tests/v3-refusals.json"
+definition = "Regenerate the finite C4 substitutions and SHA-256 of their sorted-key, compact JSON case list without Rust or production helpers. The roster fixes public test inputs and expected causes, not authenticity, entropy or an exhaustive encoding proof."
+paths = ["packages/act-authentication/tests/v3-refusals.json"]
+
+[[rows]]
 family = "control-schema-vectors"
 group = "public control envelope fixtures"
 measures = "Canonical envelope bytes and refusals, not digests"

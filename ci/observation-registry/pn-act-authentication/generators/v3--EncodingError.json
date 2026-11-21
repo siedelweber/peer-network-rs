@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "v3::EncodingError",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+    "kind": "derive",
+    "class_decision": "authentication-public",
+    "expansion_review": "Generated traits operate on public canonical representation and digest values only; they create no signature verification or authority verdict."
+  }
+}

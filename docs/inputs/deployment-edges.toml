@@ -2,6 +2,7 @@
 namespace = "org.peer-network.testing.deployment-edges"
 version = [1, 0, 0]
 rows = [
+  { source = "ACTAUTH::def:authentication:version-three", target = "ROOT::amend:identity:formation-three", relation = "realizes", reason = "These pure producers and comparison consumers implement only the admitted representation, without production selection or authority.", conditional_on = "" },
   { source = "ACTAUTH::rec:authentication:encoding-evidence", target = "ROOT::open:identity:act-realization-admission", relation = "realizes", reason = "This scopes legacy evidence and retains the new-tag implementation hold, without proving private entropy.", conditional_on = "" },
   { source = "ACTPROFILE::amend:profile:opening-evidence", target = "ROOT::open:identity:act-realization-admission", relation = "realizes", reason = "This scopes legacy evidence and retains the new-tag implementation hold, without proving private entropy.", conditional_on = "" },
   { source = "ACTPROFILE::def:profile:payload", target = "ROOT::amend:identity:act-proposal-admission", relation = "realizes", reason = "This preserves the historical byte scope and implementation hold, not private opening existence or entropy.", conditional_on = "" },
@@ -9,6 +10,7 @@ rows = [
   { source = "ACTPROFILE::def:profile:private-inputs", target = "ROOT::amend:identity:formation-three", relation = "realizes", reason = "This uses the admitted bounds, not private entropy or custody.", conditional_on = "" },
   { source = "ACTPROFILE::def:profile:recipes", target = "ROOT::amend:identity:act-content-admission", relation = "realizes", reason = "The package owns the immutable framed recipe and supplied-input comparison, not production concealment.", conditional_on = "" },
   { source = "ACTPROFILE::def:profile:recipes", target = "ROOT::amend:identity:act-proposal-admission", relation = "realizes", reason = "The package owns the immutable framed recipe and supplied-input comparison, not production concealment.", conditional_on = "" },
+  { source = "ACTPROFILE::def:profile:version-three", target = "ROOT::amend:identity:formation-three", relation = "realizes", reason = "These pure producers and comparison consumers implement only the admitted representation, without production selection or authority.", conditional_on = "" },
   { source = "ACTPROFILE::def:profile:version-two", target = "ROOT::amend:identity:act-content-admission", relation = "realizes", reason = "The pure commitment and comparison implement the admitted framing, not host entropy or custody.", conditional_on = "" },
   { source = "ACTPROFILE::def:profile:version-two", target = "ROOT::amend:identity:act-proposal-admission", relation = "realizes", reason = "The pure supplied-input recipe implements the admitted framing, not entropy or private custody.", conditional_on = "" },
   { source = "ACTPROFILE::def:profile:version-two", target = "ROOT::open:identity:host-contribution-option", relation = "realizes", reason = "The optional contribution remains absent and held; no derivation or entropy claim is implemented.", conditional_on = "" },

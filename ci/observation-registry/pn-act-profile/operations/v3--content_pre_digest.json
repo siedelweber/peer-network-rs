@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::content_pre_digest",
+    "owner": "ACTPROFILE",
+    "signature": "fn content_pre_digest (id : & ActId , pair : & ContentPair) -> Result < ContentPreDigest , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::content_pre_digest",
+    "body": "{ if ! valid_id (id) { return Err (ProfileError :: Representation) ; } check_author (id , & pair . author_content_blinding_value) ? ; let digest = frame_hash (PROPOSAL_RECIPE , \"PN-content-pre-v3\" , vec ! [public (identifier (id)) , SecretValue :: Bytes (pair . author_content_blinding_value . clone ()) , SecretValue :: Bytes (pair . payload . clone ()) ,] ,) ? ; Ok (ContentPreDigest { act : id . clone () , bytes : digest , }) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "Y and its author blinding value stay in protected carriers, and the resulting hY stays protected; the operation records only its outcome.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

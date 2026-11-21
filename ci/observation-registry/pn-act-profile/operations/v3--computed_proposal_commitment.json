@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::computed_proposal_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn computed_proposal_commitment (body : & ProposalBody , content_pair : & ContentPair , author_dependency_blinding_value : & SecretSlice < u8 > , dependencies : & SecretBox < DependencyIds > ,) -> Result < ComputedProposalCommitment , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::computed_proposal_commitment",
+    "body": "{ let projected = body_projection (body) ? ; check_author (& body . id , & content_pair . author_content_blinding_value) ? ; check_author (& body . id , author_dependency_blinding_value) ? ; let dependency = dependency_projection (dependencies) ? ; let content = content_pre_digest (& body . id , content_pair) ? ; let proposal = proposal_from_checked (body , projected , SecretValue :: Bytes (content . bytes) , author_dependency_blinding_value , dependency ,) ? ; Ok (ComputedProposalCommitment (proposal)) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The full content and dependency openings remain protected; the result is an opaque capability containing only the computed public P.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

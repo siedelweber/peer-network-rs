@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::dependencies_match_supplied_commitment",
+    "owner": "ACTPROFILE",
+    "signature": "fn dependencies_match_supplied_commitment (proposal : & ProposalCommitment , recorded_dependency : & DependencyCommitment , opening : Option < & super :: DependencyOpening > ,) -> Result < OpeningComparison , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::dependencies_match_supplied_commitment",
+    "body": "{ if proposal . recipe != PROPOSAL_RECIPE || recorded_dependency . recipe != DEPENDENCY_RECIPE { return Err (ProfileError :: Recipe) ; } let Some (opening) = opening else { return Ok (OpeningComparison :: Unavailable) ; } ; let computed = dependency_commitment (& opening . act , proposal , & opening . host_dependency_blinding_value , & opening . dependencies ,) ? ; if computed != * recorded_dependency { return Err (ProfileError :: Dependency) ; } Ok (OpeningComparison :: Matches) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The optional protected dependency opening stays private; the public C_D comparison reports absence or equality without placement proof.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

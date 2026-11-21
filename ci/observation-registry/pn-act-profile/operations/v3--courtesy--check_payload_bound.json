@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::courtesy::check_payload_bound",
+    "owner": "ACTPROFILE",
+    "signature": "fn check_payload_bound (pair : & ContentPair) -> Result < () , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::courtesy::check_payload_bound",
+    "body": "{ super :: super :: payload_length (& pair . payload) . map (| _ | ()) . map_err (| _ | ProfileError :: Bound) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "Only the protected payload length is borrowed for the carriage ceiling; the outcome establishes no custody or delivery.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

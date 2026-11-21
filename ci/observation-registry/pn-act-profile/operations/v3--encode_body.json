@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::encode_body",
+    "owner": "ACTPROFILE",
+    "signature": "fn encode_body (body : & ProposalBody) -> Result < Vec < u8 > , ProfileError >",
+    "claim": "ACTPROFILE::def:profile:version-three",
+    "mode": "instrumented",
+    "shape": "shape-act-profile"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::encode_body",
+    "body": "{ Ok (body_projection (body) ? . to_canonical_bytes ()) }",
+    "class_decision": "act-profile-private",
+    "item_premise": "The typed B3 body and resulting canonical bytes are public; encoding establishes representation only.",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    }
+  }
+}

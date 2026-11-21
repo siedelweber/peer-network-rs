@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "v3::EncodingError",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "syntax": "# [doc = \" Refusals of the selected third representation, not signature verdicts.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum EncodingError { # [error (\"representation bound exceeded\")] Bound , # [error (\"noncanonical encoding\")] Canonical , # [error (\"invalid shape\")] Shape , # [error (\"unsupported edition\")] Edition , # [error (\"unsupported recipe\")] Recipe , # [error (\"proposal body differs\")] Body , # [error (\"proposal commitment differs\")] Proposal , # [error (\"content commitment differs\")] Content , # [error (\"dependency commitment differs\")] Dependency , # [error (\"Actor signature differs\")] ActorSignature , # [error (\"content edition differs\")] ContentEdition , # [error (\"dependency edition differs\")] DependencyEdition , # [error (\"complete header bytes differ\")] HeaderBytes , # [error (\"selected run differs\")] Run , # [error (\"selected host differs\")] Host , # [error (\"profile: {0}\")] Profile (profile :: ProfileError) , }"
+  }
+}
