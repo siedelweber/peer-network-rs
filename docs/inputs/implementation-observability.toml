@@ -17,7 +17,7 @@ metrics = "Counters: validated records, resolved references and refusals (count,
 name = "pn-act-profile"
 labels = ["amend:decomposition:act-profile"]
 operations = "check profile shape and bounds, project canonical values, recompute commitments and compare supplied openings with supplied recorded residues"
-metrics = "Counters: checked openings, matched commitments and refusals (count). Gauges: active checks (operations) and bounded working bytes. Histograms: opening sizes (bytes), dependency counts and inclusive elapsed seconds. Nonces, salts, private payloads and intermediate pre-digests remain secret; a match makes no authentication claim."
+metrics = "Counters: checked openings, matched commitments and refusals (count). Gauges: active checks (operations) and bounded working bytes. Histograms: opening sizes (bytes), dependency counts and inclusive elapsed seconds. Nonces, salts, payloads and intermediate pre-digests remain in the protected route's carriers; a match makes no authentication claim."
 
 [[rows]]
 name = "pn-graph"
