@@ -772,6 +772,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "Attach independent controls for the admitted payload, binding and query operation with reviewed premises and source-matched results.",
+      "closing_step": "Owned query-model admissions and implementation, before the publication switch",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Reviewed scoped implementation evidence for dec:design:epoch-record-order",
+      "name": "ROOT::dec:design:epoch-record-order",
+      "owner": "Publication implementer and repository reviewer",
+      "path": "docs/design/implementation.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "The independently reviewed implementation verifies the carried exact members under the decided Work-free contract and the complete publication admission supplies its vectors and migrations; this disposition alone supplies no conformance claim.",
       "closing_step": "Exact publication-three verification and consumer migration",
       "hold": "ROOT::open:testing:obligation-evidence",

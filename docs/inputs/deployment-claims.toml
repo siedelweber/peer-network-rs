@@ -41,7 +41,7 @@ paper_tag = "network-v0.36.0"
 classification = "split"
 included = "Recomputation of every exact object, the order and completeness of the public attempted record, and each verdict from its stated enclosure endpoints and exact threshold."
 excluded = "Producer enclosure soundness until independently checked by the reader; inability to check establishes neither a discrepancy nor a confirmation."
-reason = "The published attempted record determines the exact checks; enclosure soundness depends on the reader’s sound evaluation. Reproduction is a voluntary host determinism test, attributable only to a bound declaration under (`open:identity:reproduction-binding`); neither route acquires implementation evidence here."
+reason = "The published attempted record determines the exact checks; enclosure soundness depends on the reader’s sound evaluation. Reproduction is a trusted-gate determinism test under (`amend:design:replay-roles`), with no package mode or host-attribution claim; neither route acquires implementation evidence here."
 witness_route = "rec:testing:deployment-replay-route"
 evidence_status = "scope-only"
 

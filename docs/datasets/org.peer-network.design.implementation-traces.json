@@ -268,28 +268,28 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Round-trip the complete package; reject duplicate keys, noncanonical bytes, missing sections and incomplete references. Require marker policy identity and edition, lineage and interpretation, accepted sets encoded as policy-selected lists or commitments with uniquely verifiable public openings; recover the entire set and verify every member against the policy and both acceptance bounds. Reject an asserted total or unavailable, ambiguous or invalid opening in their place. Planned successor cases distinguish declaration replacement and withdrawal, absent case set versus [], missing mandatory local authority, per-act and shared-account association, simultaneous paper cases, evidence failure versus verifier inability, and later changes without recorded-author reassignment.",
+      "cases": "Preserve historical complete-package roundtrips and refusals. For the successor, round-trip each admitted fixed payload, reject its noncanonical bytes and missing members, and separately check the complete required epoch inventory and admitted references. Require marker policy identity and edition, lineage and interpretation, accepted sets encoded as policy-selected lists or commitments with uniquely verifiable public openings; recover the entire set and verify every member against the policy and both acceptance bounds. Reject an asserted total or unavailable, ambiguous or invalid opening in their place. Planned successor cases distinguish declaration replacement and withdrawal, absent case set versus [], missing mandatory local authority, per-act and shared-account association, simultaneous paper cases, evidence failure versus verifier inability, and later changes without recorded-author reassignment.",
       "conformance": [
         "realizes{``post:deployment:canonical-standing-publication``; This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.}"
       ],
       "decision": "dec:design:publication",
       "fixture": "canonical-package-cases",
-      "hold": "The encoding and infrastructure dependency are accepted; namespace assignment, complete CDDL theory and independent byte vectors remain required for canonical compatibility.",
+      "hold": "The encoding and infrastructure dependency are accepted; each owned payload assignment, closed theory, binding admission and independent vectors remain required before their compatibility claims.",
       "labels": [
         "post:network:host-contract",
         "post:deployment:canonical-standing-publication",
         "post:epoch:final-edge-set"
       ],
       "name": "publication",
-      "oracle": "Independently authored byte vectors and a section-by-section semantic inventory.",
-      "property": "Equivalent normalized structures encode identically; optional diagnostic data cannot change binding fields.",
+      "oracle": "Independently authored byte vectors and the complete semantic field inventory, independent of delivery partition.",
+      "property": "Equivalent normalized structures encode identically; optional query data cannot supply required facts or change certificate verification under (`inv:design:optional-query-separation`).",
       "requirements": [
         "publication"
       ],
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Mutate each package section, omit an act and alter a charged vintage, rung verdict or rounding disclosure. Recover equal accepted sets from list and commitment encodings under their declared policies. Mutate marker policy, predecessor, lineage, accepted sets or openings; independently derive first-acceptance increments and reject missing evidence rather than silently dropping records. Planned successor cases distinguish declaration replacement and withdrawal, absent case set versus [], missing mandatory local authority, per-act and shared-account association, simultaneous paper cases, evidence failure versus verifier inability, and later changes without recorded-author reassignment.",
+      "cases": "Preserve historical package mutations; for the successor mutate each required fact payload, omit an act and alter a charged vintage, rung verdict or rounding disclosure. Recover equal accepted sets from list and commitment encodings under their declared policies. Mutate marker policy, predecessor, lineage, accepted sets or openings; independently derive first-acceptance increments and reject missing evidence rather than silently dropping records. Planned successor cases distinguish declaration replacement and withdrawal, absent case set versus [], missing mandatory local authority, per-act and shared-account association, simultaneous paper cases, evidence failure versus verifier inability, and later changes without recorded-author reassignment.",
       "conformance": [
         "realizes{``post:deployment:public-object-replay``; This statement uses exact public objects and endpoint verdicts only; enclosure soundness remains conditional on independent evaluation, and no execution evidence follows.}"
       ],
@@ -306,7 +306,7 @@
       ],
       "name": "replay",
       "oracle": "A public-input verifier and independently implemented small-case mathematics, not a host-cache comparison.",
-      "property": "Every mismatch is attributed to a section and claim; valid envelope acceptance cannot stand for mathematical verification.",
+      "property": "Every mismatch is attributed to its fact and claim; accepted payload syntax cannot stand for mathematical verification or complete collected evidence.",
       "requirements": [
         "replay"
       ],

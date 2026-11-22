@@ -2725,7 +2725,9 @@
       "tentative": 0
     },
     {
-      "bites": [],
+      "bites": [
+        8
+      ],
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
@@ -2743,7 +2745,8 @@
       "records": [
         "EPOCH::rule:admission:publication-disclosures",
         "ROOT::amend:design:publication-field-inventory",
-        "ROOT::amend:design:test-publication-profile"
+        "ROOT::amend:design:test-publication-profile",
+        "ROOT::model:design:package"
       ],
       "routes": [],
       "status": "designed",
@@ -40220,15 +40223,15 @@
     },
     {
       "category": "bite",
-      "designed": 3,
+      "designed": 4,
       "held": 0,
       "name": "8",
       "number_forms": {
         "designed": {
-          "exact": "3",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40265,10 +40268,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "4",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40314,7 +40317,7 @@
       "realized": 1,
       "record_granular": 1,
       "tentative": 0,
-      "total": 4,
+      "total": 5,
       "unassigned": 0
     },
     {
@@ -40616,15 +40619,15 @@
     },
     {
       "category": "bite",
-      "designed": 304,
+      "designed": 303,
       "held": 29,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "304",
+          "exact": "303",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "304",
+          "num": "303",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40661,10 +40664,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 525",
+          "exact": "1 524",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 525",
+          "num": "1 524",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40710,7 +40713,7 @@
       "realized": 23,
       "record_granular": 21,
       "tentative": 34,
-      "total": 1525,
+      "total": 1524,
       "unassigned": 1169
     },
     {
@@ -41394,10 +41397,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 855",
+          "exact": "1 865",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 855",
+          "num": "1 865",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41412,7 +41415,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1855
+      "total": 1865
     },
     {
       "category": "record-coverage",

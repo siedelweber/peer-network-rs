@@ -63,7 +63,7 @@
 | pn-testkit | 18 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 44 | 0 |
-| ROOT (repository-wide) | 1 855 | 216 |
+| ROOT (repository-wide) | 1 865 | 216 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -77,11 +77,11 @@
 | 5 | 44 | 6 | 5 | 33 | 0 | 3 | 0 |
 | 6 | 25 | 2 | 6 | 16 | 0 | 1 | 1 |
 | 7 | 38 | 1 | 7 | 30 | 0 | 2 | 0 |
-| 8 | 4 | 1 | 0 | 3 | 0 | 1 | 0 |
+| 8 | 5 | 1 | 0 | 4 | 0 | 1 | 0 |
 | 9 | 11 | 1 | 4 | 6 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
 | 11 | 94 | 9 | 27 | 57 | 0 | 5 | 1 |
-| unlinked | 1 525 | 23 | 29 | 304 | 34 | 21 | 1 169 |
+| unlinked | 1 524 | 23 | 29 | 303 | 34 | 21 | 1 169 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -293,7 +293,7 @@
 | ``rem:network:boundary-one-sentence`` | pn-host; policy | unassigned | | | | |  | | |
 | ``subsec:network:object-taxonomy`` | pn-host; policy | unassigned | | | | |  | | |
 | ``def:network:object-taxonomy`` | pn-host; type | held | ``ROOT::dec:design:terminal-separation`` ``ROOT::req:vision:terminal-separation`` | | | ``ROOT::dec:design:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>| 10, 11 | | |
-| ``def:network:conserved-standing-package`` | pn-host; type | designed | ``EPOCH::rule:admission:publication-disclosures`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:design:test-publication-profile`` | | | ``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>|  | | |
+| ``def:network:conserved-standing-package`` | pn-host; type | designed | ``EPOCH::rule:admission:publication-disclosures`` ``ROOT::amend:design:publication-field-inventory`` ``ROOT::amend:design:test-publication-profile`` ``ROOT::model:design:package`` | | | ``ROOT::amend:design:publication-field-inventory``; ``ROOT::open:crypto:dependency-admission``<br>| 8 | | |
 | ``itm:network:conserved-standing-package-final-state`` | pn-host; type | unassigned | | | | |  | | |
 | ``itm:network:conserved-standing-package-folds`` | pn-host; type | unassigned | | | | |  | | |
 | ``itm:network:conserved-standing-package-activation`` | pn-host; type | unassigned | | | | |  | | |

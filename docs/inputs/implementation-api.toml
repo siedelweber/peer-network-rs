@@ -19,9 +19,9 @@ bite = 8
 
 [[rows]]
 name = "fetch-publication"
-operation = "Fetch a publication package"
-contracts = ["sig:design:host", "proto:design:encoding"]
-behavior = "Return the entire stored canonical package as an exact byte string, together with its public reference. Refuse an unsupported size or unavailable package; field selection never edits the package bytes."
+operation = "Read fixed epoch payloads"
+contracts = ["sig:design:host", "dec:api:schema"]
+behavior = "The API owners admit named domain reads, their contextual discovery and preview before service. Exact payload bytes follow (`inv:design:fixed-payload-carriage`); typed projections are distinct read results under (`inv:api:document-bytes`). The first historical read continues to return its exact version-one document under (`inv:api:document-bytes`)."
 requirements = ["publication"]
 bite = 8
 
@@ -29,7 +29,7 @@ bite = 8
 name = "replay-inputs"
 operation = "Fetch replay inputs"
 contracts = ["sig:design:host", "sig:design:replay", "alg:design:reconstruction"]
-behavior = "Return the disclosed causes, declaration editions and exact evidence documents named by a package. A bounded page states its scope and continuation; only the verifier can establish complete reconstruction. The replay crate consumes these public bytes without server-side replay authority."
+behavior = "Return the disclosed causes, declaration editions and exact evidence documents named by the historical package or, after admission, by the epoch record under (`inv:design:epoch-reference-authority`). A bounded page states its scope and continuation; only the verifier can establish complete reconstruction. The replay crate consumes these public bytes without server-side replay authority."
 requirements = ["public-inputs", "replay"]
 bite = 9
 

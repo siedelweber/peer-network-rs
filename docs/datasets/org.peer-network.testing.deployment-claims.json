@@ -47,7 +47,7 @@
       "kind": "statement",
       "name": "cond:deployment:canonical-replay",
       "paper_tag": "network-v0.36.0",
-      "reason": "The published attempted record determines the exact checks; enclosure soundness depends on the reader’s sound evaluation. Reproduction is a voluntary host determinism test, attributable only to a bound declaration under (`open:identity:reproduction-binding`); neither route acquires implementation evidence here.",
+      "reason": "The published attempted record determines the exact checks; enclosure soundness depends on the reader’s sound evaluation. Reproduction is a trusted-gate determinism test under (`amend:design:replay-roles`), with no package mode or host-attribution claim; neither route acquires implementation evidence here.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {

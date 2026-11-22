@@ -47,7 +47,7 @@ contract = "individual/final-set safety, fixed floor and wall-controller cases"
 name = "publication"
 first_bite = 8
 implementations = "pure and services"
-contract = "complete causes and exact canonical package bytes"
+contract = "complete required causes and exact admitted payload bytes; unchanged version-one package controls"
 
 [[rows]]
 name = "replay"
