@@ -3,10 +3,16 @@
 (´[ROOT-amend:identity:local-authority-boundary]´)
 Semantic substitutions are expected future consumer results, not executed claims.
 """
-import copy
 import json
 import sys
 from pathlib import Path
+
+
+def independent(value):
+    """Copy each list occurrence, not its alias graph, before changing a position."""
+    if isinstance(value, list):
+        return [independent(item) for item in value]
+    return value
 
 
 def head(major, n):
@@ -76,9 +82,9 @@ def vectors():
              ref('signed-validation'), ref('authorization'), ref('projection'), config]
     paper = [1, ref('provenance'), 0, scope, ref('second-party'), ref('rules'),
              ref('convention'), ref('projection'), [ref('published-data'), ref('destroyed-unit')]]
-    author = copy.deepcopy(paper)
+    author = independent(paper)
     author[1], author[2], author[8][1] = ref('author-case'), 1, None
-    successor = copy.deepcopy(paper)
+    successor = independent(paper)
     successor[1], successor[3] = ref('provenance', 2), [run, history, 2, 3]
     actors = ['pn-devnet-v1/'+run.hex()+'/'+bytes([n]).hex()*32 for n in (11, 12)]
     # Opaque raw bytes selected by a synthetic evaluator premise. They are not
@@ -91,6 +97,11 @@ def vectors():
     associations = [[1, context, i, ['act', actors[i % 2], i, 'Registration'], local_ref, [context, 0], i % 2]
                     for i in range(3)]
     boundary = ['org.peer-network.test.publication.author-authority', 1, context, local, account, parts, associations]
+    # Each base is a value tree: equal contexts and references are independent
+    # occurrences, including across bases. Bytes, strings and integers are immutable.
+    paper, author, successor, local, account, parts, associations, boundary = (
+        independent(value) for value in
+        (paper, author, successor, local, account, parts, associations, boundary))
     rows = []
     def row(name, family, value, expected='RepresentationEqual', premises=None):
         encoded = canonical(value)
@@ -110,9 +121,9 @@ def vectors():
         ('local-boundary', 'LocalAuthorityBoundary', boundary)):
         row(name, family, value, premises=['independently selected descriptor/context and predecessor',
             'synthetic supported evaluator and public-data binding; consensus validity remains a premise'])
-    empty_account = copy.deepcopy(account)
+    empty_account = independent(account)
     empty_account[4] = [8, blocks[3:]]
-    empty_boundary = copy.deepcopy(boundary)
+    empty_boundary = independent(boundary)
     empty_boundary[4:7] = [empty_account, [], []]
     row('empty-domain-account', 'AuthorityAccount', empty_account)
     row('empty-domain-boundary', 'LocalAuthorityBoundary', empty_boundary)
@@ -135,16 +146,16 @@ def vectors():
                           buffer_heights=[9, 10], buffer_enters_authority=False))
     substitutions = []
     def change(name, family, base, path, replacement, expected, assumptions='All earlier predicates pass'):
-        value = copy.deepcopy(base)
+        value = independent(base)
         parent = value
         for index in path[:-1]:
             parent = parent[index]
-        parent[path[-1]] = replacement
+        parent[path[-1]] = independent(replacement)
         row(name, family, value, expected, [assumptions])
     change('wrong-kind', 'PaperCaseDeclaration', paper, [2], 2, 'Kind')
     change('changed-body-same-ref', 'PaperCaseDeclaration', paper, [5], ref('different-rules'), 'DeclarationContent')
     change('wrong-history', 'PaperCaseDeclaration', paper, [3, 1], b'other', 'Context')
-    both = copy.deepcopy(paper)
+    both = independent(paper)
     both[2] = 2
     change('edition-before-kind', 'PaperCaseDeclaration', both, [0], 2, 'Edition')
     change('scope-not-in-force', 'PaperCaseDeclaration', paper, [3], [run, history, 2, 4], 'Scope', 'Authenticated declaration history includes this prospective descriptor, effective after current epoch three')
@@ -160,7 +171,7 @@ def vectors():
     change('declaration-ref-mismatch', 'LocalAuthorityDeclaration', local, [1, 2], 2, 'Declaration')
     change('declaration-run-mismatch', 'LocalAuthorityDeclaration', local, [7], config[:-1]+bytes([1]), 'Run', 'Both configurations use the same supported edition; candidate scan_bytes is 8193 instead of independently selected 8192')
     change('declaration-scope-mismatch', 'LocalAuthorityDeclaration', local, [2, 3], 4, 'Scope')
-    both = copy.deepcopy(local)
+    both = independent(local)
     both[4] = ref('other-rules')
     change('declaration-before-rules', 'LocalAuthorityDeclaration', both, [1, 2], 2, 'Declaration')
     row('order-before-duplicate', 'PaperCaseBoundary', [1, context, [paper, author, author], []], 'Order', ['provenance sorts after author-case; repeated author-case also violates uniqueness'])
@@ -170,7 +181,7 @@ def vectors():
     change('wrong-first-height', 'AuthorityAccount', account, [4, 0], 4, 'MissingEvidence', 'Six carried blocks do not cover 4..10')
     change('wrong-claimed-minimum', 'AuthorityAccount', account, [4], [6, blocks[1:]], 'MissingEvidence', 'Own interval count covers 6..10; independently established qualified issuance at 5 requires the omitted block; all earlier checks pass')
     change('superfluous-first-height', 'AuthorityAccount', account, [4], [4, [canonical([4, ["unrelated", 4], ["fixture-event", 4]])]+blocks], 'Coverage', 'All blocks 4..10 are valid and bound; required minimum is 5, no required evidence is missing')
-    both = copy.deepcopy(account)
+    both = independent(account)
     both[2][0] = 2**64-1
     row('prefix-before-overflow', 'AuthorityAccount', both, 'Prefix', ['Independent h remains 8; candidate h also overflows with b=2'])
     change('too-late-scan', 'LocalAuthorityBoundary', boundary, [5, 0, 3], 6, 'Coverage')
@@ -183,7 +194,7 @@ def vectors():
     change('wrong-discriminator', 'LocalAuthorityBoundary', boundary, [0], 'other-component', 'Shape')
     # A monotone but incorrect final position leaves Order satisfied.
     change('wrong-act-position', 'LocalAuthorityBoundary', boundary, [6, 2, 2], 4, 'Act', 'Exactly three new acts at positions 0,1,2; retained lookup by Context and ActId passes')
-    both = copy.deepcopy(boundary)
+    both = independent(boundary)
     both[6][0][6] = 9
     both[6].append([1, context, 3, ['act', actors[0], 99, 'Registration'], local_ref, [context, 0], 0])
     row('coverage-before-reference', 'LocalAuthorityBoundary', both, 'Coverage', ['Roster expects three acts; four associations are strictly ordered; first part index is also out of range'])
