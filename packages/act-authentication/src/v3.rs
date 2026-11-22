@@ -4,6 +4,7 @@
 use pn_act_profile::v3 as profile;
 use pn_interchange::{Array, Bytes, Map, Value};
 use pn_records::ActId;
+use pn_records::closure::{ClosureHeader, ClosureLeg};
 use pn_records::commitments::{ActCommitments, ContentCommitment, DependencyCommitment, ProposalCommitment};
 
 /// Immutable third authentication edition.
@@ -95,6 +96,101 @@ impl VerifiedHeader {
     )]
     pub fn bytes(&self) -> &[u8] {
         &self.bytes
+    }
+}
+
+impl ClosureHeader for VerifiedHeader {
+    #[tracing::instrument(
+        name = "def:authentication:messages",
+        fields(
+            execution_owner = "ACTAUTH",
+            claim_owner = "ACTAUTH",
+            claim_label = "def:authentication:messages",
+            source_item = "v3::<VerifiedHeader as ClosureHeader>::bytes"
+        ),
+        ret
+    )]
+    fn bytes(&self) -> &[u8] {
+        self.bytes()
+    }
+
+    #[tracing::instrument(
+        name = "def:authentication:messages",
+        fields(
+            execution_owner = "ACTAUTH",
+            claim_owner = "ACTAUTH",
+            claim_label = "def:authentication:messages",
+            source_item = "v3::<VerifiedHeader as ClosureHeader>::id"
+        ),
+        ret
+    )]
+    fn id(&self) -> &ActId {
+        &self.parts.body.id
+    }
+
+    #[tracing::instrument(
+        name = "def:authentication:messages",
+        fields(
+            execution_owner = "ACTAUTH",
+            claim_owner = "ACTAUTH",
+            claim_label = "def:authentication:messages",
+            source_item = "v3::<VerifiedHeader as ClosureHeader>::body"
+        ),
+        ret
+    )]
+    fn body(&self) -> &pn_records::StructuralBody {
+        &self.parts.body.body
+    }
+
+    #[tracing::instrument(
+        name = "def:authentication:messages",
+        fields(
+            execution_owner = "ACTAUTH",
+            claim_owner = "ACTAUTH",
+            claim_label = "def:authentication:messages",
+            source_item = "v3::<VerifiedHeader as ClosureHeader>::legs"
+        ),
+        ret
+    )]
+    fn legs(&self) -> Vec<ClosureLeg<'_>> {
+        self.parts
+            .body
+            .legs
+            .iter()
+            .map(|leg| ClosureLeg {
+                id: &leg.id,
+                source: &leg.source,
+                target: &leg.target,
+            })
+            .collect()
+    }
+
+    #[tracing::instrument(
+        name = "def:authentication:messages",
+        fields(
+            execution_owner = "ACTAUTH",
+            claim_owner = "ACTAUTH",
+            claim_label = "def:authentication:messages",
+            source_item = "v3::<VerifiedHeader as ClosureHeader>::protocol_references"
+        ),
+        ret
+    )]
+    fn protocol_references(&self) -> &[pn_records::PublicReference] {
+        &self.parts.body.protocol_references
+    }
+
+    #[tracing::instrument(
+        name = "def:authentication:messages",
+        fields(
+            execution_owner = "ACTAUTH",
+            claim_owner = "ACTAUTH",
+            claim_label = "def:authentication:messages",
+            source_item = "v3::<VerifiedHeader as ClosureHeader>::commitments"
+        ),
+        ret
+    )]
+    fn commitments(&self) -> &ActCommitments {
+        &self.parts.commitments
     }
 }
 

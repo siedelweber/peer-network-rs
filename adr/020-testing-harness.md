@@ -100,7 +100,7 @@
 | pn-act-authentication::encoding | active | public-surface | pn-act-authentication-rust | fast | 14 |
 | pn-act-authentication::public | active | public-surface | pn-act-authentication-rust | fast | 3 |
 | pn-act-authentication::signatures | active | public-surface | pn-act-authentication-rust | fast | 3 |
-| pn-act-profile | active | unit | pn-act-profile-rust | fast | 13 |
+| pn-act-profile | active | unit | pn-act-profile-rust | fast | 14 |
 | pn-credential-derivation::unit | active | unit | pn-credential-derivation-rust | fast | 2 |
 | pn-credential-generator::models | active | integration | pn-credential-generator-rust | fast | 10 |
 | pn-credential-generator::process | active | integration | pn-credential-generator-rust | fast | 1 |
@@ -140,7 +140,7 @@
 | pn-epoch::semantic-publication-extended | active | public-surface | pn-epoch-rust | extended | 2 |
 | pn-epoch::support | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::workload_correctness | active | integration | pn-epoch-rust | fast | 10 |
-| pn-graph | active | unit | pn-graph-rust | fast | 1 |
+| pn-graph | active | unit | pn-graph-rust | fast | 3 |
 | pn-graph::bounded-activation-contracts | active | integration | pn-graph-rust | extended | 2 |
 | pn-graph::bounded-power-domain | active | integration | pn-graph-rust | extended | 1 |
 | pn-graph::formation | active | public-surface | pn-graph-rust | fast | 45 |
@@ -170,7 +170,7 @@
 | pn-host::credential-launch | active | integration | pn-host-rust | service | 8 |
 | pn-host::declaration-census | active | public-surface | pn-host-rust | extended | 1 |
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 14 |
-| pn-host::public | active | public-surface | pn-host-rust | fast | 26 |
+| pn-host::public | active | public-surface | pn-host-rust | fast | 31 |
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |
 | pn-host::storage-tree | active | integration | pn-host-postgresql | service | 23 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |
@@ -194,7 +194,7 @@
 | pn-interchange::transport | active | integration | pn-interchange-rust | fast | 4 |
 | pn-interchange::vectors | active | integration | pn-interchange-rust | fast | 3 |
 | pn-interchange::versions | active | integration | pn-interchange-rust | fast | 6 |
-| pn-records | active | unit | pn-records-rust | fast | 6 |
+| pn-records | active | unit | pn-records-rust | fast | 7 |
 | pn-records-doctests | active | doctest | pn-records-rust | fast | 4 |
 | pn-records::authentication-disclosures | active | public-surface | pn-records-rust | fast | 1 |
 | pn-records::conformance | active | integration | pn-records-rust | fast | 4 |

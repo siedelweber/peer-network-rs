@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-records",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "item": "closure::validate_history",
+    "owner": "RECORDS",
+    "signature": "fn validate_history < H : ClosureHeader > (acts : Vec < ClosureAct < H > > , names : & [PublicReference] ,) -> Result < ClosureHistory < H > , ValidationError >",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:records",
+    "operation": "closure-validate-history"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/closure.rs::closure::validate_history",
+    "body": "{ let mut references = BTreeSet :: new () ; for name in names { if ! matches ! (name , PublicReference :: Named { .. }) || ! valid_reference (name) { return Err (ValidationError :: InvalidReference (name . clone ())) ; } references . insert (name . clone ()) ; } let mut indices = BTreeMap :: new () ; for (index , act) in acts . iter () . enumerate () { if indices . insert (act . id () . clone () , index) . is_some () { return Err (ValidationError :: DuplicateAct (act . id () . clone ())) ; } references . insert (PublicReference :: Act (act . id () . clone ())) ; for leg in act . header . legs () { references . insert (PublicReference :: Edge (leg . id . clone ())) ; if mints (act . id () , act . header . body () . layout , leg . id . role , leg . target) { references . insert (PublicReference :: Minted (act . id () . clone ())) ; } } } for act in & acts { validate_structure (act , & references) ? ; } validate_order (acts . iter () . map (| act | (act . id () , (act . epoch , act . position)))) ? ; let available : BTreeMap < _ , _ > = acts . iter () . map (| act | (act . id () , ((act . epoch , act . position) , act . logical_time))) . collect () ; let mut parent_faults = Vec :: new () ; for act in & acts { parent_faults . extend (parent_faults_structural (& act . structural (None) , & available) ?) ; } Ok (ClosureHistory { acts , indices , references , parent_faults , }) }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Pure successor operation over public retained structure and explicitly supplied complete opening or approval evidence; it neither reads holder state nor grants authenticated inclusion. Exact public values and closed refusals may be recorded."
+  }
+}

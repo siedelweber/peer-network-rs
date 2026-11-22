@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-act-profile",
+    "package": "pn-act-profile",
+    "path": "packages/act-profile/src/v3.rs",
+    "item": "v3::valid_act_id",
+    "owner": "ACTPROFILE",
+    "signature": "fn valid_act_id (id : & ActId) -> bool",
+    "mode": "instrumented",
+    "claim": "ACTPROFILE::def:profile:version-three"
+  },
+  "review": {
+    "operation": "pn-act-profile::packages/act-profile/src/v3.rs::v3::valid_act_id",
+    "body": "{ valid_id (id) }",
+    "class_decision": "act-profile-private",
+    "assessments": {
+      "full_recording": "act-profile-review",
+      "secret_flow": "act-profile-review",
+      "exposure_consumers": "act-profile-review"
+    },
+    "item_premise": "Pure successor operation over public retained structure and explicitly supplied complete opening or approval evidence; it neither reads holder state nor grants authenticated inclusion. Exact public values and closed refusals may be recorded."
+  }
+}

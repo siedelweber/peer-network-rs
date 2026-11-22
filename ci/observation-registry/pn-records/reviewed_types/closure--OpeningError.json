@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "closure::OpeningError",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "syntax": "# [doc = \" Evidence-input refusal; neither cause changes an immutable act.\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum OpeningError { # [error (\"unknown opening target: {0:?}\")] Unknown (ActId) , # [error (\"repeated opening target: {0:?}\")] Duplicate (ActId) , # [error (\"opening list is not strictly ordered\")] Dependencies , }"
+  }
+}

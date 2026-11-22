@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::closure::ActError",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/closure.rs",
+    "syntax": "# [doc = \" Ordered successor act-fragment refusal, including nested selected causes.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum ActError { Bound , Canonical , Shape , Edition , Header (authentication :: EncodingError) , Material (authentication :: EncodingError) , Seal , Approval , Epoch , Position , Time , }"
+  }
+}

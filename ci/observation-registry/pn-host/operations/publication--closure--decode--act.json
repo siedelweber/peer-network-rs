@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-publication",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/closure.rs",
+    "item": "publication::closure::decode_act",
+    "owner": "HOST",
+    "signature": "fn decode_act (input : & [u8] , selected_run : [u8 ; 32] , expected_host : & str) -> Result < ClosureAct < VerifiedHeader > , ActError >",
+    "mode": "instrumented",
+    "claim": "HOST::rule:publication:codec"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/closure.rs::publication::closure::decode_act",
+    "body": "{ act_path (input , selected_run , expected_host , None) }",
+    "class_decision": "host-publication-codec",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    },
+    "item_premise": "Pure successor operation over public retained structure and explicitly supplied complete opening or approval evidence; it neither reads holder state nor grants authenticated inclusion. Exact public values and closed refusals may be recorded."
+  }
+}

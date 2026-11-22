@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "closure::DependencyProof",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "syntax": "# [doc = \" A complete opening supplied beside, never inside, a retained closure act.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct DependencyProof { id : ActId , epoch : u64 , position : u64 , proposal : [u8 ; 32] , dependency : [u8 ; 32] , host_dependency_blinding_value : [u8 ; 48] , dependencies : Vec < ActId > , }"
+  }
+}

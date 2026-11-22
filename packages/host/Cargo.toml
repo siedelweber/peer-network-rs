@@ -19,6 +19,8 @@ cli-common.workspace = true
 tracing.workspace = true
 metrics.workspace = true
 pn-records = { path = "../records" }
+pn-act-profile = { path = "../act-profile" }
+pn-act-authentication = { path = "../act-authentication" }
 pn-interchange = { path = "../interchange" }
 pn-epoch = { path = "../epoch" }
 secrecy.workspace = true

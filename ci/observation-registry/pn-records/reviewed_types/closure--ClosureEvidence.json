@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "closure::ClosureEvidence",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "syntax": "# [doc = \" Conditional observations after checking complete separately supplied lists.\"] # [derive (Clone , Debug)] pub struct ClosureEvidence { pub time_evidence : Vec < TimeEvidence > , pub parent_faults : Vec < ParentPlacementFault > , pub dependency_violations : Vec < DependencyViolation > , pub unavailable_targets : BTreeSet < ActId > , }"
+  }
+}

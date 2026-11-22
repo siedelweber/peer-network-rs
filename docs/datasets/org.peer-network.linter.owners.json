@@ -272,6 +272,14 @@
         {
           "owner": "NODE",
           "target": "CLICOMMON"
+        },
+        {
+          "owner": "HOST",
+          "target": "ACTPROFILE"
+        },
+        {
+          "owner": "HOST",
+          "target": "ACTAUTH"
         }
       ],
       "name": "declaration",

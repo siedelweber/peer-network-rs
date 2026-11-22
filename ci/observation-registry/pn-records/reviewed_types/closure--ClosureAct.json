@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "closure::ClosureAct",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "syntax": "# [doc = \" Exact retained successor value, without a dependency list or holder state.\"] # [derive (Clone , Debug)] pub struct ClosureAct < H : ClosureHeader > { header : H , material : Vec < u8 > , host_seal : [u8 ; 64] , actor_approval : [u8 ; 64] , epoch : u64 , position : u64 , logical_time : u64 , }"
+  }
+}

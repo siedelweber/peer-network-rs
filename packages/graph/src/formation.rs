@@ -10,6 +10,9 @@ use std::collections::BTreeMap;
 
 use crate::registration::{self, FamilyError, GroundedNode, RegistrationError, RegistrationProjection, RegistrationVerifier};
 
+/// Successor reconstruction from immutable closure history and approval alone.
+pub mod closure;
+
 /// Borrowed geometry of one act; removal and approval remain with its caller.
 pub(super) struct StructuralView<'a> {
     id: &'a ActId,

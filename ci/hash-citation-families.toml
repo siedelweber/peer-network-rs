@@ -1389,6 +1389,17 @@ definition = "Regenerate the complete fixture from its independent encoder. Patt
 paths = ["packages/act-authentication/tests/carrier-golden.json"]
 
 [[rows]]
+family = "closure-component-refusals"
+group = "public authentication encoding fixtures"
+measures = "Independent selected closure and opening refusal operands with admitted first causes"
+producer = "Independent Python standard-library canonical framing"
+establishment = "defined"
+reader = "authentication-carrier-refusals"
+source = "packages/act-authentication/tests/carrier-refusals.json"
+definition = "Regenerate complete public refusal operands from the independent carrier encoder. Guard operands and conditional anchors establish no signature, authority or finalized inclusion."
+paths = ["packages/act-authentication/tests/carrier-refusals.json"]
+
+[[rows]]
 family = "boundary-component-fixtures"
 group = "public authentication encoding fixtures"
 measures = "Independent declared-case and local authority component encodings"

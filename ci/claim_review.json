@@ -2746,6 +2746,14 @@
       "review": "The selected v3 case asserts the listed malformed/substituted inputs and jointly violated guards return the admission's first cause; unreachable guards are labelled as guard-level evidence."
     },
     {
+      "operation": "pn-act-profile::v3::tests::dependency_preimage_guard",
+      "path": "packages/act-profile/src/v3/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:dependency-proof-preimage-guard",
+      "before": "",
+      "after": "A complete frame of synthetic fill at the admitted ceiling passes;\none additional byte reaches the private bound before any digest is exposed.",
+      "review": "Synthetic public fill reaches the exact framed-preimage guard at its ceiling and one byte above; it is guard evidence, not a reachable complete proof refusal."
+    },
+    {
       "operation": "pn-act-profile::v3::tests::dependency_values",
       "path": "packages/act-profile/src/v3/tests.rs",
       "claim": "ACTPROFILE::claim:profile:version-three-dependency-values",
@@ -3825,6 +3833,22 @@
       "before": "",
       "after": "Claim: Bid shares whole-history reconstruction with the seven earlier families, retaining deterministic A/T indices and parallel bids with distinct fresh Offers. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.",
       "review": "Bid witnesses cover complete Item-to-Offer incidence, fresh terminal identity including attempted reuse of an existing Offer, independent signed/nonnegative coordinate grids and zero values, shared A/T metadata, whole-history authorization and typed revalidation. Observation compares complete outputs and eleven calls with nine successes and two refusals across disabled, default and trace. No settlement, title, geometry or ordering verdict follows."
+    },
+    {
+      "operation": "pn-graph::formation::closure::tests::closure_only_consumer",
+      "path": "packages/graph/src/formation/closure.rs",
+      "claim": "GRAPH::claim:formation:closure-only-consumer",
+      "before": "",
+      "after": "A concrete approval-only consumer reconstructs complete successor acts.",
+      "review": "The concrete consumer implements only approval, reconstructs the finite two-act graph and records its approval callback order."
+    },
+    {
+      "operation": "pn-graph::formation::closure::tests::removal_independence",
+      "path": "packages/graph/src/formation/closure.rs",
+      "claim": "GRAPH::claim:formation:closure-reconstruction-holder-independent",
+      "before": "",
+      "after": "Finite structural replay stays fixed while unrelated external holder observations vary.",
+      "review": "A finite two-act history reconstructs identically while an external holder map changes; the entry signature has no holder input."
     },
     {
       "operation": "pn-graph::formation::deinvite_projection",
@@ -4913,6 +4937,46 @@
       "before": "",
       "after": "Claim: The store case is explicit and checked before acquisition reads any private input, so no address can silently choose a held transport.",
       "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+    },
+    {
+      "operation": "pn-host::public::closure::act_order",
+      "path": "packages/host/tests/public/closure.rs",
+      "claim": "HOST::claim:publication:closure-fragment-refusal-order",
+      "before": "",
+      "after": "Every act corpus input returns its admitted first cause, with every descriptor executed once.",
+      "review": "The independent corpus supplies exact operands and expected first causes; execution retains each applicable id once."
+    },
+    {
+      "operation": "pn-host::public::closure::act_values",
+      "path": "packages/host/tests/public/closure.rs",
+      "claim": "HOST::claim:publication:closure-fragment-values",
+      "before": "",
+      "after": "Selected act producer and contextual comparison agree with the independent admitted complete values.",
+      "review": "The three admitted independent closure rows are decoded, re-encoded and compared under supplied run, host, signature and placement values."
+    },
+    {
+      "operation": "pn-host::public::closure::historical_bytes",
+      "path": "packages/host/tests/public/closure.rs",
+      "claim": "HOST::claim:publication:historical-carrier-bytes",
+      "before": "",
+      "after": "The frozen historical publication remains byte-equal and rejects the successor carrier in its act slot.",
+      "review": "The historical independent publication bytes round-trip and the successor act fails the old act slot with Shape; existing old refusal controls remain separate."
+    },
+    {
+      "operation": "pn-host::public::closure::proof_order",
+      "path": "packages/host/tests/public/closure.rs",
+      "claim": "HOST::claim:publication:dependency-proof-fragment-refusal-order",
+      "before": "",
+      "after": "Every proof corpus input returns its first structural, absence or association cause.",
+      "review": "The independent corpus supplies exact proof operands and expected first causes with each applicable id executed once; the same operands without an anchor preserve earlier structural refusals and otherwise report unavailable anchor."
+    },
+    {
+      "operation": "pn-host::public::closure::proof_values",
+      "path": "packages/host/tests/public/closure.rs",
+      "claim": "HOST::claim:publication:dependency-proof-fragment-values",
+      "before": "",
+      "after": "Selected proof producer and supplied-anchor comparison agree with the independent complete values.",
+      "review": "The three independent proof values and the maximum structural boundary are compared; fixture anchors are explicit premises, not authenticated by the control."
     },
     {
       "operation": "pn-host::public::comparison::comparison_binding",
@@ -6601,6 +6665,14 @@
       "before": "",
       "after": "Claim: Exact-route rational arithmetic independently checks the corpus's dyadic operands, threshold signs and membership relations, including original rational inputs distinct from their rounded surrogate; these checks establish no native law.",
       "review": "The controls compare named refusal classes, decoded vocabulary meanings, exact reader limits, independent rational enclosure verdicts and original-context substitutions. They establish conformance for these supplied cases, not interval soundness, native laws or numerical admission."
+    },
+    {
+      "operation": "pn-records::closure::tests::opening_evidence",
+      "path": "packages/records/src/closure.rs",
+      "claim": "RECORDS::claim:acts:closure-opening-evidence",
+      "before": "",
+      "after": "Complete supplied lists change only conditional observations; absence remains unavailable.",
+      "review": "A finite checked history keeps its act bytes while a complete supplied opening resolves time; absent and unknown targets retain their distinct evidence outcomes."
     },
     {
       "operation": "pn-records::conformance::burn_cases",

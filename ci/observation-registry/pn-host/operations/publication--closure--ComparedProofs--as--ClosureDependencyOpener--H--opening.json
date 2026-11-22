@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-publication",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/closure.rs",
+    "item": "publication::closure::<ComparedProofs as ClosureDependencyOpener < H >>::opening",
+    "owner": "HOST",
+    "signature": "fn opening < 'a > (& 'a self , act : & ClosureAct < H >) -> SuppliedOpening < 'a >",
+    "mode": "instrumented",
+    "claim": "HOST::rule:publication:codec"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/closure.rs::publication::closure::<ComparedProofs as ClosureDependencyOpener < H >>::opening",
+    "body": "{ self . 0 . iter () . find (| proof | { let commitments = act . header () . commitments () ; proof . id () == act . id () && proof . epoch () == act . epoch () && proof . position () == act . position () && proof . proposal () == & commitments . proposal . bytes && proof . dependency () == & commitments . dependency . bytes }) . map_or (SuppliedOpening :: Unavailable , | proof | { SuppliedOpening :: Available (proof . dependencies ()) }) }",
+    "class_decision": "host-publication-codec",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    },
+    "item_premise": "Pure successor operation over public retained structure and explicitly supplied complete opening or approval evidence; it neither reads holder state nor grants authenticated inclusion. Exact public values and closed refusals may be recorded."
+  }
+}

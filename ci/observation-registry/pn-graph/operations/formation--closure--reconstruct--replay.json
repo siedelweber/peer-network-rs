@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-graph-registration",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation/closure.rs",
+    "item": "formation::closure::reconstruct_replay",
+    "owner": "GRAPH",
+    "signature": "fn reconstruct_replay < H : ClosureHeader > (history : & ClosureHistory < H > , approval : & impl ClosureApproval < H > ,) -> Result < ClosureFormationGraph , ClosureGraphError >",
+    "mode": "instrumented",
+    "claim": "ROOT::alg:design:formation"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/formation/closure.rs::formation::closure::reconstruct_replay",
+    "body": "{ build (history , approval , true) }",
+    "class_decision": "graph-closure",
+    "assessments": {
+      "full_recording": "graph-closure-full_recording",
+      "secret_flow": "graph-closure-secret_flow",
+      "exposure_consumers": "graph-closure-exposure_consumers"
+    },
+    "item_premise": "Pure successor operation over public retained structure and explicitly supplied complete opening or approval evidence; it neither reads holder state nor grants authenticated inclusion. Exact public values and closed refusals may be recorded."
+  }
+}

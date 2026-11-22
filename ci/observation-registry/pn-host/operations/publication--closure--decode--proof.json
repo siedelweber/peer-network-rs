@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-publication",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/closure.rs",
+    "item": "publication::closure::decode_proof",
+    "owner": "HOST",
+    "signature": "fn decode_proof (input : & [u8]) -> Result < DependencyProof , ProofError >",
+    "mode": "instrumented",
+    "claim": "HOST::rule:publication:codec"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/closure.rs::publication::closure::decode_proof",
+    "body": "{ if input . len () > PROOF_LIMIT { return Err (ProofError :: Bound) ; } let value = Value :: from_canonical_bytes (input) . map_err (| _ | ProofError :: Canonical) ? ; let [edition , id , epoch , position , proposal , dependency , blinding , members] = values (& value) . ok_or (ProofError :: Shape) ? else { return Err (ProofError :: Shape) ; } ; let edition = unsigned (edition) . ok_or (ProofError :: Shape) ? ; if values (id) . is_none () { return Err (ProofError :: Shape) ; } let epoch = unsigned (epoch) . ok_or (ProofError :: Shape) ? ; let position = unsigned (position) . ok_or (ProofError :: Shape) ? ; let proposal = octets (proposal) . ok_or (ProofError :: Shape) ? ; let dependency = octets (dependency) . ok_or (ProofError :: Shape) ? ; let blinding = octets (blinding) . ok_or (ProofError :: Shape) ? ; let members = values (members) . ok_or (ProofError :: Shape) ? ; if edition != 2 { return Err (ProofError :: Edition) ; } let id = id_from (id) . filter (profile :: valid_act_id) . ok_or (ProofError :: Identity) ? ; let proposal : [u8 ; 32] = proposal . try_into () . map_err (| _ | ProofError :: Digest) ? ; let dependency : [u8 ; 32] = dependency . try_into () . map_err (| _ | ProofError :: Digest) ? ; let blinding : [u8 ; 48] = blinding . try_into () . map_err (| _ | ProofError :: Blinding) ? ; let encoded_members = array (members . iter () . cloned ()) . to_canonical_bytes () ; if encoded_members . len () > DEPENDENCIES_LIMIT || members . len () > DEPENDENCIES_COUNT { return Err (ProofError :: DependenciesBound) ; } let mut dependencies = Vec :: with_capacity (members . len ()) ; for member in members { dependencies . push (id_from (member) . filter (profile :: valid_act_id) . ok_or (ProofError :: Identity) ?) ; } if dependencies . windows (2) . any (| pair | pair [0] >= pair [1]) { return Err (ProofError :: Dependencies) ; } Ok (DependencyProof :: new (id , epoch , position , proposal , dependency , blinding , dependencies ,)) }",
+    "class_decision": "host-publication-codec",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    },
+    "item_premise": "The selected proof decoder receives ordinary supplied bytes; its public canonical decoder records the raw fragment and parsed Value, and its identity checks record I and each D member. S_D and D are public to this observation, not proof of an authenticated anchor."
+  }
+}

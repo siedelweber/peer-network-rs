@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "formation::closure::ClosureFormationGraph",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation/closure.rs",
+    "syntax": "# [doc = \" A successor graph is distinct by value; `graph()` lends the structural graph.\"] # [doc = \" No historical title, recognition or epoch consumer is admitted over that loan.\"] # [derive (Clone , Debug)] pub struct ClosureFormationGraph (FormationGraph) ;"
+  }
+}

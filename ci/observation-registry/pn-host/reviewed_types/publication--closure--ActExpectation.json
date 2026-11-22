@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::closure::ActExpectation",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/closure.rs",
+    "syntax": "# [doc = \" Independent values expected when comparing a complete selected act.\"] # [derive (Clone , Debug)] pub struct ActExpectation { pub selected_run : [u8 ; 32] , pub expected_host : String , pub header : HeaderParts , pub material : AuthenticationMaterial , pub host_seal : [u8 ; 64] , pub actor_approval : [u8 ; 64] , pub epoch : u64 , pub position : u64 , pub logical_time : u64 , }"
+  }
+}

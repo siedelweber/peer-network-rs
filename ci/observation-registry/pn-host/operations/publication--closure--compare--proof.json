@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-publication",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/closure.rs",
+    "item": "publication::closure::compare_proof",
+    "owner": "HOST",
+    "signature": "fn compare_proof < H : ClosureHeader > (input : Option < & [u8] > , anchor : Option < OpeningAnchor < '_ , H > > ,) -> Result < ProofComparison , ProofError >",
+    "mode": "instrumented",
+    "claim": "HOST::rule:publication:codec"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/closure.rs::publication::closure::compare_proof",
+    "body": "{ let Some (input) = input else { return Ok (ProofComparison :: UnavailableOpening) ; } ; let proof = decode_proof (input) ? ; let Some (anchor) = anchor else { return Ok (ProofComparison :: UnavailableAnchor) ; } ; let act = anchor . act ; if proof . id () != act . id () { return Err (ProofError :: AnchorIdentity) ; } if proof . epoch () != act . epoch () { return Err (ProofError :: AnchorEpoch) ; } if proof . position () != act . position () { return Err (ProofError :: AnchorPosition) ; } let commitments = act . header () . commitments () ; if proof . proposal () != & commitments . proposal . bytes { return Err (ProofError :: AnchorProposal) ; } if proof . dependency () != & commitments . dependency . bytes { return Err (ProofError :: AnchorCommitment) ; } let proposal = ProposalCommitment { recipe : profile :: PROPOSAL_RECIPE . to_owned () , bytes : * proof . proposal () , } ; let blinding = proof . host_dependency_blinding_value () . to_vec () . into () ; let dependencies = SecretBox :: new (Box :: new (DependencyIds (proof . dependencies () . to_vec ()))) ; let computed = profile :: dependency_commitment (proof . id () , & proposal , & blinding , & dependencies) . map_err (profile_cause) ? ; if computed . bytes != * proof . dependency () { return Err (ProofError :: OpeningMismatch) ; } Ok (ProofComparison :: Matches (Box :: new (proof))) }",
+    "class_decision": "host-publication-codec",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    },
+    "item_premise": "The selected proof comparison records public supplied values and closed refusals. It wraps S_D and D in the profile package\u2019s carrier only at the commitment call, then checks all five act association fields; a matching comparison is equality, not authentication."
+  }
+}

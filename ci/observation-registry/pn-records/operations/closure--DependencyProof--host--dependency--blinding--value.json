@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-records",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "item": "closure::DependencyProof::host_dependency_blinding_value",
+    "owner": "RECORDS",
+    "signature": "fn host_dependency_blinding_value (& self) -> & [u8 ; 48]",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:records",
+    "operation": "closure-dependencyproof-host-dependency-blinding-value"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/closure.rs::closure::DependencyProof::host_dependency_blinding_value",
+    "body": "{ & self . host_dependency_blinding_value }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "The complete supplied proof carries S_D and D as ordinary values. This accessor records its full argument and result under the records observation class; it does not authenticate the act or grant holder authority."
+  }
+}

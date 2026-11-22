@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "name": "graph-closure-full_recording",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The successor graph entry accepts only public retained structure and an explicitly supplied approval consumer; no holder observation, secret input or removal callback enters. Trace values are public and do not feed a reconstruction decision.",
+    "negative_probe": "GRAPH::claim:formation:closure-only-consumer"
+  }
+}

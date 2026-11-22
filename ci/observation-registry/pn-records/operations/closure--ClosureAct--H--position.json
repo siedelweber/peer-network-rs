@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-records",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "item": "closure::ClosureAct < H >::position",
+    "owner": "RECORDS",
+    "signature": "fn position (& self) -> u64",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:records",
+    "operation": "closure-closureact-h-position"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/closure.rs::closure::ClosureAct < H >::position",
+    "body": "{ self . position }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Pure successor operation over public retained structure and explicitly supplied complete opening or approval evidence; it neither reads holder state nor grants authenticated inclusion. Exact public values and closed refusals may be recorded."
+  }
+}

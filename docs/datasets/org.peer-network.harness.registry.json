@@ -1914,7 +1914,8 @@
         "pn-act-profile::v3::tests::content_order",
         "pn-act-profile::v3::tests::dependency_values",
         "pn-act-profile::v3::tests::dependency_order",
-        "pn-act-profile::v3::courtesy::tests::payload_bound"
+        "pn-act-profile::v3::courtesy::tests::payload_bound",
+        "pn-act-profile::v3::tests::dependency_preimage_guard"
       ],
       "implementation": "pn-act-profile-rust",
       "kind": "suite",
@@ -2634,7 +2635,9 @@
     {
       "budget": "pure-suite",
       "cases": [
-        "pn-graph::tests::publication_guard"
+        "pn-graph::tests::publication_guard",
+        "pn-graph::formation::closure::tests::removal_independence",
+        "pn-graph::formation::closure::tests::closure_only_consumer"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",
@@ -3332,7 +3335,12 @@
         "pn-host::public::comparison::comparison_corpus",
         "pn-host::public::controller::controller_corpus",
         "pn-host::public::controller::controller_retained_evidence",
-        "pn-host::public::controller::controller_ceilings"
+        "pn-host::public::controller::controller_ceilings",
+        "pn-host::public::closure::act_values",
+        "pn-host::public::closure::act_order",
+        "pn-host::public::closure::proof_values",
+        "pn-host::public::closure::proof_order",
+        "pn-host::public::closure::historical_bytes"
       ],
       "implementation": "pn-host-rust",
       "kind": "suite",
@@ -4405,7 +4413,8 @@
         "pn-records::tests::deployment_announcement_guard",
         "pn-records::tests::whole_act_carrier",
         "pn-records::tests::history_storage_is_shared",
-        "pn-records::tests::identity_components"
+        "pn-records::tests::identity_components",
+        "pn-records::closure::tests::opening_evidence"
       ],
       "implementation": "pn-records-rust",
       "kind": "suite",

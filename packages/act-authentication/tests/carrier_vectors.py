@@ -138,9 +138,151 @@ def refusals():
         ('proof-empty-substitution','replace nonempty D with [], anchor fixed','OpeningMismatch'),
     )]
 
+
+def refusal_vectors():
+    """Independently frame exact operands for the selected C6 order sites."""
+    source = vectors()
+    by_case = {row['case']: row for row in source['rows']}
+    rows = []
+
+    def act_fields(row):
+        return [2, bytes.fromhex(row['header']), bytes.fromhex(row['material']),
+                bytes.fromhex(row['seal']), bytes.fromhex(row['approval']),
+                row['epoch'], row['position'], row['logical_time']]
+
+    def proof_fields(row):
+        return [2, row['anchor']['identity'], row['epoch'], row['position'],
+                bytes.fromhex(row['p']), bytes.fromhex(row['cd']),
+                bytes.fromhex(row['sd']), row['dependencies']]
+
+    def add(name, site, expected, fields=None, case=3, raw=None):
+        encoded = raw if raw is not None else canonical(fields)
+        operand = dict(construction={'zero_bytes': len(encoded)}) if len(encoded) > 100_000 and not any(encoded) else dict(input=encoded.hex())
+        rows.append(dict(id=name, site=site, base_case=case, expected=expected, **operand))
+
+    a = by_case[3]
+    b = by_case[0]
+    c = by_case[7]
+    af = act_fields(a)
+    pf = proof_fields(a)
+    altered = lambda source, index, value: source[:index] + [value] + source[index+1:]
+    add('closure-edition', 'act', 'Edition', altered(af, 0, 1))
+    add('closure-proof-as-act', 'act', 'Shape', pf)
+    add('proof-act-as-proof', 'proof', 'Shape', af)
+    # The admitted descriptor text is frozen; this operand itself is synthetic ten-zero input.
+    add('historical-act-as-new', 'act', 'Shape', [0]*10)
+    add('new-act-as-historical', 'historical', 'Shape', af)
+    add('closure-extra-removal', 'act', 'Shape', af+[None])
+    add('closure-extra-D', 'act', 'Shape', af+[[]])
+    old_header = af[1].replace(bytes.fromhex('83030000'), bytes.fromhex('83020000'), 1)
+    assert old_header != af[1]
+    add('closure-old-header', 'act', 'Header:Edition', altered(af, 1, old_header))
+    old_material = canonical(['pn-act-authentication/author-token-bip340/v2',
+                              bytes.fromhex(a['run']), bytes([9])*32, a['host'], bytes([10])*32])
+    add('closure-old-material', 'act', 'Material:Edition', altered(af, 2, old_material))
+    for name, index, expected in [('seal', 3, 'Seal'), ('approval', 4, 'Approval')]:
+        add('closure-'+name, 'act', expected, altered(af, index, bytes([88])*64))
+    for name, index, expected in [('epoch', 5, 'Epoch'), ('position', 6, 'Position'), ('time', 7, 'Time')]:
+        add('closure-'+name, 'act', expected, altered(af, index, af[index]+1))
+    add('proof-edition', 'proof', 'Edition', altered(pf, 0, 1))
+    add('proof-extra', 'proof', 'Shape', pf+[None])
+    add('proof-digest', 'proof', 'Digest', altered(pf, 4, pf[4][:-1]))
+    add('proof-blinding', 'proof', 'Blinding', altered(pf, 6, pf[6][:-1]))
+    more = proof_fields(c)
+    more[7] = more[7] + [['act', more[1][1], 2**64-1, 'Registration']]
+    add('proof-count', 'proof', 'DependenciesBound', more, case=7)
+    add('proof-order', 'proof', 'Dependencies', altered(pf, 7, list(reversed(pf[7]))))
+    add('proof-duplicate', 'proof', 'Dependencies', altered(pf, 7, [pf[7][0]]*2))
+    add('proof-id', 'proof', 'AnchorIdentity', altered(pf, 1, b['anchor']['identity']))
+    for name, index, value, expected in [
+        ('epoch', 2, pf[2]+1, 'AnchorEpoch'),
+        ('position', 3, pf[3]+1, 'AnchorPosition'),
+        ('proposal', 4, bytes([81])*32, 'AnchorProposal'),
+        ('commitment', 5, bytes([82])*32, 'AnchorCommitment'),
+        ('opening', 6, bytes([83])*48, 'OpeningMismatch'),
+    ]:
+        add('proof-'+name, 'proof', expected, altered(pf, index, value))
+    add('proof-subset', 'proof', 'OpeningMismatch', altered(pf, 7, pf[7][:1]))
+    add('proof-empty-substitution', 'proof', 'OpeningMismatch', altered(pf, 7, []))
+
+    # The additions are stage and adjacent-overlap witnesses, including the
+    # independent canonical and typed/shape boundaries.
+    add('closure-bound-over', 'act', 'Bound', raw=b'\0'*(2_097_153))
+    add('closure-trailing', 'act', 'Canonical', raw=canonical(af)+b'\0')
+    add('closure-truncated', 'act', 'Canonical', raw=canonical(af)[:-1])
+    add('closure-nonpreferred', 'act', 'Canonical', raw=b'\x98\x08'+canonical(af)[1:])
+    add('closure-indefinite', 'act', 'Canonical', raw=b'\x9f'+canonical(af)[1:]+b'\xff')
+    for index, name in [(0,'edition-type'),(1,'header-type'),(2,'material-type'),
+                        (3,'seal-type'),(4,'approval-type'),(5,'epoch-type'),
+                        (6,'position-type'),(7,'time-type')]:
+        add('closure-'+name, 'act', 'Shape', altered(af, index, None))
+    for index, name in [(3,'seal-short'),(3,'seal-long'),(4,'approval-short'),(4,'approval-long')]:
+        count = 63 if name.endswith('short') else 65
+        add('closure-'+name, 'act', 'Shape', altered(af, index, bytes([87])*count))
+    add('closure-edition-before-header', 'act', 'Edition', altered(altered(af, 0, 1), 1, old_header))
+    add('closure-header-before-material', 'act', 'Header:Edition', altered(altered(af, 1, old_header), 2, old_material))
+    add('closure-seal-before-approval', 'act', 'Seal', altered(altered(af, 3, bytes([90])*64), 4, bytes([91])*64))
+    add('closure-approval-before-epoch', 'act', 'Approval', altered(altered(af, 4, bytes([91])*64), 5, af[5]+1))
+    add('closure-epoch-before-position', 'act', 'Epoch', altered(altered(af, 5, af[5]+1), 6, af[6]+1))
+    add('closure-position-before-time', 'act', 'Position', altered(altered(af, 6, af[6]+1), 7, af[7]+1))
+    add('proof-bound-over', 'proof', 'Bound', raw=b'\0'*262_454)
+    add('proof-trailing', 'proof', 'Canonical', raw=canonical(pf)+b'\0')
+    add('proof-truncated', 'proof', 'Canonical', raw=canonical(pf)[:-1])
+    add('proof-nonpreferred', 'proof', 'Canonical', raw=b'\x98\x08'+canonical(pf)[1:])
+    add('proof-indefinite', 'proof', 'Canonical', raw=b'\x9f'+canonical(pf)[1:]+b'\xff')
+    for index, name in [(0,'edition-type'),(1,'identity-type'),(2,'epoch-type'),
+                        (3,'position-type'),(4,'proposal-type'),(5,'commitment-type'),
+                        (6,'blinding-type'),(7,'dependencies-type')]:
+        add('proof-'+name, 'proof', 'Shape', altered(pf, index, None))
+    add('proof-edition-before-identity', 'proof', 'Edition', altered(altered(pf, 0, 1), 1, ['bad']))
+    add('proof-invalid-identity', 'proof', 'Identity', altered(pf, 1, ['act','bad',3,'Opinion']))
+    add('proof-both-digests', 'proof', 'Digest', altered(altered(pf, 4, b'\0'), 5, b'\0'))
+    add('proof-long-commitment', 'proof', 'Digest', altered(pf, 5, b'\0'*33))
+    add('proof-long-blinding', 'proof', 'Blinding', altered(pf, 6, b'\0'*49))
+    add('proof-bad-member', 'proof', 'Identity', altered(pf, 7, [pf[7][0], ['act','bad',4,'Registration']]))
+    add('proof-anchor-id-before-epoch', 'proof', 'AnchorIdentity', altered(altered(pf, 1, b['anchor']['identity']), 2, pf[2]+1))
+    add('proof-anchor-epoch-before-position', 'proof', 'AnchorEpoch', altered(altered(pf, 2, pf[2]+1), 3, pf[3]+1))
+    add('proof-anchor-position-before-proposal', 'proof', 'AnchorPosition', altered(altered(pf, 3, pf[3]+1), 4, bytes([81])*32))
+    add('proof-anchor-proposal-before-commitment', 'proof', 'AnchorProposal', altered(altered(pf, 4, bytes([81])*32), 5, bytes([82])*32))
+
+    maximum = boundaries()
+    boundary_id = maximum['identity']
+    for item in maximum['rows']:
+        construction = item['construction']
+        if 'author_fill' in construction:
+            dependency_list = [['act', construction['author_fill']*construction['author_bytes'], 0, 'Registration']]
+        else:
+            dependency_list = [['act', boundary_id[1], n, 'Registration']
+                               for n in range(construction['first_sequence'], construction['first_sequence']+construction['count'])]
+        proof = [2, boundary_id, item['placement'], item['placement'],
+                 bytes.fromhex(maximum['proposal']), bytes.fromhex(item['commitment']),
+                 bytes.fromhex(maximum['blinding']), dependency_list]
+        add(item['name'], 'proof-structural' if item['name'] == 'maximum-admissible' else 'proof',
+            'Valid' if item['name'] == 'maximum-admissible' else item['result'], proof, case=7)
+
+    # This private recipe guard receives synthetic fields, not a complete proof.
+    # The descriptor is still independently framed and executed at its owning site.
+    recipe = b'pn-act-profile/act-dependency/v3'
+    for size, expected in ((2_097_152, 'Valid'), (2_097_153, 'Bound')):
+        fill = size - len(recipe) - 1 - (1 + 1 + len('PN-dependency-v3') + 1 + 5)
+        framed = canonical(['PN-dependency-v3', [bytes(fill)]])
+        assert len(recipe) + 1 + len(framed) == size
+        rows.append(dict(id=f'dependency-preimage-{size}', site='profile-guard', base_case=3,
+                         expected=expected, construction=dict(zero_bytes=fill, preimage_bytes=size)))
+
+    expected = {item['name'] for item in refusals()}
+    assert expected == {row['id'] for row in rows if row['id'] in expected}
+    assert len({row['id'] for row in rows}) == len(rows)
+    assert {row['site'] for row in rows} == {'act', 'proof', 'historical', 'proof-structural', 'profile-guard'}
+    return dict(source='Independent Python framing of carrier-golden operands', rows=rows)
+
 if __name__ == '__main__':
     expected = vectors()
     if len(sys.argv) == 3 and sys.argv[1] == '--write':
         Path(sys.argv[2]).write_text(json.dumps(expected, indent=2)+'\n')
+    elif len(sys.argv) == 3 and sys.argv[1] == '--write-refusals':
+        Path(sys.argv[2]).write_text(json.dumps(refusal_vectors(), indent=2)+'\n')
+    elif len(sys.argv) == 3 and sys.argv[1] == '--check-refusals':
+        assert json.loads(Path(sys.argv[2]).read_text()) == refusal_vectors(), 'independent refusal operands differ'
     else:
         assert json.load(sys.stdin) == expected, 'independent closure component vectors differ'

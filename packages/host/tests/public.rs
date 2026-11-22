@@ -7,6 +7,8 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 mod annotations;
 #[path = "public/binary64.rs"]
 mod binary64;
+#[path = "public/closure.rs"]
+mod closure;
 #[path = "public/comparison.rs"]
 mod comparison;
 #[path = "public/controller.rs"]

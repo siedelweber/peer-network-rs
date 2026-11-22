@@ -4,6 +4,6 @@
     "item": "registration::FamilyError",
     "package": "pn-graph",
     "path": "packages/graph/src/registration.rs",
-    "syntax": "# [doc = \" The five structural outcomes shared by family projection routes.\"] # [doc = \" Removal authorization is deliberately outside this type.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub (super) enum FamilyError { UnsupportedFamily , Incidence , Unapproved , Capacity , GraphMismatch , }"
+    "syntax": "# [doc = \" Family projection produces the first three meanings; historical reconstruction\"] # [doc = \" widens its own capacity and mismatch. The successor constructs those last two itself.\"] # [doc = \" Removal authorization is deliberately outside this type.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub (super) enum FamilyError { UnsupportedFamily , Incidence , Unapproved , Capacity , GraphMismatch , }"
   }
 }

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::closure::ProofComparison",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/closure.rs",
+    "syntax": "# [doc = \" Structural absence remains distinct from successful exact comparison.\"] # [derive (Debug)] pub enum ProofComparison { UnavailableOpening , UnavailableAnchor , Matches (Box < DependencyProof >) , }"
+  }
+}

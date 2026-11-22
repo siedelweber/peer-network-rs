@@ -298,7 +298,7 @@
       "exceptions": 0,
       "generators": 28,
       "helpers": 0,
-      "instrumented": 51,
+      "instrumented": 57,
       "name": "pn-act-authentication",
       "number_forms": {
         "exceptions": {
@@ -326,18 +326,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "51",
+          "exact": "57",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "51",
+          "num": "57",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "51",
+          "exact": "57",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "51",
+          "num": "57",
           "num_exact": true,
           "num_relation": "="
         }
@@ -364,13 +364,13 @@
           "exact_digits": 32
         }
       },
-      "operations": 51
+      "operations": 57
     },
     {
       "exceptions": 3,
       "generators": 17,
       "helpers": 0,
-      "instrumented": 39,
+      "instrumented": 40,
       "name": "pn-act-profile",
       "number_forms": {
         "exceptions": {
@@ -398,18 +398,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "39",
+          "exact": "40",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "39",
+          "num": "40",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "42",
+          "exact": "43",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "42",
+          "num": "43",
           "num_exact": true,
           "num_relation": "="
         }
@@ -436,7 +436,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 42
+      "operations": 43
     },
     {
       "exceptions": 2,
@@ -655,25 +655,25 @@
       "operations": 98
     },
     {
-      "exceptions": 14,
-      "generators": 69,
+      "exceptions": 15,
+      "generators": 71,
       "helpers": 0,
-      "instrumented": 53,
+      "instrumented": 57,
       "name": "pn-graph",
       "number_forms": {
         "exceptions": {
-          "exact": "14",
+          "exact": "15",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "14",
+          "num": "15",
           "num_exact": true,
           "num_relation": "="
         },
         "generators": {
-          "exact": "69",
+          "exact": "71",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "69",
+          "num": "71",
           "num_exact": true,
           "num_relation": "="
         },
@@ -686,18 +686,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "53",
+          "exact": "57",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "53",
+          "num": "57",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "67",
+          "exact": "72",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "67",
+          "num": "72",
           "num_exact": true,
           "num_relation": "="
         }
@@ -724,28 +724,28 @@
           "exact_digits": 32
         }
       },
-      "operations": 67
+      "operations": 72
     },
     {
-      "exceptions": 272,
-      "generators": 241,
+      "exceptions": 274,
+      "generators": 247,
       "helpers": 0,
-      "instrumented": 83,
+      "instrumented": 92,
       "name": "pn-host",
       "number_forms": {
         "exceptions": {
-          "exact": "272",
+          "exact": "274",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "272",
+          "num": "274",
           "num_exact": true,
           "num_relation": "="
         },
         "generators": {
-          "exact": "241",
+          "exact": "247",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "241",
+          "num": "247",
           "num_exact": true,
           "num_relation": "="
         },
@@ -758,18 +758,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "83",
+          "exact": "92",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "83",
+          "num": "92",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "355",
+          "exact": "366",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "355",
+          "num": "366",
           "num_exact": true,
           "num_relation": "="
         }
@@ -796,7 +796,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 355
+      "operations": 366
     },
     {
       "exceptions": 36,
@@ -872,9 +872,9 @@
     },
     {
       "exceptions": 74,
-      "generators": 198,
+      "generators": 205,
       "helpers": 0,
-      "instrumented": 63,
+      "instrumented": 86,
       "name": "pn-records",
       "number_forms": {
         "exceptions": {
@@ -886,10 +886,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "198",
+          "exact": "205",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "198",
+          "num": "205",
           "num_exact": true,
           "num_relation": "="
         },
@@ -902,18 +902,18 @@
           "num_relation": "="
         },
         "instrumented": {
-          "exact": "63",
+          "exact": "86",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "63",
+          "num": "86",
           "num_exact": true,
           "num_relation": "="
         },
         "operations": {
-          "exact": "137",
+          "exact": "160",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "137",
+          "num": "160",
           "num_exact": true,
           "num_relation": "="
         }
@@ -940,7 +940,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 137
+      "operations": 160
     },
     {
       "exceptions": 14,

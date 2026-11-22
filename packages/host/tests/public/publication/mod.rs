@@ -4,6 +4,22 @@ mod base;
 #[path = "fixture.rs"]
 mod fixture;
 mod golden;
+
+pub(super) fn frozen_bytes() -> Vec<u8> {
+    golden::bytes()
+}
+
+pub(super) fn read_bytes(bytes: &[u8]) -> Result<base::d::Disclosure, pn_host::publication::Error> {
+    pn_host::publication::decode(bytes, &mut base::numeric(), wire_limits())
+}
+
+pub(super) fn historical_numeric() -> pn_records::numerics::NumericContext {
+    base::numeric()
+}
+
+pub(super) fn historical_limits() -> base::Limits {
+    wire_limits()
+}
 #[path = "mutations.rs"]
 mod mutations;
 #[path = "refusals.rs"]

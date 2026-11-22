@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "closure::ClosureHistory",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "syntax": "# [doc = \" A checked finite successor history with retained public-parent faults.\"] # [derive (Clone , Debug)] pub struct ClosureHistory < H : ClosureHeader > { acts : Vec < ClosureAct < H > > , indices : BTreeMap < ActId , usize > , references : BTreeSet < PublicReference > , parent_faults : Vec < ParentPlacementFault > , }"
+  }
+}

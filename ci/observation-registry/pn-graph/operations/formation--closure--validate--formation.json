@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-graph-registration",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation/closure.rs",
+    "item": "formation::closure::validate_formation",
+    "owner": "GRAPH",
+    "signature": "fn validate_formation < H : ClosureHeader > (graph : & ClosureFormationGraph , history : & ClosureHistory < H > , approval : & impl ClosureApproval < H > ,) -> Result < () , ClosureGraphError >",
+    "mode": "instrumented",
+    "claim": "ROOT::alg:design:formation"
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/formation/closure.rs::formation::closure::validate_formation",
+    "body": "{ let expected = reconstruct (history , approval) ? ; let actual = graph . graph () ; let reference = expected . graph () ; if actual . node_count () != reference . node_count () || actual . edge_count () != reference . edge_count () { return Err (ClosureGraphError :: GraphMismatch) ; } if reference . node_indices () . any (| index | actual . node_weight (index) != reference . node_weight (index)) { return Err (ClosureGraphError :: GraphMismatch) ; } if reference . edge_indices () . any (| index | { actual . edge_weight (index) != reference . edge_weight (index) || actual . edge_endpoints (index) != reference . edge_endpoints (index) }) { return Err (ClosureGraphError :: GraphMismatch) ; } Ok (()) }",
+    "class_decision": "graph-closure",
+    "assessments": {
+      "full_recording": "graph-closure-full_recording",
+      "secret_flow": "graph-closure-secret_flow",
+      "exposure_consumers": "graph-closure-exposure_consumers"
+    },
+    "item_premise": "Pure successor operation over public retained structure and explicitly supplied complete opening or approval evidence; it neither reads holder state nor grants authenticated inclusion. Exact public values and closed refusals may be recorded."
+  }
+}

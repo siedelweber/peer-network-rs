@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-records",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "item": "closure::assess_openings",
+    "owner": "RECORDS",
+    "signature": "fn assess_openings < H : ClosureHeader > (history : & ClosureHistory < H > , openings : & impl ClosureDependencyOpener < H > ,) -> Result < ClosureEvidence , OpeningError >",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:records",
+    "operation": "closure-assess-openings"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/closure.rs::closure::assess_openings",
+    "body": "{ let mut seen = BTreeSet :: new () ; for target in openings . targets () { if history . get (target) . is_none () { return Err (OpeningError :: Unknown (target . clone ())) ; } if ! seen . insert (target) { return Err (OpeningError :: Duplicate (target . clone ())) ; } } let mut ordered : Vec < _ > = history . acts . iter () . collect () ; ordered . sort_by_key (| act | ((act . epoch , act . position) , act . id ())) ; let mut inputs = Vec :: new () ; let mut unavailable_targets = BTreeSet :: new () ; let mut dependency_violations = Vec :: new () ; for act in ordered { let deps = match openings . opening (act) { SuppliedOpening :: Available (deps) => { if deps . windows (2) . any (| pair | pair [0] >= pair [1]) { return Err (OpeningError :: Dependencies) ; } let act_order = (act . epoch , act . position) ; for dependency in deps { let cause = if dependency == act . id () { Some (DependencyCause :: SelfDependency) } else { match history . get (dependency) { None => Some (DependencyCause :: Missing) , Some (target) if (target . epoch , target . position) >= act_order => Some (DependencyCause :: NotEarlier) , Some (_) => None , } } ; if let Some (cause) = cause { dependency_violations . push (DependencyViolation { act : act . id () . clone () , dependency : dependency . clone () , cause , }) ; } } Some (deps) } SuppliedOpening :: Unavailable => { unavailable_targets . insert (act . id () . clone ()) ; None } } ; inputs . push (act . structural (deps)) ; } Ok (ClosureEvidence { time_evidence : check_times_structural (& inputs) , parent_faults : history . parent_faults . clone () , dependency_violations , unavailable_targets , }) }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Pure successor assessment over public retained structure and a separately supplied complete opening. The supplied D and any violating dependency identifiers are public to observation and its result trace records them; the operation neither reads holder state nor grants authenticated inclusion."
+  }
+}

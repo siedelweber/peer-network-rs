@@ -156,7 +156,7 @@ fn reproduction(boundary: &str) -> Vec<u8> {
         vec![0x80],
     ])
 }
-fn bytes() -> Vec<u8> {
+pub(super) fn bytes() -> Vec<u8> {
     let accepted = array(&[
         vec![0x80],
         vec![0x80],

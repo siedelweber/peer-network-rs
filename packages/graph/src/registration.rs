@@ -89,7 +89,8 @@ pub enum RegistrationError {
     GraphMismatch,
 }
 
-/// The five structural outcomes shared by family projection routes.
+/// Family projection produces the first three meanings; historical reconstruction
+/// widens its own capacity and mismatch. The successor constructs those last two itself.
 /// Removal authorization is deliberately outside this type.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(super) enum FamilyError {

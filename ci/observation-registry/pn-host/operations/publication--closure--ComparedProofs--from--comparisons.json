@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-publication",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/closure.rs",
+    "item": "publication::closure::ComparedProofs::from_comparisons",
+    "owner": "HOST",
+    "signature": "fn from_comparisons (comparisons : Vec < ProofComparison >) -> Self",
+    "mode": "instrumented",
+    "claim": "HOST::rule:publication:codec"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/closure.rs::publication::closure::ComparedProofs::from_comparisons",
+    "body": "{ Self (comparisons . into_iter () . filter_map (| result | match result { ProofComparison :: Matches (proof) => Some (* proof) , ProofComparison :: UnavailableOpening | ProofComparison :: UnavailableAnchor => None , }) . collect () ,) }",
+    "class_decision": "host-publication-codec",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    },
+    "item_premise": "Pure successor operation over public retained structure and explicitly supplied complete opening or approval evidence; it neither reads holder state nor grants authenticated inclusion. Exact public values and closed refusals may be recorded."
+  }
+}

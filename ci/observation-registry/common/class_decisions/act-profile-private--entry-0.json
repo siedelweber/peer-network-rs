@@ -32,7 +32,8 @@
         "pn-act-profile::packages/act-profile/src/v3.rs::v3::dependency_commitment",
         "pn-act-profile::packages/act-profile/src/v3.rs::v3::encode_body",
         "pn-act-profile::packages/act-profile/src/v3.rs::v3::proposal_commitment",
-        "pn-act-profile::packages/act-profile/src/v3.rs::v3::proposal_matches_supplied_commitment"
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::proposal_matches_supplied_commitment",
+        "pn-act-profile::packages/act-profile/src/v3.rs::v3::valid_act_id"
       ]
     }
   }

@@ -43,8 +43,8 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-act-authentication"
-operations = 51
-instrumented = 51
+operations = 57
+instrumented = 57
 exceptions = 0
 helpers = 0
 generators = 28
@@ -53,8 +53,8 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-act-profile"
-operations = 42
-instrumented = 39
+operations = 43
+instrumented = 40
 exceptions = 3
 helpers = 0
 generators = 17
@@ -93,21 +93,21 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-graph"
-operations = 67
-instrumented = 53
-exceptions = 14
+operations = 72
+instrumented = 57
+exceptions = 15
 helpers = 0
-generators = 69
+generators = 71
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 
 [[rows]]
 name = "pn-host"
-operations = 355
-instrumented = 83
-exceptions = 272
+operations = 366
+instrumented = 92
+exceptions = 274
 helpers = 0
-generators = 241
+generators = 247
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 
@@ -123,11 +123,11 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-records"
-operations = 137
-instrumented = 63
+operations = 160
+instrumented = 86
 exceptions = 74
 helpers = 0
-generators = 198
+generators = 205
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 

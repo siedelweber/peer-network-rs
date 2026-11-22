@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "closure::ClosureLeg",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "syntax": "# [doc = \" A borrowed structural edge from the same checked header as its body.\"] # [derive (Clone , Copy , Debug)] pub struct ClosureLeg < 'a > { pub id : & 'a EdgeId , pub source : & 'a PublicReference , pub target : & 'a PublicReference , }"
+  }
+}

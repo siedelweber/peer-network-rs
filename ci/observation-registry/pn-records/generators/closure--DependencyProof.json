@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "closure::DependencyProof",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "public-records",
+    "expansion_review": "Derives only clone, public diagnostic, equality, default or closed error-display behaviour for the declared immutable successor representation. It grants no signature truth, holder status, opening authenticity or accepted inclusion; all semantic checks remain in the explicit consumer."
+  }
+}

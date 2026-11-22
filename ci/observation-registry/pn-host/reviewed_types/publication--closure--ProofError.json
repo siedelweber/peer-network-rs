@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::closure::ProofError",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/closure.rs",
+    "syntax": "# [doc = \" Ordered opening-proof refusal; absence is a result, not a malformed fragment.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum ProofError { Bound , Canonical , Shape , Edition , Identity , Digest , Blinding , DependenciesBound , Dependencies , AnchorIdentity , AnchorEpoch , AnchorPosition , AnchorProposal , AnchorCommitment , OpeningMismatch , }"
+  }
+}

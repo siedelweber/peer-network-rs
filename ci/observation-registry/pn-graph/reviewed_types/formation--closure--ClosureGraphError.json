@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "formation::closure::ClosureGraphError",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation/closure.rs",
+    "syntax": "# [doc = \" The five structural meanings; no removal refusal exists here.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ClosureGraphError { # [error (\"unsupported act family\")] UnsupportedFamily , # [error (\"invalid structural incidence\")] Incidence , # [error (\"approval not established\")] Unapproved , # [error (\"graph capacity exhausted\")] Capacity , # [error (\"graph differs from reconstruction\")] GraphMismatch , }"
+  }
+}

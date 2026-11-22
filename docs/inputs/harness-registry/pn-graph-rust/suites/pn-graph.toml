@@ -6,4 +6,4 @@ level = "unit"
 implementation = "pn-graph-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-graph::tests::publication_guard"]
+cases = ["pn-graph::tests::publication_guard", "pn-graph::formation::closure::tests::removal_independence", "pn-graph::formation::closure::tests::closure_only_consumer"]

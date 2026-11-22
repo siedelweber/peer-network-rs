@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::closure::OpeningAnchor",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/closure.rs",
+    "syntax": "# [doc = \" The independently retained act is the stated authenticated-selection premise.\"] # [doc = \" This wrapper does not authenticate that premise.\"] # [derive (Clone , Copy , Debug)] pub struct OpeningAnchor < 'a , H : ClosureHeader > { pub act : & 'a ClosureAct < H > , }"
+  }
+}

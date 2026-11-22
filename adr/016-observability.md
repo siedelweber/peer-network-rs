@@ -99,15 +99,15 @@ The implemented follow-up adds entry_origin_installation_transfer (the shared in
 | documents | 29 | 19 | 10 | 0 | 22 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
 | pn | 34 | 24 | 10 | 0 | 29 |
-| pn-act-authentication | 51 | 51 | 0 | 0 | 28 |
-| pn-act-profile | 42 | 39 | 3 | 0 | 17 |
+| pn-act-authentication | 57 | 57 | 0 | 0 | 28 |
+| pn-act-profile | 43 | 40 | 3 | 0 | 17 |
 | pn-credential-derivation | 6 | 4 | 2 | 0 | 1 |
 | pn-credential-generator | 6 | 1 | 5 | 0 | 2 |
 | pn-epoch | 98 | 74 | 24 | 0 | 149 |
-| pn-graph | 67 | 53 | 14 | 0 | 69 |
-| pn-host | 355 | 83 | 272 | 0 | 241 |
+| pn-graph | 72 | 57 | 15 | 0 | 71 |
+| pn-host | 366 | 92 | 274 | 0 | 247 |
 | pn-interchange | 171 | 134 | 36 | 1 | 104 |
-| pn-records | 137 | 63 | 74 | 0 | 198 |
+| pn-records | 160 | 86 | 74 | 0 | 205 |
 | pn-secret-home | 23 | 9 | 14 | 0 | 6 |
 | pn-wallet | 30 | 7 | 23 | 0 | 30 |
 

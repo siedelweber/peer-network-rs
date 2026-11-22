@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-publication",
+    "package": "pn-host",
+    "path": "packages/host/src/publication/closure.rs",
+    "item": "publication::closure::encode_proof",
+    "owner": "HOST",
+    "signature": "fn encode_proof (proof : & DependencyProof) -> Result < Vec < u8 > , ProofError >",
+    "mode": "instrumented",
+    "claim": "HOST::rule:publication:codec"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/publication/closure.rs::publication::closure::encode_proof",
+    "body": "{ let encoded = proof_value (proof) . to_canonical_bytes () ; decode_proof (& encoded) ? ; Ok (encoded) }",
+    "class_decision": "host-publication-codec",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    },
+    "item_premise": "The selected proof writer constructs an ordinary canonical Value containing S_D and the complete D, and the public encoder records receiver and result in full. Its decoder self-check records the same public supplied values; neither route authenticates the retained act."
+  }
+}

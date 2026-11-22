@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-records",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "item": "closure::DependencyProof::dependencies",
+    "owner": "RECORDS",
+    "signature": "fn dependencies (& self) -> & [ActId]",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:records",
+    "operation": "closure-dependencyproof-dependencies"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/closure.rs::closure::DependencyProof::dependencies",
+    "body": "{ & self . dependencies }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "The complete supplied proof carries S_D and D as ordinary values. This accessor records its full argument and result under the records observation class; it does not authenticate the act or grant holder authority."
+  }
+}

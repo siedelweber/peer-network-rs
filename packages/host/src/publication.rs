@@ -14,6 +14,9 @@ mod backend_error;
 /// (´[ROOT-dec:design:comparison-verdict-record]´)
 pub mod comparison;
 
+/// Caller-selected successor act and opening fragments, separate from publication one.
+pub mod closure;
+
 /// Explicit controller fragments, separate from every publication producer.
 /// (´[ROOT-dec:design:comparison-verdict-record]´)
 pub mod controller;

@@ -3927,6 +3927,27 @@ impl RegistrationVerifier for OrderVerifier {
 /// ´test:integration:historical-removal-order´
 #[test]
 fn historical_removal_order() {
+    let mut complete = settlement_inputs();
+    complete[0].projections.content = Removal::Tombstoned((2, 1));
+    let history = validate_history(&complete, &names()).unwrap();
+    let verifier = OrderVerifier::default();
+    assert!(reconstruct(&history, &verifier).is_ok());
+    let full_events = verifier.events.into_inner();
+    assert_eq!(
+        full_events
+            .iter()
+            .filter(|event| *event == &("approval", "Bid".into(), 8))
+            .count(),
+        4
+    );
+    assert_eq!(
+        full_events
+            .iter()
+            .filter(|event| *event == &("removal", "Bid".into(), 8))
+            .count(),
+        4
+    );
+
     let mut direct = candidate("Registration", 1);
     direct.projections.content = Removal::Tombstoned((2, 1));
     let history = validate_history(&[direct], &names()).unwrap();

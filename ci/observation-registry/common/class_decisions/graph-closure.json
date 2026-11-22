@@ -1,0 +1,17 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "graph-closure",
+    "membership": {
+      "explicit": [
+        "pn-graph::packages/graph/src/formation/closure.rs::formation::closure::<ClosureGraphError as From < FamilyError >>::from",
+        "pn-graph::packages/graph/src/formation/closure.rs::formation::closure::ClosureFormationGraph::graph",
+        "pn-graph::packages/graph/src/formation/closure.rs::formation::closure::reconstruct",
+        "pn-graph::packages/graph/src/formation/closure.rs::formation::closure::reconstruct_replay",
+        "pn-graph::packages/graph/src/formation/closure.rs::formation::closure::validate_formation"
+      ]
+    },
+    "status": "reviewer-confirmed",
+    "premises": "Successor graph operations consume immutable public closure records and caller-supplied approval outcomes. They do not read holder state, authenticate signatures or authorize removals. Complete public structure and typed refusals can be recorded without altering reconstruction."
+  }
+}

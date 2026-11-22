@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-wallet",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/v3.rs",
+    "item": "v3::<VerifiedHeader as ClosureHeader>::legs",
+    "owner": "ACTAUTH",
+    "signature": "fn legs (& self) -> Vec < ClosureLeg < '_ > >",
+    "mode": "instrumented",
+    "claim": "ACTAUTH::def:authentication:messages"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/v3.rs::v3::<VerifiedHeader as ClosureHeader>::legs",
+    "body": "{ self . parts . body . legs . iter () . map (| leg | ClosureLeg { id : & leg . id , source : & leg . source , target : & leg . target , }) . collect () }",
+    "class_decision": "authentication-public",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Pure successor operation over public retained structure and explicitly supplied complete opening or approval evidence; it neither reads holder state nor grants authenticated inclusion. Exact public values and closed refusals may be recorded."
+  }
+}

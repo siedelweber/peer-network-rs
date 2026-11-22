@@ -2082,6 +2082,8 @@ dependencies = [
  "hmac",
  "metrics",
  "pbkdf2",
+ "pn-act-authentication",
+ "pn-act-profile",
  "pn-credential-derivation",
  "pn-epoch",
  "pn-interchange",

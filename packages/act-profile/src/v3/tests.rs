@@ -83,6 +83,39 @@ fn boundary_value(source: &Json) -> Value {
     array(entries.iter().map(boundary_value))
 }
 
+/// A complete frame of synthetic fill at the admitted ceiling passes;
+/// one additional byte reaches the private bound before any digest is exposed.
+/// ´claim:profile:dependency-proof-preimage-guard´
+/// ´test:unit:dependency-preimage-guard´
+#[test]
+fn dependency_preimage_guard() {
+    let corpus: serde_json::Value =
+        serde_json::from_str(include_str!("../../../act-authentication/tests/carrier-refusals.json")).unwrap();
+    let cases: Vec<_> = corpus["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|row| row["site"] == "profile-guard")
+        .collect();
+    assert_eq!(cases.len(), 2);
+    for row in cases {
+        let fill = usize::try_from(row["construction"]["zero_bytes"].as_u64().unwrap()).unwrap();
+        let bytes = usize::try_from(row["construction"]["preimage_bytes"].as_u64().unwrap()).unwrap();
+        // Array(2), text head plus tag, Array(1), and five-byte bytes head.
+        assert_eq!(
+            DEPENDENCY_RECIPE.len() + 1 + 1 + 1 + "PN-dependency-v3".len() + 1 + 5 + fill,
+            bytes
+        );
+        let fields = vec![SecretValue::Bytes(vec![0_u8; fill].into())];
+        let result = frame_hash(DEPENDENCY_RECIPE, "PN-dependency-v3", fields);
+        match row["expected"].as_str().unwrap() {
+            "Valid" => assert!(result.is_ok(), "{}", row["id"]),
+            "Bound" => assert!(matches!(result, Err(ProfileError::Bound)), "{}", row["id"]),
+            other => panic!("unrecognized guard result: {other}"),
+        }
+    }
+}
+
 /// Independent B3 bytes round-trip through both selected paths and bind the independent residues.
 /// ´claim:profile:version-three-body-values´
 /// ´test:unit:body-values´

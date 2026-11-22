@@ -27,6 +27,10 @@ pub mod live_markers;
 /// (´def:acts:commitment-residues´)
 pub mod commitments;
 
+/// Immutable successor acts and separately supplied opening evidence.
+/// (´[ROOT-amend:identity:closure-components]´)
+pub mod closure;
+
 /// Named untrusted act handshake disclosures.
 /// (´def:acts:authentication-disclosure´)
 pub mod authentication;

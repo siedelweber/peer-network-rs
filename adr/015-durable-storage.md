@@ -71,12 +71,18 @@
 | anstyle-query 1.1.5 | MIT OR Apache-2.0 | none enabled | 1.66.0 | none | 40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc |
 | anstyle-wincon 3.0.11 | MIT OR Apache-2.0 | not built for pn-host | 1.66.0 | none | 291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d |
 | anyhow 1.0.104 | MIT OR Apache-2.0 | default, std | 1.68 | build script: build-script-build | 330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470 |
+| arrayvec 0.7.8 | MIT OR Apache-2.0 | not built for pn-host | 1.51 | none | d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56 |
 | async-trait 0.1.92 | MIT OR Apache-2.0 | none enabled | 1.71 | none; procedural macro async_trait | 82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667 |
 | autocfg 1.5.1 | Apache-2.0 OR MIT | none enabled | 1.0 | none | f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53 |
 | base64 0.22.1 | MIT OR Apache-2.0 | alloc, default, std | 1.48.0 | none | 72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6 |
 | base64 0.23.1 | MIT OR Apache-2.0 | none enabled | 1.71.0 | none | ac07cdecf99051d9a5238b80f35af32cdeba5b336e55d957b318b50137e18da5 |
 | bit-set 0.11.1 | Apache-2.0 OR MIT | default, std | 1.85.0 | none | 56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c |
 | bit-vec 0.10.1 | Apache-2.0 OR MIT | default, std | 1.85.0 | none | 5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269 |
+| bitcoin-consensus-encoding 1.3.0 | CC0-1.0 | not built for pn-host | 1.74.0 | none | 9daa31138eb443d5751b207f3f64154e2bb09cd59960562ccc7a7112be38147f |
+| bitcoin-internals 0.7.0 | CC0-1.0 | not built for pn-host | 1.74.0 | build script: build-script-build | e8bea3a9f0cfece4564e37cb49a38cc245ca5184719e50d7d0dda3268722c4e2 |
+| bitcoin-io 0.1.101 | CC0-1.0 | not built for pn-host | 1.60.0 | build script: build-script-build | bb5de036369d1ac59d3c1819ebc4d850f89466f5401c571a285b6ed564a4cb78 |
+| bitcoin-private 0.1.0 | CC0-1.0 | default | not declared | build script: build-script-build | 73290177011694f38ec25e165d0387ab7ea749a4b81cd4c80dae5988229f7a57 |
+| bitcoin_hashes 0.14.101 | CC0-1.0 | not built for pn-host | 1.60.0 | none | bca4c7abb40c8817d77403c880988cfd484f23ab2365726afb2f798363e2c4a2 |
 | bitflags 2.13.2 | MIT OR Apache-2.0 | std | 1.56.0 | none | 3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06 |
 | block-buffer 0.12.1 | MIT OR Apache-2.0 | zeroize | 1.85 | none | d2f6c7dbe95a6ed67ad9f18e57daf93a2f034c524b99fd2b76d18fdfeb6660aa |
 | borsh 1.8.1 | MIT OR Apache-2.0 | not built for pn-host | 1.77.0 | build script: build-script-build | 553c5d846a6ba5150c65e3b1b8ec073bcf1abc20f9b7220de384a4443ea4e20a |
@@ -127,6 +133,7 @@
 | futures-sink 0.3.34 | MIT OR Apache-2.0 | alloc, default, std | 1.36 | none | 1944426bf7d03f1d14f708785e4b33efd750b36d48a157b836b3efc15ede8e1d |
 | futures-task 0.3.34 | MIT OR Apache-2.0 | alloc, std | 1.71 | none | cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd |
 | futures-util 0.3.34 | MIT OR Apache-2.0 | alloc, async-await, async-await-macro, futures-macro, futures-sink, sink, slab, std | 1.71 | none | 0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc |
+| getrandom 0.2.17 | MIT OR Apache-2.0 | not built for pn-host | not declared | none | ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0 |
 | getrandom 0.3.4 | MIT OR Apache-2.0 | std | 1.63 | build script: build-script-build | 899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd |
 | getrandom 0.4.3 | MIT OR Apache-2.0 | std, sys_rng | 1.85 | build script: build-script-build | 300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099 |
 | globset 0.4.20 | Unlicense OR MIT | not built for pn-host | 1.88 | none | 07c34a9410465b45bd9787443bc7370f37735bad04b0f0cd57ff1a3186c98988 |
@@ -134,6 +141,8 @@
 | hashbrown 0.15.5 | MIT OR Apache-2.0 | default-hasher, inline-more | 1.65.0 | none | 9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1 |
 | hashbrown 0.17.1 | MIT OR Apache-2.0 | none enabled | 1.85.0 | none | ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a |
 | heck 0.5.0 | MIT OR Apache-2.0 | none enabled | 1.56 | none | 2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea |
+| hex-conservative 0.2.3 | CC0-1.0 | not built for pn-host | 1.56.1 | none | db3fef046dca3ca91ee1408a8c1b80ab777e80a4d308d1bf4e7adb3fcb047e08 |
+| hex-conservative 1.3.0 | CC0-1.0 | not built for pn-host | 1.74.0 | none | 271e0d19bcb473b6675739a2b536076b24a082316cb5199ad918edce10c599e8 |
 | hmac 0.13.0 | MIT OR Apache-2.0 | zeroize | 1.85 | none | 6303bc9732ae41b04cb554b844a762b4115a61bfaa81e3e83050991eeb56863f |
 | http 1.5.0 | MIT OR Apache-2.0 | std | 1.57.0 | none | 918d3568bebf352712bc2ef3d46a8bcf1a75b373be6539de198e9105cbbf9ce0 |
 | httpdate 1.0.3 | MIT OR Apache-2.0 | none enabled | 1.56 | none | df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9 |
@@ -204,9 +213,12 @@
 | r-efi 5.3.0 | MIT OR Apache-2.0 OR LGPL-2.1-or-later | not built for pn-host | 1.68 | none | 69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f |
 | r-efi 6.0.0 | MIT OR Apache-2.0 OR LGPL-2.1-or-later | not built for pn-host | 1.68 | none | f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf |
 | rand 0.10.3 | MIT OR Apache-2.0 | alloc, default, std, std_rng, sys_rng, thread_rng | 1.85 | none | 65c9fb96cbc91e3478eaae79a69fcd3f1ae4ad052e471fe6732fff548984b4af |
+| rand 0.8.8 | MIT OR Apache-2.0 | not built for pn-host | not declared | none | e058c7de0b26af77780c769414d6257830bb240f3c38477dbc2c16e5f54d6d4c |
 | rand 0.9.5 | MIT OR Apache-2.0 | alloc, os_rng, small_rng, std, std_rng, thread_rng | 1.63 | none | b9ef1d0d795eb7d84685bca4f72f3649f064e6641543d3a8c415898726a57b41 |
+| rand_chacha 0.3.1 | MIT OR Apache-2.0 | not built for pn-host | not declared | none | e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88 |
 | rand_chacha 0.9.0 | MIT OR Apache-2.0 | std | 1.63 | none | d3022b5f1df60f26e1ffddd6c66e8aa15de382ae63b3a0c1bfc0e4d3e3f325cb |
 | rand_core 0.10.1 | MIT OR Apache-2.0 | none enabled | 1.85 | none | 63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69 |
+| rand_core 0.6.4 | MIT OR Apache-2.0 | not built for pn-host | not declared | none | ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c |
 | rand_core 0.9.5 | MIT OR Apache-2.0 | os_rng, std | 1.63 | none | 76afc826de14238e6e8c374ddcc1fa19e374fd8dd986b0d2af0d02377261d83c |
 | rand_xorshift 0.5.0 | MIT OR Apache-2.0 | none enabled | 1.85 | none | 60aa6af80be32871323012e02e6e65f8a7cc7890931ae421d217ad8fe0df2ccf |
 | rapidhash 4.5.1 | MIT OR Apache-2.0 | none enabled | 1.71.0 | none | 5da7e78a036ce858e8d55b7e7dc8ba3a88b78350fd2155d3591bbd966b58589e |

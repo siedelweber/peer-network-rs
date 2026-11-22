@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-records",
+    "package": "pn-records",
+    "path": "packages/records/src/closure.rs",
+    "item": "closure::DependencyProof::new",
+    "owner": "RECORDS",
+    "signature": "fn new (id : ActId , epoch : u64 , position : u64 , proposal : [u8 ; 32] , dependency : [u8 ; 32] , host_dependency_blinding_value : [u8 ; 48] , dependencies : Vec < ActId > ,) -> Self",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:records",
+    "operation": "closure-dependencyproof-new"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/closure.rs::closure::DependencyProof::new",
+    "body": "{ Self { id , epoch , position , proposal , dependency , host_dependency_blinding_value , dependencies , } }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Pure successor operation over public retained structure and explicitly supplied complete opening or approval evidence; it neither reads holder state nor grants authenticated inclusion. Exact public values and closed refusals may be recorded."
+  }
+}

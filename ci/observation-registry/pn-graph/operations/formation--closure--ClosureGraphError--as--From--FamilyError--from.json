@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-graph-registration",
+    "package": "pn-graph",
+    "path": "packages/graph/src/formation/closure.rs",
+    "item": "formation::closure::<ClosureGraphError as From < FamilyError >>::from",
+    "owner": "GRAPH",
+    "signature": "fn from (error : FamilyError) -> Self",
+    "mode": "exception",
+    "claim": "ROOT::alg:design:formation",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Pure conversion of the five structural refusals inherits its enclosing reconstruction boundary.",
+      "witness": "GRAPH::claim:formation:closure-only-consumer",
+      "boundary": "pn-graph::packages/graph/src/formation/closure.rs::formation::closure::reconstruct",
+      "class_decision": "graph-closure"
+    }
+  },
+  "review": {
+    "operation": "pn-graph::packages/graph/src/formation/closure.rs::formation::closure::<ClosureGraphError as From < FamilyError >>::from",
+    "body": "{ match error { FamilyError :: UnsupportedFamily => Self :: UnsupportedFamily , FamilyError :: Incidence => Self :: Incidence , FamilyError :: Unapproved => Self :: Unapproved , FamilyError :: Capacity => Self :: Capacity , FamilyError :: GraphMismatch => Self :: GraphMismatch , } }",
+    "class_decision": "graph-closure",
+    "assessments": {
+      "full_recording": "graph-closure-full_recording",
+      "secret_flow": "graph-closure-secret_flow",
+      "exposure_consumers": "graph-closure-exposure_consumers"
+    },
+    "item_premise": "Pure successor operation over public retained structure and explicitly supplied complete opening or approval evidence; it neither reads holder state nor grants authenticated inclusion. Exact public values and closed refusals may be recorded."
+  }
+}

@@ -145,6 +145,19 @@
     },
     {
       "build_time": "none",
+      "built_for_host": false,
+      "checksum": "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "MIT OR Apache-2.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "1.51",
+      "name": "arrayvec 0.7.8",
+      "procedural_macros": [],
+      "version": "0.7.8"
+    },
+    {
+      "build_time": "none",
       "built_for_host": true,
       "checksum": "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
@@ -232,6 +245,73 @@
       "name": "bit-vec 0.10.1",
       "procedural_macros": [],
       "version": "0.10.1"
+    },
+    {
+      "build_time": "none",
+      "built_for_host": false,
+      "checksum": "9daa31138eb443d5751b207f3f64154e2bb09cd59960562ccc7a7112be38147f",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "CC0-1.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "1.74.0",
+      "name": "bitcoin-consensus-encoding 1.3.0",
+      "procedural_macros": [],
+      "version": "1.3.0"
+    },
+    {
+      "build_time": "build script: build-script-build",
+      "built_for_host": false,
+      "checksum": "e8bea3a9f0cfece4564e37cb49a38cc245ca5184719e50d7d0dda3268722c4e2",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "CC0-1.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "1.74.0",
+      "name": "bitcoin-internals 0.7.0",
+      "procedural_macros": [],
+      "version": "0.7.0"
+    },
+    {
+      "build_time": "build script: build-script-build",
+      "built_for_host": false,
+      "checksum": "bb5de036369d1ac59d3c1819ebc4d850f89466f5401c571a285b6ed564a4cb78",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "CC0-1.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "1.60.0",
+      "name": "bitcoin-io 0.1.101",
+      "procedural_macros": [],
+      "version": "0.1.101"
+    },
+    {
+      "build_time": "build script: build-script-build",
+      "built_for_host": true,
+      "checksum": "73290177011694f38ec25e165d0387ab7ea749a4b81cd4c80dae5988229f7a57",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [
+        "default"
+      ],
+      "licence": "CC0-1.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "not declared",
+      "name": "bitcoin-private 0.1.0",
+      "procedural_macros": [],
+      "version": "0.1.0"
+    },
+    {
+      "build_time": "none",
+      "built_for_host": false,
+      "checksum": "bca4c7abb40c8817d77403c880988cfd484f23ab2365726afb2f798363e2c4a2",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "CC0-1.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "1.60.0",
+      "name": "bitcoin_hashes 0.14.101",
+      "procedural_macros": [],
+      "version": "0.14.101"
     },
     {
       "build_time": "none",
@@ -981,6 +1061,19 @@
       "version": "0.3.34"
     },
     {
+      "build_time": "none",
+      "built_for_host": false,
+      "checksum": "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "MIT OR Apache-2.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "not declared",
+      "name": "getrandom 0.2.17",
+      "procedural_macros": [],
+      "version": "0.2.17"
+    },
+    {
       "build_time": "build script: build-script-build",
       "built_for_host": true,
       "checksum": "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd",
@@ -1078,6 +1171,32 @@
       "name": "heck 0.5.0",
       "procedural_macros": [],
       "version": "0.5.0"
+    },
+    {
+      "build_time": "none",
+      "built_for_host": false,
+      "checksum": "db3fef046dca3ca91ee1408a8c1b80ab777e80a4d308d1bf4e7adb3fcb047e08",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "CC0-1.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "1.56.1",
+      "name": "hex-conservative 0.2.3",
+      "procedural_macros": [],
+      "version": "0.2.3"
+    },
+    {
+      "build_time": "none",
+      "built_for_host": false,
+      "checksum": "271e0d19bcb473b6675739a2b536076b24a082316cb5199ad918edce10c599e8",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "CC0-1.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "1.74.0",
+      "name": "hex-conservative 1.3.0",
+      "procedural_macros": [],
+      "version": "1.3.0"
     },
     {
       "build_time": "none",
@@ -2142,6 +2261,19 @@
     },
     {
       "build_time": "none",
+      "built_for_host": false,
+      "checksum": "e058c7de0b26af77780c769414d6257830bb240f3c38477dbc2c16e5f54d6d4c",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "MIT OR Apache-2.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "not declared",
+      "name": "rand 0.8.8",
+      "procedural_macros": [],
+      "version": "0.8.8"
+    },
+    {
+      "build_time": "none",
       "built_for_host": true,
       "checksum": "b9ef1d0d795eb7d84685bca4f72f3649f064e6641543d3a8c415898726a57b41",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
@@ -2159,6 +2291,19 @@
       "name": "rand 0.9.5",
       "procedural_macros": [],
       "version": "0.9.5"
+    },
+    {
+      "build_time": "none",
+      "built_for_host": false,
+      "checksum": "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "MIT OR Apache-2.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "not declared",
+      "name": "rand_chacha 0.3.1",
+      "procedural_macros": [],
+      "version": "0.3.1"
     },
     {
       "build_time": "none",
@@ -2187,6 +2332,19 @@
       "name": "rand_core 0.10.1",
       "procedural_macros": [],
       "version": "0.10.1"
+    },
+    {
+      "build_time": "none",
+      "built_for_host": false,
+      "checksum": "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c",
+      "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
+      "features": [],
+      "licence": "MIT OR Apache-2.0",
+      "membership_scope": "Cargo.lock closure reachable from pn-host along all lock edges, including transitive development and platform-only edges.",
+      "msrv": "not declared",
+      "name": "rand_core 0.6.4",
+      "procedural_macros": [],
+      "version": "0.6.4"
     },
     {
       "build_time": "none",

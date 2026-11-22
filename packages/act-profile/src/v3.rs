@@ -15,6 +15,23 @@ pub const PROPOSAL_RECIPE: &str = "pn-act-profile/act-proposal/v3";
 pub const CONTENT_RECIPE: &str = "pn-act-profile/act-content/v3";
 /// Third dependency recipe, selected by the caller.
 pub const DEPENDENCY_RECIPE: &str = "pn-act-profile/act-dependency/v3";
+
+/// Check the admitted third-formation `ActId` spelling without changing its recipe.
+/// (´def:profile:version-three´)
+#[must_use]
+#[tracing::instrument(
+    name = "def:profile:version-three",
+    fields(
+        execution_owner = "ACTPROFILE",
+        claim_owner = "ACTPROFILE",
+        claim_label = "def:profile:version-three",
+        source_item = "v3::valid_act_id"
+    ),
+    ret
+)]
+pub fn valid_act_id(id: &ActId) -> bool {
+    valid_id(id)
+}
 const BODY_LIMIT: usize = 1_048_576;
 const PREIMAGE_LIMIT: usize = 2_097_152;
 const DEPENDENCY_LIMIT: usize = 262_144;
