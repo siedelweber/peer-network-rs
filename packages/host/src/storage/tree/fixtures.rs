@@ -457,6 +457,12 @@ pub(crate) fn tree_sequence(placements: &[u64], introduction: Option<u64>) -> Ve
     tree_sequence_with_check(placements, introduction, "history").0
 }
 
+/// One root and its single independent verifier for a caller-chosen fixture history.
+pub(crate) fn tree_root_with_check(history: &str) -> (publication::AdmittedPackage, Check) {
+    let (packages, check) = tree_sequence_with_check(&[100], None, history);
+    (packages.into_iter().next().unwrap(), check)
+}
+
 fn tree_sequence_with_check(
     placements: &[u64],
     introduction: Option<u64>,

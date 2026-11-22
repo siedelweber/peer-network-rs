@@ -106,7 +106,7 @@ fn budget() -> ReadBudget {
 
 fn audit_budget() -> AuditBudget {
     AuditBudget {
-        page_rows: 10_000,
+        page_rows: 8,
         rows: 1_000_000,
         allocation_bytes: 100_000_000,
         retained_bytes: 100_000_000,
@@ -266,6 +266,32 @@ fn fork_assertions(f: &ForkFixture) -> Vec<ReplayAssertion<'_>> {
         .collect()
 }
 
+fn prepare_fork_fixture(f: &ForkFixture) -> PreparedReplay {
+    let assertions = fork_assertions(f);
+    let entries = [2, 3, 1, 0, 0].map(|index| ReplayEntry {
+        bytes: &f.bytes[index],
+        assertion: assertions[index].clone(),
+    });
+    let mut numeric = base::numeric();
+    let mut encoding_usage = EncodingUsage::default();
+    let mut reserve = |_| Ok(());
+    prepare(
+        ReplayInput {
+            generations: &f.generations,
+            entries: &entries,
+        },
+        &f.verifier,
+        &mut ReplayPreparation {
+            numeric: &mut numeric,
+            encoding_usage: &mut encoding_usage,
+            reservation: &mut reserve,
+            limits: limits(),
+            position_ceiling: usize::MAX,
+        },
+    )
+    .unwrap()
+}
+
 fn prepare_entries(
     f: &Fixture,
     generations: &[Generation],
@@ -382,58 +408,8 @@ fn assert_framed_digit_boundary(scope: &EpochScope, short: usize, long: usize) {
     );
 }
 
-/// Claim: Independent restoration of the complete explicitly labelled fixture input produces the expected audited memory tree, exact bytes and tip-relative history through the ordinary writers.
-/// ´claim:history:rebuild-restores-labelled-input´
-/// ´test:unit:rebuild-restores-labelled-input´
-#[test]
-fn rebuild_restores_labelled_input() {
-    let fixture = fork_fixture();
-    assert_eq!(fixture.scopes[0].history, "aa");
-    assert_eq!(fixture.scopes[3].history, "b");
-    assert!(fixture.scopes[0] < fixture.scopes[3], "derived field order puts aa first");
-    assert_eq!(
-        super::super::framed_scope_cmp(&fixture.scopes[0], &fixture.scopes[3]),
-        std::cmp::Ordering::Greater,
-        "framed key order puts b first"
-    );
-    assert_eq!(fixture.scopes[0], fixture.scopes[1]);
-    assert_eq!(fixture.scopes[0], fixture.scopes[2]);
-    assert_framed_digit_boundary(&fixture.scopes[0], 9, 10);
-    assert_framed_digit_boundary(&fixture.scopes[0], 1, 10);
-    let assertions = fork_assertions(&fixture);
-    let entries = [2, 3, 1, 0, 0].map(|index| ReplayEntry {
-        bytes: &fixture.bytes[index],
-        assertion: assertions[index].clone(),
-    });
-    let mut numeric = base::numeric();
-    let mut encoding_usage = EncodingUsage::default();
-    let mut reserve = |_| Ok(());
-    let prepared = prepare(
-        ReplayInput {
-            generations: &fixture.generations,
-            entries: &entries,
-        },
-        &fixture.verifier,
-        &mut ReplayPreparation {
-            numeric: &mut numeric,
-            encoding_usage: &mut encoding_usage,
-            reservation: &mut reserve,
-            limits: limits(),
-            position_ceiling: usize::MAX,
-        },
-    )
-    .unwrap();
-    assert_framed_order(&fixture, &prepared);
-    let schedule = schedule(&prepared);
-    let mut usage = ReplayUsage::default();
-    let completed = replay_memory(
-        &prepared,
-        &mut ReplayExecution {
-            schedule: &schedule,
-            usage: &mut usage,
-        },
-    )
-    .unwrap();
+fn assert_memory_fork(fixture: &ForkFixture, completed: &CompletedMemory<'_>) {
+    let assertions = fork_assertions(fixture);
     assert_eq!(completed.inventory().counts().0, 2);
     assert_eq!(completed.inventory().counts().3, 4);
     let mut reader = completed.reader(budget());
@@ -478,7 +454,40 @@ fn rebuild_restores_labelled_input() {
     assert!(first_child.debits.iter().all(|debit| debit.origin != fixture.identities[2]));
 }
 
-/// Claim: Each listed preparation refusal preserves its distinct phase and cause. The list excludes Retention pending the replay-interface design owner's scoped selection revision; prepare has no target parameter, so unchanged target follows from API shape rather than an executed mutation assertion.
+/// Claim: Independent restoration of the complete explicitly labelled fixture input produces the expected audited memory tree, exact bytes and tip-relative history through the ordinary writers.
+/// ´claim:history:rebuild-restores-labelled-input´
+/// ´test:unit:rebuild-restores-labelled-input´
+#[test]
+fn rebuild_restores_labelled_input() {
+    let fixture = fork_fixture();
+    assert_eq!(fixture.scopes[0].history, "aa");
+    assert_eq!(fixture.scopes[3].history, "b");
+    assert!(fixture.scopes[0] < fixture.scopes[3], "derived field order puts aa first");
+    assert_eq!(
+        super::super::framed_scope_cmp(&fixture.scopes[0], &fixture.scopes[3]),
+        std::cmp::Ordering::Greater,
+        "framed key order puts b first"
+    );
+    assert_eq!(fixture.scopes[0], fixture.scopes[1]);
+    assert_eq!(fixture.scopes[0], fixture.scopes[2]);
+    assert_framed_digit_boundary(&fixture.scopes[0], 9, 10);
+    assert_framed_digit_boundary(&fixture.scopes[0], 1, 10);
+    let prepared = prepare_fork_fixture(&fixture);
+    assert_framed_order(&fixture, &prepared);
+    let schedule = schedule(&prepared);
+    let mut usage = ReplayUsage::default();
+    let completed = replay_memory(
+        &prepared,
+        &mut ReplayExecution {
+            schedule: &schedule,
+            usage: &mut usage,
+        },
+    )
+    .unwrap();
+    assert_memory_fork(&fixture, &completed);
+}
+
+/// Claim: Each listed preparation refusal, including composite-key overflow at Retention, preserves its distinct phase and cause. Pre-write Bytes is a defensive comparison excluded from this list under the canonical codec round trip; prepare has no target parameter, so unchanged target follows from API shape rather than an executed mutation assertion.
 /// ´claim:history:rebuild-input-refusals´
 /// ´test:unit:rebuild-input-refusals´
 #[test]
@@ -488,10 +497,68 @@ fn rebuild_input_refusals() {
     let declared = std::slice::from_ref(&f.generation);
     let valid = [root_entry(&f, root)];
     assert!(prepare_entries(&f, declared, &valid).is_ok(), "passing neighbour");
+    assert_eq!(f.root_scope.history, "history", "short-history neighbour");
     check_inspection_refusals(&f);
     check_declaration_refusals(&f);
     check_parent_and_comparison_refusals(&f);
     check_decoding_refusals(&f);
+    check_retention_refusal();
+}
+
+fn check_retention_refusal() {
+    let history = "a".repeat(900);
+    let (root, verifier) = tree_fixture::tree_root_with_check(&history);
+    let position = Position::from_package(&root, None, RECIPE, usize::MAX, &mut EncodingUsage::default(), |_| Ok(())).unwrap();
+    let disclosure = root.disclosures();
+    let scope =
+        crate::admitted_result::event_key(&root.boundary().candidate().input().causes.bindings.last().unwrap().marker).scope;
+    let identity = *position.residue();
+    let depth = position.depth();
+    let generation = Generation {
+        scope: scope.clone(),
+        ordinal: 1,
+        minimum: 1,
+        label: "unstable".into(),
+        versions: Vec::new(),
+        closures: Vec::new(),
+    };
+    let bytes = publication::encode(&disclosure, &mut base::numeric(), limits()).unwrap();
+    let entry = ReplayEntry {
+        bytes: &bytes,
+        assertion: ReplayAssertion {
+            label: Some("unstable"),
+            ordinal: 1,
+            scope,
+            identity,
+            parent: None,
+            depth,
+            uses: &[],
+        },
+    };
+    let mut numeric = base::numeric();
+    let mut encoding_usage = EncodingUsage::default();
+    let mut reserve = |_| Ok(());
+    let Err(failure) = prepare(
+        ReplayInput {
+            generations: std::slice::from_ref(&generation),
+            entries: std::slice::from_ref(&entry),
+        },
+        &verifier,
+        &mut ReplayPreparation {
+            numeric: &mut numeric,
+            encoding_usage: &mut encoding_usage,
+            reservation: &mut reserve,
+            limits: limits(),
+            position_ceiling: usize::MAX,
+        },
+    ) else {
+        panic!("long-history root prepared")
+    };
+    assert_eq!(failure.phase, ReplayPhase::Retention);
+    assert!(matches!(
+        failure.cause,
+        ReplayCause::Retain(crate::admitted_result::CarrierError::Representation)
+    ));
 }
 
 fn check_inspection_refusals(f: &Fixture) {
@@ -851,4 +918,313 @@ fn rebuild_memory_execution_refusals() {
         )
         .is_ok()
     );
+}
+
+fn server_schedule(prepared: &PreparedReplay) -> ReplaySchedule {
+    ReplaySchedule {
+        installation: prepared.declaration_scopes().map(|_| budget()).collect(),
+        commit: prepared.commit_order().map(|_| budget()).collect(),
+        target_read: prepared.reader_order().map(|_| budget()).collect(),
+        reference_read: prepared.reader_order().map(|_| budget()).collect(),
+        opening_audit: Some(audit_budget()),
+        final_audit: audit_budget(),
+    }
+}
+
+fn memory_reference(prepared: &PreparedReplay) -> CompletedMemory<'_> {
+    let schedule = schedule(prepared);
+    let mut usage = ReplayUsage::default();
+    replay_memory(
+        prepared,
+        &mut ReplayExecution {
+            schedule: &schedule,
+            usage: &mut usage,
+        },
+    )
+    .unwrap()
+}
+
+fn assert_server_result(fixture: &ForkFixture, index: usize, result: &ServerResult) {
+    let assertions = fork_assertions(fixture);
+    assert_eq!(result.identity, fixture.identities[index]);
+    assert_eq!(result.parent, assertions[index].parent);
+    assert_eq!(result.depth, assertions[index].depth);
+    assert_eq!(result.label, "unstable");
+    assert_eq!(result.generation, 1);
+    assert_eq!(result.bytes, fixture.bytes[index]);
+    assert_eq!(result.selections.len(), fixture.uses[index].len());
+    for (actual, expected) in result.selections.iter().zip(&fixture.uses[index]) {
+        assert_eq!(actual.use_, expected.declaration);
+        assert_eq!(actual.origin, expected.origin);
+    }
+}
+
+fn assert_server_debits(scope: &EpochScope, memory: &super::super::ResultRead<'_>, server: &ServerResult) {
+    assert_eq!(server.debits.len(), memory.debits.len());
+    for (actual, expected) in server.debits.iter().zip(&memory.debits) {
+        assert_eq!(expected.vintage.key.scope, *scope);
+        assert_eq!(actual.act, expected.vintage.key.act);
+        assert_eq!(actual.writing_boundary, expected.vintage.disclosure.boundary);
+        assert_eq!(actual.origin, expected.origin);
+        assert_eq!(actual.bytes, expected.bytes);
+    }
+}
+
+async fn assert_server_fork(fixture: &ForkFixture, reference: &CompletedMemory<'_>, target: &mut ServerTree) {
+    for index in 0..4 {
+        let mut reader = target.reader(budget()).await.unwrap();
+        let mut memory_reader = reference.reader(budget());
+        let result = reader
+            .exact(&fixture.scopes[index], fixture.identities[index])
+            .await
+            .unwrap()
+            .unwrap();
+        assert_server_result(fixture, index, &result);
+        let memory = memory_reader
+            .exact(&fixture.scopes[index], fixture.identities[index])
+            .unwrap()
+            .unwrap();
+        assert_server_debits(&fixture.scopes[index], &memory, &result);
+        for height in 0..=if matches!(index, 1 | 2) { 2 } else { 1 } {
+            let result = reader
+                .as_of(&fixture.scopes[index], fixture.identities[index], height)
+                .await
+                .unwrap();
+            let expected = if height == 0 {
+                None
+            } else if height == 1 && matches!(index, 1 | 2) {
+                Some(0)
+            } else {
+                Some(index)
+            };
+            match (result.as_ref(), expected) {
+                (None, None) => {
+                    assert!(
+                        memory_reader
+                            .as_of(&fixture.scopes[index], fixture.identities[index], height)
+                            .unwrap()
+                            .is_none()
+                    );
+                }
+                (Some(result), Some(expected)) => {
+                    assert_server_result(fixture, expected, result);
+                    let memory = memory_reader
+                        .as_of(&fixture.scopes[index], fixture.identities[index], height)
+                        .unwrap()
+                        .unwrap();
+                    assert_server_debits(&fixture.scopes[index], &memory, result);
+                }
+                _ => panic!("fixture ancestor differs"),
+            }
+        }
+        reader.end().await.unwrap();
+    }
+    let mut sibling_reader = target.reader(budget()).await.unwrap();
+    let sibling = sibling_reader
+        .exact(&fixture.scopes[2], fixture.identities[2])
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(sibling.debits.iter().any(|debit| debit.origin == fixture.identities[2]));
+    let first_child = sibling_reader
+        .exact(&fixture.scopes[1], fixture.identities[1])
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(first_child.debits.iter().all(|debit| debit.origin != fixture.identities[2]));
+    sibling_reader.end().await.unwrap();
+}
+
+/// Claim: Complete server replay preserves the completed memory reference's logical inventory and complete exact and tip-relative reads.
+/// ´claim:history:rebuild-server-matches-memory´
+/// ´test:unit:rebuild-server-matches-memory´
+#[test]
+fn rebuild_server_matches_memory() {
+    let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+    runtime.block_on(async {
+        let fixture = fork_fixture();
+        let prepared = prepare_fork_fixture(&fixture);
+        assert_framed_order(&fixture, &prepared);
+        let reference = memory_reference(&prepared);
+        assert_memory_fork(&fixture, &reference);
+        let schedule = server_schedule(&prepared);
+        let mut usage = ReplayUsage::default();
+        let mut target = super::super::server::tests::empty_server_tree().await;
+        let complete = replay_server(
+            &prepared,
+            &mut target,
+            &reference,
+            &mut ReplayExecution {
+                schedule: &schedule,
+                usage: &mut usage,
+            },
+        )
+        .await
+        .unwrap();
+        assert_eq!(complete.inventory(), reference.inventory());
+        let mut independent_usage = AuditUsage::default();
+        assert_eq!(
+            target.audit(audit_budget(), &mut independent_usage).await.unwrap(),
+            *reference.inventory()
+        );
+        assert_server_fork(&fixture, &reference, &mut target).await;
+        assert_eq!(usage.installation.len(), 2);
+        assert_eq!(usage.commit.len(), 4);
+        assert_eq!(usage.target_read.len(), 4);
+        assert_eq!(usage.reference_read.len(), 4);
+        assert!(usage.installation.iter().all(Option::is_some));
+        assert!(usage.commit.iter().all(Option::is_some));
+        assert!(usage.target_read.iter().all(Option::is_some));
+        assert!(usage.reference_read.iter().all(Option::is_some));
+        assert!(usage.opening_audit.is_some());
+        assert!(usage.final_audit.is_some());
+    });
+}
+
+async fn reference_mismatch_case(fixture: &ForkFixture, prepared: &PreparedReplay) {
+    let other_prepared = prepare_fork_fixture(fixture);
+    let reference = memory_reference(&other_prepared);
+    let schedule = server_schedule(prepared);
+    let mut usage = ReplayUsage::default();
+    let mut target = super::super::server::tests::empty_server_tree().await;
+    let before = super::super::server::tests::complete_snapshot(&mut target).await;
+    let Err(failure) = replay_server(
+        prepared,
+        &mut target,
+        &reference,
+        &mut ReplayExecution {
+            schedule: &schedule,
+            usage: &mut usage,
+        },
+    )
+    .await
+    else {
+        panic!("different prepared owner accepted")
+    };
+    assert_eq!(failure.phase, ReplayPhase::ExecutionStart);
+    assert!(matches!(failure.cause, ReplayCause::ReferenceMismatch));
+    assert_eq!(failure.disposition, TargetDisposition::NotTouched);
+    assert_eq!(usage.installation.len(), 0);
+    assert_eq!(usage.commit.len(), 0);
+    assert_eq!(usage.target_read.len(), 0);
+    assert_eq!(usage.reference_read.len(), 0);
+    assert!(usage.opening_audit.is_none());
+    assert!(usage.final_audit.is_none());
+    assert_eq!(super::super::server::tests::complete_snapshot(&mut target).await, before);
+}
+
+fn assert_unattempted_slots(usage: &ReplayUsage, schedule: &ReplaySchedule) {
+    assert_eq!(usage.installation.len(), schedule.installation.len());
+    assert_eq!(usage.commit.len(), schedule.commit.len());
+    assert_eq!(usage.target_read.len(), schedule.target_read.len());
+    assert_eq!(usage.reference_read.len(), schedule.reference_read.len());
+    assert!(usage.installation.iter().all(Option::is_none));
+    assert!(usage.commit.iter().all(Option::is_none));
+    assert!(usage.target_read.iter().all(Option::is_none));
+    assert!(usage.reference_read.iter().all(Option::is_none));
+}
+
+async fn nonempty_target_case(prepared: &PreparedReplay, reference: &CompletedMemory<'_>) {
+    let schedule = server_schedule(prepared);
+    let mut target = super::super::server::tests::empty_server_tree().await;
+    assert!(
+        target
+            .install_generation(&prepared.generations[0], budget(), &mut Usage::default())
+            .await
+            .unwrap()
+    );
+    let mut audit_usage = AuditUsage::default();
+    let intact = target.audit(audit_budget(), &mut audit_usage).await.unwrap();
+    assert_eq!(intact.counts().0, 1);
+    assert_eq!(intact.counts().3, 0);
+    let before = super::super::server::tests::complete_snapshot(&mut target).await;
+    let mut usage = ReplayUsage::default();
+    let Err(failure) = replay_server(
+        prepared,
+        &mut target,
+        reference,
+        &mut ReplayExecution {
+            schedule: &schedule,
+            usage: &mut usage,
+        },
+    )
+    .await
+    else {
+        panic!("nonempty target accepted")
+    };
+    assert_eq!(failure.phase, ReplayPhase::TargetOpening);
+    assert!(matches!(failure.cause, ReplayCause::TargetNotEmpty));
+    assert_eq!(failure.disposition, TargetDisposition::RejectedNonempty);
+    assert!(usage.opening_audit.is_some());
+    assert_unattempted_slots(&usage, &schedule);
+    assert!(usage.final_audit.is_none());
+    assert_eq!(super::super::server::tests::complete_snapshot(&mut target).await, before);
+}
+
+async fn opening_audit_limit_case(prepared: &PreparedReplay, reference: &CompletedMemory<'_>) {
+    let mut schedule = server_schedule(prepared);
+    schedule.opening_audit.as_mut().unwrap().allocation_bytes = 0;
+    schedule.opening_audit.as_mut().unwrap().page_rows = 1;
+    let mut target = super::super::server::tests::empty_server_tree().await;
+    let before = super::super::server::tests::complete_snapshot(&mut target).await;
+    let mut usage = ReplayUsage::default();
+    let Err(failure) = replay_server(
+        prepared,
+        &mut target,
+        reference,
+        &mut ReplayExecution {
+            schedule: &schedule,
+            usage: &mut usage,
+        },
+    )
+    .await
+    else {
+        panic!("zero-allocation opening audit accepted")
+    };
+    assert_eq!(failure.phase, ReplayPhase::TargetOpening);
+    assert_eq!(failure.disposition, TargetDisposition::NotTouched);
+    let ReplayCause::Audit(AuditFailure::Refused { error, location }) = failure.cause else {
+        panic!("opening audit did not return its nested refusal")
+    };
+    assert!(matches!(error, TreeError::Storage(StorageError::ReadLimit)));
+    assert!(location.relation().is_none());
+    assert_eq!(location.key_len(), 0);
+    assert_eq!(format!("{location:?}"), "NotRead");
+    assert!(usage.opening_audit.is_some());
+    assert_unattempted_slots(&usage, &schedule);
+    assert!(usage.final_audit.is_none());
+    assert_eq!(super::super::server::tests::complete_snapshot(&mut target).await, before);
+}
+
+/// Claim: The selected server opening refusals preserve their phase, cause and target disposition without changing the target.
+/// ´claim:history:rebuild-server-opening-refusals´
+/// ´test:unit:rebuild-server-opening-refusals´
+#[test]
+fn rebuild_server_opening_refusals() {
+    let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+    runtime.block_on(async {
+        let fixture = fork_fixture();
+        let prepared = prepare_fork_fixture(&fixture);
+        let reference = memory_reference(&prepared);
+        reference_mismatch_case(&fixture, &prepared).await;
+        nonempty_target_case(&prepared, &reference).await;
+        opening_audit_limit_case(&prepared, &reference).await;
+        let mut target = super::super::server::tests::empty_server_tree().await;
+        let schedule = server_schedule(&prepared);
+        let mut usage = ReplayUsage::default();
+        assert!(
+            replay_server(
+                &prepared,
+                &mut target,
+                &reference,
+                &mut ReplayExecution {
+                    schedule: &schedule,
+                    usage: &mut usage,
+                },
+            )
+            .await
+            .is_ok(),
+            "passing empty-target neighbour"
+        );
+    });
 }

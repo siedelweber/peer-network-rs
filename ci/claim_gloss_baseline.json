@@ -880,6 +880,8 @@
     "pn-host::storage::tree::rebuild::tests::rebuild_input_refusals": "",
     "pn-host::storage::tree::rebuild::tests::rebuild_memory_execution_refusals": "",
     "pn-host::storage::tree::rebuild::tests::rebuild_restores_labelled_input": "",
+    "pn-host::storage::tree::rebuild::tests::rebuild_server_matches_memory": "",
+    "pn-host::storage::tree::rebuild::tests::rebuild_server_opening_refusals": "",
     "pn-host::storage::tree::server::content::tests::tree_server_rational_spelling": "",
     "pn-host::storage::tree::server::tests::generation::tree_server_generation_cleanup": "",
     "pn-host::storage::tree::server::tests::generation::tree_server_generation_input": "",

@@ -3,8 +3,8 @@
 
 use super::{
     AuditBudget, AuditFailure, AuditInventory, AuditUsage, EpochScope, Error as TreeError, Generation, MemoryTree, ReadBudget,
-    Reader, StorageError, Usage, check_result_label_bound, check_result_label_name, compare_generation_declaration,
-    generation_parts, require_result_label, scope_check,
+    Reader, ServerResult, ServerTree, StorageError, Usage, check_result_label_bound, check_result_label_name,
+    compare_generation_declaration, generation_parts, require_result_label, scope_check,
 };
 use crate::admitted_result::{
     DeclarationUse,
@@ -572,6 +572,20 @@ pub struct CompletedMemory<'p> {
     inventory: AuditInventory,
 }
 
+/// An in-process server replay whose complete target inventory was compared with memory.
+pub struct ReplayComplete {
+    inventory: AuditInventory,
+}
+
+impl ReplayComplete {
+    /// Inspect the successfully compared target inventory.
+    /// Justified: Immutable replay completion inspection inherits the enclosing server replay observation.
+    #[must_use]
+    pub fn inventory(&self) -> &AuditInventory {
+        &self.inventory
+    }
+}
+
 impl<'p> CompletedMemory<'p> {
     /// Justified: Immutable replay completion inspection inherits the enclosing memory replay observation.
     #[must_use]
@@ -662,6 +676,35 @@ fn read_matches(prepared: &PreparedReplay, index: usize, read: &super::ResultRea
         return false;
     }
     true
+}
+
+fn same_logical_read(scope: &EpochScope, memory: Option<&super::ResultRead<'_>>, server: Option<&ServerResult>) -> bool {
+    match (memory, server) {
+        (None, None) => true,
+        (Some(memory), Some(server)) => {
+            memory.identity == server.identity
+                && memory.parent == server.parent
+                && memory.depth == server.depth
+                && memory.label == server.label
+                && memory.generation == server.generation
+                && memory.bytes == server.bytes
+                && memory.selections.len() == server.selections.len()
+                && memory
+                    .selections
+                    .iter()
+                    .zip(&server.selections)
+                    .all(|(left, right)| left.use_ == &right.use_ && left.origin == right.origin)
+                && memory.debits.len() == server.debits.len()
+                && memory.debits.iter().zip(&server.debits).all(|(left, right)| {
+                    left.vintage.key.scope == *scope
+                        && left.vintage.key.act == right.act
+                        && left.vintage.disclosure.boundary == right.writing_boundary
+                        && left.origin == right.origin
+                        && left.bytes == right.bytes
+                })
+        }
+        _ => false,
+    }
 }
 
 fn ancestor_at(prepared: &PreparedReplay, tip_index: usize, depth: u64) -> Option<usize> {
@@ -822,6 +865,205 @@ fn replay_memory_inner<'p>(
         tree,
         inventory,
     })
+}
+
+/// Replay the same prepared input into an exclusively reserved empty server target.
+/// (´[ROOT-amend:storage:fixture-replay-interface]´)
+/// # Errors
+/// Returns the first typed opening, writer, audit or paired-read refusal with its target disposition.
+// Justified: The admitted failure table keeps nested owner errors in its required owned representation.
+#[expect(clippy::result_large_err)]
+pub async fn replay_server(
+    prepared: &PreparedReplay,
+    target: &mut ServerTree,
+    reference: &CompletedMemory<'_>,
+    resources: &mut ReplayExecution<'_>,
+) -> Result<ReplayComplete, ReplayFailure> {
+    let operation = cli_common::observation::scope(
+        "HOST",
+        "sig:design:storage",
+        "storage::tree::rebuild::replay_server",
+        &prepared.counts(),
+    );
+    let result = replay_server_inner(prepared, target, reference, resources).await;
+    operation.finish(&result.as_ref().map(|_| ()));
+    result
+}
+
+// Justified: The admitted owned errors and fixed server schedule keep every call and its first refusal in one visible order.
+#[expect(clippy::result_large_err, clippy::too_many_lines)]
+async fn replay_server_inner(
+    prepared: &PreparedReplay,
+    target: &mut ServerTree,
+    reference: &CompletedMemory<'_>,
+    resources: &mut ReplayExecution<'_>,
+) -> Result<ReplayComplete, ReplayFailure> {
+    let (generations, results) = prepared.counts();
+    *resources.usage = ReplayUsage::default();
+    if resources.schedule.installation.len() != generations
+        || resources.schedule.commit.len() != results
+        || resources.schedule.target_read.len() != results
+        || resources.schedule.reference_read.len() != results
+        || resources.schedule.opening_audit.is_none()
+    {
+        return Err(refuse(ReplayPhase::ExecutionStart, None, ReplayCause::ResourcesUnspecified));
+    }
+    if !std::ptr::eq(prepared, reference.prepared) {
+        return Err(refuse(ReplayPhase::ExecutionStart, None, ReplayCause::ReferenceMismatch));
+    }
+    resources.usage.installation.resize(generations, None);
+    resources.usage.commit.resize(results, None);
+    resources.usage.target_read.resize(results, None);
+    resources.usage.reference_read.resize(results, None);
+
+    let mut opening_usage = AuditUsage::default();
+    let opening = target
+        .audit(resources.schedule.opening_audit.unwrap(), &mut opening_usage)
+        .await;
+    resources.usage.opening_audit = Some(opening_usage);
+    let opening = opening.map_err(|cause| refuse(ReplayPhase::TargetOpening, None, ReplayCause::Audit(cause)))?;
+    if opening.counts().0 != 0 || opening.counts().1 != 0 || opening.counts().2 != 0 || opening.counts().3 != 0 {
+        return Err(ReplayFailure {
+            phase: ReplayPhase::TargetOpening,
+            coordinate: None,
+            cause: ReplayCause::TargetNotEmpty,
+            disposition: TargetDisposition::RejectedNonempty,
+        });
+    }
+
+    for (index, generation) in prepared.generations.iter().enumerate() {
+        let mut usage = Usage::default();
+        let attempt = target
+            .install_generation(generation, resources.schedule.installation[index], &mut usage)
+            .await;
+        resources.usage.installation[index] = Some(usage);
+        let inserted = attempt.map_err(|cause| after_write(ReplayPhase::Installation, None, ReplayCause::Tree(cause)))?;
+        if !inserted {
+            return Err(after_write(ReplayPhase::Installation, None, ReplayCause::TargetInterference));
+        }
+    }
+    for (index, result) in prepared.results.iter().enumerate() {
+        let mut usage = Usage::default();
+        let attempt = target
+            .commit(
+                &result.retained,
+                Some(&result.label),
+                resources.schedule.commit[index],
+                &mut usage,
+            )
+            .await;
+        resources.usage.commit[index] = Some(usage);
+        let judgement =
+            attempt.map_err(|cause| after_write(ReplayPhase::Commit, Some(result_key(result)), ReplayCause::Tree(cause)))?;
+        if !judgement.inserted {
+            return Err(after_write(
+                ReplayPhase::Commit,
+                Some(result_key(result)),
+                ReplayCause::TargetInterference,
+            ));
+        }
+        if judgement.label != result.label
+            || judgement.generation != result.ordinal
+            || judgement.selections.len() != result.asserted.len()
+            || judgement
+                .selections
+                .iter()
+                .zip(&result.asserted)
+                .any(|(actual, expected)| actual.use_ != &expected.declaration)
+        {
+            return Err(after_write(
+                ReplayPhase::PostcommitComparison,
+                Some(result_key(result)),
+                ReplayCause::Mismatch(Mismatch::Judgement),
+            ));
+        }
+        if judgement
+            .selections
+            .iter()
+            .zip(&result.asserted)
+            .any(|(actual, expected)| actual.origin != expected.origin)
+        {
+            return Err(after_write(
+                ReplayPhase::PostcommitComparison,
+                Some(result_key(result)),
+                ReplayCause::Mismatch(Mismatch::Origins),
+            ));
+        }
+    }
+
+    let mut audit_usage = AuditUsage::default();
+    let audited = target.audit(resources.schedule.final_audit, &mut audit_usage).await;
+    resources.usage.final_audit = Some(audit_usage);
+    let inventory = audited.map_err(|cause| after_write(ReplayPhase::Audit, None, ReplayCause::Audit(cause)))?;
+    if inventory != *reference.inventory() {
+        return Err(after_write(
+            ReplayPhase::FinalComparison,
+            None,
+            ReplayCause::Mismatch(Mismatch::Inventory),
+        ));
+    }
+
+    for (slot, index) in prepared.reader_order.iter().copied().enumerate() {
+        let result = &prepared.results[index];
+        let (scope, identity, _, depth) = result.retained.event();
+        let mut memory_reader = reference.reader(resources.schedule.reference_read[slot]);
+        let opened = target.reader(resources.schedule.target_read[slot]).await;
+        let mut server_reader = match opened {
+            Ok(reader) => reader,
+            Err(cause) => {
+                resources.usage.reference_read[slot] = Some(memory_reader.usage());
+                resources.usage.target_read[slot] = Some(Usage::default());
+                return Err(after_write(
+                    ReplayPhase::FinalComparison,
+                    Some(result_key(result)),
+                    ReplayCause::Tree(cause),
+                ));
+            }
+        };
+        let compared: Result<Option<Mismatch>, TreeError> = async {
+            let memory = memory_reader.exact(scope, *identity)?;
+            let server = server_reader.exact(scope, *identity).await?;
+            if !same_logical_read(scope, memory.as_ref(), server.as_ref()) {
+                return Ok(Some(Mismatch::Bytes));
+            }
+            for height in 0..=depth {
+                let memory = memory_reader.as_of(scope, *identity, height)?;
+                let server = server_reader.as_of(scope, *identity, height).await?;
+                if !same_logical_read(scope, memory.as_ref(), server.as_ref()) {
+                    return Ok(Some(Mismatch::TipRead));
+                }
+            }
+            Ok(None)
+        }
+        .await;
+        resources.usage.reference_read[slot] = Some(memory_reader.usage());
+        resources.usage.target_read[slot] = Some(server_reader.usage());
+        let ended = server_reader.end().await;
+        match compared {
+            Err(cause) => {
+                return Err(after_write(
+                    ReplayPhase::FinalComparison,
+                    Some(result_key(result)),
+                    ReplayCause::Tree(cause),
+                ));
+            }
+            Ok(Some(mismatch)) => {
+                return Err(after_write(
+                    ReplayPhase::FinalComparison,
+                    Some(result_key(result)),
+                    ReplayCause::Mismatch(mismatch),
+                ));
+            }
+            Ok(None) => ended.map_err(|cause| {
+                after_write(
+                    ReplayPhase::FinalComparison,
+                    Some(result_key(result)),
+                    ReplayCause::Tree(cause),
+                )
+            })?,
+        }
+    }
+    Ok(ReplayComplete { inventory })
 }
 
 #[cfg(test)]

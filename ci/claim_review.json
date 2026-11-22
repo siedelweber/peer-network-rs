@@ -5519,8 +5519,8 @@
       "path": "packages/host/src/storage/tree/rebuild/tests.rs",
       "claim": "HOST::claim:history:rebuild-input-refusals",
       "before": "",
-      "after": "Claim: Each listed preparation refusal preserves its distinct phase and cause. The list excludes Retention pending the replay-interface design owner's scoped selection revision; prepare has no target parameter, so unchanged target follows from API shape rather than an executed mutation assertion.",
-      "review": "One-process invalid bytes, assertions, declarations and caller resource callback reach the production preparation entry with a passing neighbour. The target-free signature establishes unchanged target as a premise, while Retention awaits a scoped selection revision."
+      "after": "Claim: Each listed preparation refusal, including composite-key overflow at Retention, preserves its distinct phase and cause. Pre-write Bytes is a defensive comparison excluded from this list under the canonical codec round trip; prepare has no target parameter, so unchanged target follows from API shape rather than an executed mutation assertion.",
+      "review": "One-process invalid bytes, assertions, declarations, a 900-octet lineage history and caller resource callback reach production preparation with a passing short-history neighbour. The long history passes Position and refuses Retention as a representation error. The target-free signature establishes unchanged target as a premise."
     },
     {
       "operation": "pn-host::storage::tree::rebuild::tests::rebuild_memory_execution_refusals",
@@ -5537,6 +5537,22 @@
       "before": "",
       "after": "Claim: Independent restoration of the complete explicitly labelled fixture input produces the expected audited memory tree, exact bytes and tip-relative history through the ordinary writers.",
       "review": "One-process root, two children and another scope enter production preparation and memory replay with an exact duplicate. Identities and uses are taken from independently restored packages through the existing position and retention owners; origins follow an independently stated rule. The completed audit, exact and ancestor reads, sibling debit origin and opposite framed/derived scope orders are checked."
+    },
+    {
+      "operation": "pn-host::storage::tree::rebuild::tests::rebuild_server_matches_memory",
+      "path": "packages/host/src/storage/tree/rebuild/tests.rs",
+      "claim": "HOST::claim:history:rebuild-server-matches-memory",
+      "before": "",
+      "after": "Claim: Complete server replay preserves the completed memory reference's logical inventory and complete exact and tip-relative reads.",
+      "review": "The registered disposable PostgreSQL fixture receives the prepared two-scope fork through ordinary writers. The memory reference is independently checked against fixture declarations before replay; full inventory, exact and tip-relative values and every usage slot are checked, with server readers explicitly ended."
+    },
+    {
+      "operation": "pn-host::storage::tree::rebuild::tests::rebuild_server_opening_refusals",
+      "path": "packages/host/src/storage/tree/rebuild/tests.rs",
+      "claim": "HOST::claim:history:rebuild-server-opening-refusals",
+      "before": "",
+      "after": "Claim: The selected server opening refusals preserve their phase, cause and target disposition without changing the target.",
+      "review": "The registered disposable PostgreSQL fixture supplies distinct reference-owner, intact nonempty target and opening-audit allowance refusals plus an empty-target neighbour. Complete relation censuses before and after each attempt establish unchanged state independently of replay's judgement."
     },
     {
       "operation": "pn-host::storage::tree::server::content::tests::tree_server_rational_spelling",

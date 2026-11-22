@@ -13,8 +13,10 @@
         "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::PreparedReplay::counts",
         "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::PreparedReplay::declaration_scopes",
         "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::PreparedReplay::reader_order",
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::ReplayComplete::inventory",
         "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::prepare",
-        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::replay_memory"
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::replay_memory",
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::replay_server"
       ]
     }
   }

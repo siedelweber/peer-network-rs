@@ -36,11 +36,23 @@ async fn session() -> Session {
     connect_named("storage-tree-reads.json").await
 }
 
-async fn connect_named(name: &str) -> Session {
+pub(in crate::storage::tree) async fn connect_named(name: &str) -> Session {
     let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
     let mut file = std::fs::File::open(std::path::Path::new(&root).join(name)).unwrap();
     let configuration = crate::Configuration::acquire(Some("host-secured"), &mut file).unwrap();
     Session::connect(configuration).await.unwrap()
+}
+
+pub(in crate::storage::tree) async fn empty_server_tree() -> ServerTree {
+    let owner = empty_server_owner("storage-tree-reads.json").await;
+    ServerTree::open(owner).await.unwrap()
+}
+
+async fn empty_server_owner(name: &str) -> Session {
+    let mut owner = connect_named(name).await;
+    catalogue::open(&mut owner).await.unwrap();
+    owner.client().batch_execute("TRUNCATE pn_epoch_debit_chunks,pn_epoch_result_debits,pn_epoch_debits,pn_epoch_references,pn_epoch_package_chunks,pn_epoch_results,pn_epoch_branches,pn_epoch_scopes,pn_admission_versions,pn_admission_closures,pn_admission_generations,pn_versions,pn_closures").await.unwrap();
+    owner
 }
 
 // This is explicit fixture installation, not the production writer. The functional
@@ -73,10 +85,8 @@ pub(in crate::storage::tree) async fn setup_named(reverse: bool, name: &str) -> 
     model
 }
 async fn install(model: &MemoryTree<'_>, generation: &super::super::Generation, name: &str) {
-    let mut owner = connect_named(name).await;
-    catalogue::open(&mut owner).await.unwrap();
+    let owner = empty_server_owner(name).await;
     let client = owner.client();
-    client.batch_execute("TRUNCATE pn_epoch_debit_chunks,pn_epoch_result_debits,pn_epoch_debits,pn_epoch_references,pn_epoch_package_chunks,pn_epoch_results,pn_epoch_branches,pn_epoch_scopes,pn_admission_versions,pn_admission_closures,pn_admission_generations,pn_versions,pn_closures").await.unwrap();
     client.batch_execute("BEGIN; SET CONSTRAINTS ALL DEFERRED").await.unwrap();
     let scope = ServerReader::scope(&generation.scope).unwrap();
     let scope = scope.text().unwrap();
@@ -207,7 +217,7 @@ impl super::super::roster::ReadContract for Fixture<'_> {
     }
 }
 
-async fn complete_snapshot(store: &mut ServerTree) -> String {
+pub(in crate::storage::tree) async fn complete_snapshot(store: &mut ServerTree) -> String {
     // Test-only relation census: one freshly ended snapshot captures orphans as well as readable results.
     let transaction = store
         .session

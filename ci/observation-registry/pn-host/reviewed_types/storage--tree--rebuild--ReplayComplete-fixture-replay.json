@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::ReplayComplete",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [doc = \" An in-process server replay whose complete target inventory was compared with memory.\"] pub struct ReplayComplete { inventory : AuditInventory , }"
+  }
+}

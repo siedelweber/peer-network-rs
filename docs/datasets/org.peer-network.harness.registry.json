@@ -3421,7 +3421,9 @@
         "pn-host::storage::tree::audit::server::tests::tree_audit_server_inventory",
         "pn-host::storage::tree::audit::server::tests::tree_audit_server_cursor",
         "pn-host::storage::tree::audit::server::tests::tree_audit_server_location",
-        "pn-host::storage::tree::audit::server::tests::tree_audit_server_limits"
+        "pn-host::storage::tree::audit::server::tests::tree_audit_server_limits",
+        "pn-host::storage::tree::rebuild::tests::rebuild_server_matches_memory",
+        "pn-host::storage::tree::rebuild::tests::rebuild_server_opening_refusals"
       ],
       "implementation": "pn-host-postgresql",
       "kind": "suite",
