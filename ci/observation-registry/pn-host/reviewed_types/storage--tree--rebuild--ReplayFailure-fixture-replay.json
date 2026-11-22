@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::ReplayFailure",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [derive (Debug)] pub struct ReplayFailure { pub phase : ReplayPhase , pub coordinate : Option < ReplayCoordinate > , pub cause : ReplayCause , pub disposition : TargetDisposition , }"
+  }
+}

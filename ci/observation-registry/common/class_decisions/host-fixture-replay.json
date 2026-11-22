@@ -1,0 +1,21 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "host-fixture-replay",
+    "status": "reviewer-confirmed",
+    "premises": "Replay receives explicitly premised fixture bytes and asserted declarations, holds them only in process, and observes operation counts and typed outcomes. No private path, secret, verifier state or package byte is published; immutable inspections inherit preparation or completed replay observation.",
+    "membership": {
+      "explicit": [
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::CompletedMemory < 'p >::inventory",
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::CompletedMemory < 'p >::prepared",
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::CompletedMemory < 'p >::reader",
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::PreparedReplay::commit_order",
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::PreparedReplay::counts",
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::PreparedReplay::declaration_scopes",
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::PreparedReplay::reader_order",
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::prepare",
+        "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::replay_memory"
+      ]
+    }
+  }
+}

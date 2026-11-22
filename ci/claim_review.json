@@ -5451,6 +5451,30 @@
       "review": "The undamaged positive, exact-usage rerun and exhausted-meter direct finish assert the cause and complete key, meter requests and backing pointer/capacity transfer. This is one private damage shape, not a global allocator census or server snapshot."
     },
     {
+      "operation": "pn-host::storage::tree::rebuild::tests::rebuild_input_refusals",
+      "path": "packages/host/src/storage/tree/rebuild/tests.rs",
+      "claim": "HOST::claim:history:rebuild-input-refusals",
+      "before": "",
+      "after": "Claim: Each listed preparation refusal preserves its distinct phase and cause. The list excludes Retention pending the replay-interface design owner's scoped selection revision; prepare has no target parameter, so unchanged target follows from API shape rather than an executed mutation assertion.",
+      "review": "One-process invalid bytes, assertions, declarations and caller resource callback reach the production preparation entry with a passing neighbour. The target-free signature establishes unchanged target as a premise, while Retention awaits a scoped selection revision."
+    },
+    {
+      "operation": "pn-host::storage::tree::rebuild::tests::rebuild_memory_execution_refusals",
+      "path": "packages/host/src/storage/tree/rebuild/tests.rs",
+      "claim": "HOST::claim:history:rebuild-memory-execution-refusals",
+      "before": "",
+      "after": "Claim: The selected reachable memory execution refusals retain their phase, cause and target disposition.",
+      "review": "The same prepared fixture first omits a commit allowance and then independently asserts a wrong origin. Assertions check execution start before target creation, postcommit disposition and a passing neighbour."
+    },
+    {
+      "operation": "pn-host::storage::tree::rebuild::tests::rebuild_restores_labelled_input",
+      "path": "packages/host/src/storage/tree/rebuild/tests.rs",
+      "claim": "HOST::claim:history:rebuild-restores-labelled-input",
+      "before": "",
+      "after": "Claim: Independent restoration of the complete explicitly labelled fixture input produces the expected audited memory tree, exact bytes and tip-relative history through the ordinary writers.",
+      "review": "One-process root, two children and another scope enter production preparation and memory replay with an exact duplicate. Identities and uses are taken from independently restored packages through the existing position and retention owners; origins follow an independently stated rule. The completed audit, exact and ancestor reads, sibling debit origin and opposite framed/derived scope orders are checked."
+    },
+    {
       "operation": "pn-host::storage::tree::server::content::tests::tree_server_rational_spelling",
       "path": "packages/host/src/storage/tree/server/content.rs",
       "claim": "HOST::claim:history:tree-server-rational-spelling",

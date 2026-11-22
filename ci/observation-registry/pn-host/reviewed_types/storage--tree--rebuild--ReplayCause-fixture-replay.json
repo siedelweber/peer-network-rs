@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::ReplayCause",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [doc = \" Existing owner causes remain nested, not recast as stored corruption.\"] # [derive (Debug)] pub enum ReplayCause { Decode (publication :: Error) , Tree (TreeError) , Association (Association) , ConflictingDuplicate , MissingParent , ParentCycle , SuppliedWorkStop , Restore (epoch_publication :: Error) , Position (position :: Error) , Retain (crate :: admitted_result :: CarrierError) , Mismatch (Mismatch) , ResourcesUnspecified , ReferenceMismatch , TargetNotEmpty , TargetInterference , Audit (AuditFailure) , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::ReplayEntry",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [doc = \" Original bytes and their independently supplied assertion.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ReplayEntry < 'a > { pub bytes : & 'a [u8] , pub assertion : ReplayAssertion < 'a > , }"
+  }
+}

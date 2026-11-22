@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::ReplayInput",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [doc = \" Finite borrowed fixture input; none of its borrows survive preparation.\"] # [derive (Clone , Copy , Debug)] pub struct ReplayInput < 'a > { pub generations : & 'a [Generation] , pub entries : & 'a [ReplayEntry < 'a >] , }"
+  }
+}

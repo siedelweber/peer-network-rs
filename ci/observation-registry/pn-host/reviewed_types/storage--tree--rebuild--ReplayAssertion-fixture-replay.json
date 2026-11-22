@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::ReplayAssertion",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [doc = \" A complete asserted result, separate from a store judgement.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ReplayAssertion < 'a > { pub label : Option < & 'a str > , pub ordinal : u64 , pub scope : EpochScope , pub identity : Identity , pub parent : Option < Identity > , pub depth : u64 , pub uses : & 'a [AssertedUse] , }"
+  }
+}

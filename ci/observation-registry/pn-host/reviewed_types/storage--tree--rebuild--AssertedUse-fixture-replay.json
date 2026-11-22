@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::AssertedUse",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [doc = \" One asserted selected declaration and its explicitly asserted origin.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AssertedUse { pub declaration : DeclarationUse , pub origin : Identity , }"
+  }
+}

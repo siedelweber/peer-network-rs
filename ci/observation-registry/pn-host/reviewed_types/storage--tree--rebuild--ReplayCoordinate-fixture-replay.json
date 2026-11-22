@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::ReplayCoordinate",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [doc = \" The supplied or observed key at a replay refusal.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum ReplayCoordinate { Declaration (usize) , Entry (usize) , Key (EpochScope , Identity) , }"
+  }
+}

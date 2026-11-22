@@ -971,10 +971,11 @@ pub(super) fn reconcile(source: &super::MemoryTree<'_>, meter: &mut AuditMeter) 
 fn prepare_graph<'a>(source: &'a impl AuditSource<'a>, meter: &mut AuditMeter) -> Result<AuditGraph<'a>, AuditFailure> {
     source.check_identity(meter)?;
     let mut rows = source.collect(meter)?;
-    rows.generations.sort_unstable_by(|a, b| a.key.cmp(&b.key));
-    rows.scopes.sort_unstable_by(|a, b| a.key.cmp(&b.key));
+    rows.generations
+        .sort_unstable_by(|a, b| super::framed_scope_cmp(&a.declaration.scope, &b.declaration.scope));
+    rows.scopes.sort_unstable_by(|a, b| super::framed_scope_cmp(a.scope, b.scope));
     rows.results
-        .sort_unstable_by(|a, b| (&a.key, a.identity).cmp(&(&b.key, b.identity)));
+        .sort_unstable_by(|a, b| super::framed_scope_cmp(a.scope, b.scope).then_with(|| a.identity.cmp(&b.identity)));
     source.check_shapes(&rows, meter)?;
     check_generation(&rows, meter)?;
     source.check_generation_indices(&mut rows, meter)?;

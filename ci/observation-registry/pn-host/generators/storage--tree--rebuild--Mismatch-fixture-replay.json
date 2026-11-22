@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::rebuild::Mismatch",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "host-fixture-replay",
+    "expansion_review": "Derived replay carriers only implement structural traits. They add no independent acquisition, observation or operation; the preparation and replay boundaries own the complete values."
+  }
+}

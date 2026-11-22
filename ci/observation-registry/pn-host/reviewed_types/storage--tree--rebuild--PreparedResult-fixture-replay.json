@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::PreparedResult",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "struct PreparedResult { retained : Retained , label : String , ordinal : u64 , asserted : Vec < AssertedUse > , }"
+  }
+}

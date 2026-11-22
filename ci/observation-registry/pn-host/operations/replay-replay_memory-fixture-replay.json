@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "item": "storage::tree::rebuild::replay_memory",
+    "owner": "HOST",
+    "signature": "fn replay_memory < 'p > (prepared : & 'p PreparedReplay , resources : & mut ReplayExecution < '_ > ,) -> Result < CompletedMemory < 'p > , ReplayFailure >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::replay_memory",
+    "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::tree::rebuild::replay_memory\" , & prepared . counts () ,) ; let result = replay_memory_inner (prepared , resources) ; operation . finish (& result . as_ref () . map (| _ | ())) ; result }",
+    "class_decision": "host-fixture-replay",
+    "item_premise": "The fixture input and replay resources are caller supplied; observation records only counts and a typed success or refusal outcome, never package bytes, identity values, verifier state or private paths.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

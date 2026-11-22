@@ -1,7 +1,7 @@
 //! Atomic first-generation installation through the existing statement wrapper.
 //! (´[ROOT-amend:storage:admitted-transaction]´)
 
-use super::super::{Closure, Generation, Meter, ReadBudget, Usage};
+use super::super::{Closure, Generation, Meter, ReadBudget, Usage, compare_generation_declaration, generation_parts};
 use super::{Error, ServerReader, ServerTree, Statement, StatementParameter, StatementTransaction, StorageError};
 use super::{copy_text, decode_version, family, positive, read_request, text, unsigned};
 
@@ -237,9 +237,10 @@ impl Writer<'_, '_> {
         if Generation::check_parts(&input.scope, 1, 1, label, &decoded_versions, &decoded_closures).is_err() {
             return Err(StorageError::CorruptHistory.into());
         }
-        if decoded_versions != input.versions || decoded_closures != input.closures {
-            return Err(Error::AdmissionGenerationConflict);
-        }
+        compare_generation_declaration(
+            (&input.scope, 1, 1, label, &decoded_versions, &decoded_closures),
+            generation_parts(input),
+        )?;
         Ok(false)
     }
 

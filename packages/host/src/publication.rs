@@ -309,6 +309,15 @@ pub fn encode(disclosure: &d::Disclosure, numeric: &mut NumericContext, limits: 
     ret
 )]
 pub fn decode(bytes: &[u8], numeric: &mut NumericContext, limits: d::Limits) -> Result<d::Disclosure, Error> {
+    let inspected = inspect(bytes)?;
+    decode_inspected(&inspected, numeric, limits)
+}
+
+pub(crate) struct Inspected {
+    document: Document,
+}
+
+pub(crate) fn inspect(bytes: &[u8]) -> Result<Inspected, Error> {
     let document = Document::from_canonical_bytes(bytes).map_err(|_| Error::Encoding)?;
     if document.envelope().label() != &NamespaceLabel::parse("org.peer-network.test.publication").map_err(|_| Error::Edition)?
         || document.envelope().version().major() != 1
@@ -328,8 +337,21 @@ pub fn decode(bytes: &[u8], numeric: &mut NumericContext, limits: d::Limits) -> 
     if document.content().len() != 7 {
         return Err(Error::Shape);
     }
+    for key in 2..=8 {
+        if document.content().get(key).is_none() {
+            return Err(Error::Shape);
+        }
+    }
+    Ok(Inspected { document })
+}
+
+pub(crate) fn decode_inspected(
+    inspected: &Inspected,
+    numeric: &mut NumericContext,
+    limits: d::Limits,
+) -> Result<d::Disclosure, Error> {
     let values = (2..=8)
-        .map(|key| document.content().get(key).ok_or(Error::Shape))
+        .map(|key| inspected.document.content().get(key).ok_or(Error::Shape))
         .collect::<Result<Vec<_>, _>>()?;
     let values = values.try_into().map_err(|_| Error::Shape)?;
     let mut context = Context {

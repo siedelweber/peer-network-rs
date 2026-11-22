@@ -241,7 +241,7 @@ fn announce(
     .unwrap()
 }
 
-fn tree_prelude(placement: u64) -> Prelude {
+fn tree_prelude(placement: u64, history: &str) -> Prelude {
     let mut value = prelude();
     if placement == 102 {
         value.raw.policy.cadence = "alternative-declared-cadence".into();
@@ -258,20 +258,25 @@ fn tree_prelude(placement: u64) -> Prelude {
     }
     value.raw.history.markers[1].history_position = placement;
     value.raw.history.markers[1].name = format!("root-{placement}");
+    value.raw.history.identity = history.to_owned();
+    for marker in &mut value.raw.history.markers {
+        marker.history = history.to_owned();
+    }
     let markers = pn_records::test_support::burn::recognize(value.raw.clone()).unwrap();
     value.candidate_input.causes.bindings[0].marker = markers.markers()[1].identity().clone();
+    value.candidate_input.causes.bindings[0].predecessor = markers.markers()[0].identity().clone();
     value.candidate_input.causes.markers = markers;
     value
 }
 
-fn tree_first(placement: u64) -> (ClosedBoundary, Carrier, Check) {
+fn tree_first(placement: u64, history: &str) -> (ClosedBoundary, Carrier, Check) {
     let Prelude {
         raw,
         causes: public_causes,
         parameters,
         price,
         candidate_input,
-    } = tree_prelude(placement);
+    } = tree_prelude(placement, history);
     let causes = Causes(candidate_input.clone());
     let candidate = package::verify_candidate(candidate_input.clone(), &causes, &causes).unwrap();
     let plan = procedure(&candidate);
@@ -449,7 +454,15 @@ fn tree_successor(
 // Explicit fixture publication authority, using the same independent restoration path
 // as complete(); placements and the new act's writing epoch are declared test inputs.
 pub(crate) fn tree_sequence(placements: &[u64], introduction: Option<u64>) -> Vec<publication::AdmittedPackage> {
-    let (mut closed, mut carrier, mut check) = tree_first(placements[0]);
+    tree_sequence_with_check(placements, introduction, "history").0
+}
+
+fn tree_sequence_with_check(
+    placements: &[u64],
+    introduction: Option<u64>,
+    history: &str,
+) -> (Vec<publication::AdmittedPackage>, Check) {
+    let (mut closed, mut carrier, mut check) = tree_first(placements[0], history);
     let first = publication::assemble(&closed, carrier.clone(), &check).unwrap();
     let first_state =
         pn_epoch::compiler::compile_admitted(first.boundary(), &check, &mut numeric(), Limits::default(), 10_000_u64).unwrap();
@@ -515,5 +528,22 @@ pub(crate) fn tree_sequence(placements: &[u64], introduction: Option<u64>) -> Ve
         output.push(publication::assemble(&next, carrier.clone(), &check).unwrap());
         closed = next;
     }
-    output
+    (output, check)
+}
+
+/// Root, two independently authored children and a second scope, with one restoration verifier.
+/// The first scope's `aa` and second scope's `b` reverse field order under framed-key order.
+pub(crate) fn tree_fork_fixture() -> (Vec<publication::AdmittedPackage>, Check) {
+    let (mut first, mut check) = tree_sequence_with_check(&[100, 200], None, "aa");
+    let (mut side, side_check) = tree_sequence_with_check(&[100, 201], Some(2), "aa");
+    let (mut other, other_check) = tree_sequence_with_check(&[100], None, "b");
+    check.candidates.extend(side_check.candidates);
+    check.candidates.extend(other_check.candidates);
+    check.procedures.extend(side_check.procedures);
+    check.procedures.extend(other_check.procedures);
+    let root = first.remove(0);
+    let child = first.remove(0);
+    let sibling = side.remove(1);
+    let second_scope_root = other.remove(0);
+    (vec![root, child, sibling, second_scope_root], check)
 }

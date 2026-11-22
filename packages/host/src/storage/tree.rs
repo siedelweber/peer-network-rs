@@ -9,6 +9,7 @@ mod index;
 mod read;
 pub use read::{DebitRead, Page, Reader, ResultRead};
 mod audit;
+pub mod rebuild;
 pub use audit::{AuditBudget, AuditFailure, AuditInventory, AuditLocation, AuditUsage};
 pub(crate) mod server;
 pub use server::{ServerDebit, ServerJudgement, ServerReader, ServerResult, ServerSelection, ServerTree};
@@ -112,6 +113,41 @@ impl Meter {
 fn fields(scope: &EpochScope) -> [&str; 4] {
     [&scope.history, &scope.policy_identity, &scope.policy_edition, &scope.sequence]
 }
+
+fn framed_length(mut length: usize) -> ([u8; 21], usize) {
+    let mut bytes = [0; 21];
+    bytes[20] = b':';
+    let mut start = 20;
+    loop {
+        start -= 1;
+        bytes[start] = b'0' + u8::try_from(length % 10).expect("decimal digit fits u8");
+        length /= 10;
+        if length == 0 {
+            break;
+        }
+    }
+    (bytes, start)
+}
+
+// K's byte order is the order of its four len:field parts after the shared "4:".
+// The ':' is compared too: "9:" and "1:" both sort after "10:".
+// (´[ROOT-amend:storage:tree-audit]´)
+fn framed_scope_cmp(left: &EpochScope, right: &EpochScope) -> std::cmp::Ordering {
+    for (left, right) in fields(left).into_iter().zip(fields(right)) {
+        let (left_length, left_start) = framed_length(left.len());
+        let (right_length, right_start) = framed_length(right.len());
+        let length_order = left_length[left_start..].cmp(&right_length[right_start..]);
+        if length_order != std::cmp::Ordering::Equal {
+            return length_order;
+        }
+        let field_order = left.as_bytes().cmp(right.as_bytes());
+        if field_order != std::cmp::Ordering::Equal {
+            return field_order;
+        }
+    }
+    std::cmp::Ordering::Equal
+}
+
 fn scope_check(scope: &EpochScope) -> Result<(), Error> {
     let mut bytes = 2usize;
     for field in fields(scope) {
@@ -249,6 +285,28 @@ impl Generation {
     }
 }
 
+fn compare_generation_declaration(
+    left: (&EpochScope, u64, u64, &str, &[Version], &[Closure]),
+    right: (&EpochScope, u64, u64, &str, &[Version], &[Closure]),
+) -> Result<(), Error> {
+    if left == right {
+        Ok(())
+    } else {
+        Err(Error::AdmissionGenerationConflict)
+    }
+}
+
+fn generation_parts(input: &Generation) -> (&EpochScope, u64, u64, &str, &[Version], &[Closure]) {
+    (
+        &input.scope,
+        input.ordinal,
+        input.minimum,
+        &input.label,
+        &input.versions,
+        &input.closures,
+    )
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Write {
     Generation,
@@ -366,18 +424,35 @@ fn retained_bytes(parts: &[&[u8]], retained_length: usize, expected: &[u8], mete
     Ok(bytes == expected)
 }
 
-fn checked_result_input<'a>(input: &Retained, label: Option<&'a str>) -> Result<&'a str, Error> {
-    let (scope, _, parent, depth) = input.event();
-    let label = label.ok_or(Error::MissingGenerationLabel)?;
-    scope_check(scope)?;
-    super::stored_text(label)?;
-    super::stored_projection(input.declarations(), input.debits())?;
-    if label.len() > 1024 || depth > i64::MAX as u64 {
-        return Err(StorageError::Representation.into());
-    }
+fn require_result_label(label: Option<&str>) -> Result<&str, Error> {
+    label.ok_or(Error::MissingGenerationLabel)
+}
+
+fn check_result_label_name(label: &str) -> Result<(), Error> {
     if label != "unstable" {
         return Err(Error::UnknownGenerationLabel);
     }
+    Ok(())
+}
+
+fn check_result_label_bound(label: &str) -> Result<(), Error> {
+    if label.len() > 1024 {
+        return Err(StorageError::Representation.into());
+    }
+    Ok(())
+}
+
+fn checked_result_input<'a>(input: &Retained, label: Option<&'a str>) -> Result<&'a str, Error> {
+    let (scope, _, parent, depth) = input.event();
+    let label = require_result_label(label)?;
+    scope_check(scope)?;
+    super::stored_text(label)?;
+    super::stored_projection(input.declarations(), input.debits())?;
+    check_result_label_bound(label)?;
+    if depth > i64::MAX as u64 {
+        return Err(StorageError::Representation.into());
+    }
+    check_result_label_name(label)?;
     if depth == 0 || (depth == 1) != parent.is_none() {
         return Err(Error::PredecessorMismatch);
     }
@@ -881,11 +956,8 @@ impl<'a> MemoryTree<'a> {
             for closure in &existing.declaration.closures {
                 meter.row(|| closure)?;
             }
-            return if existing.declaration == input {
-                Ok(false)
-            } else {
-                Err(Error::AdmissionGenerationConflict)
-            };
+            compare_generation_declaration(generation_parts(existing.declaration), generation_parts(input))?;
+            return Ok(false);
         }
         meter.reserve(&mut self.generations, 1)?;
         let stage = stage::generation(input, meter, point)?;

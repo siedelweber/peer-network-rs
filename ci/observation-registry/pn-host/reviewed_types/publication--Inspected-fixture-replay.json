@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "publication::Inspected",
+    "package": "pn-host",
+    "path": "packages/host/src/publication.rs",
+    "syntax": "pub (crate) struct Inspected { document : Document , }"
+  }
+}

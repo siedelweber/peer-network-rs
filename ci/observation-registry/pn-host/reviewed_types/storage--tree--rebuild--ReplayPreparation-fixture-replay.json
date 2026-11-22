@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::ReplayPreparation",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [doc = \" The existing numerical, position and reservation resources of one preparation.\"] pub struct ReplayPreparation < 'a > { pub numeric : & 'a mut NumericContext , pub encoding_usage : & 'a mut EncodingUsage , pub reservation : & 'a mut dyn FnMut (usize) -> Result < () , () > , pub limits : disclosures :: Limits , pub position_ceiling : usize , }"
+  }
+}

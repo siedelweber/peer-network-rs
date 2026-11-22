@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "item": "storage::tree::rebuild::PreparedReplay::declaration_scopes",
+    "owner": "HOST",
+    "signature": "fn declaration_scopes (& self) -> impl Iterator < Item = & EpochScope >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: Immutable prepared replay inspection inherits the enclosing preparation observation.",
+      "witness": "HOST::claim:history:rebuild-restores-labelled-input",
+      "boundary": "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::prepare",
+      "class_decision": "host-fixture-replay"
+    }
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/storage/tree/rebuild.rs::storage::tree::rebuild::PreparedReplay::declaration_scopes",
+    "body": "{ self . generations . iter () . map (| g | & g . scope) }",
+    "class_decision": "host-fixture-replay",
+    "item_premise": "The immutable prepared or completed owner has already been established by the observed replay boundary. The accessor reads only its retained in-process state and adds no disclosure.",
+    "assessments": {
+      "full_recording": "storage-full_recording",
+      "secret_flow": "storage-secret_flow",
+      "exposure_consumers": "storage-exposure_consumers"
+    }
+  }
+}

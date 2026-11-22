@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::ReplaySchedule",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [doc = \" Call-indexed allowances; the whole route shape is checked before a target exists.\"] pub struct ReplaySchedule { pub installation : Vec < ReadBudget > , pub commit : Vec < ReadBudget > , pub target_read : Vec < ReadBudget > , pub reference_read : Vec < ReadBudget > , pub opening_audit : Option < AuditBudget > , pub final_audit : AuditBudget , }"
+  }
+}

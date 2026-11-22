@@ -3054,6 +3054,9 @@
         "pn-host::scram::tests::derivation_permits": "calibrated-host-scram-derivation-permits-case"
       },
       "cases": [
+        "pn-host::storage::tree::rebuild::tests::rebuild_restores_labelled_input",
+        "pn-host::storage::tree::rebuild::tests::rebuild_input_refusals",
+        "pn-host::storage::tree::rebuild::tests::rebuild_memory_execution_refusals",
         "pn-host::storage::tree::audit::tests::tree_audit_memory_domains",
         "pn-host::storage::tree::audit::tests::tree_audit_memory_forks",
         "pn-host::storage::tree::audit::tests::tree_audit_memory_orphan",

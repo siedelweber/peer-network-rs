@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "storage::tree::rebuild::CompletedMemory",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [doc = \" A completed, audited memory reference borrows its prepared owner for every retained writer input.\"] pub struct CompletedMemory < 'p > { prepared : & 'p PreparedReplay , tree : MemoryTree < 'p > , inventory : AuditInventory , }"
+  }
+}
