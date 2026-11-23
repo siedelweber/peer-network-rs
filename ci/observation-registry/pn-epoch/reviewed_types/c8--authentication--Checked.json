@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::Checked",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" A confirmed value, refusal or inability, with assessed premises where established.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Checked < T > { Confirmed (Assessed < T >) , Refused (Refusal) , Unavailable (Inability) , RefusedWithPremises (Assessed < Refusal >) , UnavailableWithPremises (Assessed < Inability >) , }"
+  }
+}

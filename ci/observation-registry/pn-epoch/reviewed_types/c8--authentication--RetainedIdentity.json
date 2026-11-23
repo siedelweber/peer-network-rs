@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::RetainedIdentity",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Public identity extracted from a complete retained act by its selected reader.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RetainedIdentity { pub actor : String , pub signer_key_hash : [u8 ; 32] , }"
+  }
+}

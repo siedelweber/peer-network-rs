@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::AssessmentPremises",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" The independently selected consensus and complete-parent-binding premises.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AssessmentPremises { pub evaluator : EvaluatorSelection , pub consensus : String , pub binding : String , pub context : BoundaryContext , }"
+  }
+}

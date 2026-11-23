@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::PaperHistory",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Independently selected current and predecessor declaration sets.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PaperHistory { pub current : Vec < PaperCaseDeclaration > , pub predecessor : Option < Vec < PaperCaseDeclaration > > , }"
+  }
+}

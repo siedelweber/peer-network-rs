@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::BoundaryInput",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" The producer keeps its complete public values beside, not inside, retained acts.\"] # [derive (Debug)] pub struct BoundaryInput < 'a , H : ClosureHeader > { pub components : BoundaryComponents , pub selected : Option < & 'a BoundaryContext > , pub acts : & 'a [ClosureAct < H >] , }"
+  }
+}

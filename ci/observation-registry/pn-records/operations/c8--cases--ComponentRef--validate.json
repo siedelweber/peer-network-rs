@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-records",
+    "package": "pn-records",
+    "path": "packages/records/src/cases.rs",
+    "item": "cases::ComponentRef::validate",
+    "owner": "RECORDS",
+    "signature": "fn validate (& self) -> Result < () , CaseError >",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:records",
+    "operation": "cases-component-ref-validate"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/cases.rs::cases::ComponentRef::validate",
+    "body": "{ fn atom (value : & str) -> bool { ! value . is_empty () && value . len () <= 255 && value . as_bytes () . first () . is_some_and (| byte | byte . is_ascii_lowercase () || byte . is_ascii_digit ()) && value . as_bytes () . last () . is_some_and (| byte | byte . is_ascii_lowercase () || byte . is_ascii_digit ()) && value . bytes () . all (| byte | byte . is_ascii_lowercase () || byte . is_ascii_digit () || byte == b'-') } if self . namespace . is_empty () || self . namespace . len () > 255 || self . namespace . split ('.') . count () < 2 || ! self . namespace . split ('.') . all (atom) || ! atom (& self . name) { return Err (CaseError :: Field) ; } Ok (()) }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Typed component declarations and validations read bounded public descriptor fields and return closed structural causes. They neither acquire a private value nor decide deployment authority."
+  }
+}

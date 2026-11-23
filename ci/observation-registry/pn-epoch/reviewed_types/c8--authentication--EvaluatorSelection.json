@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::EvaluatorSelection",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" An explicit synthetic premise cannot establish production readiness.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum EvaluatorSelection { ExplicitSyntheticPremise , }"
+  }
+}

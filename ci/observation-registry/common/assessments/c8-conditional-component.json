@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "name": "c8-conditional-component",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The C8 epoch entries receive only public component structure, selected context and explicit evaluator results with their premises. Trace may record those values and bounded refusal causes; no secret credential, production evaluator, authenticated inclusion or real cryptographic verdict is constructed by this cut.",
+    "negative_probe": "EPOCH::claim:admission:authority-outcome-mapping"
+  }
+}

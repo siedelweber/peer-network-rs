@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::Role",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Exact role to be verified over a complete retained act.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Role { Proposal , Seal , Approval , }"
+  }
+}

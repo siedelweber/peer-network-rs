@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-records",
+    "package": "pn-records",
+    "path": "packages/records/src/cases.rs",
+    "item": "cases::LocalAuthorityDeclaration::validate",
+    "owner": "RECORDS",
+    "signature": "fn validate (& self) -> Result < () , CaseError >",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:records",
+    "operation": "cases-local-authority-declaration-validate"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/cases.rs::cases::LocalAuthorityDeclaration::validate",
+    "body": "{ self . reference . validate () ? ; self . scope . validate () ? ; self . second_party . validate () ? ; self . rules . validate () ? ; self . authorization_convention . validate () ? ; self . projection . validate () ? ; if self . run_configuration . is_empty () { return Err (CaseError :: Field) ; } Ok (()) }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Typed component declarations and validations read bounded public descriptor fields and return closed structural causes. They neither acquire a private value nor decide deployment authority."
+  }
+}

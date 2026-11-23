@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::ReadAllowances",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Independently supplied limits describe the reader's available work.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct ReadAllowances { pub encoded_bytes : usize , pub history_scope_bytes : usize , pub declarations : usize , pub transitions : usize , pub account_bytes : usize , pub blocks : usize , pub block_bytes : usize , pub parts : usize , pub associations : usize , pub prior_epochs : usize , }"
+  }
+}

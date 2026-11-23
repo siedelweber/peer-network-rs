@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::Inability",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Inability is distinct from a demonstrated defect of the supplied evidence.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Inability { MissingComponent , UnsupportedEdition , UnavailableBudget , UnavailableContext , UnavailableSelection , UnavailableDefinition , UnavailablePredecessor , UnavailableRules , UnavailableBinding , UnavailableEvaluation , UnavailableLinkage , NotCovered , NotEvaluated , }"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-publication",
+    "package": "pn-host",
+    "path": "packages/host/src/boundary_components.rs",
+    "item": "boundary_components::encode_account",
+    "owner": "HOST",
+    "signature": "fn encode_account (value : & AuthorityAccount , limits : & ReadAllowances) -> Result < Vec < u8 > , FragmentError >",
+    "mode": "instrumented",
+    "claim": "HOST::rule:publication:codec"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/boundary_components.rs::boundary_components::encode_account",
+    "body": "{ let encoded = encoded (& account_value (value) , limits) ? ; if encoded . len () > limits . account_bytes { return Err (FragmentError :: UnavailableBudget) ; } parse_account (& Value :: from_canonical_bytes (& encoded) . map_err (| _ | FragmentError :: Canonical) ? , limits ,) ? ; Ok (encoded) }",
+    "class_decision": "host-publication-codec",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    },
+    "item_premise": "Caller-selected fragment codecs read complete public component bytes under supplied limits and return bounded public refusals. They neither select an evaluator nor establish publication binding."
+  }
+}

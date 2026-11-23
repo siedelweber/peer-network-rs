@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::BoundaryComponents",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Both independently selected component families are retained.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BoundaryComponents { pub paper : PaperCaseBoundary , pub local : LocalAuthorityBoundary , }"
+  }
+}

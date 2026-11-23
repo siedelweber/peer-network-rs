@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cases::PaperCaseKind",
+    "package": "pn-records",
+    "path": "packages/records/src/cases.rs",
+    "syntax": "# [doc = \" The selected external predicate family; the local deployment extension is separate.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum PaperCaseKind { Provenance , AuthorAuthority , }"
+  }
+}

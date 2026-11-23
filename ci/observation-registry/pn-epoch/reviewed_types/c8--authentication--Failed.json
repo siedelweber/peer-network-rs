@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::Failed",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "enum Failed { Refused (Refusal) , Unavailable (Inability) , RefusedWithPremises (Assessed < Refusal >) , UnavailableWithPremises (Assessed < Inability >) , }"
+  }
+}

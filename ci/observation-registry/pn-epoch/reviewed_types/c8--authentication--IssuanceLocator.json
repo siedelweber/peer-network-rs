@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::IssuanceLocator",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" The qualified issuance location of one covered Actor.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct IssuanceLocator { pub height : u64 , pub transaction_index : u64 , pub input_index : u64 , pub issuance_prevout : [u8 ; 36] , }"
+  }
+}

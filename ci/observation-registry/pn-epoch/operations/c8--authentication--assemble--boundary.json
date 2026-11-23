@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-epoch",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "item": "authentication::assemble_boundary",
+    "owner": "EPOCH",
+    "signature": "fn assemble_boundary < H : ClosureHeader > (input : BoundaryInput < '_ , H > , consumer : & impl BoundaryConsumer) -> BoundaryBuild",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/authentication.rs::authentication::assemble_boundary",
+    "body": "{ let assessment = compare_boundary (BoundaryView { paper : Some (& input . components . paper) , local : Some (& input . components . local) , selected : input . selected , acts : input . acts , } , consumer ,) ; let components = match (& assessment . closure , & assessment . local , & assessment . paper) { (Checked :: Confirmed (closure) , Checked :: Confirmed (local) , Checked :: Confirmed (paper)) if same_premises (& closure . premises , & local . premises) && same_premises (& closure . premises , & paper . premises) => { Some (input . components) } _ => None , } ; BoundaryBuild { components , assessment } }",
+    "class_decision": "semantic-publication-public",
+    "assessments": {
+      "full_recording": "c8-conditional-component",
+      "secret_flow": "c8-conditional-component",
+      "exposure_consumers": "c8-conditional-component"
+    },
+    "item_premise": "The conditional component comparison reads public supplied context, typed values and explicit evaluator premises; it retains inability and refusal separately. No production evaluator, authenticated history or deployment authority is supplied by this operation."
+  }
+}

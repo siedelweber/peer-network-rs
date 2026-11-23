@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::BoundaryAssessment",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Three separately selected boundaries and their conditional aggregate.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BoundaryAssessment { pub closure : Checked < () > , pub local : Checked < () > , pub paper : Checked < () > , pub ready : Checked < () > , }"
+  }
+}

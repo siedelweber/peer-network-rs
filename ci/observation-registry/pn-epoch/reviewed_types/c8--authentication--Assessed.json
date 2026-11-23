@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::Assessed",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" A positive result always keeps the premises under which it was assessed.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Assessed < T > { pub value : T , pub premises : AssessmentPremises , }"
+  }
+}

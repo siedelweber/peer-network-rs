@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-epoch",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "item": "authentication::compare_local_boundary",
+    "owner": "EPOCH",
+    "signature": "fn compare_local_boundary < H : ClosureHeader > (candidate : & LocalAuthorityBoundary , acts : & [ClosureAct < H >] , selected : Option < & BoundaryContext > , consumer : & impl BoundaryConsumer ,) -> Checked < () >",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/authentication.rs::authentication::compare_local_boundary",
+    "body": "{ let Some (selected) = selected else { return Checked :: Unavailable (Inability :: UnavailableContext) ; } ; let context = match forward_consumer (consumer . required_boundary_context (selected)) { Ok (value) => value , Err (other) => return failed_checked (& other) , } ; if candidate . context != context . value { return with_premises (Checked :: Refused (Refusal :: Context) , & context . premises) ; } with_premises (compare_local (candidate , acts , selected , consumer) , & context . premises) }",
+    "class_decision": "semantic-publication-public",
+    "assessments": {
+      "full_recording": "c8-conditional-component",
+      "secret_flow": "c8-conditional-component",
+      "exposure_consumers": "c8-conditional-component"
+    },
+    "item_premise": "The conditional component comparison reads public supplied context, typed values and explicit evaluator premises; it retains inability and refusal separately. No production evaluator, authenticated history or deployment authority is supplied by this operation."
+  }
+}

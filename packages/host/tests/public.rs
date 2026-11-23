@@ -5,6 +5,8 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 #[path = "public/binary64.rs"]
 mod binary64;
+#[path = "public/boundary_components.rs"]
+mod boundary_components;
 #[path = "public/closure.rs"]
 mod closure;
 #[path = "public/comparison.rs"]

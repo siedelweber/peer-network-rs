@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-epoch",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "item": "authentication::compare_boundary",
+    "owner": "EPOCH",
+    "signature": "fn compare_boundary < H : ClosureHeader > (input : BoundaryView < '_ , H > , consumer : & impl BoundaryConsumer) -> BoundaryAssessment",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/authentication.rs::authentication::compare_boundary",
+    "body": "{ let unavailable = | | Checked :: Unavailable (Inability :: NotEvaluated) ; let Some (selected) = input . selected else { return BoundaryAssessment { closure : unavailable () , local : Checked :: Unavailable (Inability :: UnavailableContext) , paper : unavailable () , ready : unavailable () , } ; } ; let context = match forward_consumer (consumer . required_boundary_context (selected)) { Ok (value) => value , Err (other) => { let other : Checked < () > = failed_checked (& other) ; return BoundaryAssessment { closure : other . clone () , local : other . clone () , paper : other . clone () , ready : other , } ; } } ; if context . value != * selected { return BoundaryAssessment { closure : unavailable () , local : with_premises (Checked :: Refused (Refusal :: Context) , & context . premises) , paper : with_premises (Checked :: Refused (Refusal :: Context) , & context . premises) , ready : unavailable () , } ; } let closure = input . acts . iter () . fold (Checked :: Confirmed (Assessed { value : () , premises : context . premises . clone () , }) , | previous , act | { if ! matches ! (previous , Checked :: Confirmed (_)) { return previous ; } let mut latest = None ; for role in [Role :: Proposal , Role :: Seal , Role :: Approval] { match forward_consumer_under (consumer . verify_recorded_role (act , role) , & context . premises) { Ok (value) if value . premises == context . premises => latest = Some (value . premises) , Ok (_) => { return with_premises (Checked :: Unavailable (Inability :: UnavailableBinding) , & context . premises) ; } Err (other) => return failed_checked (& other) , } } Checked :: Confirmed (Assessed { value : () , premises : latest . unwrap_or_else (| | context . premises . clone ()) , }) } ,) ; let closure = match closure { Checked :: Unavailable (Inability :: UnavailableBinding) => { with_premises (Checked :: Unavailable (Inability :: UnavailableBinding) , & context . premises) } other => other , } ; let local = input . local . map_or (Checked :: Unavailable (Inability :: MissingComponent) , | value | { compare_local_boundary (value , input . acts , Some (selected) , consumer) }) ; let paper = input . paper . map_or (Checked :: Unavailable (Inability :: MissingComponent) , | value | { compare_paper_boundary (value , Some (selected) , consumer) }) ; let ready = Checked :: Unavailable (Inability :: NotEvaluated) ; BoundaryAssessment { closure , local , paper , ready , } }",
+    "class_decision": "semantic-publication-public",
+    "assessments": {
+      "full_recording": "c8-conditional-component",
+      "secret_flow": "c8-conditional-component",
+      "exposure_consumers": "c8-conditional-component"
+    },
+    "item_premise": "The conditional component comparison reads public supplied context, typed values and explicit evaluator premises; it retains inability and refusal separately. No production evaluator, authenticated history or deployment authority is supplied by this operation."
+  }
+}

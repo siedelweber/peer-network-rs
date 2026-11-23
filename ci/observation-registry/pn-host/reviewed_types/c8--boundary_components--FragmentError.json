@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "boundary_components::FragmentError",
+    "package": "pn-host",
+    "path": "packages/host/src/boundary_components.rs",
+    "syntax": "# [doc = \" The ordered representation outcome for a standalone component.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum FragmentError { UnsupportedEdition , MissingComponent , UnavailableBudget , Canonical , Shape , Edition , Kind , Field , # [doc = \" A nested component's own edition or kind refused during this boundary's Field stage.\"] FieldWithNested (NestedCause) , Order , Duplicate , }"
+  }
+}

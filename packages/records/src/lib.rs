@@ -31,6 +31,10 @@ pub mod commitments;
 /// (´[ROOT-amend:identity:closure-components]´)
 pub mod closure;
 
+/// Typed declarations used by the caller-selected successor boundary.
+/// (´[ROOT-amend:identity:paper-case-declaration]´)
+pub mod cases;
+
 /// Named untrusted act handshake disclosures.
 /// (´def:acts:authentication-disclosure´)
 pub mod authentication;

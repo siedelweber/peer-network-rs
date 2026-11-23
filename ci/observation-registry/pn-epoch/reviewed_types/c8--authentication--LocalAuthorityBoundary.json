@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::LocalAuthorityBoundary",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Required local extension, outside the paper case set.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct LocalAuthorityBoundary { pub context : BoundaryContext , pub declaration : LocalAuthorityDeclaration , pub account : AuthorityAccount , pub parts : Vec < ActorPart > , pub associations : Vec < ActAssociation > , }"
+  }
+}

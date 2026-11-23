@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::AccountPin",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Exact marker prefix and declared stability buffer.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AccountPin { pub height : u64 , pub block_hash : [u8 ; 32] , pub buffer : u64 , }"
+  }
+}

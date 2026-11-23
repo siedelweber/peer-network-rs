@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::BoundaryContext",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" The exact selected public context; history scope is retained as bytes.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BoundaryContext { pub run : [u8 ; 32] , pub history_scope : Vec < u8 > , pub epoch : u64 , }"
+  }
+}

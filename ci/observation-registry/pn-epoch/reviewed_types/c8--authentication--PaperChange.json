@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::PaperChange",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Successor or withdrawal of one independently selected paper case.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum PaperChange { Successor { old : ComponentRef , new : ComponentRef } , Withdrawal { old : ComponentRef } , }"
+  }
+}

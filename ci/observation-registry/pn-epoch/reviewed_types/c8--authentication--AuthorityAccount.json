@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::AuthorityAccount",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Complete public blocks, not a supplier's assertion of active keys.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AuthorityAccount { pub context : BoundaryContext , pub pin : AccountPin , pub run_configuration : Vec < u8 > , pub chain_parameters : Vec < u8 > , pub first_height : u64 , pub blocks : Vec < Vec < u8 > > , pub prior_range : PriorRange , }"
+  }
+}

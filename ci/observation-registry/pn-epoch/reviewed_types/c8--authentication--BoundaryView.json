@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::BoundaryView",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" The exact input to a pure component comparison, supplied by the caller.\"] # [derive (Debug)] pub struct BoundaryView < 'a , H : ClosureHeader > { pub paper : Option < & 'a PaperCaseBoundary > , pub local : Option < & 'a LocalAuthorityBoundary > , pub selected : Option < & 'a BoundaryContext > , pub acts : & 'a [ClosureAct < H >] , }"
+  }
+}

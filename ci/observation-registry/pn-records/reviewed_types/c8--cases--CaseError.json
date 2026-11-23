@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cases::CaseError",
+    "package": "pn-records",
+    "path": "packages/records/src/cases.rs",
+    "syntax": "# [doc = \" Structural refusal for a typed successor declaration.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum CaseError { Shape , Field , Kind , Scope , }"
+  }
+}

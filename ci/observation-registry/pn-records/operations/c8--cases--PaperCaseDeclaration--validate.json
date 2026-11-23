@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-records",
+    "package": "pn-records",
+    "path": "packages/records/src/cases.rs",
+    "item": "cases::PaperCaseDeclaration::validate",
+    "owner": "RECORDS",
+    "signature": "fn validate (& self) -> Result < () , CaseError >",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:records",
+    "operation": "cases-paper-case-declaration-validate"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/cases.rs::cases::PaperCaseDeclaration::validate",
+    "body": "{ self . reference . validate () ? ; self . scope . validate () ? ; self . second_party . validate () ? ; self . rules . validate () ? ; self . convention . validate () ? ; self . projection . validate () ? ; self . published_data_rule . validate () ? ; match (& self . kind , & self . unit) { (PaperCaseKind :: Provenance , Some (unit)) => unit . validate () , (PaperCaseKind :: AuthorAuthority , None) => Ok (()) , _ => Err (CaseError :: Kind) , } }",
+    "class_decision": "public-records",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Typed component declarations and validations read bounded public descriptor fields and return closed structural causes. They neither acquire a private value nor decide deployment authority."
+  }
+}

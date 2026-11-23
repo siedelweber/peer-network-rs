@@ -2,6 +2,9 @@
 //! (´def:compiler:boundary-inputs´)
 
 pub mod admission;
+/// Caller-selected successor authentication components, separate from historical replay.
+/// (´[ROOT-amend:design:epoch-authentication-restoration]´)
+pub mod authentication;
 pub mod base;
 pub mod cells;
 pub mod closure;

@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-publication",
+    "package": "pn-host",
+    "path": "packages/host/src/boundary_components.rs",
+    "item": "boundary_components::decode_paper_boundary",
+    "owner": "HOST",
+    "signature": "fn decode_paper_boundary (input : Option < & [u8] > , selected_edition : u64 , limits : & ReadAllowances ,) -> Result < PaperCaseBoundary , FragmentError >",
+    "mode": "instrumented",
+    "claim": "HOST::rule:publication:codec"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/boundary_components.rs::boundary_components::decode_paper_boundary",
+    "body": "{ parse_paper_boundary (& selected (selected_edition , input , limits) ? , limits) }",
+    "class_decision": "host-publication-codec",
+    "assessments": {
+      "full_recording": "host-publication-codec",
+      "secret_flow": "host-publication-codec",
+      "exposure_consumers": "host-publication-codec"
+    },
+    "item_premise": "Caller-selected fragment codecs read complete public component bytes under supplied limits and return bounded public refusals. They neither select an evaluator nor establish publication binding."
+  }
+}

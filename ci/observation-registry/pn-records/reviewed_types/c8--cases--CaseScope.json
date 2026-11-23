@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cases::CaseScope",
+    "package": "pn-records",
+    "path": "packages/records/src/cases.rs",
+    "syntax": "# [doc = \" The exact selected run and starting context, with an inclusive effective epoch.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CaseScope { pub run : [u8 ; 32] , pub history_scope : Vec < u8 > , pub announced_at : u64 , pub effective_at : u64 , }"
+  }
+}

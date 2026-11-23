@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "authentication::PaperCaseBoundary",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "semantic-publication-public",
+    "expansion_review": "Derived structural Clone, Debug and equality over public component carriers and closed causes; the explicit validation, codec and conditional comparison entries own operations and no generated authentication or private acquisition is inferred."
+  }
+}

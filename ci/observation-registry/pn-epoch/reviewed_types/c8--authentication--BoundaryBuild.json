@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::BoundaryBuild",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" A failed or unevaluable comparison retains no assembled component object.\"] # [derive (Debug)] pub struct BoundaryBuild { pub components : Option < BoundaryComponents > , pub assessment : BoundaryAssessment , }"
+  }
+}

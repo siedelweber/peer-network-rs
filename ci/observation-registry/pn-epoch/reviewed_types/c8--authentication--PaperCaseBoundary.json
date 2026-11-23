@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::PaperCaseBoundary",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Complete bound paper set, including an explicit empty set.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PaperCaseBoundary { pub context : BoundaryContext , pub active : Vec < PaperCaseDeclaration > , pub changes : Vec < PaperChange > , }"
+  }
+}

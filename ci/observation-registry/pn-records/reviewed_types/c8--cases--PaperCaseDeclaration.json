@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cases::PaperCaseDeclaration",
+    "package": "pn-records",
+    "path": "packages/records/src/cases.rs",
+    "syntax": "# [doc = \" A paper case descriptor. Its proof language is not admitted by this representation.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PaperCaseDeclaration { pub reference : ComponentRef , pub kind : PaperCaseKind , pub scope : CaseScope , pub second_party : ComponentRef , pub rules : ComponentRef , pub convention : ComponentRef , pub projection : ComponentRef , pub published_data_rule : ComponentRef , pub unit : Option < ComponentRef > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::Refusal",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Public, bounded refusal reasons. They do not contain instance secrets.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Refusal { Shape , Edition , Kind , Field , Order , Duplicate , Context , SelectionMismatch , DeclarationContent , Declaration , Rules , Convention , Run , Scope , CaseSet , Transition , FailedCase , Prefix , Overflow , MissingEvidence , Binding , Chain , History , Qualification , Actor , Coverage , Path , Act , RetainedActRefusal , Account , Part , Reference , Signature , ActorBinding , }"
+  }
+}

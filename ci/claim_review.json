@@ -2962,6 +2962,30 @@
       "review": "Read the closed configuration refusal and the finite process control as written; neither source identity nor a terminated process supplies an installation witness."
     },
     {
+      "operation": "pn-epoch::authentication::tests::missing_authority_case",
+      "path": "packages/epoch/src/authentication.rs",
+      "claim": "EPOCH::claim:admission:mandatory-authority-context",
+      "before": "",
+      "after": "Claim: A required local component cannot be supplied by an explicit empty paper set.",
+      "review": "The explicit synthetic context and evaluation premises exercise this finite conditional result; no production evaluator, authenticated history or deployment selection is inferred."
+    },
+    {
+      "operation": "pn-epoch::authentication::tests::outcome_mapping",
+      "path": "packages/epoch/src/authentication.rs",
+      "claim": "EPOCH::claim:admission:authority-outcome-mapping",
+      "before": "",
+      "after": "Claim: Positive results retain evaluator and binding premises, and incompatible or synthetic premises never become production readiness.",
+      "review": "The explicit synthetic context and evaluation premises exercise this finite conditional result; no production evaluator, authenticated history or deployment selection is inferred."
+    },
+    {
+      "operation": "pn-epoch::authentication::tests::verification_case_context",
+      "path": "packages/epoch/src/authentication.rs",
+      "claim": "EPOCH::claim:admission:verification-case-context",
+      "before": "",
+      "after": "Claim: An explicit empty paper set is compared with selected history, and a ceased case needs its transition.",
+      "review": "The explicit synthetic context and evaluation premises exercise this finite conditional result; no production evaluator, authenticated history or deployment selection is inferred."
+    },
+    {
       "operation": "pn-epoch::base::base_holds",
       "path": "packages/epoch/tests/base.rs",
       "claim": "EPOCH::claim:compiler:irrational-base-entries-retain-their-evidence-gap",
@@ -4977,6 +5001,94 @@
       "before": "",
       "after": "Claim: The finite endpoint constructor orders signed subnormal and normal patterns by the integer key, refuses negative zero and every sampled non-finite class, and the reader accepts each independently counted byte, item and depth limit and refuses one below it; a carrier and its decoder refuse an insufficient arithmetic ceiling and accept the declared test ceiling, with the decoder's preliminary fraction ceiling independently preceding a malformed question's refusal.",
       "review": "The controls compare named refusal classes, decoded vocabulary meanings, exact reader limits, independent rational enclosure verdicts and original-context substitutions. They establish conformance for these supplied cases, not interval soundness, native laws or numerical admission. The existing root-not-last bytes refuse CanonicalNodes under the declared ceiling and Resource under work one, distinguishing preliminary fraction construction from cumulative constant reading."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::account_order",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:authority-account-order",
+      "before": "",
+      "after": "Claim: Independent account mutations retain `Prefix`, `Overflow`, `MissingEvidence` and `Coverage` order.",
+      "review": "Independent encoded operands are selected by id, exercised at their owned site and compared with a separately transcribed expected-id set; this is finite conditional evidence, not a real evaluator or production selection."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::account_values",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:authority-account-values",
+      "before": "",
+      "after": "Claim: Exact account encoding and allowance formulas agree with the independent shared and empty-domain inputs.",
+      "review": "Independent encoded operands are selected by id, exercised at their owned site and compared with a separately transcribed expected-id set; this is finite conditional evidence, not a real evaluator or production selection."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::historical_isolation",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:boundary-component-isolation",
+      "before": "",
+      "after": "Claim: Caller-selected component decoders refuse historical fragments, and historical decoders refuse each successor component.",
+      "review": "The independent carrier, header and component bytes are cross-fed in both directions; each historical and successor decoder rejects the other representation. The site compares its own separately transcribed descriptor id. This finite check supplies no evaluator or production selection."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::local_boundary_order",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:local-boundary-order",
+      "before": "",
+      "after": "Claim: Local roster, association and scan-bound mutations retain their first selected cause.",
+      "review": "Independent encoded operands are selected by id, exercised at their owned site and compared with a separately transcribed expected-id set; this is finite conditional evidence, not a real evaluator or production selection."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::local_boundary_values",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:local-boundary-values",
+      "before": "",
+      "after": "Claim: Complete local component values agree with the independent shared and empty-domain encodings.",
+      "review": "Independent encoded operands are selected by id, exercised at their owned site and compared with a separately transcribed expected-id set; this is finite conditional evidence, not a real evaluator or production selection."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::local_declaration_order",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:local-declaration-order",
+      "before": "",
+      "after": "Claim: Local descriptor changes refuse at Declaration, Rules, Convention, Run or Scope in order.",
+      "review": "Independent encoded operands are selected by id, exercised at their owned site and compared with a separately transcribed expected-id set; this is finite conditional evidence, not a real evaluator or production selection."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::local_declaration_values",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:local-declaration-values",
+      "before": "",
+      "after": "Claim: The complete independently selected local declaration agrees with its producer and consumer.",
+      "review": "Independent encoded operands are selected by id, exercised at their owned site and compared with a separately transcribed expected-id set; this is finite conditional evidence, not a real evaluator or production selection."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::paper_boundary_order",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:paper-boundary-order",
+      "before": "",
+      "after": "Claim: Paper boundary representation order and selected predecessor deltas retain their first causes.",
+      "review": "Independent encoded operands are selected by id, exercised at their owned site and compared with a separately transcribed expected-id set; this is finite conditional evidence, not a real evaluator or production selection."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::paper_boundary_values",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:paper-boundary-values",
+      "before": "",
+      "after": "Claim: Complete paper set and transition values agree with all five independent encodings.",
+      "review": "Independent encoded operands are selected by id, exercised at their owned site and compared with a separately transcribed expected-id set; this is finite conditional evidence, not a real evaluator or production selection."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::paper_declaration_order",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:paper-declaration-order",
+      "before": "",
+      "after": "Claim: The admitted paper declaration mutations reach their first representation or contextual cause.",
+      "review": "Independent encoded operands are selected by id, exercised at their owned site and compared with a separately transcribed expected-id set; this is finite conditional evidence, not a real evaluator or production selection."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::paper_declaration_values",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:paper-declaration-values",
+      "before": "",
+      "after": "Claim: The selected producer and consumer agree on both complete admitted paper declaration encodings.",
+      "review": "Independent encoded operands are selected by id, exercised at their owned site and compared with a separately transcribed expected-id set; this is finite conditional evidence, not a real evaluator or production selection."
     },
     {
       "operation": "pn-host::public::case_before_input",

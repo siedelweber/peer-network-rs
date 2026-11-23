@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::ActAssociation",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Association with an exact retained act and one shared account part.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ActAssociation { pub context : BoundaryContext , pub act_position : u64 , pub act : ActId , pub local_declaration : ComponentRef , pub account_context : BoundaryContext , pub account_index : u64 , pub part_index : u64 , }"
+  }
+}

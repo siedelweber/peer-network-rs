@@ -11,6 +11,9 @@ pub mod binary64;
 /// Budgeted positions computed only from borrowed admitted packages.
 /// (´[ROOT-amend:identity:result-position-recipe]´)
 pub use admitted_result::position;
+/// Caller-selected, standalone successor component fragments.
+/// (´[ROOT-amend:identity:paper-case-declaration]´)
+pub mod boundary_components;
 mod config;
 #[cfg(test)]
 mod credential_fixture;

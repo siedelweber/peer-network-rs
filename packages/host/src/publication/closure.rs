@@ -279,7 +279,7 @@ pub struct OpeningAnchor<'a, H: ClosureHeader> {
 }
 
 /// Structural absence remains distinct from successful exact comparison.
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ProofComparison {
     UnavailableOpening,
     UnavailableAnchor,
@@ -288,7 +288,7 @@ pub enum ProofComparison {
 
 /// Exact compared complete lists made available beside, never inside, history.
 /// Only successful comparison results enter this adapter.
-#[derive(Debug, Default)]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct ComparedProofs(Vec<DependencyProof>);
 
 impl ComparedProofs {

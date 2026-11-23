@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::AuthorizedKeysWithPremises",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" A checked authority set, with its full premise context.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AuthorizedKeysWithPremises { pub actor : String , pub keys : Vec < [u8 ; 32] > , pub pin : AccountPin , }"
+  }
+}

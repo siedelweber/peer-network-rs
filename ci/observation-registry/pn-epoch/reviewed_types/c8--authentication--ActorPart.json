@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::ActorPart",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" One covered Actor's complete scan boundaries.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ActorPart { pub actor : String , pub issuance : IssuanceLocator , pub scan_from : u64 , pub scan_through : u64 , pub prior_range : PriorRange , }"
+  }
+}

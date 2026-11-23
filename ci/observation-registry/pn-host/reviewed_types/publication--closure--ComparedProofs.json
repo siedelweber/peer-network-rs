@@ -4,6 +4,6 @@
     "item": "publication::closure::ComparedProofs",
     "package": "pn-host",
     "path": "packages/host/src/publication/closure.rs",
-    "syntax": "# [doc = \" Exact compared complete lists made available beside, never inside, history.\"] # [doc = \" Only successful comparison results enter this adapter.\"] # [derive (Debug , Default)] pub struct ComparedProofs (Vec < DependencyProof >) ;"
+    "syntax": "# [doc = \" Exact compared complete lists made available beside, never inside, history.\"] # [doc = \" Only successful comparison results enter this adapter.\"] # [derive (Clone , Debug , Default , PartialEq , Eq)] pub struct ComparedProofs (Vec < DependencyProof >) ;"
   }
 }

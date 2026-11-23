@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cases::ComponentRef",
+    "package": "pn-records",
+    "path": "packages/records/src/cases.rs",
+    "syntax": "# [doc = \" A bounded successor reference. Historical `DeclarationId` is unchanged.\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct ComponentRef { pub namespace : String , pub name : String , pub edition : u64 , }"
+  }
+}

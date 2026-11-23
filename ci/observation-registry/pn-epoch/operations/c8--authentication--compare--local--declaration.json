@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "shape": "shape-epoch",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "item": "authentication::compare_local_declaration",
+    "owner": "EPOCH",
+    "signature": "fn compare_local_declaration (candidate : & LocalAuthorityDeclaration , selected : Option < & BoundaryContext > , consumer : & impl BoundaryConsumer ,) -> Checked < () >",
+    "mode": "instrumented",
+    "claim": "ROOT::sig:design:epoch"
+  },
+  "review": {
+    "operation": "pn-epoch::packages/epoch/src/authentication.rs::authentication::compare_local_declaration",
+    "body": "{ let Some (selected) = selected else { return Checked :: Unavailable (Inability :: UnavailableContext) ; } ; let context = match forward_consumer (consumer . required_boundary_context (selected)) { Ok (value) => value , Err (other) => return failed_checked (& other) , } ; let expected = match forward_consumer_under (consumer . local_declaration_definition (selected) , & context . premises) { Ok (value) => value , Err (other) => return failed_checked (& other) , } ; if ! same_premises (& context . premises , & expected . premises) { return with_premises (Checked :: Unavailable (Inability :: UnavailableBinding) , & context . premises) ; } if candidate . scope . run != context . value . run || candidate . scope . history_scope != context . value . history_scope { return with_premises (Checked :: Refused (Refusal :: Context) , & context . premises) ; } if candidate . reference != expected . value . reference || candidate . second_party != expected . value . second_party || candidate . genesis_hash != expected . value . genesis_hash { return with_premises (Checked :: Refused (Refusal :: Declaration) , & expected . premises) ; } if candidate . rules != expected . value . rules { return with_premises (Checked :: Refused (Refusal :: Rules) , & expected . premises) ; } if candidate . authorization_convention != expected . value . authorization_convention || candidate . projection != expected . value . projection { return with_premises (Checked :: Refused (Refusal :: Convention) , & expected . premises) ; } if candidate . run_configuration != expected . value . run_configuration { return with_premises (Checked :: Refused (Refusal :: Run) , & expected . premises) ; } if candidate . scope != expected . value . scope || candidate . scope . announced_at > candidate . scope . effective_at || candidate . scope . effective_at > selected . epoch { return with_premises (Checked :: Refused (Refusal :: Scope) , & expected . premises) ; } Checked :: Confirmed (Assessed { value : () , premises : expected . premises , }) }",
+    "class_decision": "semantic-publication-public",
+    "assessments": {
+      "full_recording": "c8-conditional-component",
+      "secret_flow": "c8-conditional-component",
+      "exposure_consumers": "c8-conditional-component"
+    },
+    "item_premise": "The conditional component comparison reads public supplied context, typed values and explicit evaluator premises; it retains inability and refusal separately. No production evaluator, authenticated history or deployment authority is supplied by this operation."
+  }
+}

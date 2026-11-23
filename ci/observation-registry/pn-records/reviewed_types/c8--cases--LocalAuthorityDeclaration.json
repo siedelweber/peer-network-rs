@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "cases::LocalAuthorityDeclaration",
+    "package": "pn-records",
+    "path": "packages/records/src/cases.rs",
+    "syntax": "# [doc = \" The mandatory local predicate descriptor, outside the paper case set.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct LocalAuthorityDeclaration { pub reference : ComponentRef , pub scope : CaseScope , pub second_party : ComponentRef , pub genesis_hash : [u8 ; 32] , pub rules : ComponentRef , pub authorization_convention : ComponentRef , pub projection : ComponentRef , pub run_configuration : Vec < u8 > , }"
+  }
+}

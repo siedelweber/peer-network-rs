@@ -1,5 +1,5 @@
 // Generated from ci/observation-registry by ci/observe.py --write-operation-vocabulary.
-pub(super) const RECORDS_OPERATIONS: [&str; 84] = [
+pub(super) const RECORDS_OPERATIONS: [&str; 88] = [
     "assemble-boundary-inputs",
     "authentication-disclosure",
     "binary64-carrier-bind",
@@ -16,6 +16,10 @@ pub(super) const RECORDS_OPERATIONS: [&str; 84] = [
     "binary64-fraction-parts",
     "bind-constants",
     "bind-marker-policy",
+    "cases-case-scope-validate",
+    "cases-component-ref-validate",
+    "cases-local-authority-declaration-validate",
+    "cases-paper-case-declaration-validate",
     "closure-assess-openings",
     "closure-closureact-h-actor-approval",
     "closure-closureact-h-epoch",

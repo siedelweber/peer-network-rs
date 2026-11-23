@@ -27,10 +27,6 @@ fn field(row: &Value, name: &str) -> Vec<u8> {
     hex(row[name].as_str().unwrap())
 }
 
-fn assert_encoded_proof(actual: &[u8], expected: &[u8]) {
-    assert_eq!(actual, expected);
-}
-
 fn context(row: &Value) -> ([u8; 32], &str) {
     (field(row, "run").try_into().unwrap(), row["host"].as_str().unwrap())
 }
@@ -111,14 +107,13 @@ fn proof_values() {
         let (run, host) = context(row);
         let act = codec::decode_act(&field(row, "closure"), run, host).unwrap();
         let bytes = field(row, "proof");
-        let protected = bytes.clone();
-        let proof = codec::decode_proof(&protected).unwrap();
-        assert_encoded_proof(&codec::encode_proof(&proof).unwrap(), &bytes);
-        let result = codec::compare_proof(Some(&protected), Some(OpeningAnchor { act: &act })).unwrap();
+        let proof = codec::decode_proof(&bytes).unwrap();
+        assert_eq!(&codec::encode_proof(&proof).unwrap(), &bytes);
+        let result = codec::compare_proof(Some(&bytes), Some(OpeningAnchor { act: &act })).unwrap();
         let ProofComparison::Matches(compared) = result else {
             panic!("fixture anchor must match");
         };
-        assert_encoded_proof(&codec::encode_proof(compared.as_ref()).unwrap(), &bytes);
+        assert_eq!(&codec::encode_proof(compared.as_ref()).unwrap(), &bytes);
         let adapter = codec::ComparedProofs::from_comparisons(vec![ProofComparison::Matches(compared)]);
         let expected_dependencies: Vec<_> = row["dependencies"]
             .as_array()
@@ -146,14 +141,14 @@ fn proof_values() {
             ProofComparison::UnavailableOpening
         ));
         assert!(matches!(
-            codec::compare_proof::<authentication::VerifiedHeader>(Some(&protected), None).unwrap(),
+            codec::compare_proof::<authentication::VerifiedHeader>(Some(&bytes), None).unwrap(),
             ProofComparison::UnavailableAnchor
         ));
     }
     for row in rows_by_site("proof-structural") {
         assert_eq!(row["expected"], "Valid");
-        let protected = operand(&row);
-        assert!(codec::decode_proof(&protected).is_ok(), "{}", row["id"]);
+        let bytes = operand(&row);
+        assert!(codec::decode_proof(&bytes).is_ok(), "{}", row["id"]);
     }
     assert_eq!(rows_by_site("proof-structural").len(), 1);
 }
@@ -201,10 +196,10 @@ fn proof_order() {
             .unwrap();
         let (run, host) = context(base);
         let act = codec::decode_act(&field(base, "closure"), run, host).unwrap();
-        let protected = operand(&descriptor);
-        let error = codec::compare_proof(Some(&protected), Some(OpeningAnchor { act: &act })).unwrap_err();
+        let bytes = operand(&descriptor);
+        let error = codec::compare_proof(Some(&bytes), Some(OpeningAnchor { act: &act })).unwrap_err();
         assert_eq!(cause(error), descriptor["expected"].as_str().unwrap(), "{}", descriptor["id"]);
-        match codec::compare_proof::<authentication::VerifiedHeader>(Some(&protected), None) {
+        match codec::compare_proof::<authentication::VerifiedHeader>(Some(&bytes), None) {
             Err(error) => assert_eq!(cause(error), descriptor["expected"].as_str().unwrap(), "{}", descriptor["id"]),
             Ok(ProofComparison::UnavailableAnchor) => {
                 assert!(matches!(

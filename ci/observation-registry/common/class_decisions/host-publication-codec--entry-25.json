@@ -6,6 +6,17 @@
     "premises": "Public untrusted publication fields, exact arithmetic contexts and structural refusals only. No secret acquisition or cryptographic authority; exhaustive field destructuring and closed variant mappings retain assertions for the separate epoch consumer.",
     "membership": {
       "explicit": [
+        "pn-host::packages/host/src/boundary_components.rs::boundary_components::<FragmentError as std :: fmt :: Display>::fmt",
+        "pn-host::packages/host/src/boundary_components.rs::boundary_components::decode_account",
+        "pn-host::packages/host/src/boundary_components.rs::boundary_components::decode_local_boundary",
+        "pn-host::packages/host/src/boundary_components.rs::boundary_components::decode_local_declaration",
+        "pn-host::packages/host/src/boundary_components.rs::boundary_components::decode_paper_boundary",
+        "pn-host::packages/host/src/boundary_components.rs::boundary_components::decode_paper_declaration",
+        "pn-host::packages/host/src/boundary_components.rs::boundary_components::encode_account",
+        "pn-host::packages/host/src/boundary_components.rs::boundary_components::encode_local_boundary",
+        "pn-host::packages/host/src/boundary_components.rs::boundary_components::encode_local_declaration",
+        "pn-host::packages/host/src/boundary_components.rs::boundary_components::encode_paper_boundary",
+        "pn-host::packages/host/src/boundary_components.rs::boundary_components::encode_paper_declaration",
         "pn-host::packages/host/src/publication.rs::publication::decode",
         "pn-host::packages/host/src/publication.rs::publication::encode",
         "pn-host::packages/host/src/publication/backend_budget.rs::publication::backend_budget::<d :: limits :: BudgetKind as Wire>::read",

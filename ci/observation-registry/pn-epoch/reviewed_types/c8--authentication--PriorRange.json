@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::PriorRange",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" A complete predecessor reference, never a filtered retirement set.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PriorRange { pub history_scope : Vec < u8 > , pub first_epoch : u64 , pub exclusive_end : u64 , }"
+  }
+}

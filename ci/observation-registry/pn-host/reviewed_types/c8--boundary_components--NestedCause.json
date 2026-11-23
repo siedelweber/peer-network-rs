@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "boundary_components::NestedCause",
+    "package": "pn-host",
+    "path": "packages/host/src/boundary_components.rs",
+    "syntax": "# [doc = \" The closed causes a nested component can expose through a boundary Field refusal.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum NestedCause { Edition , Kind , }"
+  }
+}
