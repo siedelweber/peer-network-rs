@@ -1,0 +1,12 @@
+name = "ROOT::verif:api:epoch-views"
+witnessed_labels = []
+path = "adr/018-public-api.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:api:epoch-view-admission"
+owner = "Public API implementer and repository reviewer"
+missing = "Planned contextual-view, mapped-payload and planned-read manifest controls, followed by served-path, immutable-view, reference-vector and measured workload evidence."
+closing_condition = "Admit the contextual schema/register, reviewed mappings and finite execution resources; attach independent passing evidence for view agreement, exact payload carriage and manifest scope/counting before serving an epoch-query edition."
+closing_step = "Epoch-query admission and implementation cuts before production enablement"
+premises = "Synthetic versions and profiles are unserved test inputs, not admitted production profiles, content-reference recipes or evidence of real epoch binding."
