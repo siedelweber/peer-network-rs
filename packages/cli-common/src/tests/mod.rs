@@ -778,12 +778,13 @@ fn parse_args_from_returns_help_record() {
     assert!(text.contains("--debug"));
 }
 
-/// Claim: A sole --version argument produces the exact success record with caller command, package and version, preserving executable identity in metadata.
+/// Claim: A sole --version argument produces the exact success record with caller command, package, version and compiled build kind.
 /// ´claim:cli:sole-version-carries-caller-metadata´
 /// ´test:crate:sole-version-carries-caller-metadata´
 #[test]
 fn sole_version_carries_caller_metadata() {
     let exit = crate::version_exit_from(["--version"], "entry", "package", "1.2.3", None).expect("sole version matches");
+    let build_kind = crate::observation::BuildKind::compiled().name();
     assert_eq!(exit.exit, CommandExit::Success);
     assert_eq!(
         serde_json::to_value(exit.record).unwrap(),
@@ -792,7 +793,7 @@ fn sole_version_carries_caller_metadata() {
             "command": "entry",
             "kind": "version",
             "message": "version requested",
-            "fields": {"type": "version", "version": "package 1.2.3", "build_kind": "release"}
+            "fields": {"type": "version", "version": "package 1.2.3", "build_kind": build_kind}
         })
     );
 }

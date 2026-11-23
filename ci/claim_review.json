@@ -2006,8 +2006,8 @@
       "path": "packages/cli-common/src/tests/mod.rs",
       "claim": "CLICOMMON::claim:cli:sole-version-carries-caller-metadata",
       "before": "sole version carries caller metadata.",
-      "after": "Claim: A sole --version argument produces the exact success record with caller command, package and version, preserving executable identity in metadata.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+      "after": "Claim: A sole --version argument produces the exact success record with caller command, package, version and compiled build kind.",
+      "review": "The assertion checks the complete version record and obtains the build-kind expectation from the compiled test kind; release and debug runs therefore witness the same caller metadata without hard-coding release."
     },
     {
       "operation": "cli-common::tests::sole_version_carries_compiled_commit",
