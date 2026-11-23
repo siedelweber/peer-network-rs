@@ -96,20 +96,19 @@ impl EmissionPolicy {
     /// Select the policy from the two public inputs and the compiled kind.
     ///
     /// # Errors
-    /// Refuses malformed disable values before the silent valid-disable conflict, then checks the level.
+    /// Refuses malformed disable values, then valid debug disable, before the silent release conflict and level.
     /// Justified: Pure selection runs before observation installation and cannot record itself.
     pub fn select(disable: Option<&OsStr>, level: Option<&OsStr>, kind: BuildKind) -> Result<Self, EmissionConfigurationError> {
         if let Some(value) = disable {
             match value.to_str() {
                 Some("1") => {
+                    if kind == BuildKind::Debug {
+                        return Err(EmissionConfigurationError::DebugCannotDisable);
+                    }
                     if level.is_some() {
                         return Err(EmissionConfigurationError::ConflictingInputs);
                     }
-                    return if kind == BuildKind::Release {
-                        Ok(Self::Off)
-                    } else {
-                        Err(EmissionConfigurationError::DebugCannotDisable)
-                    };
+                    return Ok(Self::Off);
                 }
                 Some(_) => return Err(EmissionConfigurationError::InvalidDisable),
                 None => return Err(EmissionConfigurationError::NonUtf8Disable),
@@ -1828,7 +1827,7 @@ pub enum BootstrapError {
 /// Refused values of the executable-owned emission setting.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum EmissionConfigurationError {
-    /// Two explicit selectors cannot be present in one invocation.
+    /// A valid release disable request conflicts with an explicit level.
     #[error("PN_OBSERVE_DISABLE conflicts with PN_OBSERVE_LEVEL")]
     ConflictingInputs,
     /// Only one exact spelling selects quiet release.

@@ -520,7 +520,7 @@ class BuildKinds(unittest.TestCase):
                 self.assertTrue(enabled.stdout.endswith(b'\n'), (package, kind))
 
     def test_invalid_disable_reports_usage(self):
-        """Malformed observation disable requests report usage in both kinds; the valid switch and level conflict stays silent.
+        """Disable refusals report usage in both kinds, except the valid release switch and level conflict, which stays silent.
         ´claim:discipline:invalid-observe-disable-is-reported´
         ´test:integration:test-invalid-disable-reports-usage´
         """
@@ -542,7 +542,7 @@ class BuildKinds(unittest.TestCase):
                                             capture_output=True, timeout=30, check=False)
                     self.assertEqual((result.returncode, result.stdout), (2, b''),
                                      (package, kind, name))
-                    if silent:
+                    if silent and kind == 'release':
                         self.assertEqual(result.stderr, b'', (package, kind, name))
                     else:
                         rows = [json.loads(line) for line in result.stderr.splitlines()]

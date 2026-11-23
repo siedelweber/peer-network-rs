@@ -1038,8 +1038,8 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:invalid-observe-disable-is-reported",
       "before": "",
-      "after": "Malformed observation disable requests report usage in both kinds; the valid switch and level conflict stays silent.",
-      "review": "Each shipped release and debug recipe artifact receives a malformed switch alone, a malformed switch beside a level, a non-Unicode switch beside a level, and a valid switch beside a level before a help result. The first three yield one usage row; the valid conflict stays silent."
+      "after": "Disable refusals report usage in both kinds, except the valid release switch and level conflict, which stays silent.",
+      "review": "Each shipped release and debug recipe artifact receives malformed switch values with and without a level and a valid switch beside a level before help. The malformed values and valid debug switch yield one usage row; only the valid release conflict is silent."
     },
     {
       "operation": "ci::test_observe_runtime.BuildKinds.test_release_ignores_debug_version_switch",
@@ -1366,8 +1366,8 @@
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:build-kind-mode-admission",
       "before": "",
-      "after": "Claim: Compiled release and debug kinds admit the closed policy table, checking disable spelling before the silent valid-disable conflict.",
-      "review": "The supplied option pairs exercise the closed table, including malformed and non-UTF-8 switch spellings before the valid silent conflict, and the debug-only refusal."
+      "after": "Claim: Both kinds check disable spelling first; valid debug disable is refused, while only release retains the silent level conflict.",
+      "review": "The supplied pairs exercise malformed and non-UTF-8 spelling priority, both valid levels and a bad level beside the switch, debug refusal with or without a level, and the release-only silent conflict."
     },
     {
       "operation": "cli-common::observation::tests::compaction_branching",
