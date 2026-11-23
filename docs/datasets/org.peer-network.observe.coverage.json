@@ -7,17 +7,17 @@
   ],
   "rows": [
     {
-      "exceptions": 100,
+      "exceptions": 105,
       "generators": 47,
       "helpers": 3,
       "instrumented": 31,
       "name": "cli-common",
       "number_forms": {
         "exceptions": {
-          "exact": "100",
+          "exact": "105",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "100",
+          "num": "105",
           "num_exact": true,
           "num_relation": "="
         },
@@ -46,10 +46,10 @@
           "num_relation": "="
         },
         "operations": {
-          "exact": "134",
+          "exact": "139",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "134",
+          "num": "139",
           "num_exact": true,
           "num_relation": "="
         }
@@ -76,7 +76,7 @@
           "exact_digits": 32
         }
       },
-      "operations": 134
+      "operations": 139
     },
     {
       "exceptions": 10,

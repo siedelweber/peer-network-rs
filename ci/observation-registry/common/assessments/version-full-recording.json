@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "name": "version-full-recording",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The three-form statement is public source metadata. Its result is delivered as the complete version field and the warning carries the same bytes; the switch state is a complete closed value.",
+    "negative_probe": "ROOT::claim:discipline:host-version-warning-agreement"
+  }
+}

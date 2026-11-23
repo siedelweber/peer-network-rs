@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "VersionQuerySwitch::name",
+    "owner": "CLICOMMON",
+    "signature": "const fn name (self) -> & 'static str",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "shape": "shape-003",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: This closed public state is read within the existing load callback and starts no operation.",
+      "witness": "ROOT::claim:discipline:debug-build-load-warning-levels",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    }
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::VersionQuerySwitch::name",
+    "body": "{ match self { Self :: On => \"on\" , Self :: SwitchedOff => \"switched_off\" , } }",
+    "class_decision": "public-cli",
+    "item_premise": "The closed switch state is public and is delivered in full with the load warning.",
+    "assessments": {
+      "full_recording": "version-full-recording",
+      "secret_flow": "version-secret-flow",
+      "exposure_consumers": "version-exposure-consumers"
+    }
+  }
+}

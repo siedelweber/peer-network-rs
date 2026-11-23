@@ -20,7 +20,7 @@
   },
   "review": {
     "operation": "cli-common::packages/cli-common/src/lib.rs::run_stdout_json_command_from_origin",
-    "body": "{ run_stdout_json_command_from_origin_inner (command_name , | | install_json_panic_hook (command_name) , prepare , | | stdout_tty_refusal_record (command_name) , | arguments | observation :: install_from_origin (origin , debug , default_level , arguments) . map (Some) , emit_control_plane_record , emit , run ,) }",
+    "body": "{ run_stdout_json_command_from_origin_with_load (origin , command_name , debug , default_level , prepare , | | { } , run) }",
     "class_decision": "public-cli",
     "item_premise": "The outer runner delegates result-write classification to the inner account, so the root completion and returned exit agree.",
     "assessments": {

@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "BuildStatement::new",
+    "owner": "CLICOMMON",
+    "signature": "const fn new (package : & 'static str , revision : Option < & 'static str > , tag : Option < & 'static str >) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "shape": "shape-003",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "const",
+      "justification": "Justified: This const constructor validates compilation inputs before an executable or observer exists.",
+      "witness": "CLICOMMON::claim:cli:build-statement-refusals",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    }
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::BuildStatement::new",
+    "body": "{ assert ! (tag . is_none () || revision . is_some () , \"PN_BUILD_RELEASE_TAG requires PN_BUILD_SOURCE_REVISION\") ; if let Some (value) = revision { let bytes = value . as_bytes () ; assert ! (bytes . len () == 40 , \"PN_BUILD_SOURCE_REVISION must be a full lowercase Git commit name\") ; let mut index = 0 ; while index < bytes . len () { let byte = bytes [index] ; assert ! ((byte >= b'0' && byte <= b'9') || (byte >= b'a' && byte <= b'f') , \"PN_BUILD_SOURCE_REVISION must be a full lowercase Git commit name\") ; index += 1 ; } } if let Some (value) = tag { let bytes = value . as_bytes () ; assert ! (! bytes . is_empty () , \"PN_BUILD_RELEASE_TAG must be a distinct nonempty release tag\") ; let untagged = b\"untagged\" ; let undescribed = b\"undescribed\" ; let mut is_untagged = bytes . len () == untagged . len () ; let mut is_undescribed = bytes . len () == undescribed . len () ; let mut index = 0 ; while index < bytes . len () { let byte = bytes [index] ; if index < untagged . len () && byte != untagged [index] { is_untagged = false ; } if index < undescribed . len () && byte != undescribed [index] { is_undescribed = false ; } assert ! (! byte . is_ascii_whitespace () && ! byte . is_ascii_control () , \"PN_BUILD_RELEASE_TAG cannot contain whitespace or control characters\") ; index += 1 ; } assert ! (! is_untagged && ! is_undescribed , \"PN_BUILD_RELEASE_TAG must be a distinct nonempty release tag\") ; } Self { package , revision , tag } }",
+    "class_decision": "public-cli",
+    "item_premise": "Compile-time inputs are immutable public metadata. The constructor refuses malformed revision, malformed tag spelling or an orphan tag before any executable can run.",
+    "assessments": {
+      "full_recording": "version-full-recording",
+      "secret_flow": "version-secret-flow",
+      "exposure_consumers": "version-exposure-consumers"
+    }
+  }
+}

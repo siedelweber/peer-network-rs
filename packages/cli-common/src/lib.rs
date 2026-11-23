@@ -497,7 +497,10 @@ where
 
 /// Answer a sole process `--version` argument on stderr and exit successfully.
 ///
-/// Call before startup work or other argv reading. Callers with argv0-based
+/// Hand parsers call before startup work or other argv reading. The host instead
+/// selects observation policy, validates its debug-only version-query setting,
+/// attempts its load warning, and then returns the version through the origin
+/// runner. Callers with argv0-based
 /// forwarding must classify that mode first and leave forwarded argv alone.
 /// Nonmatching argv returns normally; failure to emit the record exits 1.
 #[tracing::instrument(
@@ -806,6 +809,127 @@ pub fn select_observation_policy_or_exit(command_name: &str) {
     }
 }
 
+/// Immutable source description captured by the executable at compilation.
+pub struct BuildStatement {
+    package: &'static str,
+    revision: Option<&'static str>,
+    tag: Option<&'static str>,
+}
+
+impl BuildStatement {
+    /// Validate and retain optional compilation inputs.
+    ///
+    /// # Panics
+    /// Panics during compilation if a tag has no revision or an invalid form,
+    /// or a supplied revision is not a full lowercase Git object name. A valid
+    /// build invocation cannot arrange these conditions.
+    /// Justified: This const constructor validates compilation inputs before an executable or observer exists.
+    #[must_use]
+    pub const fn new(package: &'static str, revision: Option<&'static str>, tag: Option<&'static str>) -> Self {
+        assert!(
+            tag.is_none() || revision.is_some(),
+            "PN_BUILD_RELEASE_TAG requires PN_BUILD_SOURCE_REVISION"
+        );
+        if let Some(value) = revision {
+            let bytes = value.as_bytes();
+            assert!(
+                bytes.len() == 40,
+                "PN_BUILD_SOURCE_REVISION must be a full lowercase Git commit name"
+            );
+            let mut index = 0;
+            while index < bytes.len() {
+                let byte = bytes[index];
+                assert!(
+                    (byte >= b'0' && byte <= b'9') || (byte >= b'a' && byte <= b'f'),
+                    "PN_BUILD_SOURCE_REVISION must be a full lowercase Git commit name"
+                );
+                index += 1;
+            }
+        }
+        if let Some(value) = tag {
+            let bytes = value.as_bytes();
+            assert!(
+                !bytes.is_empty(),
+                "PN_BUILD_RELEASE_TAG must be a distinct nonempty release tag"
+            );
+            let untagged = b"untagged";
+            let undescribed = b"undescribed";
+            let mut is_untagged = bytes.len() == untagged.len();
+            let mut is_undescribed = bytes.len() == undescribed.len();
+            let mut index = 0;
+            while index < bytes.len() {
+                let byte = bytes[index];
+                if index < untagged.len() && byte != untagged[index] {
+                    is_untagged = false;
+                }
+                if index < undescribed.len() && byte != undescribed[index] {
+                    is_undescribed = false;
+                }
+                assert!(
+                    !byte.is_ascii_whitespace() && !byte.is_ascii_control(),
+                    "PN_BUILD_RELEASE_TAG cannot contain whitespace or control characters"
+                );
+                index += 1;
+            }
+            assert!(
+                !is_untagged && !is_undescribed,
+                "PN_BUILD_RELEASE_TAG must be a distinct nonempty release tag"
+            );
+        }
+        Self { package, revision, tag }
+    }
+
+    /// Format the version result and debug warning from one compiled statement.
+    /// Justified: Public compiled metadata is formatted during preparation or within the existing load callback and starts no operation.
+    #[must_use]
+    pub fn version(self) -> String {
+        match (self.revision, self.tag) {
+            (Some(revision), Some(tag)) => format!("{} {tag} (commit {revision})", self.package),
+            (Some(revision), None) => format!("{} untagged (commit {revision})", self.package),
+            (None, _) => format!("{} undescribed", self.package),
+        }
+    }
+}
+
+/// The admitted state of the debug-only optional version query switch.
+pub enum VersionQuerySwitch {
+    /// Optional query may be offered.
+    On,
+    /// Optional query is switched off.
+    SwitchedOff,
+}
+
+impl VersionQuerySwitch {
+    /// The state carried by the debug load warning.
+    /// Justified: This closed public state is read within the existing load callback and starts no operation.
+    #[must_use]
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::On => "on",
+            Self::SwitchedOff => "switched_off",
+        }
+    }
+}
+
+/// Select the debug-only switch after observation policy and before command work.
+/// Justified: This pre-installation selector emits only a direct usage record and cannot instrument itself.
+#[must_use]
+pub fn select_version_query_switch_or_exit(command_name: &str) -> Option<VersionQuerySwitch> {
+    if observation::BuildKind::compiled() != observation::BuildKind::Debug {
+        return None;
+    }
+    match std::env::var_os("PN_DEBUG_VERSION_DISABLE") {
+        None => Some(VersionQuerySwitch::On),
+        Some(value) if value == OsStr::new("1") => Some(VersionQuerySwitch::SwitchedOff),
+        Some(_) => {
+            let mut record = ControlPlaneRecord::usage_error(command_name, "version_query_configuration");
+            record.message = "PN_DEBUG_VERSION_DISABLE accepts only 1 when present".to_string();
+            let _ignored = emit_control_plane_record(&record);
+            exit_with(CommandExit::Usage);
+        }
+    }
+}
+
 /// Initialise `tracing-subscriber` with JSON output on stderr.
 /// # Errors
 /// Returns a typed configuration refusal or nonbinding observer unavailability.
@@ -962,12 +1086,35 @@ where
     Prepare: FnOnce() -> OriginPreparation<Context>,
     Run: FnOnce(Context) -> Result<Output, CommandError>,
 {
+    run_stdout_json_command_from_origin_with_load(origin, command_name, debug, default_level, prepare, || {}, run)
+}
+
+/// Run an origin command with one load callback after observer installation.
+/// The callback runs before either a terminal result or command work.
+/// Justified: This entry-origin adapter hands the accepted load to the existing command root.
+pub fn run_stdout_json_command_from_origin_with_load<Context, Output, CommandError, Prepare, Load, Run>(
+    origin: observation::EntryOrigin,
+    command_name: &str,
+    debug: bool,
+    default_level: tracing::Level,
+    prepare: Prepare,
+    load: Load,
+    run: Run,
+) -> ExitCode
+where
+    Output: serde::Serialize,
+    CommandError: std::fmt::Display,
+    Prepare: FnOnce() -> OriginPreparation<Context>,
+    Load: FnOnce(),
+    Run: FnOnce(Context) -> Result<Output, CommandError>,
+{
     run_stdout_json_command_from_origin_inner(
         command_name,
         || install_json_panic_hook(command_name),
         prepare,
         || stdout_tty_refusal_record(command_name),
         |arguments| observation::install_from_origin(origin, debug, default_level, arguments).map(Some),
+        load,
         emit_control_plane_record,
         emit,
         run,
@@ -985,6 +1132,7 @@ fn run_stdout_json_command_from_origin_inner<
     Hook,
     Prepare,
     Install,
+    Load,
     EmitControl,
     EmitOutput,
     Run,
@@ -995,6 +1143,7 @@ fn run_stdout_json_command_from_origin_inner<
     prepare: Prepare,
     tty: Tty,
     install: Install,
+    load: Load,
     mut emit_control: EmitControl,
     mut emit_output: EmitOutput,
     run: Run,
@@ -1005,6 +1154,7 @@ where
     Hook: FnOnce(),
     Prepare: FnOnce() -> OriginPreparation<Context>,
     Install: FnOnce(serde_json::Value) -> Result<Option<observation::OriginInstallation>, observation::BootstrapError>,
+    Load: FnOnce(),
     EmitControl: FnMut(&ControlPlaneRecord) -> io::Result<()>,
     EmitOutput: FnMut(&Output) -> io::Result<()>,
     Run: FnOnce(Context) -> Result<Output, CommandError>,
@@ -1044,6 +1194,7 @@ where
             .unwrap_or_else(|_| unreachable!("new origin installation retains its root"))
     });
     let scope = root.as_ref().map(|lease| lease.enter_command_scope(command_name));
+    load();
     let (exit, outcome, result) = match prepared {
         OriginPreparation::Terminal { exit, .. } => {
             let emitted = emit_control(&exit.record);

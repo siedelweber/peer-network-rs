@@ -986,6 +986,22 @@
       "review": "The separately built debug documents artifact sees an invalid input namespace in generate check. Status one, empty stdout, exactly one ERROR row and no summary or status row witness terminal delivery at error level."
     },
     {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_debug_load_warning_levels",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:debug-build-load-warning-levels",
+      "before": "",
+      "after": "Each accepted debug switch state offers one WARN at default and none at error level.",
+      "review": "The registered debug artifact is invoked in each switch state at default and error levels; the warning rows are counted and their state fields checked."
+    },
+    {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_debug_version_switch_values",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:debug-version-switch-values",
+      "before": "",
+      "after": "The debug switch admits absence and exact 1 and refuses every other present value before a version result.",
+      "review": "Both admitted values return the version result; invalid present values return usage two and no stdout on the registered debug recipe artifact."
+    },
+    {
       "operation": "ci::test_observe_runtime.BuildKinds.test_failed_help_version_write",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:recipe-artifact-failed-result-write",
@@ -1002,12 +1018,44 @@
       "review": "The release documents artifact receives the global report request on a controlled fixture. The pipe result is bounded below the PTY buffer, then the pipe and terminal both complete with status zero, empty stderr and equal whole JSON results."
     },
     {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_host_version_matches_warning",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:host-version-warning-agreement",
+      "before": "",
+      "after": "The debug artifact's version result and load warning carry the same compiled statement.",
+      "review": "The registered debug artifact returns a version JSON result and one WARN whose public version content equals the result field."
+    },
+    {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_host_version_undescribed",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:host-version-undescribed",
+      "before": "",
+      "after": "Both retained pn recipe artifacts state the decided undescribed version result.",
+      "review": "Release and debug package-scoped recipe artifacts each return fields.version exactly pn undescribed without build description inputs."
+    },
+    {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_release_ignores_debug_version_switch",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:release-version-switch-nonreading",
+      "before": "",
+      "after": "No switch value changes a release artifact's status, result or emitted observation kinds and levels; release emits no load warning.",
+      "review": "The registered release artifact is invoked at default, trace and error levels with absent, empty, zero, one, invalid and non-Unicode switch values; statuses, results and counted observation kinds and levels agree, and no load warning or usage row appears."
+    },
+    {
       "operation": "ci::test_observe_runtime.BuildKinds.test_version_build_kind",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:recipe-artifact-version-build-kind",
       "before": "",
       "after": "Each recipe artifact's version result names its compiled kind in every admitted mode.",
       "review": "Each registered binary supplies a version JSON stdout result for every mode its compiled kind admits, including release/off. The admission control and package-scoped recipe commands establish kind separately from this public field."
+    },
+    {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_version_setting_precedence",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:version-setting-precedence",
+      "before": "",
+      "after": "Observation selection refuses before an invalid debug version switch and no load warning is attempted.",
+      "review": "The registered debug artifact receives two invalid settings; only the observation usage record is delivered."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_burn_entry",
@@ -1594,6 +1642,22 @@
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
     },
     {
+      "operation": "cli-common::tests::build_statement_forms",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:build-statement-forms",
+      "before": "",
+      "after": "Claim: The compiled statement formatter distinguishes exact tag, untagged description, and absent description.",
+      "review": "Three constructor inputs yield the exact three decided strings; this is a formatter witness and does not claim that a build invocation verified either supplied Git input."
+    },
+    {
+      "operation": "cli-common::tests::build_statement_refusals",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:build-statement-refusals",
+      "before": "",
+      "after": "Claim: The compiled statement constructor refuses every invalid revision and tag form before formatting.",
+      "review": "The same const constructor is called at runtime under catch_unwind for an orphan tag, short, long, uppercase and nonhex revisions, and empty, reserved, whitespace and control-containing tags; a valid neighbour is admitted."
+    },
+    {
       "operation": "cli-common::tests::command_exit_codes_match_contract",
       "path": "packages/cli-common/src/tests/mod.rs",
       "claim": "CLICOMMON::claim:cli:command-exit-codes-match-contract",
@@ -1678,8 +1742,8 @@
       "path": "packages/cli-common/src/tests/mod.rs",
       "claim": "CLICOMMON::claim:cli:entry-origin-runner-order",
       "before": "",
-      "after": "Claim: Preparation selects the path before installation, continuation children adopt the sole root, and terminal paths skip command work.",
-      "review": "The controlled subscriber observes preparation, TTY and installation order, child parentage, inclusive durations, one root completion, and help, version, usage and TTY terminal cases."
+      "after": "Claim: Preparation selects the path before installation, the load callback runs once after installation and before a terminal result or command work, continuation children adopt the sole root, and terminal paths skip command work.",
+      "review": "The controlled subscriber observes the load callback between installation and command work and between installation and each terminal result, with one root completion and no terminal command work."
     },
     {
       "operation": "cli-common::tests::hard_linked_destinations_are_not_treated_as_one_role",

@@ -2,6 +2,7 @@
 import json
 import hashlib
 import os
+from collections import Counter
 from pathlib import Path
 import resource
 import subprocess
@@ -368,6 +369,133 @@ class BuildKinds(unittest.TestCase):
             env['PN_OBSERVE_LEVEL'] = mode
         return subprocess.run([BuildKinds.binary(package, kind), argument],
                               env=env, capture_output=True, timeout=30, check=False)
+
+    @staticmethod
+    def host_version(kind, level='default', switch=None, observation_disable=None):
+        env = {key: value for key, value in os.environ.items()
+               if key not in ('PN_OBSERVE_LEVEL', 'PN_OBSERVE_DISABLE', 'PN_DEBUG_VERSION_DISABLE')}
+        env['PN_OBSERVE_LEVEL'] = level
+        if switch is not None:
+            env['PN_DEBUG_VERSION_DISABLE'] = switch
+        if observation_disable is not None:
+            env['PN_OBSERVE_DISABLE'] = observation_disable
+        return subprocess.run([BuildKinds.binary('pn', kind), '--version'],
+                              env=env, capture_output=True, timeout=30, check=False)
+
+    @staticmethod
+    def host_rows(result):
+        return [json.loads(line) for line in result.stderr.splitlines()]
+
+    def test_debug_version_switch_values(self):
+        """The debug switch admits absence and exact 1 and refuses every other present value before a version result.
+        ´claim:discipline:debug-version-switch-values´
+        ´test:integration:test-debug-version-switch-values´
+        """
+        for switch in (None, '1'):
+            result = self.host_version('debug', switch=switch)
+            self.assertEqual(result.returncode, 0, (switch, result.stderr))
+            self.assertEqual(json.loads(result.stdout)['kind'], 'version')
+        for switch in ('', '0', 'true', '2', '01', ' 1', '1 ', '1\n'):
+            result = self.host_version('debug', switch=switch)
+            self.assertEqual((result.returncode, result.stdout), (2, b''), switch)
+            rows = self.host_rows(result)
+            self.assertEqual((len(rows), rows[0]['kind'], rows[0]['fields']['exit_code']),
+                             (1, 'usage_error', 2), switch)
+        env = {os.fsencode(key): os.fsencode(value) for key, value in os.environ.items()
+               if key not in ('PN_OBSERVE_LEVEL', 'PN_OBSERVE_DISABLE', 'PN_DEBUG_VERSION_DISABLE')}
+        env[b'PN_DEBUG_VERSION_DISABLE'] = bytes([255])
+        refused = subprocess.run([self.binary('pn', 'debug'), '--version'], env=env,
+                                 capture_output=True, timeout=30, check=False)
+        self.assertEqual((refused.returncode, refused.stdout), (2, b''))
+
+    def test_release_ignores_debug_version_switch(self):
+        """No switch value changes a release artifact's status, result or emitted observation kinds and levels; release emits no load warning.
+        ´claim:discipline:release-version-switch-nonreading´
+        ´test:integration:test-release-ignores-debug-version-switch´
+        """
+        for level in ('default', 'trace', 'error'):
+            baseline = self.host_version('release', level=level)
+            self.assertEqual(baseline.returncode, 0, (level, baseline.stderr))
+            baseline_rows = self.host_rows(baseline)
+            self.assertFalse(any(row.get('fields', {}).get('event') == 'debug_build_load'
+                                 for row in baseline_rows), (level, baseline_rows))
+            baseline_shape = Counter((row['kind'], row.get('level'), row.get('fields', {}).get('event'))
+                                     for row in baseline_rows)
+            for switch in ('', '0', '1', 'invalid'):
+                changed = self.host_version('release', level=level, switch=switch)
+                self.assertEqual((changed.returncode, changed.stdout),
+                                 (baseline.returncode, baseline.stdout), (level, switch))
+                rows = self.host_rows(changed)
+                self.assertEqual(Counter((row['kind'], row.get('level'), row.get('fields', {}).get('event'))
+                                         for row in rows), baseline_shape, (level, switch))
+                self.assertFalse(any(row['kind'] == 'usage_error' or
+                                     row.get('fields', {}).get('event') == 'debug_build_load'
+                                     for row in rows), (level, switch, rows))
+            environment = {os.fsencode(key): os.fsencode(value) for key, value in os.environ.items()
+                           if key not in ('PN_OBSERVE_LEVEL', 'PN_OBSERVE_DISABLE', 'PN_DEBUG_VERSION_DISABLE')}
+            environment[b'PN_OBSERVE_LEVEL'] = level.encode()
+            environment[b'PN_DEBUG_VERSION_DISABLE'] = bytes([255])
+            changed = subprocess.run([self.binary('pn', 'release'), '--version'], env=environment,
+                                     capture_output=True, timeout=30, check=False)
+            self.assertEqual((changed.returncode, changed.stdout),
+                             (baseline.returncode, baseline.stdout), (level, 'non-Unicode'))
+            rows = self.host_rows(changed)
+            self.assertEqual(Counter((row['kind'], row.get('level'), row.get('fields', {}).get('event'))
+                                     for row in rows), baseline_shape, (level, 'non-Unicode'))
+
+    def test_host_version_undescribed(self):
+        """Both retained pn recipe artifacts state the decided undescribed version result.
+        ´claim:discipline:host-version-undescribed´
+        ´test:integration:test-host-version-undescribed´
+        """
+        for kind in ('release', 'debug'):
+            result = self.host_version(kind)
+            self.assertEqual(result.returncode, 0, (kind, result.stderr))
+            self.assertEqual(json.loads(result.stdout)['fields']['version'], 'pn undescribed', kind)
+
+    def test_debug_load_warning_levels(self):
+        """Each accepted debug switch state offers one WARN at default and none at error level.
+        ´claim:discipline:debug-build-load-warning-levels´
+        ´test:integration:test-debug-load-warning-levels´
+        """
+        for switch, state in ((None, 'on'), ('1', 'switched_off')):
+            for level, count in (('default', 1), ('error', 0)):
+                result = self.host_version('debug', level=level, switch=switch)
+                self.assertEqual(result.returncode, 0)
+                warnings = [row for row in self.host_rows(result)
+                            if row.get('fields', {}).get('event') == 'debug_build_load']
+                self.assertEqual(len(warnings), count, (switch, level, warnings))
+                if warnings:
+                    self.assertEqual((warnings[0]['level'], warnings[0]['fields']['epoch_version_query'],
+                                      warnings[0]['fields']['version_query_switch']),
+                                     ('WARN', state, 'PN_DEBUG_VERSION_DISABLE'))
+                    self.assertEqual(warnings[0]['fields']['message']['content']['data'], 'debug build')
+                    self.assertEqual(warnings[0]['fields']['build_kind'], 'debug')
+
+    def test_version_setting_precedence(self):
+        """Observation selection refuses before an invalid debug version switch and no load warning is attempted.
+        ´claim:discipline:version-setting-precedence´
+        ´test:integration:test-version-setting-precedence´
+        """
+        result = self.host_version('debug', level='nonsense', switch='invalid')
+        self.assertEqual((result.returncode, result.stdout), (2, b''))
+        rows = self.host_rows(result)
+        self.assertEqual(len(rows), 1, rows)
+        self.assertEqual(rows[0]['kind'], 'usage_error')
+        self.assertIn('PN_OBSERVE_LEVEL', rows[0]['message'])
+
+    def test_host_version_matches_warning(self):
+        """The debug artifact's version result and load warning carry the same compiled statement.
+        ´claim:discipline:host-version-warning-agreement´
+        ´test:integration:test-host-version-matches-warning´
+        """
+        result = self.host_version('debug')
+        self.assertEqual(result.returncode, 0)
+        version = json.loads(result.stdout)['fields']['version']
+        warnings = [row for row in self.host_rows(result)
+                    if row.get('fields', {}).get('event') == 'debug_build_load']
+        self.assertEqual(len(warnings), 1)
+        self.assertEqual(warnings[0]['fields']['version']['content']['data'], version)
 
     def test_compiled_kind_admission(self):
         """Off is admitted by each release artifact and refused with an enabled error by each debug artifact; enabled neighbours run.

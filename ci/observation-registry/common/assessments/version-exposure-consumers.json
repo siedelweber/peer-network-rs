@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "name": "version-exposure-consumers",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Version output and warning fields are public sinks; the compile-time statement and switch state do not introduce a private exposure consumer.",
+    "negative_probe": "ROOT::claim:discipline:debug-build-load-warning-levels"
+  }
+}

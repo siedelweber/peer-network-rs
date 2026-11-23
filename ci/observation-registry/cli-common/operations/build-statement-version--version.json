@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "BuildStatement::version",
+    "owner": "CLICOMMON",
+    "signature": "fn version (self) -> String",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "shape": "shape-003",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "bootstrap",
+      "justification": "Justified: Public compiled metadata is formatted during preparation or within the existing load callback and starts no operation.",
+      "witness": "ROOT::claim:discipline:host-version-warning-agreement",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "delivery"
+    }
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::BuildStatement::version",
+    "body": "{ match (self . revision , self . tag) { (Some (revision) , Some (tag)) => format ! (\"{} {tag} (commit {revision})\" , self . package) , (Some (revision) , None) => format ! (\"{} untagged (commit {revision})\" , self . package) , (None , _) => format ! (\"{} undescribed\" , self . package) , } }",
+    "class_decision": "public-cli",
+    "item_premise": "The formatter returns the entire public compiled statement in one of three fixed forms; the process control compares its result to the load warning.",
+    "assessments": {
+      "full_recording": "version-full-recording",
+      "secret_flow": "version-secret-flow",
+      "exposure_consumers": "version-exposure-consumers"
+    }
+  }
+}

@@ -50,11 +50,11 @@
 | ci::test_host_runtime | active | integration | pn-host-postgresql | service | 17 |
 | ci::test_linter_entry | active | integration | ci-composition-services | service | 25 |
 | ci::test_observe | active | unit | ci-python | fast | 13 |
-| ci::test_observe_runtime | active | integration | ci-python | extended | 22 |
+| ci::test_observe_runtime | active | integration | ci-python | extended | 28 |
 | ci::test_observe_syntax | active | integration | ci-python | extended | 1 |
 | ci::test_testkit | active | unit | ci-python | fast | 12 |
 | ci::test_wallet_boundary | active | integration | pn-wallet-rust | service | 11 |
-| cli-common | active | unit | cli-common-rust | fast | 115 |
+| cli-common | active | unit | cli-common-rust | fast | 117 |
 | cli-common-doctests | active | doctest | cli-common-rust | fast | 2 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 6 |
 | cli-common::public | active | public-surface | cli-common-rust | fast | 1 |

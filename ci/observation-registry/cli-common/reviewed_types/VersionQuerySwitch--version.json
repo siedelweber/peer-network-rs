@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "VersionQuerySwitch",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" The admitted state of the debug-only optional version query switch.\"] pub enum VersionQuerySwitch { # [doc = \" Optional query may be offered.\"] On , # [doc = \" Optional query is switched off.\"] SwitchedOff , }"
+  }
+}

@@ -5,6 +5,12 @@ use std::{ffi::OsString, process::ExitCode, time::Instant};
 use clap::{Parser, Subcommand};
 use cli_common::{OriginPreparation, observation::EntryOrigin};
 
+const BUILD_STATEMENT: cli_common::BuildStatement = cli_common::BuildStatement::new(
+    env!("CARGO_PKG_NAME"),
+    option_env!("PN_BUILD_SOURCE_REVISION"),
+    option_env!("PN_BUILD_RELEASE_TAG"),
+);
+
 mod process_adapter;
 
 /// The initial command grammar has no edition operand or override.
@@ -34,7 +40,8 @@ enum Command {
 fn main() -> ExitCode {
     let origin = EntryOrigin::capture();
     cli_common::select_observation_policy_or_exit("pn");
-    cli_common::run_stdout_json_command_from_origin(
+    let version_query_switch = cli_common::select_version_query_switch_or_exit("pn");
+    cli_common::run_stdout_json_command_from_origin_with_load(
         origin,
         "pn",
         false,
@@ -47,10 +54,27 @@ fn main() -> ExitCode {
             });
             match cli_common::parse_args_from::<Arguments, _, _>(arguments.clone()) {
                 Ok(Arguments { command }) => process_adapter::prepare(&command, &arguments, preparation_at),
-                Err(exit) => OriginPreparation::Terminal {
-                    exit,
-                    arguments: observed,
-                },
+                Err(mut exit) => {
+                    if exit.record.kind == cli_common::ControlPlaneRecordKind::Version {
+                        exit.record = cli_common::ControlPlaneRecord::version("pn", &BUILD_STATEMENT.version());
+                    }
+                    OriginPreparation::Terminal {
+                        exit,
+                        arguments: observed,
+                    }
+                }
+            }
+        },
+        || {
+            if let Some(version_query_switch) = version_query_switch {
+                tracing::warn!(
+                    event = "debug_build_load",
+                    version = %BUILD_STATEMENT.version(),
+                    build_kind = cli_common::observation::BuildKind::compiled().name(),
+                    epoch_version_query = version_query_switch.name(),
+                    version_query_switch = "PN_DEBUG_VERSION_DISABLE",
+                    "debug build"
+                );
             }
         },
         process_adapter::run,

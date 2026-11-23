@@ -51,7 +51,7 @@ use crate::{
     TracingFilterSource, panic_payload_message_from_payload, parse_args_from, tracing_filter_from_rust_log, write_json_line,
 };
 
-/// Claim: Preparation selects the path before installation, continuation children adopt the sole root, and terminal paths skip command work.
+/// Claim: Preparation selects the path before installation, the load callback runs once after installation and before a terminal result or command work, continuation children adopt the sole root, and terminal paths skip command work.
 /// ´claim:cli:entry-origin-runner-order´
 /// ´test:crate:entry-origin-runner-order´
 #[test]
@@ -82,6 +82,7 @@ fn entry_origin_runner_order() {
                 events.borrow_mut().push("install");
                 Ok(Some(installed))
             },
+            || events.borrow_mut().push("load"),
             |_| panic!("continuation emitted control record"),
             |_| {
                 emitted.set(true);
@@ -101,7 +102,7 @@ fn entry_origin_runner_order() {
     });
     assert_eq!(exit, std::process::ExitCode::SUCCESS);
     assert!(emitted.get());
-    assert_eq!(*events.borrow(), ["hook", "prepare", "tty", "install", "command"]);
+    assert_eq!(*events.borrow(), ["hook", "prepare", "tty", "install", "load", "command"]);
     let rows = records(&observation, &capture);
     let root = rows
         .iter()
@@ -124,6 +125,51 @@ fn entry_origin_runner_order() {
     assert_origin_terminal_cases();
 }
 
+/// Claim: The compiled statement formatter distinguishes exact tag, untagged description, and absent description.
+/// ´claim:cli:build-statement-forms´
+/// ´test:crate:build-statement-forms´
+#[test]
+fn build_statement_forms() {
+    let revision: &'static str = "a".repeat(40).leak();
+    assert_eq!(
+        crate::BuildStatement::new("pn", Some(revision), Some("network-v0.36.0")).version(),
+        format!("pn network-v0.36.0 (commit {revision})")
+    );
+    assert_eq!(
+        crate::BuildStatement::new("pn", Some(revision), None).version(),
+        format!("pn untagged (commit {revision})")
+    );
+    assert_eq!(crate::BuildStatement::new("pn", None, None).version(), "pn undescribed");
+}
+
+/// Claim: The compiled statement constructor refuses every invalid revision and tag form before formatting.
+/// ´claim:cli:build-statement-refusals´
+/// ´test:crate:build-statement-refusals´
+#[test]
+fn build_statement_refusals() {
+    let revision: &'static str = "a".repeat(40).leak();
+    let short: &'static str = "a".repeat(39).leak();
+    let long: &'static str = "a".repeat(41).leak();
+    let upper: &'static str = format!("{}A", "a".repeat(39)).leak();
+    let non_hex: &'static str = format!("{}g", "a".repeat(39)).leak();
+    assert!(std::panic::catch_unwind(|| crate::BuildStatement::new("pn", Some(revision), Some("network-v0.36.0"))).is_ok());
+    for (revision, tag) in [
+        (None, Some("network-v0.36.0")),
+        (Some(short), None),
+        (Some(long), None),
+        (Some(upper), None),
+        (Some(non_hex), None),
+        (Some(revision), Some("")),
+        (Some(revision), Some("untagged")),
+        (Some(revision), Some("undescribed")),
+        (Some(revision), Some("bad tag")),
+        (Some(revision), Some("bad\n tag")),
+        (Some(revision), Some("bad\u{7f}tag")),
+    ] {
+        assert!(std::panic::catch_unwind(|| crate::BuildStatement::new("pn", revision, tag)).is_err());
+    }
+}
+
 /// Claim: A failed terminal result write selects failure and an ERROR before the origin root completes.
 /// ´claim:cli:entry-origin-failed-result´
 /// ´test:crate:entry-origin-failed-result´
@@ -141,6 +187,7 @@ fn entry_origin_failed_result() {
             },
             || None,
             |_| Ok(Some(installed)),
+            || {},
             |_| Err(io::Error::other("injected stdout failure")),
             |_: &u8| panic!("terminal emitted stdout"),
             |()| -> Result<u8, &str> { panic!("terminal ran command") },
@@ -167,20 +214,29 @@ fn assert_origin_terminal_cases() {
         let tty_called = Cell::new(false);
         let command_called = Cell::new(false);
         let selected = RefCell::new(Vec::new());
+        let events = RefCell::new(Vec::new());
         let exit = with_fixture_subscriber(&observation, || {
             crate::run_stdout_json_command_from_origin_inner(
                 "fixture",
-                || {},
-                || crate::OriginPreparation::Terminal {
-                    exit: crate::CliExit::new(record.clone(), expected),
-                    arguments: json!({"command":"fixture"}),
+                || events.borrow_mut().push("hook"),
+                || {
+                    events.borrow_mut().push("prepare");
+                    crate::OriginPreparation::Terminal {
+                        exit: crate::CliExit::new(record.clone(), expected),
+                        arguments: json!({"command":"fixture"}),
+                    }
                 },
                 || {
                     tty_called.set(true);
                     None
                 },
-                |_| Ok(Some(installed)),
+                |_| {
+                    events.borrow_mut().push("install");
+                    Ok(Some(installed))
+                },
+                || events.borrow_mut().push("load"),
                 |record| {
+                    events.borrow_mut().push("emit");
                     selected.borrow_mut().push(record.clone());
                     Ok(())
                 },
@@ -195,6 +251,7 @@ fn assert_origin_terminal_cases() {
         assert!(!tty_called.get());
         assert!(!command_called.get());
         assert_eq!(*selected.borrow(), [record]);
+        assert_eq!(*events.borrow(), ["hook", "prepare", "install", "load", "emit"]);
         let rows = records(&observation, &capture);
         assert_eq!(
             rows.iter()
@@ -216,6 +273,7 @@ fn assert_origin_terminal_cases() {
             },
             || Some(ControlPlaneRecord::tty_refusal("fixture")),
             |_| Ok(Some(installed)),
+            || {},
             |record| {
                 selected.borrow_mut().push(record.clone());
                 Ok(())
@@ -256,6 +314,7 @@ fn entry_origin_installation_failure() {
             },
             || panic!("terminal checked TTY"),
             |_| Err(BootstrapError::Configuration(EmissionConfigurationError::UnknownLevel)),
+            || panic!("configuration attempted load"),
             |record| {
                 emitted.borrow_mut().push(record.clone());
                 Ok(())
@@ -283,6 +342,7 @@ fn entry_origin_installation_failure() {
                 ObserverUnavailable::ObservationAlreadyInitialized,
             ))
         },
+        || {},
         |record| {
             emitted.borrow_mut().push(record.clone());
             Ok(())

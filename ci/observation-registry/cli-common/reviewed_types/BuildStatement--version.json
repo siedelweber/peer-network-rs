@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "BuildStatement",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" Immutable source description captured by the executable at compilation.\"] pub struct BuildStatement { package : & 'static str , revision : Option < & 'static str > , tag : Option < & 'static str > , }"
+  }
+}
