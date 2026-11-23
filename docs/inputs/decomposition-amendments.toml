@@ -31,3 +31,12 @@ refinements = [
   { bite = 10, work = "Optional node readout edge and raw service" },
   { bite = 11, work = "Complete supported integration corpus and evidence ledger" },
 ]
+
+[[rows]]
+name = "fixture-input"
+status = "accepted"
+host_dependencies = []
+added_crates = [
+  { name = "pn-fixtures", role = "Designed code-built served input, independent assertions and explicit synthetic premises for the disposable fixture instance; not built", dependencies = ["pn-host", "pn-epoch", "pn-records", "pn-interchange"], optional = [] },
+]
+refinements = []

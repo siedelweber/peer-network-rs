@@ -127,6 +127,25 @@
         }
       ],
       "status": "accepted"
+    },
+    {
+      "added_crates": [
+        {
+          "dependencies": [
+            "pn-host",
+            "pn-epoch",
+            "pn-records",
+            "pn-interchange"
+          ],
+          "name": "pn-fixtures",
+          "optional": [],
+          "role": "Designed code-built served input, independent assertions and explicit synthetic premises for the disposable fixture instance; not built"
+        }
+      ],
+      "host_dependencies": [],
+      "name": "fixture-input",
+      "refinements": [],
+      "status": "accepted"
     }
   ]
 }
