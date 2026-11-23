@@ -8,7 +8,7 @@ fn receive<T>(receiver: &mpsc::Receiver<T>, event: &str) -> T {
 
 use super::*;
 
-/// Claim: Compiled release and debug kinds admit only the closed policy table, with presence conflict ahead of value checks.
+/// Claim: Compiled release and debug kinds admit the closed policy table, checking disable spelling before the silent valid-disable conflict.
 /// ´claim:cli:build-kind-mode-admission´
 /// ´test:unit:build-kind-mode-admission´
 #[test]
@@ -40,6 +40,10 @@ fn build_kind_mode_admission() {
         }
         assert_eq!(
             setting(Some("invalid"), Some("invalid"), kind),
+            Err(EmissionConfigurationError::InvalidDisable)
+        );
+        assert_eq!(
+            setting(Some("1"), Some("invalid"), kind),
             Err(EmissionConfigurationError::ConflictingInputs)
         );
     }
@@ -62,7 +66,7 @@ fn build_kind_mode_admission() {
         );
         assert_eq!(
             EmissionPolicy::select(Some(invalid), Some(invalid), BuildKind::Release),
-            Err(EmissionConfigurationError::ConflictingInputs)
+            Err(EmissionConfigurationError::NonUtf8Disable)
         );
     }
 }

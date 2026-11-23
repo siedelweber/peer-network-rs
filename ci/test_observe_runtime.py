@@ -519,6 +519,37 @@ class BuildKinds(unittest.TestCase):
                 self.assertEqual((enabled.returncode, enabled.stderr), (0, b''), (package, kind))
                 self.assertTrue(enabled.stdout.endswith(b'\n'), (package, kind))
 
+    def test_invalid_disable_reports_usage(self):
+        """Malformed observation disable requests report usage in both kinds; the valid switch and level conflict stays silent.
+        ´claim:discipline:invalid-observe-disable-is-reported´
+        ´test:integration:test-invalid-disable-reports-usage´
+        """
+        for package in ('documents', 'pn', 'pn-credential-generator'):
+            for kind in ('release', 'debug'):
+                for name, disable, level, silent in (
+                    ('malformed-alone', b'mistyped', None, False),
+                    ('malformed-with-level', b'mistyped', b'default', False),
+                    ('non-unicode-with-level', bytes([255]), b'default', False),
+                    ('valid-with-level', b'1', b'default', True),
+                ):
+                    env = {os.fsencode(key): os.fsencode(value) for key, value in os.environ.items()
+                           if key not in ('PN_OBSERVE_DISABLE', 'PN_OBSERVE_LEVEL',
+                                          'PN_DEBUG_VERSION_DISABLE')}
+                    env[b'PN_OBSERVE_DISABLE'] = disable
+                    if level is not None:
+                        env[b'PN_OBSERVE_LEVEL'] = level
+                    result = subprocess.run([self.binary(package, kind), '--help'], env=env,
+                                            capture_output=True, timeout=30, check=False)
+                    self.assertEqual((result.returncode, result.stdout), (2, b''),
+                                     (package, kind, name))
+                    if silent:
+                        self.assertEqual(result.stderr, b'', (package, kind, name))
+                    else:
+                        rows = [json.loads(line) for line in result.stderr.splitlines()]
+                        self.assertEqual(len(rows), 1, (package, kind, name, rows))
+                        self.assertEqual((rows[0]['kind'], rows[0]['fields']['exit_code']),
+                                         ('usage_error', 2), (package, kind, name))
+
     def test_version_build_kind(self):
         """Each recipe artifact's version result names its compiled kind in every admitted mode.
         ´claim:discipline:recipe-artifact-version-build-kind´

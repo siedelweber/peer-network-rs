@@ -795,8 +795,8 @@ pub fn refuse_if_stdout_is_tty(binary_name: &str) {
 
 /// Select the immutable public observation policy before parsing or output.
 ///
-/// This is the executable boundary for invalid selection: the presence conflict
-/// is silent and all other refusals attempt a public usage diagnostic.
+/// This is the executable boundary for invalid selection: a valid disable beside
+/// a level is silent, while malformed disable values attempt a public usage diagnostic.
 /// Justified: This pre-installation selector emits only the selected direct terminal diagnostic and cannot instrument itself.
 pub fn select_observation_policy_or_exit(command_name: &str) {
     if let Err(error) = observation::select_process_policy() {

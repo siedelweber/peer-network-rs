@@ -1034,6 +1034,14 @@
       "review": "Release and debug package-scoped recipe artifacts each return fields.version exactly pn undescribed without build description inputs."
     },
     {
+      "operation": "ci::test_observe_runtime.BuildKinds.test_invalid_disable_reports_usage",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:invalid-observe-disable-is-reported",
+      "before": "",
+      "after": "Malformed observation disable requests report usage in both kinds; the valid switch and level conflict stays silent.",
+      "review": "Each shipped release and debug recipe artifact receives a malformed switch alone, a malformed switch beside a level, a non-Unicode switch beside a level, and a valid switch beside a level before a help result. The first three yield one usage row; the valid conflict stays silent."
+    },
+    {
       "operation": "ci::test_observe_runtime.BuildKinds.test_release_ignores_debug_version_switch",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:release-version-switch-nonreading",
@@ -1358,8 +1366,8 @@
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:build-kind-mode-admission",
       "before": "",
-      "after": "Claim: Compiled release and debug kinds admit only the closed policy table, with presence conflict ahead of value checks.",
-      "review": "The supplied option pairs exercise all table branches, including malformed spelling, non-UTF-8 and the silent conflict priority."
+      "after": "Claim: Compiled release and debug kinds admit the closed policy table, checking disable spelling before the silent valid-disable conflict.",
+      "review": "The supplied option pairs exercise the closed table, including malformed and non-UTF-8 switch spellings before the valid silent conflict, and the debug-only refusal."
     },
     {
       "operation": "cli-common::observation::tests::compaction_branching",

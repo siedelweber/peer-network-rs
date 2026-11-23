@@ -96,19 +96,24 @@ impl EmissionPolicy {
     /// Select the policy from the two public inputs and the compiled kind.
     ///
     /// # Errors
-    /// Refuses conflicts before spelling checks, then malformed disable and level values.
+    /// Refuses malformed disable values before the silent valid-disable conflict, then checks the level.
     /// Justified: Pure selection runs before observation installation and cannot record itself.
     pub fn select(disable: Option<&OsStr>, level: Option<&OsStr>, kind: BuildKind) -> Result<Self, EmissionConfigurationError> {
-        if disable.is_some() && level.is_some() {
-            return Err(EmissionConfigurationError::ConflictingInputs);
-        }
         if let Some(value) = disable {
-            return match value.to_str() {
-                Some("1") if kind == BuildKind::Release => Ok(Self::Off),
-                Some("1") => Err(EmissionConfigurationError::DebugCannotDisable),
-                Some(_) => Err(EmissionConfigurationError::InvalidDisable),
-                None => Err(EmissionConfigurationError::NonUtf8Disable),
-            };
+            match value.to_str() {
+                Some("1") => {
+                    if level.is_some() {
+                        return Err(EmissionConfigurationError::ConflictingInputs);
+                    }
+                    return if kind == BuildKind::Release {
+                        Ok(Self::Off)
+                    } else {
+                        Err(EmissionConfigurationError::DebugCannotDisable)
+                    };
+                }
+                Some(_) => return Err(EmissionConfigurationError::InvalidDisable),
+                None => return Err(EmissionConfigurationError::NonUtf8Disable),
+            }
         }
         match level.map(OsStr::to_str) {
             None | Some(Some("default")) => Ok(Self::Default),

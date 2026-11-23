@@ -806,6 +806,7 @@
         "ci::test_observe_runtime.BuildKinds.test_global_report_on_terminal",
         "ci::test_observe_runtime.BuildKinds.test_host_version_matches_warning",
         "ci::test_observe_runtime.BuildKinds.test_host_version_undescribed",
+        "ci::test_observe_runtime.BuildKinds.test_invalid_disable_reports_usage",
         "ci::test_observe_runtime.BuildKinds.test_release_ignores_debug_version_switch",
         "ci::test_observe_runtime.BuildKinds.test_version_build_kind",
         "ci::test_observe_runtime.BuildKinds.test_version_setting_precedence",
