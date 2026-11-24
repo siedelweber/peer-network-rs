@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "item": "token::history::scan_account",
+    "owner": "WALLET",
+    "signature": "fn scan_account (input : AccountScan < '_ >) -> Result < Vec < ActorHistory > , ScanError >",
+    "claim": "ROOT::rule:identity:author-key-history",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-wallet::packages/wallet/src/token/history.rs::token::history::scan_account",
+    "body": "{ let expected_first = input . parts . iter () . map (| part | part . height) . min () . unwrap_or (input . pin_height) ; if input . first_height != expected_first || expected_first > input . pin_height { return Err (ScanError :: MissingEvidence) ; } let end = input . pin_height . checked_add (input . buffer) . ok_or (ScanError :: MissingEvidence) ? ; let count = end . checked_sub (input . first_height) . and_then (| n | n . checked_add (1)) . and_then (| n | usize :: try_from (n) . ok ()) . ok_or (ScanError :: MissingEvidence) ? ; if count != input . blocks . len () { return Err (ScanError :: MissingEvidence) ; } for part in input . parts { preflight_span (& input , part) ? ; } let mut decoded = Vec :: new () ; decoded . try_reserve_exact (count) . map_err (| _ | ScanError :: Budget) ? ; for block in input . blocks { if block . len () > input . decoder . bytes { return Err (ScanError :: Budget) ; } decoded . push (decode_block (block , input . decoder) . map_err (ScanError :: Decoder) ?) ; } let mut histories = Vec :: new () ; histories . try_reserve_exact (input . parts . len ()) . map_err (| _ | ScanError :: Budget) ? ; for part in input . parts { histories . push (scan_part (& input , & decoded , part) ?) ; } Ok (histories) }",
+    "class_decision": "wallet-decoder",
+    "assessments": {
+      "full_recording": "wallet-full_recording",
+      "secret_flow": "wallet-secret_flow",
+      "exposure_consumers": "wallet-exposure_consumers"
+    },
+    "item_premise": "Complete supplied public block layouts are scanned with caller-selected finite bounds. The resulting key histories are conditional public evidence, not signed-chain or account-binding truth."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::CurrentAssessment",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" A current query result retains its explicit selection and does not rewrite history.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CurrentAssessment { pub selected : BoundaryContext , pub at_pin : PinDisposition , pub current : Checked < Vec < CurrentAct > > , }"
+  }
+}

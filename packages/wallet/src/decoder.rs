@@ -67,7 +67,11 @@ pub struct TransactionFields {
 /// A transaction whose complete framing and maintained decoding succeeded.
 /// (´def:wallet:validated-layout´)
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Transaction(TransactionFields);
+pub struct Transaction {
+    fields: TransactionFields,
+    txid: [u8; 32],
+    encoded_len: usize,
+}
 
 impl Transaction {
     /// Immutable public fields; obtaining them cannot construct another validated layout.
@@ -75,7 +79,15 @@ impl Transaction {
     #[doc = "Justified: Pure field access inherits the labelled decoder or evidence operation; it neither starts work nor records the whole transaction again."]
     #[must_use]
     pub fn fields(&self) -> &TransactionFields {
-        &self.0
+        &self.fields
+    }
+
+    pub(crate) fn consensus_txid(&self) -> &[u8; 32] {
+        &self.txid
+    }
+
+    pub(crate) fn encoded_len(&self) -> usize {
+        self.encoded_len
     }
 }
 
@@ -125,36 +137,42 @@ pub struct Block {
     pub transactions: Vec<Transaction>,
 }
 
-fn project(tx: elements::Transaction) -> Transaction {
+fn project(tx: elements::Transaction, encoded_len: usize) -> Transaction {
     use elements::encode::serialize;
-    Transaction(TransactionFields {
-        version: tx.version,
-        lock_time: tx.lock_time.to_consensus_u32(),
-        inputs: tx
-            .input
-            .into_iter()
-            .map(|input| Input {
-                outpoint: serialize(&input.previous_output),
-                pegin: input.is_pegin,
-                script: input.script_sig.as_bytes().to_vec(),
-                sequence: input.sequence.to_consensus_u32(),
-                issuance: serialize(&input.asset_issuance),
-                has_issuance: !input.asset_issuance.is_null(),
-                witness: serialize(&input.witness),
-            })
-            .collect(),
-        outputs: tx
-            .output
-            .into_iter()
-            .map(|output| Output {
-                asset: serialize(&output.asset),
-                value: serialize(&output.value),
-                nonce: serialize(&output.nonce),
-                script: output.script_pubkey.as_bytes().to_vec(),
-                witness: serialize(&output.witness),
-            })
-            .collect(),
-    })
+    let mut txid = [0; 32];
+    txid.copy_from_slice(&serialize(&tx.txid()));
+    Transaction {
+        txid,
+        encoded_len,
+        fields: TransactionFields {
+            version: tx.version,
+            lock_time: tx.lock_time.to_consensus_u32(),
+            inputs: tx
+                .input
+                .into_iter()
+                .map(|input| Input {
+                    outpoint: serialize(&input.previous_output),
+                    pegin: input.is_pegin,
+                    script: input.script_sig.as_bytes().to_vec(),
+                    sequence: input.sequence.to_consensus_u32(),
+                    issuance: serialize(&input.asset_issuance),
+                    has_issuance: !input.asset_issuance.is_null(),
+                    witness: serialize(&input.witness),
+                })
+                .collect(),
+            outputs: tx
+                .output
+                .into_iter()
+                .map(|output| Output {
+                    asset: serialize(&output.asset),
+                    value: serialize(&output.value),
+                    nonce: serialize(&output.nonce),
+                    script: output.script_pubkey.as_bytes().to_vec(),
+                    witness: serialize(&output.witness),
+                })
+                .collect(),
+        },
+    }
 }
 
 struct Reader<'a> {
@@ -363,7 +381,7 @@ pub fn decode_transaction(bytes: &[u8], limits: Limits) -> Result<Transaction, R
             return Err(Refusal::Trailing);
         }
         let tx: elements::Transaction = elements::encoding::decode_from_slice(bytes).map_err(|_| Refusal::Codec)?;
-        Ok(project(tx))
+        Ok(project(tx, bytes.len()))
     })();
     if result.is_err() {
         tracing::info!(outcome = "refusal");
@@ -408,7 +426,7 @@ pub fn decode_block(bytes: &[u8], limits: Limits) -> Result<Block, Refusal> {
             let mut tx_reader = Reader::new(&bytes[cursor..], limits)?;
             tx_reader.transaction()?;
             let tx = elements::encoding::decode_from_slice(&bytes[cursor..cursor + tx_reader.pos]).map_err(|_| Refusal::Codec)?;
-            transactions.push(project(tx));
+            transactions.push(project(tx, tx_reader.pos));
             cursor += tx_reader.pos;
         }
         Ok(Block {
@@ -462,7 +480,7 @@ pub fn evidence_amount(
     request: &[u8; 32],
 ) -> Result<u64, Refusal> {
     let result = (|| {
-        let tx = &tx.0;
+        let tx = &tx.fields;
         if tx.inputs.iter().any(|input| input.pegin || input.has_issuance) {
             return Err(Refusal::EvidenceInput);
         }
@@ -565,7 +583,13 @@ pub fn codec_verdict(bytes: &[u8], block: bool, limits: Limits) -> Result<(Block
     Ok((
         Block {
             header,
-            transactions: transactions.into_iter().map(project).collect(),
+            transactions: transactions
+                .into_iter()
+                .map(|transaction| {
+                    let encoded_len = serialize(&transaction).len();
+                    project(transaction, encoded_len)
+                })
+                .collect(),
         },
         fits,
     ))

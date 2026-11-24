@@ -39,8 +39,8 @@ fn nested_component(cause: FragmentError) -> FragmentError {
     match cause {
         FragmentError::Edition => FragmentError::FieldWithNested(NestedCause::Edition),
         FragmentError::Kind => FragmentError::FieldWithNested(NestedCause::Kind),
-        FragmentError::UnavailableBudget => FragmentError::UnavailableBudget,
-        _ => FragmentError::Field,
+        FragmentError::Field => FragmentError::Field,
+        other => other,
     }
 }
 

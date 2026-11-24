@@ -2962,6 +2962,14 @@
       "review": "Read the closed configuration refusal and the finite process control as written; neither source identity nor a terminated process supplies an installation witness."
     },
     {
+      "operation": "pn-epoch::authentication::tests::current_account",
+      "path": "packages/epoch/src/authentication.rs",
+      "claim": "EPOCH::claim:admission:current-authority-keeps-pins",
+      "before": "",
+      "after": "Claim: A separately selected current account can change its conditional result without replacing an old pin.",
+      "review": "Finite selected current account and previous pin views exercise a conditional result. The selected consumer supplies all premises; no real evaluator or production account is inferred."
+    },
+    {
       "operation": "pn-epoch::authentication::tests::missing_authority_case",
       "path": "packages/epoch/src/authentication.rs",
       "claim": "EPOCH::claim:admission:mandatory-authority-context",
@@ -4979,6 +4987,30 @@
       "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
     },
     {
+      "operation": "pn-host::public::authority::account_scan_ceiling",
+      "path": "packages/host/tests/public/authority.rs",
+      "claim": "HOST::claim:publication:account-scan-ceiling",
+      "before": "",
+      "after": "Claim: A selected complete-scan ceiling refuses before unreadable block bytes are decoded.",
+      "review": "The exact one-block span exceeds the selected zero-block ceiling before its unreadable bytes are decoded; no partial history is returned."
+    },
+    {
+      "operation": "pn-host::public::authority::pinned_authority",
+      "path": "packages/host/tests/public/authority.rs",
+      "claim": "HOST::claim:publication:pinned-authority",
+      "before": "",
+      "after": "Claim: Complete supplied layouts reconstruct the selected Actor's keys under",
+      "review": "Real decoded supplied block layouts and a declared scan bound exercise conditional public key reconstruction; the binding and chain premises remain caller-selected, and no production evaluator is inferred."
+    },
+    {
+      "operation": "pn-host::public::authority::retirement_path_maximum",
+      "path": "packages/host/tests/public/authority.rs",
+      "claim": "HOST::claim:publication:retirement-path-maximum",
+      "before": "",
+      "after": "Claim: Earlier retirement fields use the maximum effective point of their original path.",
+      "review": "Two original-epoch requests in reverse order select the later point of a finite path; the active set begins at that point."
+    },
+    {
       "operation": "pn-host::public::binary64::binary64_canonical_corpus",
       "path": "packages/host/tests/public/binary64.rs",
       "claim": "HOST::claim:host:binary64-canonical-corpus",
@@ -5017,6 +5049,14 @@
       "before": "",
       "after": "Claim: Exact account encoding and allowance formulas agree with the independent shared and empty-domain inputs.",
       "review": "Independent encoded operands are selected by id, exercised at their owned site and compared with a separately transcribed expected-id set; this is finite conditional evidence, not a real evaluator or production selection."
+    },
+    {
+      "operation": "pn-host::public::boundary_components::current_authority_membership",
+      "path": "packages/host/tests/public/boundary_components.rs",
+      "claim": "HOST::claim:publication:current-authority-membership",
+      "before": "",
+      "after": "Claim: A separately selected current query checks covered membership and reports an uncovered Actor without changing an old pin.",
+      "review": "A retained fixture act with a changed key set reports conditional nonmembership, while a foreign Actor reports NotCovered; both leave the original pin unchanged under the selected current context."
     },
     {
       "operation": "pn-host::public::boundary_components::historical_isolation",

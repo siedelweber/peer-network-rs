@@ -21,7 +21,7 @@
   "review": {
     "operation": "pn-wallet::packages/wallet/src/decoder.rs::decoder::Transaction::fields",
     "class_decision": "wallet-decoder",
-    "body": "{ & self . 0 }",
+    "body": "{ & self . fields }",
     "assessments": {
       "full_recording": "wallet-full_recording",
       "secret_flow": "wallet-secret_flow",

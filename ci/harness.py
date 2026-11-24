@@ -12,7 +12,7 @@ from registry_fragments import read as read_fragments
 
 from devperf import StructuralError, budgets, calibration_defaults
 
-CONFIGURATION = 'foundation-fast/gate/default-features+pn-epoch/test-support+pn-records/test-support+pn-wallet/fuzzing'
+CONFIGURATION = 'foundation-fast/gate/default-features+pn-epoch/test-support+pn-records/test-support+pn-wallet/fuzzing+pn-host/development-network'
 ROOT = Path(__file__).resolve().parent.parent
 
 

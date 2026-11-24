@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "token::history::ActorHistory",
+    "kind": "derive",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "wallet-decoder",
+    "expansion_review": "Derived structural helpers on public conditional account values; they imply no authenticated authority or private credential."
+  }
+}

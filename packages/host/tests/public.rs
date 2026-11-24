@@ -3,6 +3,9 @@ use pn_host::{Configuration, Refusal, Session};
 use std::io::Read;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
+#[cfg(feature = "development-network")]
+#[path = "public/authority.rs"]
+mod authority;
 #[path = "public/binary64.rs"]
 mod binary64;
 #[path = "public/boundary_components.rs"]

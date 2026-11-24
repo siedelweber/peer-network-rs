@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::history::ScanPart",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "syntax": "# [doc = \" One Actor and the independently located qualified issuance input.\"] # [derive (Clone , Debug)] pub struct ScanPart < 'a > { pub actor : & 'a str , pub height : u64 , pub transaction_index : usize , pub input_index : usize , pub issuance_prevout : [u8 ; 36] , }"
+  }
+}

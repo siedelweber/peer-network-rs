@@ -2110,7 +2110,8 @@
       "cases": [
         "pn-epoch::authentication::tests::missing_authority_case",
         "pn-epoch::authentication::tests::outcome_mapping",
-        "pn-epoch::authentication::tests::verification_case_context"
+        "pn-epoch::authentication::tests::verification_case_context",
+        "pn-epoch::authentication::tests::current_account"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",
@@ -3363,6 +3364,7 @@
         "pn-host::public::closure::proof_values",
         "pn-host::public::closure::proof_order",
         "pn-host::public::closure::historical_bytes",
+        "pn-host::public::boundary_components::current_authority_membership",
         "pn-host::public::boundary_components::account_order",
         "pn-host::public::boundary_components::account_values",
         "pn-host::public::boundary_components::historical_isolation",
@@ -3373,7 +3375,10 @@
         "pn-host::public::boundary_components::paper_boundary_order",
         "pn-host::public::boundary_components::paper_boundary_values",
         "pn-host::public::boundary_components::paper_declaration_order",
-        "pn-host::public::boundary_components::paper_declaration_values"
+        "pn-host::public::boundary_components::paper_declaration_values",
+        "pn-host::public::authority::account_scan_ceiling",
+        "pn-host::public::authority::pinned_authority",
+        "pn-host::public::authority::retirement_path_maximum"
       ],
       "implementation": "pn-host-rust",
       "kind": "suite",

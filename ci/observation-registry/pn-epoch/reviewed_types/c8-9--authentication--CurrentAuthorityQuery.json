@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::CurrentAuthorityQuery",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" An in-memory query; it cannot replace the account pinned to an old act.\"] # [derive (Debug)] pub struct CurrentAuthorityQuery < 'a , H : ClosureHeader > { pub retained_acts : & 'a [ClosureAct < H >] , pub original_pin_contexts : & 'a [BoundaryContext] , pub selected_current_context : & 'a BoundaryContext , pub selected_current_rules : & 'a LocalAuthorityDeclaration , pub current_account_view : CurrentAccountView < 'a > , pub prior_epoch_views : & 'a [PriorRange] , pub read_allowances : ReadAllowances , }"
+  }
+}

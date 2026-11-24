@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::history::RetirementRequest",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "syntax": "# [doc = \" One act's signed retirement field, judged in its original epoch view.\"] # [derive (Clone , Copy , Debug)] pub struct RetirementRequest { pub epoch : u64 , pub point : [u8 ; 32] , }"
+  }
+}

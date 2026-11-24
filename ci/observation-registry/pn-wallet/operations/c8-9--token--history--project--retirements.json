@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "item": "token::history::project_retirements",
+    "owner": "WALLET",
+    "signature": "fn project_retirements (current : & [PathStep] , originals : & [OriginalEpoch < '_ >] , selected_epoch : u64 , active_limit : usize ,) -> Result < Vec < KeyHash > , ScanError >",
+    "claim": "ROOT::rule:identity:retirement-order",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-wallet::packages/wallet/src/token/history.rs::token::history::project_retirements",
+    "body": "{ let mut boundary = current . first () . ok_or (ScanError :: MissingEvidence) ? . txid ; for (index , original) in originals . iter () . enumerate () { if original . epoch != u64 :: try_from (index) . map_err (| _ | ScanError :: Budget) ? || original . epoch >= selected_epoch { return Err (ScanError :: MissingEvidence) ; } let mut maximum = original . path . iter () . position (| step | step . txid == boundary) . ok_or (ScanError :: MissingEvidence) ? ; for request in original . requests { if request . epoch != original . epoch { return Err (ScanError :: MissingEvidence) ; } if let Some (position) = original . path . iter () . position (| step | step . txid == request . point) { maximum = maximum . max (position) ; } } boundary = original . path [maximum] . txid ; } if originals . len () != usize :: try_from (selected_epoch) . map_err (| _ | ScanError :: Budget) ? { return Err (ScanError :: MissingEvidence) ; } let boundary = current . iter () . position (| step | step . txid == boundary) . ok_or (ScanError :: MissingEvidence) ? ; active_keys (current , boundary , active_limit) }",
+    "class_decision": "wallet-decoder",
+    "assessments": {
+      "full_recording": "wallet-full_recording",
+      "secret_flow": "wallet-secret_flow",
+      "exposure_consumers": "wallet-exposure_consumers"
+    },
+    "item_premise": "Complete supplied public block layouts are scanned with caller-selected finite bounds. The resulting key histories are conditional public evidence, not signed-chain or account-binding truth."
+  }
+}

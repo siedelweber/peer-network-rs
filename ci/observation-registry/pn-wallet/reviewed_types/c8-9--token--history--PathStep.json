@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::history::PathStep",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "syntax": "# [doc = \" One transaction on the supported path; its declarations belong to this token.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PathStep { pub height : u64 , pub transaction_index : usize , pub txid : [u8 ; 32] , pub keys : Vec < KeyHash > , }"
+  }
+}

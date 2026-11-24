@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::history::ActorHistory",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "syntax": "# [doc = \" A reconstructed path and active set under an explicit retirement boundary.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ActorHistory { pub actor : String , pub path : Vec < PathStep > , pub active : Vec < KeyHash > , }"
+  }
+}

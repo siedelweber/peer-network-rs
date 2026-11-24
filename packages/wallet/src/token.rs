@@ -5,6 +5,7 @@ use pn_act_authentication::{AssetId, KeyHash, initial_asset_id, key_script, qual
 
 use crate::{Input, Output, Transaction};
 
+pub mod history;
 #[cfg(test)]
 mod tests;
 

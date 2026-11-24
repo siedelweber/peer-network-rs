@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::history::HistoryLimits",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "syntax": "# [doc = \" The six independently selected run ceilings; this module chooses no values.\"] # [derive (Clone , Copy , Debug)] pub struct HistoryLimits { pub declaration_outputs : usize , pub history_bytes : usize , pub history_transactions : usize , pub active_entries : usize , pub scan_blocks : usize , pub scan_bytes : usize , }"
+  }
+}

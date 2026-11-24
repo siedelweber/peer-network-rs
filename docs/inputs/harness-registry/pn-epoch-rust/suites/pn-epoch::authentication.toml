@@ -7,4 +7,4 @@ level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::authentication::tests::missing_authority_case", "pn-epoch::authentication::tests::outcome_mapping", "pn-epoch::authentication::tests::verification_case_context"]
+cases = ["pn-epoch::authentication::tests::missing_authority_case", "pn-epoch::authentication::tests::outcome_mapping", "pn-epoch::authentication::tests::verification_case_context", "pn-epoch::authentication::tests::current_account"]

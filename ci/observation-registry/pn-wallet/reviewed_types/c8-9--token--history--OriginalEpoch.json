@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::history::OriginalEpoch",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "syntax": "# [doc = \" Complete per-Actor original-epoch path and its ordered retirement requests.\"] # [derive (Debug)] pub struct OriginalEpoch < 'a > { pub epoch : u64 , pub path : & 'a [PathStep] , pub requests : & 'a [RetirementRequest] , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::history::ScanError",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "syntax": "# [doc = \" Finite reconstruction outcome, without a chain signature or inclusion verdict.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum ScanError { Budget , MissingEvidence , Qualification , Actor , Path , UnsupportedPath , Decoder (Refusal) , Token (TokenRefusal) , }"
+  }
+}

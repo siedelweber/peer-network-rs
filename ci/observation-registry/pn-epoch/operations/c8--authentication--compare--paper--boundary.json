@@ -12,7 +12,7 @@
   },
   "review": {
     "operation": "pn-epoch::packages/epoch/src/authentication.rs::authentication::compare_paper_boundary",
-    "body": "{ let Some (selected) = selected else { return Checked :: Unavailable (Inability :: UnavailableContext) ; } ; let context = match forward_consumer (consumer . required_boundary_context (selected)) { Ok (value) => value , Err (other) => return failed_checked (& other) , } ; if candidate . context != context . value { return with_premises (Checked :: Refused (Refusal :: Context) , & context . premises) ; } with_premises (compare_paper (candidate , selected , consumer , & context . premises) , & context . premises ,) }",
+    "body": "{ let Some (selected) = selected else { return Checked :: Unavailable (Inability :: UnavailableContext) ; } ; let context = match forward_consumer (consumer . required_boundary_context (selected)) { Ok (value) => value , Err (other) => return failed_checked (& other) , } ; compare_paper_boundary_under (candidate , selected , consumer , & context) }",
     "class_decision": "semantic-publication-public",
     "assessments": {
       "full_recording": "c8-conditional-component",

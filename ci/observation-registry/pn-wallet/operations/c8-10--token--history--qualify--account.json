@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "item": "token::history::qualify_account",
+    "owner": "WALLET",
+    "signature": "fn qualify_account (input : & AccountScan < '_ >) -> Result < () , ScanError >",
+    "claim": "ROOT::amend:identity:authority-account",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-wallet::packages/wallet/src/token/history.rs::token::history::qualify_account",
+    "body": "{ for part in input . parts { let offset = part . height . checked_sub (input . first_height) . ok_or (ScanError :: MissingEvidence) ? ; if part . height > input . pin_height { return Err (ScanError :: MissingEvidence) ; } let offset = usize :: try_from (offset) . map_err (| _ | ScanError :: Budget) ? ; let bytes = input . blocks . get (offset) . ok_or (ScanError :: MissingEvidence) ? ; if bytes . len () > input . decoder . bytes { return Err (ScanError :: Budget) ; } let block = decode_block (bytes , input . decoder) . map_err (ScanError :: Decoder) ? ; let issuance = block . transactions . get (part . transaction_index) . ok_or (ScanError :: MissingEvidence) ? ; let issuance_input = issuance . fields () . inputs . get (part . input_index) . ok_or (ScanError :: Qualification) ? ; if issuance_input . outpoint . as_slice () != part . issuance_prevout . as_slice () || ! issuance_input . has_issuance { return Err (ScanError :: Qualification) ; } let asset = issued_asset (issuance_input) . ok_or (ScanError :: Qualification) ? ; if actor_name (input . run , asset) != part . actor { return Err (ScanError :: Actor) ; } } Ok (()) }",
+    "class_decision": "wallet-decoder",
+    "assessments": {
+      "full_recording": "wallet-full_recording",
+      "secret_flow": "wallet-secret_flow",
+      "exposure_consumers": "wallet-exposure_consumers"
+    },
+    "item_premise": "The caller-selected complete account is checked for each issuance and derived Actor before coverage and path evaluation; signed-chain and binding truth remain separate premises."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::CurrentAccountView",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" Borrowed current evidence selected independently of the retained boundary.\"] # [derive (Debug)] pub struct CurrentAccountView < 'a > { pub account : & 'a AuthorityAccount , pub parts : & 'a [ActorPart] , }"
+  }
+}

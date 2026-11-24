@@ -330,7 +330,7 @@ def split_main(action):
             raise StructuralError('cargo-nextest version must be exactly 0.9.149')
         status = execute('metadata', ['cargo', 'metadata', '--no-deps', '--locked', '--offline', '--format-version=1'])
         status |= execute('build', ['cargo', 'nextest', 'list', '--workspace', '--locked', '--offline',
-            '--cargo-profile', 'gate', '--features', 'pn-wallet/fuzzing', '--config-file', str(policy),
+            '--cargo-profile', 'gate', '--features', 'pn-wallet/fuzzing,pn-host/development-network', '--config-file', str(policy),
             '--profile', 'default', '--user-config-file', 'none', '--list-type', 'binaries-only', '--message-format', 'json'], 'incremental-build')
         if status: return status
         status = execute('credential-executable', ['cargo', 'build', '--locked', '--offline',
@@ -469,7 +469,7 @@ def run_main(action=None):
         return 2
     metadata_status = execute('metadata', ['cargo', 'metadata', '--no-deps', '--locked', '--offline', '--format-version=1'])
     build_status = execute('build', ['cargo', 'nextest', 'list', '--workspace', '--locked', '--offline',
-                                     '--cargo-profile', 'gate', '--features', 'pn-wallet/fuzzing',
+                                     '--cargo-profile', 'gate', '--features', 'pn-wallet/fuzzing,pn-host/development-network',
                                      '--config-file', str(policy_path), '--profile', 'default',
                                      '--user-config-file', 'none', '--list-type', 'binaries-only', '--message-format', 'json'], 'incremental-build')
     list_status = build_status

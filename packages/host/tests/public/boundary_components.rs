@@ -3,8 +3,8 @@
 use pn_epoch::authentication::ReadAllowances;
 use pn_epoch::authentication::{
     AccountPin, ActorPart, Assessed, AssessmentPremises, AuthorityAccount, AuthorizedKeysWithPremises, BoundaryConsumer,
-    BoundaryContext, Checked, EvaluatorSelection, Inability, LocalAuthorityBoundary, PaperCaseBoundary, PaperHistory, PriorRange,
-    Refusal, RetainedIdentity, Role,
+    BoundaryContext, Checked, ConsumerResult, CurrentAccountView, CurrentAuthorityQuery, EvaluatorSelection, Inability,
+    LocalAuthorityBoundary, PaperCaseBoundary, PaperHistory, PinDisposition, PriorRange, Refusal, RetainedIdentity, Role,
 };
 use pn_host::boundary_components as codec;
 use pn_records::cases::{ComponentRef, LocalAuthorityDeclaration, PaperCaseDeclaration};
@@ -68,6 +68,7 @@ const SITE_IDS: &[(&str, &[&str])] = &[
             "new:account-premise-before-minimum",
             "new:account-selected-context-premise",
             "new:account-foreign-binding-refusal",
+            "new:account-foreign-binding-inability",
             "new:account-rules-premise",
         ],
     ),
@@ -86,6 +87,9 @@ const SITE_IDS: &[(&str, &[&str])] = &[
             "row:buffer-scan",
             "row:too-early-scan",
             "row:too-late-scan",
+            "new:qualification-before-association-act",
+            "new:qualification-before-coverage",
+            "new:path-before-signature",
             "byte:boundary-trailing",
             "byte:boundary-nonminimal-head",
             "byte:boundary-budget-before-canonical",
@@ -629,8 +633,8 @@ fn fixture_acts(boundary: &LocalAuthorityBoundary) -> Vec<ClosureAct<FixtureHead
 }
 
 #[derive(Debug)]
-struct Synthetic<'a> {
-    context: BoundaryContext,
+pub(super) struct Synthetic<'a> {
+    pub(super) context: BoundaryContext,
     paper: PaperCaseBoundary,
     local: LocalAuthorityBoundary,
     minimum: u64,
@@ -639,7 +643,7 @@ struct Synthetic<'a> {
 }
 
 impl Synthetic<'_> {
-    fn from_fixture() -> Self {
+    pub(super) fn from_fixture() -> Self {
         let fixture = fixture();
         let row = |name: &str| {
             fixture["rows"]
@@ -680,37 +684,50 @@ impl Synthetic<'_> {
         }
     }
 
-    fn okay<T>(&self, value: T) -> Checked<T> {
-        Checked::Confirmed(Assessed {
+    fn okay<T>(&self, value: T) -> ConsumerResult<T> {
+        ConsumerResult::Confirmed(Assessed {
             value,
             premises: self.premises(),
         })
     }
 
-    fn different<T>(&self, value: T) -> Checked<T> {
+    fn different<T>(&self, value: T) -> ConsumerResult<T> {
         let mut premises = self.premises();
         "other-selected-record".clone_into(&mut premises.binding);
-        Checked::Confirmed(Assessed { value, premises })
+        ConsumerResult::Confirmed(Assessed { value, premises })
     }
 
-    fn refused<T>(&self, value: Refusal) -> Checked<T> {
-        Checked::RefusedWithPremises(Assessed {
+    fn unavailable<T>(&self, value: Inability) -> ConsumerResult<T> {
+        ConsumerResult::Unavailable(Assessed {
             value,
             premises: self.premises(),
         })
     }
 
-    fn foreign_refusal<T>(&self, value: Refusal) -> Checked<T> {
+    fn refused<T>(&self, value: Refusal) -> ConsumerResult<T> {
+        ConsumerResult::Refused(Assessed {
+            value,
+            premises: self.premises(),
+        })
+    }
+
+    fn foreign_refusal<T>(&self, value: Refusal) -> ConsumerResult<T> {
         let mut premises = self.premises();
         "other-selected-record".clone_into(&mut premises.binding);
-        Checked::RefusedWithPremises(Assessed { value, premises })
+        ConsumerResult::Refused(Assessed { value, premises })
+    }
+
+    fn foreign_inability<T>(&self, value: Inability) -> ConsumerResult<T> {
+        let mut premises = self.premises();
+        "other-selected-record".clone_into(&mut premises.binding);
+        ConsumerResult::Unavailable(Assessed { value, premises })
     }
 }
 
 impl BoundaryConsumer for Synthetic<'_> {
-    fn required_boundary_context(&self, _candidate: &BoundaryContext) -> Checked<BoundaryContext> {
+    fn required_boundary_context(&self, _candidate: &BoundaryContext) -> ConsumerResult<BoundaryContext> {
         if self.failure == Some("context") {
-            Checked::Unavailable(Inability::UnavailableContext)
+            self.unavailable(Inability::UnavailableContext)
         } else if self.failure == Some("account-selected-context-premise") {
             self.different(self.context.clone())
         } else {
@@ -721,12 +738,12 @@ impl BoundaryConsumer for Synthetic<'_> {
         &self,
         _selected: &BoundaryContext,
         reference: &ComponentRef,
-    ) -> Checked<PaperCaseDeclaration> {
+    ) -> ConsumerResult<PaperCaseDeclaration> {
         if self.failure == Some("paper-definition") {
-            return Checked::Unavailable(Inability::UnavailableEvaluation);
+            return self.unavailable(Inability::UnavailableEvaluation);
         }
         if self.failure == Some("paper-selection") {
-            return Checked::Unavailable(Inability::UnavailableSelection);
+            return self.unavailable(Inability::UnavailableSelection);
         }
         if self.failure == Some("paper-selection-mismatch") {
             return self.refused(Refusal::SelectionMismatch);
@@ -744,21 +761,21 @@ impl BoundaryConsumer for Synthetic<'_> {
         let selected = self.paper.active.iter().find(|candidate| &candidate.reference == reference);
         match selected {
             Some(value) => self.okay(value.clone()),
-            None => Checked::Unavailable(Inability::UnavailableSelection),
+            None => self.unavailable(Inability::UnavailableSelection),
         }
     }
-    fn local_declaration_definition(&self, _selected: &BoundaryContext) -> Checked<LocalAuthorityDeclaration> {
+    fn local_declaration_definition(&self, _selected: &BoundaryContext) -> ConsumerResult<LocalAuthorityDeclaration> {
         match self.failure {
-            Some("local-selection") => Checked::Unavailable(Inability::UnavailableSelection),
+            Some("local-selection") => self.unavailable(Inability::UnavailableSelection),
             Some("local-selection-mismatch") => self.refused(Refusal::SelectionMismatch),
-            Some("local-evaluator") => Checked::Unavailable(Inability::UnavailableEvaluation),
+            Some("local-evaluator") => self.unavailable(Inability::UnavailableEvaluation),
             Some("local-premise-before-rules") => self.different(self.local.declaration.clone()),
             _ => self.okay(self.local.declaration.clone()),
         }
     }
-    fn paper_declaration_history(&self, _candidate: &PaperCaseBoundary) -> Checked<PaperHistory> {
+    fn paper_declaration_history(&self, _candidate: &PaperCaseBoundary) -> ConsumerResult<PaperHistory> {
         if self.failure == Some("predecessor") {
-            return Checked::Unavailable(Inability::UnavailablePredecessor);
+            return self.unavailable(Inability::UnavailablePredecessor);
         }
         if self.failure == Some("paper-case-set") {
             return self.okay(PaperHistory {
@@ -771,16 +788,16 @@ impl BoundaryConsumer for Synthetic<'_> {
             predecessor: Some(self.predecessor.clone()),
         })
     }
-    fn prior_epoch(&self, _candidate: &PriorRange) -> Checked<()> {
+    fn prior_epoch(&self, _candidate: &PriorRange) -> ConsumerResult<()> {
         match self.failure {
             Some("missing-prior") => self.refused(Refusal::MissingEvidence),
             Some("prior" | "chain-before-history") => self.refused(Refusal::History),
             _ => self.okay(()),
         }
     }
-    fn compare_marker_prefix(&self, candidate: &AccountPin) -> Checked<()> {
+    fn compare_marker_prefix(&self, candidate: &AccountPin) -> ConsumerResult<()> {
         if self.failure == Some("linkage-unavailable") {
-            return Checked::Unavailable(Inability::UnavailableLinkage);
+            return self.unavailable(Inability::UnavailableLinkage);
         }
         if *candidate == self.local.account.pin {
             if self.failure == Some("local-boundary-prefix-premise") {
@@ -792,38 +809,48 @@ impl BoundaryConsumer for Synthetic<'_> {
             self.refused(Refusal::Prefix)
         }
     }
-    fn selected_chain_rules(&self, _selected: &BoundaryContext) -> Checked<()> {
+    fn selected_chain_rules(&self, _selected: &BoundaryContext) -> ConsumerResult<()> {
         if matches!(self.failure, Some("rules" | "selection-before-binding")) {
-            Checked::Unavailable(Inability::UnavailableRules)
+            self.unavailable(Inability::UnavailableRules)
         } else if self.failure == Some("account-rules-premise") {
             self.different(())
         } else {
             self.okay(())
         }
     }
-    fn compare_public_binding(&self, _candidate: &AuthorityAccount) -> Checked<()> {
+    fn compare_public_binding(&self, _candidate: &AuthorityAccount) -> ConsumerResult<()> {
         match self.failure {
             Some("account-foreign-binding-refusal") => self.foreign_refusal(Refusal::Binding),
+            Some("account-foreign-binding-inability") => self.foreign_inability(Inability::UnavailableEvaluation),
             Some("binding" | "binding-before-chain" | "selection-before-binding") => self.refused(Refusal::Binding),
-            Some("binding-unavailable") => Checked::Unavailable(Inability::UnavailableBinding),
+            Some("binding-unavailable") => self.unavailable(Inability::UnavailableBinding),
             _ => self.okay(()),
         }
     }
-    fn evaluate_chain_evidence(&self, _candidate: &AuthorityAccount) -> Checked<()> {
+    fn evaluate_chain_evidence(&self, _candidate: &AuthorityAccount) -> ConsumerResult<()> {
         match self.failure {
             Some("chain" | "chain-before-history" | "binding-before-chain") => self.refused(Refusal::Chain),
-            Some("chain-unavailable") => Checked::Unavailable(Inability::UnavailableEvaluation),
+            Some("chain-unavailable") => self.unavailable(Inability::UnavailableEvaluation),
             _ => self.okay(()),
         }
     }
-    fn qualified_first_height(&self, _candidate: &AuthorityAccount) -> Checked<u64> {
-        if self.failure == Some("account-premise-before-minimum") {
+    fn qualified_first_height(&self, _candidate: &AuthorityAccount) -> ConsumerResult<u64> {
+        if matches!(
+            self.failure,
+            Some("qualification-before-association-act" | "qualification-before-coverage")
+        ) {
+            return self.refused(Refusal::Qualification);
+        }
+        if matches!(
+            self.failure,
+            Some("account-premise-before-minimum" | "account-selected-context-premise")
+        ) {
             self.different(self.minimum + 1)
         } else {
             self.okay(self.minimum)
         }
     }
-    fn compare_retained_act<H: ClosureHeader>(&self, candidate: &ClosureAct<H>) -> Checked<RetainedIdentity> {
+    fn compare_retained_act<H: ClosureHeader>(&self, candidate: &ClosureAct<H>) -> ConsumerResult<RetainedIdentity> {
         if self.failure == Some("retained") {
             return self.refused(Refusal::RetainedActRefusal);
         }
@@ -844,16 +871,19 @@ impl BoundaryConsumer for Synthetic<'_> {
             signer_key_hash: [7; 32],
         })
     }
-    fn verify_recorded_role<H: ClosureHeader>(&self, _candidate: &ClosureAct<H>, _role: Role) -> Checked<()> {
+    fn verify_recorded_role<H: ClosureHeader>(&self, _candidate: &ClosureAct<H>, _role: Role) -> ConsumerResult<()> {
         match self.failure {
-            Some("signature" | "signature-before-membership") => self.refused(Refusal::Signature),
-            Some("role-unavailable") => Checked::Unavailable(Inability::UnavailableEvaluation),
+            Some("signature" | "signature-before-membership" | "path-before-signature") => self.refused(Refusal::Signature),
+            Some("role-unavailable") => self.unavailable(Inability::UnavailableEvaluation),
             _ => self.okay(()),
         }
     }
-    fn authority_set(&self, _account: &AuthorityAccount, part: &ActorPart) -> Checked<AuthorizedKeysWithPremises> {
+    fn authority_set(&self, _account: &AuthorityAccount, part: &ActorPart) -> ConsumerResult<AuthorizedKeysWithPremises> {
+        if self.failure == Some("path-before-signature") {
+            return self.refused(Refusal::Path);
+        }
         if self.failure == Some("not-covered") {
-            return Checked::Unavailable(Inability::NotCovered);
+            return self.unavailable(Inability::NotCovered);
         }
         if matches!(self.failure, Some("membership" | "signature-before-membership")) {
             return self.okay(AuthorizedKeysWithPremises {
@@ -868,10 +898,10 @@ impl BoundaryConsumer for Synthetic<'_> {
             pin: self.local.account.pin.clone(),
         })
     }
-    fn evaluate_case(&self, _declaration: &PaperCaseDeclaration) -> Checked<()> {
+    fn evaluate_case(&self, _declaration: &PaperCaseDeclaration) -> ConsumerResult<()> {
         match self.failure {
             Some("paper-case") => self.refused(Refusal::FailedCase),
-            Some("paper-unavailable") => Checked::Unavailable(Inability::UnavailableEvaluation),
+            Some("paper-unavailable") => self.unavailable(Inability::UnavailableEvaluation),
             _ => self.okay(()),
         }
     }
@@ -999,6 +1029,10 @@ fn matches_expected<T>(actual: &Checked<T>, expected: &str) -> bool {
         "NotEvaluated" => inability == Some(Inability::NotEvaluated),
         "NotCovered" => inability == Some(Inability::NotCovered),
         "UnavailableBinding" => inability == Some(Inability::UnavailableBinding),
+        "UnavailableBindingWithSelectedPremises" => matches!(actual, Checked::UnavailableWithPremises(value)
+            if value.value == Inability::UnavailableBinding && value.premises.binding == "fixture-selected-complete-record"),
+        "UnavailableBindingWithForeignPremises" => matches!(actual, Checked::UnavailableWithPremises(value)
+            if value.value == Inability::UnavailableBinding && value.premises.binding == "other-selected-record"),
         "UnavailableContext" => inability == Some(Inability::UnavailableContext),
         "UnavailableEvaluation" => inability == Some(Inability::UnavailableEvaluation),
         "UnavailableLinkage" => inability == Some(Inability::UnavailableLinkage),
@@ -1327,10 +1361,10 @@ fn semantic_descriptors(site: &str) -> Vec<String> {
     }
     let expected_count = match site {
         "paper_declaration_order" => 5,
-        "account_order" => 8,
+        "account_order" => 9,
         "paper_boundary_order" => 14,
         "local_declaration_order" => 6,
-        "local_boundary_order" => 24,
+        "local_boundary_order" => 27,
         _ => 0,
     };
     assert_eq!(executed.len(), expected_count, "semantic descriptor set for {site}");
@@ -1540,6 +1574,72 @@ fn local_boundary_order() {
     }
     assert_site_ids("local_boundary_order", &executed);
     assert!(mismatches.is_empty(), "{}", mismatches.join("; "));
+}
+
+/// Claim: A separately selected current query checks covered membership and reports an uncovered Actor without changing an old pin.
+/// ´claim:publication:current-authority-membership´
+/// ´test:integration:current-authority-membership´
+#[test]
+fn current_authority_membership() {
+    let mut synthetic = Synthetic::from_fixture();
+    let boundary = synthetic.local.clone();
+    let context = boundary.context.clone();
+    let acts = fixture_acts(&boundary);
+    let original_contexts = vec![context.clone(); acts.len()];
+    let prior = (0..context.epoch)
+        .map(|epoch| PriorRange {
+            history_scope: boundary.account.prior_range.history_scope.clone(),
+            first_epoch: epoch,
+            exclusive_end: epoch + 1,
+        })
+        .collect::<Vec<_>>();
+    let assess = |acts: &[ClosureAct<FixtureHeader>], originals: &[BoundaryContext], consumer: &Synthetic<'_>| {
+        pn_epoch::authentication::evaluate_current_authority(
+            CurrentAuthorityQuery {
+                retained_acts: acts,
+                original_pin_contexts: originals,
+                selected_current_context: &context,
+                selected_current_rules: &boundary.declaration,
+                current_account_view: CurrentAccountView {
+                    account: &boundary.account,
+                    parts: &boundary.parts,
+                },
+                prior_epoch_views: &prior,
+                read_allowances: limits(),
+            },
+            consumer,
+        )
+    };
+    synthetic.failure = Some("membership");
+    let changed = assess(&acts, &original_contexts, &synthetic);
+    assert_eq!(changed.at_pin, PinDisposition::AtPinUnchanged);
+    assert!(matches!(
+        changed.current,
+        Checked::Confirmed(Assessed { value, .. }) if value.len() == acts.len()
+            && value.iter().all(|entry| matches!(entry.membership, Checked::RefusedWithPremises(Assessed { value: Refusal::ActorBinding, .. })))
+    ));
+    synthetic.failure = None;
+    let mut foreign_header = acts[0].header().clone();
+    foreign_header.id.author = "uncovered-actor".to_owned();
+    let foreign = [ClosureAct::new(
+        foreign_header,
+        Vec::new(),
+        [0; 64],
+        [0; 64],
+        context.epoch,
+        0,
+        0,
+    )];
+    let foreign_contexts = [context.clone()];
+    let uncovered = assess(&foreign, &foreign_contexts, &synthetic);
+    assert_eq!(uncovered.at_pin, PinDisposition::AtPinUnchanged);
+    assert!(matches!(
+        uncovered.current,
+        Checked::UnavailableWithPremises(Assessed {
+            value: Inability::NotCovered,
+            ..
+        })
+    ));
 }
 
 /// Claim: Caller-selected component decoders refuse historical fragments, and historical decoders refuse each successor component.

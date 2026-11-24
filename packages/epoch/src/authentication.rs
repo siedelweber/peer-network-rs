@@ -229,6 +229,14 @@ pub enum Checked<T> {
     UnavailableWithPremises(Assessed<Inability>),
 }
 
+/// An external assessment always identifies the premises for its outcome.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ConsumerResult<T> {
+    Confirmed(Assessed<T>),
+    Refused(Assessed<Refusal>),
+    Unavailable(Assessed<Inability>),
+}
+
 /// Three separately selected boundaries and their conditional aggregate.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BoundaryAssessment {
@@ -262,6 +270,48 @@ pub struct BoundaryBuild {
     pub assessment: BoundaryAssessment,
 }
 
+/// Borrowed current evidence selected independently of the retained boundary.
+#[derive(Debug)]
+pub struct CurrentAccountView<'a> {
+    pub account: &'a AuthorityAccount,
+    pub parts: &'a [ActorPart],
+}
+
+/// An in-memory query; it cannot replace the account pinned to an old act.
+#[derive(Debug)]
+pub struct CurrentAuthorityQuery<'a, H: ClosureHeader> {
+    pub retained_acts: &'a [ClosureAct<H>],
+    pub original_pin_contexts: &'a [BoundaryContext],
+    pub selected_current_context: &'a BoundaryContext,
+    pub selected_current_rules: &'a LocalAuthorityDeclaration,
+    pub current_account_view: CurrentAccountView<'a>,
+    pub prior_epoch_views: &'a [PriorRange],
+    pub read_allowances: ReadAllowances,
+}
+
+/// The original pin is an immutable input, whatever the current result is.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PinDisposition {
+    AtPinUnchanged,
+}
+
+/// One retained act's recorded key compared with current selected membership.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CurrentAct {
+    pub act: ActId,
+    pub actor: String,
+    pub recorded_signer: [u8; 32],
+    pub membership: Checked<()>,
+}
+
+/// A current query result retains its explicit selection and does not rewrite history.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CurrentAssessment {
+    pub selected: BoundaryContext,
+    pub at_pin: PinDisposition,
+    pub current: Checked<Vec<CurrentAct>>,
+}
+
 /// A checked authority set, with its full premise context.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AuthorizedKeysWithPremises {
@@ -287,21 +337,24 @@ pub struct PaperHistory {
 /// A required semantic consumer. Implementations must state each independent fact.
 /// No method supplies a success, empty set or signature by default.
 pub trait BoundaryConsumer: std::fmt::Debug {
-    fn required_boundary_context(&self, candidate: &BoundaryContext) -> Checked<BoundaryContext>;
-    fn paper_declaration_definition(&self, selected: &BoundaryContext, reference: &ComponentRef)
-    -> Checked<PaperCaseDeclaration>;
-    fn local_declaration_definition(&self, selected: &BoundaryContext) -> Checked<LocalAuthorityDeclaration>;
-    fn paper_declaration_history(&self, candidate: &PaperCaseBoundary) -> Checked<PaperHistory>;
-    fn prior_epoch(&self, candidate: &PriorRange) -> Checked<()>;
-    fn compare_marker_prefix(&self, candidate: &AccountPin) -> Checked<()>;
-    fn selected_chain_rules(&self, selected: &BoundaryContext) -> Checked<()>;
-    fn compare_public_binding(&self, candidate: &AuthorityAccount) -> Checked<()>;
-    fn evaluate_chain_evidence(&self, candidate: &AuthorityAccount) -> Checked<()>;
-    fn qualified_first_height(&self, candidate: &AuthorityAccount) -> Checked<u64>;
-    fn compare_retained_act<H: ClosureHeader>(&self, candidate: &ClosureAct<H>) -> Checked<RetainedIdentity>;
-    fn verify_recorded_role<H: ClosureHeader>(&self, candidate: &ClosureAct<H>, role: Role) -> Checked<()>;
-    fn authority_set(&self, account: &AuthorityAccount, part: &ActorPart) -> Checked<AuthorizedKeysWithPremises>;
-    fn evaluate_case(&self, declaration: &PaperCaseDeclaration) -> Checked<()>;
+    fn required_boundary_context(&self, candidate: &BoundaryContext) -> ConsumerResult<BoundaryContext>;
+    fn paper_declaration_definition(
+        &self,
+        selected: &BoundaryContext,
+        reference: &ComponentRef,
+    ) -> ConsumerResult<PaperCaseDeclaration>;
+    fn local_declaration_definition(&self, selected: &BoundaryContext) -> ConsumerResult<LocalAuthorityDeclaration>;
+    fn paper_declaration_history(&self, candidate: &PaperCaseBoundary) -> ConsumerResult<PaperHistory>;
+    fn prior_epoch(&self, candidate: &PriorRange) -> ConsumerResult<()>;
+    fn compare_marker_prefix(&self, candidate: &AccountPin) -> ConsumerResult<()>;
+    fn selected_chain_rules(&self, selected: &BoundaryContext) -> ConsumerResult<()>;
+    fn compare_public_binding(&self, candidate: &AuthorityAccount) -> ConsumerResult<()>;
+    fn evaluate_chain_evidence(&self, candidate: &AuthorityAccount) -> ConsumerResult<()>;
+    fn qualified_first_height(&self, candidate: &AuthorityAccount) -> ConsumerResult<u64>;
+    fn compare_retained_act<H: ClosureHeader>(&self, candidate: &ClosureAct<H>) -> ConsumerResult<RetainedIdentity>;
+    fn verify_recorded_role<H: ClosureHeader>(&self, candidate: &ClosureAct<H>, role: Role) -> ConsumerResult<()>;
+    fn authority_set(&self, account: &AuthorityAccount, part: &ActorPart) -> ConsumerResult<AuthorizedKeysWithPremises>;
+    fn evaluate_case(&self, declaration: &PaperCaseDeclaration) -> ConsumerResult<()>;
 }
 
 /// Exact role to be verified over a complete retained act.
@@ -319,7 +372,7 @@ enum Failed {
     UnavailableWithPremises(Assessed<Inability>),
 }
 
-fn failed_checked(failed: &Failed) -> Checked<()> {
+fn failed_checked<T>(failed: &Failed) -> Checked<T> {
     match failed {
         Failed::Refused(cause) => Checked::Refused(*cause),
         Failed::Unavailable(reason) => Checked::Unavailable(*reason),
@@ -339,25 +392,25 @@ fn forward<T>(outcome: Checked<T>) -> Result<Assessed<T>, Failed> {
 }
 
 // A consumer cannot establish a refusal without saying which assessment made it.
-fn forward_consumer<T>(outcome: Checked<T>) -> Result<Assessed<T>, Failed> {
+fn forward_consumer<T>(outcome: ConsumerResult<T>) -> Result<Assessed<T>, Failed> {
     match outcome {
-        Checked::Refused(_) => Err(Failed::Unavailable(Inability::UnavailableBinding)),
-        other => forward(other),
+        ConsumerResult::Confirmed(value) => Ok(value),
+        ConsumerResult::Refused(value) => Err(Failed::RefusedWithPremises(value)),
+        ConsumerResult::Unavailable(value) => Err(Failed::UnavailableWithPremises(value)),
     }
 }
 
-fn forward_consumer_under<T>(outcome: Checked<T>, expected: &AssessmentPremises) -> Result<Assessed<T>, Failed> {
-    match &outcome {
-        Checked::Confirmed(value) if !same_premises(&value.premises, expected) => {
-            return Err(Failed::Unavailable(Inability::UnavailableBinding));
-        }
-        Checked::RefusedWithPremises(value) if !same_premises(&value.premises, expected) => {
-            return Err(Failed::Unavailable(Inability::UnavailableBinding));
-        }
-        Checked::UnavailableWithPremises(value) if !same_premises(&value.premises, expected) => {
-            return Err(Failed::Unavailable(Inability::UnavailableBinding));
-        }
-        _ => {}
+fn forward_consumer_under<T>(outcome: ConsumerResult<T>, expected: &AssessmentPremises) -> Result<Assessed<T>, Failed> {
+    let actual = match &outcome {
+        ConsumerResult::Confirmed(value) => &value.premises,
+        ConsumerResult::Refused(value) => &value.premises,
+        ConsumerResult::Unavailable(value) => &value.premises,
+    };
+    if !same_premises(actual, expected) {
+        return Err(Failed::UnavailableWithPremises(Assessed {
+            value: Inability::UnavailableBinding,
+            premises: expected.clone(),
+        }));
     }
     forward_consumer(outcome)
 }
@@ -409,11 +462,8 @@ pub fn compare_paper_declaration(
         &context.premises,
     ) {
         Ok(value) => value,
-        Err(other) => return failed_checked(&other),
+        Err(other) => return with_premises(failed_checked(&other), &context.premises),
     };
-    if !same_premises(&context.premises, &expected.premises) {
-        return with_premises(Checked::Unavailable(Inability::UnavailableBinding), &context.premises);
-    }
     if candidate.scope.run != context.value.run || candidate.scope.history_scope != context.value.history_scope {
         return with_premises(Checked::Refused(Refusal::Context), &context.premises);
     }
@@ -453,13 +503,19 @@ pub fn compare_local_declaration(
         Ok(value) => value,
         Err(other) => return failed_checked(&other),
     };
+    compare_local_declaration_under(candidate, selected, consumer, &context)
+}
+
+fn compare_local_declaration_under(
+    candidate: &LocalAuthorityDeclaration,
+    selected: &BoundaryContext,
+    consumer: &impl BoundaryConsumer,
+    context: &Assessed<BoundaryContext>,
+) -> Checked<()> {
     let expected = match forward_consumer_under(consumer.local_declaration_definition(selected), &context.premises) {
         Ok(value) => value,
-        Err(other) => return failed_checked(&other),
+        Err(other) => return with_premises(failed_checked(&other), &context.premises),
     };
-    if !same_premises(&context.premises, &expected.premises) {
-        return with_premises(Checked::Unavailable(Inability::UnavailableBinding), &context.premises);
-    }
     if candidate.scope.run != context.value.run || candidate.scope.history_scope != context.value.history_scope {
         return with_premises(Checked::Refused(Refusal::Context), &context.premises);
     }
@@ -516,6 +572,15 @@ pub fn compare_paper_boundary(
         Ok(value) => value,
         Err(other) => return failed_checked(&other),
     };
+    compare_paper_boundary_under(candidate, selected, consumer, &context)
+}
+
+fn compare_paper_boundary_under(
+    candidate: &PaperCaseBoundary,
+    selected: &BoundaryContext,
+    consumer: &impl BoundaryConsumer,
+    context: &Assessed<BoundaryContext>,
+) -> Checked<()> {
     if candidate.context != context.value {
         return with_premises(Checked::Refused(Refusal::Context), &context.premises);
     }
@@ -554,8 +619,7 @@ pub fn compare_authority_account(
     }
     with_premises(
         match compare_account(candidate, consumer, &context.premises) {
-            Ok(premises) if same_premises(&premises, &context.premises) => Checked::Confirmed(Assessed { value: (), premises }),
-            Ok(_) => Checked::Unavailable(Inability::UnavailableBinding),
+            Ok(premises) => Checked::Confirmed(Assessed { value: (), premises }),
             Err(other) => failed_checked(&other),
         },
         &context.premises,
@@ -587,10 +651,20 @@ pub fn compare_local_boundary<H: ClosureHeader>(
         Ok(value) => value,
         Err(other) => return failed_checked(&other),
     };
+    compare_local_boundary_under(candidate, acts, selected, consumer, &context)
+}
+
+fn compare_local_boundary_under<H: ClosureHeader>(
+    candidate: &LocalAuthorityBoundary,
+    acts: &[ClosureAct<H>],
+    selected: &BoundaryContext,
+    consumer: &impl BoundaryConsumer,
+    context: &Assessed<BoundaryContext>,
+) -> Checked<()> {
     if candidate.context != context.value {
         return with_premises(Checked::Refused(Refusal::Context), &context.premises);
     }
-    with_premises(compare_local(candidate, acts, selected, consumer), &context.premises)
+    with_premises(compare_local(candidate, acts, selected, consumer, context), &context.premises)
 }
 
 /// Compare the three conditional slots without selecting a production evaluator.
@@ -647,10 +721,7 @@ pub fn compare_boundary<H: ClosureHeader>(input: BoundaryView<'_, H>, consumer: 
             let mut latest = None;
             for role in [Role::Proposal, Role::Seal, Role::Approval] {
                 match forward_consumer_under(consumer.verify_recorded_role(act, role), &context.premises) {
-                    Ok(value) if value.premises == context.premises => latest = Some(value.premises),
-                    Ok(_) => {
-                        return with_premises(Checked::Unavailable(Inability::UnavailableBinding), &context.premises);
-                    }
+                    Ok(value) => latest = Some(value.premises),
                     Err(other) => return failed_checked(&other),
                 }
             }
@@ -660,21 +731,15 @@ pub fn compare_boundary<H: ClosureHeader>(input: BoundaryView<'_, H>, consumer: 
             })
         },
     );
-    let closure = match closure {
-        Checked::Unavailable(Inability::UnavailableBinding) => {
-            with_premises(Checked::Unavailable(Inability::UnavailableBinding), &context.premises)
-        }
-        other => other,
-    };
     let local = input
         .local
         .map_or(Checked::Unavailable(Inability::MissingComponent), |value| {
-            compare_local_boundary(value, input.acts, Some(selected), consumer)
+            compare_local_boundary_under(value, input.acts, selected, consumer, &context)
         });
     let paper = input
         .paper
         .map_or(Checked::Unavailable(Inability::MissingComponent), |value| {
-            compare_paper_boundary(value, Some(selected), consumer)
+            compare_paper_boundary_under(value, selected, consumer, &context)
         });
     // C8 has no admitted production evaluator; only C8E may add that route.
     let ready = Checked::Unavailable(Inability::NotEvaluated);
@@ -719,6 +784,148 @@ pub fn assemble_boundary<H: ClosureHeader>(input: BoundaryInput<'_, H>, consumer
     BoundaryBuild { components, assessment }
 }
 
+/// Compare a separately selected current account without modifying any old pin.
+/// This remains conditional on the consumer's declared evidence premises.
+#[tracing::instrument(
+    name = "dec:devnet:author-authority-convertibility",
+    fields(
+        execution_owner = "EPOCH",
+        claim_owner = "ROOT",
+        claim_label = "dec:devnet:author-authority-convertibility",
+        operation = "authentication-evaluate-current-authority",
+        source_item = "authentication::evaluate_current_authority"
+    ),
+    ret
+)]
+pub fn evaluate_current_authority<H: ClosureHeader>(
+    query: CurrentAuthorityQuery<'_, H>,
+    consumer: &impl BoundaryConsumer,
+) -> CurrentAssessment {
+    let selected = query.selected_current_context;
+    let finish = |current| CurrentAssessment {
+        selected: selected.clone(),
+        at_pin: PinDisposition::AtPinUnchanged,
+        current,
+    };
+    let context = match forward_consumer(consumer.required_boundary_context(selected)) {
+        Ok(value) => value,
+        Err(other) => return finish(failed_checked(&other)),
+    };
+    if context.value != *selected || query.current_account_view.account.context != *selected {
+        return finish(with_premises(Checked::Refused(Refusal::Context), &context.premises));
+    }
+    if query.selected_current_rules.scope.run != selected.run
+        || query.selected_current_rules.scope.history_scope != selected.history_scope
+        || query.current_account_view.account.run_configuration != query.selected_current_rules.run_configuration
+    {
+        return finish(with_premises(Checked::Refused(Refusal::Run), &context.premises));
+    }
+    if query.original_pin_contexts.len() != query.retained_acts.len() {
+        return finish(with_premises(Checked::Refused(Refusal::MissingEvidence), &context.premises));
+    }
+    if query.prior_epoch_views.len() > query.read_allowances.prior_epochs {
+        return finish(with_premises(
+            Checked::Unavailable(Inability::UnavailableBudget),
+            &context.premises,
+        ));
+    }
+    if query.prior_epoch_views.len() != usize::try_from(selected.epoch).unwrap_or(usize::MAX) {
+        return finish(with_premises(
+            Checked::Unavailable(Inability::UnavailablePredecessor),
+            &context.premises,
+        ));
+    }
+    let account = query.current_account_view.account;
+    let block_bytes = account
+        .blocks
+        .iter()
+        .try_fold(0_usize, |total, block| total.checked_add(block.len()));
+    if account.blocks.len() > query.read_allowances.blocks
+        || block_bytes.is_none_or(|total| total > query.read_allowances.block_bytes)
+    {
+        return finish(with_premises(
+            Checked::Unavailable(Inability::UnavailableBudget),
+            &context.premises,
+        ));
+    }
+    let premises = match compare_account(account, consumer, &context.premises) {
+        Ok(value) => value,
+        Err(other) => return finish(with_premises(failed_checked(&other), &context.premises)),
+    };
+    if let Err(other) = check_prior_epochs(query.prior_epoch_views, account, consumer, &premises) {
+        return finish(failed_checked(&other));
+    }
+    let mut assessed = Vec::new();
+    if assessed.try_reserve_exact(query.retained_acts.len()).is_err() {
+        return finish(with_premises(Checked::Unavailable(Inability::UnavailableBudget), &premises));
+    }
+    for (act, original) in query.retained_acts.iter().zip(query.original_pin_contexts) {
+        if original.epoch > selected.epoch || original.run != selected.run {
+            return finish(with_premises(Checked::Refused(Refusal::History), &premises));
+        }
+        let identity = match forward_consumer_under(consumer.compare_retained_act(act), &premises) {
+            Ok(value) => value,
+            Err(other) => return finish(with_premises(failed_checked(&other), &premises)),
+        };
+        let Some(part) = query
+            .current_account_view
+            .parts
+            .iter()
+            .find(|part| part.actor == identity.value.actor)
+        else {
+            return finish(with_premises(Checked::Unavailable(Inability::NotCovered), &premises));
+        };
+        let keys = match forward_consumer_under(consumer.authority_set(account, part), &premises) {
+            Ok(value) => value,
+            Err(other) => return finish(with_premises(failed_checked(&other), &premises)),
+        };
+        let membership = if keys.value.actor == identity.value.actor && keys.value.keys.contains(&identity.value.signer_key_hash)
+        {
+            Checked::Confirmed(Assessed {
+                value: (),
+                premises: premises.clone(),
+            })
+        } else {
+            with_premises(Checked::Refused(Refusal::ActorBinding), &premises)
+        };
+        assessed.push(CurrentAct {
+            act: act.header().id().clone(),
+            actor: identity.value.actor,
+            recorded_signer: identity.value.signer_key_hash,
+            membership,
+        });
+    }
+    finish(Checked::Confirmed(Assessed {
+        value: assessed,
+        premises,
+    }))
+}
+
+fn check_prior_epochs(
+    views: &[PriorRange],
+    account: &AuthorityAccount,
+    consumer: &impl BoundaryConsumer,
+    premises: &AssessmentPremises,
+) -> Result<(), Failed> {
+    for (index, view) in views.iter().enumerate() {
+        let epoch = u64::try_from(index).map_err(|_| {
+            Failed::UnavailableWithPremises(Assessed {
+                value: Inability::UnavailableBudget,
+                premises: premises.clone(),
+            })
+        })?;
+        if view.history_scope != account.prior_range.history_scope || view.first_epoch != epoch || view.exclusive_end != epoch + 1
+        {
+            return Err(Failed::RefusedWithPremises(Assessed {
+                value: Refusal::History,
+                premises: premises.clone(),
+            }));
+        }
+        forward_consumer_under(consumer.prior_epoch(view), premises)?;
+    }
+    Ok(())
+}
+
 fn compare_paper(
     value: &PaperCaseBoundary,
     selected: &BoundaryContext,
@@ -756,9 +963,6 @@ fn compare_paper(
             Ok(value) => value,
             Err(other) => return failed_checked(&other),
         };
-        if !same_premises(&expected.premises, context_premises) {
-            return Checked::Unavailable(Inability::UnavailableBinding);
-        }
         if expected.value != *declaration {
             return Checked::Refused(Refusal::DeclarationContent);
         }
@@ -772,9 +976,6 @@ fn compare_paper(
         Ok(value) => value,
         Err(other) => return failed_checked(&other),
     };
-    if !same_premises(&expected.premises, context_premises) {
-        return Checked::Unavailable(Inability::UnavailableBinding);
-    }
     if value.active != expected.value.current {
         return Checked::Refused(Refusal::CaseSet);
     }
@@ -805,8 +1006,7 @@ fn compare_paper(
     }
     for declaration in &value.active {
         match forward_consumer_under(consumer.evaluate_case(declaration), context_premises) {
-            Ok(result) if same_premises(&result.premises, &expected.premises) => {}
-            Ok(_) => return Checked::Unavailable(Inability::UnavailableBinding),
+            Ok(_) => {}
             Err(other) => return failed_checked(&other),
         }
     }
@@ -850,6 +1050,7 @@ fn compare_local<H: ClosureHeader>(
     acts: &[ClosureAct<H>],
     selected: &BoundaryContext,
     consumer: &impl BoundaryConsumer,
+    context: &Assessed<BoundaryContext>,
 ) -> Checked<()> {
     if value.context != *selected || value.account.context != *selected {
         return Checked::Refused(Refusal::Context);
@@ -857,20 +1058,22 @@ fn compare_local<H: ClosureHeader>(
     if value.declaration.scope.run != selected.run || value.declaration.scope.history_scope != selected.history_scope {
         return Checked::Refused(Refusal::Context);
     }
-    let declaration = match forward(compare_local_declaration(&value.declaration, Some(selected), consumer)) {
+    let declaration = match forward(compare_local_declaration_under(
+        &value.declaration,
+        selected,
+        consumer,
+        context,
+    )) {
         Ok(value) => value,
         Err(other) => return failed_checked(&other),
     };
     if value.account.run_configuration != value.declaration.run_configuration {
         return Checked::Refused(Refusal::Run);
     }
-    let prefix = match forward_consumer_under(consumer.compare_marker_prefix(&value.account.pin), &declaration.premises) {
+    let _prefix = match forward_consumer_under(consumer.compare_marker_prefix(&value.account.pin), &declaration.premises) {
         Ok(value) => value,
         Err(other) => return failed_checked(&other),
     };
-    if !same_premises(&declaration.premises, &prefix.premises) {
-        return Checked::Unavailable(Inability::UnavailableBinding);
-    }
     if value.account.pin.height.checked_add(value.account.pin.buffer).is_none() {
         return Checked::Refused(Refusal::Overflow);
     }
@@ -881,18 +1084,14 @@ fn compare_local<H: ClosureHeader>(
     for act in acts {
         retained.push(
             match forward_consumer_under(consumer.compare_retained_act(act), &declaration.premises) {
-                Ok(value) if same_premises(&declaration.premises, &value.premises) => value,
-                Ok(_) => return Checked::Unavailable(Inability::UnavailableBinding),
+                Ok(value) => value,
                 Err(other) => return failed_checked(&other),
             },
         );
     }
-    let account_premises = match compare_account(&value.account, consumer, &declaration.premises) {
-        Ok(premises) => premises,
+    match compare_account(&value.account, consumer, &declaration.premises) {
+        Ok(_) => {}
         Err(other) => return failed_checked(&other),
-    };
-    if !same_premises(&declaration.premises, &account_premises) {
-        return Checked::Unavailable(Inability::UnavailableBinding);
     }
     for part in &value.parts {
         if part.scan_from != part.issuance.height
@@ -902,6 +1101,18 @@ fn compare_local<H: ClosureHeader>(
             return Checked::Refused(Refusal::Coverage);
         }
     }
+    let mut authority_order = (0..value.parts.len()).collect::<Vec<_>>();
+    authority_order.sort_by(|left, right| value.parts[*left].actor.cmp(&value.parts[*right].actor));
+    let mut authority_sets = Vec::with_capacity(value.parts.len());
+    for index in authority_order {
+        let part = &value.parts[index];
+        let keys = match forward_consumer_under(consumer.authority_set(&value.account, part), &declaration.premises) {
+            Ok(value) => value,
+            Err(other) => return failed_checked(&other),
+        };
+        authority_sets.push((index, keys));
+    }
+    authority_sets.sort_by_key(|(index, _)| *index);
     for ((association, act), identity) in value.associations.iter().zip(acts).zip(&retained) {
         if association.act != *act.header().id() || association.act_position != act.position() {
             return Checked::Refused(Refusal::Act);
@@ -918,18 +1129,11 @@ fn compare_local<H: ClosureHeader>(
         }
         for role in [Role::Proposal, Role::Approval] {
             match forward_consumer_under(consumer.verify_recorded_role(act, role), &declaration.premises) {
-                Ok(result) if same_premises(&result.premises, &declaration.premises) => {}
-                Ok(_) => return Checked::Unavailable(Inability::UnavailableBinding),
+                Ok(_) => {}
                 Err(other) => return failed_checked(&other),
             }
         }
-        let keys = match forward_consumer_under(consumer.authority_set(&value.account, part), &declaration.premises) {
-            Ok(value) => value,
-            Err(other) => return failed_checked(&other),
-        };
-        if !same_premises(&keys.premises, &declaration.premises) {
-            return Checked::Unavailable(Inability::UnavailableBinding);
-        }
+        let keys = &authority_sets[usize::try_from(association.part_index).unwrap_or(0)].1;
         if keys.value.actor != part.actor || !keys.value.keys.contains(&identity.value.signer_key_hash) {
             return Checked::Refused(Refusal::ActorBinding);
         }
@@ -945,7 +1149,7 @@ fn compare_account(
     consumer: &impl BoundaryConsumer,
     expected: &AssessmentPremises,
 ) -> Result<AssessmentPremises, Failed> {
-    let prefix = forward_consumer_under(consumer.compare_marker_prefix(&value.pin), expected)?;
+    let _prefix = forward_consumer_under(consumer.compare_marker_prefix(&value.pin), expected)?;
     let Some(last) = value.pin.height.checked_add(value.pin.buffer) else {
         return Err(Failed::Refused(Refusal::Overflow));
     };
@@ -955,33 +1159,18 @@ fn compare_account(
     if usize::try_from(count).ok() != Some(value.blocks.len()) {
         return Err(Failed::Refused(Refusal::MissingEvidence));
     }
-    let rules = forward_consumer_under(consumer.selected_chain_rules(&value.context), expected)?;
-    if !same_premises(&prefix.premises, &rules.premises) {
-        return Err(Failed::Unavailable(Inability::UnavailableBinding));
-    }
-    let bound = forward_consumer_under(consumer.compare_public_binding(value), expected)?;
-    if !same_premises(&prefix.premises, &bound.premises) {
-        return Err(Failed::Unavailable(Inability::UnavailableBinding));
-    }
-    let chain = forward_consumer_under(consumer.evaluate_chain_evidence(value), expected)?;
-    if !same_premises(&prefix.premises, &chain.premises) {
-        return Err(Failed::Unavailable(Inability::UnavailableBinding));
-    }
-    let prior = forward_consumer_under(consumer.prior_epoch(&value.prior_range), expected)?;
-    if !same_premises(&prefix.premises, &prior.premises) {
-        return Err(Failed::Unavailable(Inability::UnavailableBinding));
-    }
+    forward_consumer_under(consumer.selected_chain_rules(&value.context), expected)?;
+    forward_consumer_under(consumer.compare_public_binding(value), expected)?;
+    forward_consumer_under(consumer.evaluate_chain_evidence(value), expected)?;
+    forward_consumer_under(consumer.prior_epoch(&value.prior_range), expected)?;
     let minimum = forward_consumer_under(consumer.qualified_first_height(value), expected)?;
-    if !same_premises(&prefix.premises, &minimum.premises) {
-        return Err(Failed::Unavailable(Inability::UnavailableBinding));
-    }
     if value.first_height > minimum.value {
         return Err(Failed::Refused(Refusal::MissingEvidence));
     }
     if value.first_height < minimum.value {
         return Err(Failed::Refused(Refusal::Coverage));
     }
-    Ok(prefix.premises)
+    Ok(expected.clone())
 }
 
 #[cfg(test)]
@@ -1025,8 +1214,20 @@ mod tests {
     }
 
     impl Synthetic {
-        fn positive<T>(&self, value: T, alternate: bool) -> Checked<T> {
-            Checked::Confirmed(Assessed {
+        fn unavailable<T>(&self, value: Inability) -> ConsumerResult<T> {
+            ConsumerResult::Unavailable(Assessed {
+                value,
+                premises: AssessmentPremises {
+                    evaluator: EvaluatorSelection::ExplicitSyntheticPremise,
+                    consensus: "selected-consensus".to_owned(),
+                    binding: "selected-complete-record".to_owned(),
+                    context: self.context.clone(),
+                },
+            })
+        }
+
+        fn positive<T>(&self, value: T, alternate: bool) -> ConsumerResult<T> {
+            ConsumerResult::Confirmed(Assessed {
                 value,
                 premises: AssessmentPremises {
                     evaluator: EvaluatorSelection::ExplicitSyntheticPremise,
@@ -1039,56 +1240,56 @@ mod tests {
     }
 
     impl BoundaryConsumer for Synthetic {
-        fn required_boundary_context(&self, _candidate: &BoundaryContext) -> Checked<BoundaryContext> {
+        fn required_boundary_context(&self, _candidate: &BoundaryContext) -> ConsumerResult<BoundaryContext> {
             self.positive(self.context.clone(), false)
         }
         fn paper_declaration_definition(
             &self,
             _selected: &BoundaryContext,
             reference: &ComponentRef,
-        ) -> Checked<PaperCaseDeclaration> {
+        ) -> ConsumerResult<PaperCaseDeclaration> {
             self.paper
                 .current
                 .iter()
                 .find(|candidate| &candidate.reference == reference)
-                .map_or(Checked::Unavailable(Inability::UnavailableSelection), |value| {
+                .map_or(self.unavailable(Inability::UnavailableSelection), |value| {
                     self.positive(value.clone(), self.alternate_paper_premise)
                 })
         }
-        fn local_declaration_definition(&self, _selected: &BoundaryContext) -> Checked<LocalAuthorityDeclaration> {
+        fn local_declaration_definition(&self, _selected: &BoundaryContext) -> ConsumerResult<LocalAuthorityDeclaration> {
             self.positive(self.local.clone(), false)
         }
-        fn paper_declaration_history(&self, _candidate: &PaperCaseBoundary) -> Checked<PaperHistory> {
+        fn paper_declaration_history(&self, _candidate: &PaperCaseBoundary) -> ConsumerResult<PaperHistory> {
             self.positive(self.paper.clone(), self.alternate_paper_premise)
         }
-        fn prior_epoch(&self, _candidate: &PriorRange) -> Checked<()> {
+        fn prior_epoch(&self, _candidate: &PriorRange) -> ConsumerResult<()> {
             self.positive((), false)
         }
-        fn compare_marker_prefix(&self, _candidate: &AccountPin) -> Checked<()> {
+        fn compare_marker_prefix(&self, _candidate: &AccountPin) -> ConsumerResult<()> {
             self.positive((), false)
         }
-        fn selected_chain_rules(&self, _selected: &BoundaryContext) -> Checked<()> {
+        fn selected_chain_rules(&self, _selected: &BoundaryContext) -> ConsumerResult<()> {
             self.positive((), false)
         }
-        fn compare_public_binding(&self, _candidate: &AuthorityAccount) -> Checked<()> {
+        fn compare_public_binding(&self, _candidate: &AuthorityAccount) -> ConsumerResult<()> {
             self.positive((), false)
         }
-        fn evaluate_chain_evidence(&self, _candidate: &AuthorityAccount) -> Checked<()> {
+        fn evaluate_chain_evidence(&self, _candidate: &AuthorityAccount) -> ConsumerResult<()> {
             self.positive((), false)
         }
-        fn qualified_first_height(&self, candidate: &AuthorityAccount) -> Checked<u64> {
+        fn qualified_first_height(&self, candidate: &AuthorityAccount) -> ConsumerResult<u64> {
             self.positive(candidate.first_height, false)
         }
-        fn compare_retained_act<H: ClosureHeader>(&self, _candidate: &ClosureAct<H>) -> Checked<RetainedIdentity> {
+        fn compare_retained_act<H: ClosureHeader>(&self, _candidate: &ClosureAct<H>) -> ConsumerResult<RetainedIdentity> {
             unreachable!()
         }
-        fn verify_recorded_role<H: ClosureHeader>(&self, _candidate: &ClosureAct<H>, _role: Role) -> Checked<()> {
+        fn verify_recorded_role<H: ClosureHeader>(&self, _candidate: &ClosureAct<H>, _role: Role) -> ConsumerResult<()> {
             unreachable!()
         }
-        fn authority_set(&self, _account: &AuthorityAccount, _part: &ActorPart) -> Checked<AuthorizedKeysWithPremises> {
+        fn authority_set(&self, _account: &AuthorityAccount, _part: &ActorPart) -> ConsumerResult<AuthorizedKeysWithPremises> {
             unreachable!()
         }
-        fn evaluate_case(&self, _declaration: &PaperCaseDeclaration) -> Checked<()> {
+        fn evaluate_case(&self, _declaration: &PaperCaseDeclaration) -> ConsumerResult<()> {
             self.positive((), self.alternate_paper_premise)
         }
     }
@@ -1226,6 +1427,113 @@ mod tests {
         assert_site_ids(executed, vec!["new:explicit-empty-paper-and-transitions"]);
     }
 
+    /// Claim: A separately selected current account can change its conditional result without replacing an old pin.
+    /// ´claim:admission:current-authority-keeps-pins´
+    /// ´test:unit:current-account´
+    #[test]
+    fn current_account() {
+        let mut executed = Vec::new();
+        let context = context();
+        let components = components(&context);
+        let consumer = Synthetic {
+            context: context.clone(),
+            local: components.local.declaration.clone(),
+            paper: PaperHistory {
+                current: Vec::new(),
+                predecessor: Some(Vec::new()),
+            },
+            alternate_paper_premise: false,
+        };
+        let old_pin = components.local.account.pin.clone();
+        let acts: &[ClosureAct<NoAct>] = &[];
+        let prior = (0..context.epoch)
+            .map(|epoch| PriorRange {
+                history_scope: components.local.account.prior_range.history_scope.clone(),
+                first_epoch: epoch,
+                exclusive_end: epoch + 1,
+            })
+            .collect::<Vec<_>>();
+        let limits = ReadAllowances {
+            encoded_bytes: usize::MAX,
+            history_scope_bytes: usize::MAX,
+            declarations: usize::MAX,
+            transitions: usize::MAX,
+            account_bytes: usize::MAX,
+            blocks: usize::MAX,
+            block_bytes: usize::MAX,
+            parts: usize::MAX,
+            associations: usize::MAX,
+            prior_epochs: usize::MAX,
+        };
+        let assess = |account: &AuthorityAccount| {
+            evaluate_current_authority(
+                CurrentAuthorityQuery {
+                    retained_acts: acts,
+                    original_pin_contexts: &[],
+                    selected_current_context: &context,
+                    selected_current_rules: &components.local.declaration,
+                    current_account_view: CurrentAccountView { account, parts: &[] },
+                    prior_epoch_views: &prior,
+                    read_allowances: limits,
+                },
+                &consumer,
+            )
+        };
+        let current = assess(&components.local.account);
+        assert!(matches!(current.current, Checked::Confirmed(_)));
+        assert_eq!(current.at_pin, PinDisposition::AtPinUnchanged);
+        executed.push("current:unchanged-selection");
+        let mut incomplete = components.local.account.clone();
+        incomplete.first_height += 1;
+        let changed = assess(&incomplete);
+        assert!(
+            matches!(
+                changed.current,
+                Checked::RefusedWithPremises(Assessed {
+                    value: Refusal::MissingEvidence,
+                    ..
+                })
+            ),
+            "{:?}",
+            changed.current
+        );
+        assert_eq!(changed.at_pin, PinDisposition::AtPinUnchanged);
+        assert_eq!(components.local.account.pin, old_pin);
+        executed.push("current:changed-account");
+        let no_prior = evaluate_current_authority(
+            CurrentAuthorityQuery {
+                retained_acts: acts,
+                original_pin_contexts: &[],
+                selected_current_context: &context,
+                selected_current_rules: &components.local.declaration,
+                current_account_view: CurrentAccountView {
+                    account: &components.local.account,
+                    parts: &[],
+                },
+                prior_epoch_views: &[],
+                read_allowances: limits,
+            },
+            &consumer,
+        );
+        assert!(matches!(
+            no_prior.current,
+            Checked::UnavailableWithPremises(Assessed {
+                value: Inability::UnavailablePredecessor,
+                ..
+            })
+        ));
+        assert_eq!(no_prior.at_pin, PinDisposition::AtPinUnchanged);
+        executed.push("current:missing-prior");
+        assert_site_ids(
+            executed,
+            vec![
+                "current:unchanged-selection",
+                "current:changed-account",
+                "current:missing-prior",
+            ],
+        );
+    }
+
     /// Claim: Positive results retain evaluator and binding premises, and incompatible or synthetic premises never become production readiness.
     /// ´claim:admission:authority-outcome-mapping´
     /// ´test:unit:outcome-mapping´
@@ -1264,8 +1572,26 @@ mod tests {
             assert_eq!(local.premises.context, context);
         }
         assert_eq!(same.ready, Checked::Unavailable(Inability::NotEvaluated));
-        let unbound: Result<Assessed<()>, Failed> = forward_consumer(Checked::Refused(Refusal::Signature));
-        assert!(matches!(unbound, Err(Failed::Unavailable(Inability::UnavailableBinding))));
+        let expected_premises = match &same.local {
+            Checked::Confirmed(value) => value.premises.clone(),
+            _ => unreachable!(),
+        };
+        let mut foreign = expected_premises.clone();
+        foreign.binding = "another-record".to_owned();
+        let unbound: Result<Assessed<()>, Failed> = forward_consumer_under(
+            ConsumerResult::Refused(Assessed {
+                value: Refusal::Signature,
+                premises: foreign,
+            }),
+            &expected_premises,
+        );
+        assert!(matches!(
+            unbound,
+            Err(Failed::UnavailableWithPremises(Assessed {
+                value: Inability::UnavailableBinding,
+                ..
+            }))
+        ));
         consumer.context.epoch += 1;
         let wrong_context = view(&consumer);
         assert!(matches!(

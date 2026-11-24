@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "authentication::CurrentAct",
+    "kind": "derive",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+    "class_decision": "semantic-publication-public",
+    "expansion_review": "Derived structural helpers on public conditional account values; they imply no authenticated authority or private credential."
+  }
+}

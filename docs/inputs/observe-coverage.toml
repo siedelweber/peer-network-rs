@@ -83,11 +83,11 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-epoch"
-operations = 106
-instrumented = 82
+operations = 107
+instrumented = 83
 exceptions = 24
 helpers = 0
-generators = 175
+generators = 181
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 
@@ -143,9 +143,9 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-wallet"
-operations = 30
-instrumented = 7
+operations = 33
+instrumented = 10
 exceptions = 23
 helpers = 0
-generators = 30
+generators = 38
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }

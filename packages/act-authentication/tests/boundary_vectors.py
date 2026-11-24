@@ -558,9 +558,11 @@ def vectors():
     new_operand('AuthorityAccount', 'account-premise-before-minimum', account,
                 'UnavailableBinding', scenario='account-premise-before-minimum')
     new_operand('AuthorityAccount', 'account-selected-context-premise', account,
-                'UnavailableBinding', scenario='account-selected-context-premise')
+                'UnavailableBindingWithForeignPremises', scenario='account-selected-context-premise')
     new_operand('AuthorityAccount', 'account-foreign-binding-refusal', account,
-                'UnavailableBinding', scenario='account-foreign-binding-refusal')
+                'UnavailableBindingWithSelectedPremises', scenario='account-foreign-binding-refusal')
+    new_operand('AuthorityAccount', 'account-foreign-binding-inability', account,
+                'UnavailableBindingWithSelectedPremises', scenario='account-foreign-binding-inability')
     new_operand('AuthorityAccount', 'account-rules-premise', account,
                 'UnavailableBinding', scenario='account-rules-premise')
     for name, expected, scenario, value in (
@@ -592,9 +594,47 @@ def vectors():
                 'UnavailableBinding', scenario='retained-premise-before-actor')
     new_operand('LocalAuthorityBoundary', 'local_boundary-prefix-premise', boundary,
                 'UnavailableBinding', scenario='local-boundary-prefix-premise')
+    new_operand('LocalAuthorityBoundary', 'qualification-before-association-act',
+                variant(boundary, [6,2,2], 4), 'Qualification', scenario='qualification-before-association-act')
+    new_operand('LocalAuthorityBoundary', 'qualification-before-coverage',
+                variant(boundary, [5,0,3], 4), 'Qualification', scenario='qualification-before-coverage')
+    new_operand('LocalAuthorityBoundary', 'path-before-signature',
+                boundary, 'Path', scenario='path-before-signature')
     directory = Path(__file__).parent
     carrier_rows = json.loads((directory/'carrier-golden.json').read_text())['rows']
     formation_rows = json.loads((directory/'v3-golden.json').read_text())['rows']
+    token_row = json.loads((directory/'golden.json').read_text())['assets'][0]
+    # Semantic scan operands share an independently encoded transaction. The
+    # expected result is selected here, separately from the Rust scanner.
+    scan_descriptors = [
+        dict(id='scan:qualified-key', scenario='base', expected='ConfirmedKey', transaction=token_row['transaction']),
+        dict(id='scan:declaration-ceiling', scenario='declaration-under', expected='UnavailableBudget'),
+        dict(id='scan:history-byte-ceiling', scenario='history-byte-under', expected='UnavailableBudget'),
+        dict(id='scan:history-transaction-ceiling', scenario='history-transaction-under', expected='UnavailableBudget'),
+        dict(id='scan:active-ceiling', scenario='active-under', expected='UnavailableBudget'),
+        dict(id='scan:block-ceiling', scenario='scan-block-under', expected='UnavailableBudget'),
+        dict(id='scan:scan-byte-ceiling', scenario='scan-byte-under', expected='UnavailableBudget'),
+        dict(id='scan:unrelated-transaction', scenario='unrelated-transaction', expected='UnavailableBudget'),
+        dict(id='scan:buffer-only-declaration', scenario='buffer-only', expected='ConfirmedEmpty'),
+        dict(id='scan:missing-last-block', scenario='missing-block', expected='RefusedMissingEvidence'),
+        dict(id='scan:wrong-issuance-input', scenario='wrong-issuance', expected='RefusedQualification'),
+        dict(id='scan:duplicate-keys', scenario='duplicate-keys', expected='ConfirmedKey'),
+        dict(id='scan:malformed-pnak-neighbor', scenario='malformed-neighbor', expected='ConfirmedKey'),
+        dict(id='scan:retirement-same-epoch', scenario='retirement-same', expected='StartingSetUnchanged'),
+        dict(id='scan:retirement-next-epoch', scenario='retirement-next', expected='NextEpochRetirement'),
+        dict(id='scan:earlier-maximum', scenario='retirement-maximum', expected='MaximumRetained'),
+        dict(id='scan:no-effect-point', scenario='retirement-no-effect', expected='NeverActivated'),
+        dict(id='scan:boundary-declaration', scenario='retirement-boundary-declaration', expected='Included'),
+        dict(id='scan:redeclaration', scenario='retirement-redeclaration', expected='MembershipRestored'),
+        dict(id='scan:no-key-transfer', scenario='no-key-transfer', expected='ConfirmedKey'),
+        dict(id='scan:later-spend-without-unit', scenario='later-spend-omitted', expected='LocalUnavailable'),
+        dict(id='scan:unsupported-token-path', scenario='unsupported-token-path', expected='LocalUnavailable'),
+        dict(id='scan:decoder-items-bound', scenario='decoder-items', expected='UnavailableBudget'),
+        dict(id='scan:decoder-script-bound', scenario='decoder-script', expected='UnavailableBudget'),
+        dict(id='scan:decoder-witness-bound', scenario='decoder-witness', expected='UnavailableBudget'),
+        dict(id='scan:decoder-allocation-bound', scenario='decoder-allocation', expected='UnavailableBudget'),
+        dict(id='scan:decoder-truncated-block', scenario='decoder-truncated', expected='LocalUnavailable'),
+    ]
     executable.append(dict(id='new:cross-feed-historical-formation-components', site='historical_isolation',
                            encoded=canonical(paper).hex(), expected='RefusedByForeignDecoder',
                            foreign_closure=carrier_rows[0]['closure'], foreign_header=formation_rows[0]['header'],
@@ -622,7 +662,7 @@ def vectors():
                     for limit, measured in (('declaration_outputs', 2), ('history_bytes', 100),
                     ('history_transactions', 3), ('active_entries', 2), ('scan_blocks', scans[0]['scan_blocks']),
                     ('scan_bytes', scans[0]['scan_bytes'])) for ceiling in (measured, measured-1)],
-                expected_future_substitutions=substitutions,
+                expected_future_substitutions=substitutions, scan_descriptors=scan_descriptors,
                 executable_descriptors=executable)
 
 

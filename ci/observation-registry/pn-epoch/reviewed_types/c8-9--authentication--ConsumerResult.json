@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::ConsumerResult",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" An external assessment always identifies the premises for its outcome.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum ConsumerResult < T > { Confirmed (Assessed < T >) , Refused (Assessed < Refusal >) , Unavailable (Assessed < Inability >) , }"
+  }
+}

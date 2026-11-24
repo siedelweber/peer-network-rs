@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "token::history::AccountScan",
+    "package": "pn-wallet",
+    "path": "packages/wallet/src/token/history.rs",
+    "syntax": "# [doc = \" Complete raw blocks, including unrelated transactions and the stability buffer.\"] # [derive (Debug)] pub struct AccountScan < 'a > { pub first_height : u64 , pub pin_height : u64 , pub buffer : u64 , pub blocks : & 'a [Vec < u8 >] , pub parts : & 'a [ScanPart < 'a >] , pub run : [u8 ; 32] , pub fee_asset : AssetId , pub decoder : Limits , pub token : TokenLimits , pub limits : HistoryLimits , }"
+  }
+}

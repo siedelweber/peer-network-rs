@@ -110,7 +110,7 @@
 | pn-epoch::admission-contract | active | public-surface | pn-epoch-rust | fast | 1 |
 | pn-epoch::admission-review | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::admission-work | active | public-surface | pn-epoch-rust | fast | 1 |
-| pn-epoch::authentication | active | public-surface | pn-epoch-rust | fast | 3 |
+| pn-epoch::authentication | active | public-surface | pn-epoch-rust | fast | 4 |
 | pn-epoch::base | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::bounded-activation-conformance | active | integration | pn-epoch-rust | extended | 1 |
 | pn-epoch::cells | active | public-surface | pn-epoch-rust | fast | 4 |
@@ -171,7 +171,7 @@
 | pn-host::credential-launch | active | integration | pn-host-rust | service | 8 |
 | pn-host::declaration-census | active | public-surface | pn-host-rust | extended | 1 |
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 14 |
-| pn-host::public | active | public-surface | pn-host-rust | fast | 39 |
+| pn-host::public | active | public-surface | pn-host-rust | fast | 43 |
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |
 | pn-host::storage-tree | active | integration | pn-host-postgresql | service | 25 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |

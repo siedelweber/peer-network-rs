@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "authentication::CurrentAct",
+    "package": "pn-epoch",
+    "path": "packages/epoch/src/authentication.rs",
+    "syntax": "# [doc = \" One retained act's recorded key compared with current selected membership.\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CurrentAct { pub act : ActId , pub actor : String , pub recorded_signer : [u8 ; 32] , pub membership : Checked < () > , }"
+  }
+}

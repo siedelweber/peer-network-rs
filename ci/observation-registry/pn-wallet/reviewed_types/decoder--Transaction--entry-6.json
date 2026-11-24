@@ -4,6 +4,6 @@
     "item": "decoder::Transaction",
     "package": "pn-wallet",
     "path": "packages/wallet/src/decoder.rs",
-    "syntax": "# [doc = \" A transaction whose complete framing and maintained decoding succeeded.\"] # [doc = \" (´def:wallet:validated-layout´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct Transaction (TransactionFields) ;"
+    "syntax": "# [doc = \" A transaction whose complete framing and maintained decoding succeeded.\"] # [doc = \" (\u00b4def:wallet:validated-layout\u00b4)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct Transaction { fields : TransactionFields , txid : [u8 ; 32] , encoded_len : usize , }"
   }
 }
