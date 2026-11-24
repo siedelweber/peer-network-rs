@@ -3551,6 +3551,20 @@
       "witnessed_labels": []
     },
     {
+      "claims": [],
+      "closing_condition": "Admit the compiled fixture construction and node dependency; witness public build and fixture selection disclosure and admit the health disclosure edition and feature-off behavior, and implement runtime entry, full replay before service, session-loss termination, closed fixture selection, the declared entry priority, the health answer's fixture-selection field and declared failure classes with independent passing evidence.",
+      "closing_step": "Fixture lifecycle implementation and installation admission before serving the disposable instance",
+      "hold": "ROOT::open:observe:credential-installation",
+      "missing": "Planned session-loss termination, typed start-failure classification and closed fixture-selection and entry-priority controls, followed by installed-build and public selection disclosure evidence.",
+      "name": "ROOT::verif:api:fixture-activation",
+      "owner": "Public API implementer and repository reviewer with installation and credential-entry owners",
+      "path": "adr/018-public-api.md",
+      "premises": "Supplied-fact controls do not establish installed supervision, public build and fixture selection disclosure, real-service replay or credential delivery.",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
       "case_census": [
         "publication validity at all lengths",
         "wrapper admission at exactly 32 bytes",
