@@ -3552,10 +3552,10 @@
     },
     {
       "claims": [],
-      "closing_condition": "Admit the compiled fixture construction and node dependency; witness public build and fixture selection disclosure; admit the common nullable fixture-name member's spelling, reviewed schema/register mapping and wire form; implement runtime entry, full replay before service, session-loss termination, closed fixture selection, the declared entry priority, the health answer's fixture-selection field and declared failure classes with independent passing evidence.",
+      "closing_condition": "Admit the compiled fixture construction and node dependency; witness public build and fixture selection disclosure; admit and implement the common nullable fixture-name member with its spelling, reviewed SDL and register row, and resulting wire admission, with independent passing evidence for the selected name in the fixture-only optional-feature configuration and null in the no-optional-features configuration, declared separately, and for failure distinguished by an error at its path; implement runtime entry, full replay before service, session-loss termination, closed fixture selection, the declared entry priority and declared failure classes with independent passing evidence.",
       "closing_step": "Fixture lifecycle implementation and installation admission before serving the disposable instance",
       "hold": "ROOT::open:observe:credential-installation",
-      "missing": "Planned session-loss termination, typed start-failure classification and closed fixture-selection and entry-priority controls, followed by installed-build and public selection disclosure evidence.",
+      "missing": "Planned session-loss termination, typed start-failure classification and closed fixture-selection and entry-priority controls; health member admission and controls for its two feature configurations and failure-path distinction; followed by installed-build and public selection disclosure evidence.",
       "name": "ROOT::verif:api:fixture-activation",
       "owner": "Public API implementer and repository reviewer with installation and credential-entry owners",
       "path": "adr/018-public-api.md",
