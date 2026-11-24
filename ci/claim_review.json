@@ -66,6 +66,14 @@
       "review": "Read the changed carrier fixture assertions: citations now support both carriers, exhibitions cannot establish support, and property macro documentation remains an independently joined Rust carrier. Python commentary placement is delegated to the deployed linter."
     },
     {
+      "operation": "ci::test_design.Correspondence.test_malformed_qualified_release_refuses",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:malformed-qualified-release-refuses",
+      "before": "Malformed qualifiers refuse as selected and historical release names.",
+      "after": "Malformed qualifiers refuse as selected and historical release names.",
+      "review": "The closed grammar rejects missing ordinals, leading zeros, empty components, plus signs and uppercase names at both inputs."
+    },
+    {
       "operation": "ci::test_design.Correspondence.test_numeric_correspondence",
       "path": "ci/test_design.py",
       "claim": "ROOT::claim:design:numeric-displays-match-rational-operands",
@@ -80,6 +88,46 @@
       "before": "",
       "after": "Rendered numeric word fragments refuse while intact words, mathematical literals and measured units remain accepted.",
       "review": "Read the finite directed-rounding and rendered-word controls; they establish outward presentation and scoped prose refusals, without certifying authored numeric facts. Synthetic JSON datasets retain all parsed values with compact whitespace; every optimized command still rereads and revalidates its inputs, preserving all original mutation assertions."
+    },
+    {
+      "operation": "ci::test_design.Correspondence.test_qualified_release_joins_before_punctuation",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:qualified-release-joins-before-punctuation",
+      "before": "A qualified current mention and an older qualified row join before sentence punctuation.",
+      "after": "A qualified current mention and an older qualified row join before sentence punctuation.",
+      "review": "A tracked current draft and a tracked older qualified history row both end before full stops, and the complete row joins once with no refusal."
+    },
+    {
+      "operation": "ci::test_design.Correspondence.test_qualified_release_precedes_final",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:qualified-release-precedes-final",
+      "before": "A qualified release precedes its unqualified peer, never the reverse.",
+      "after": "A qualified release precedes its unqualified peer, never the reverse.",
+      "review": "The final release accepts draft.1 as history; draft.1 refuses the final release as history."
+    },
+    {
+      "operation": "ci::test_design.Correspondence.test_qualified_release_remains_distinct_from_final",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:qualified-release-is-distinct-from-final",
+      "before": "A draft name never equals its final name in edition and published-value checks.",
+      "after": "A draft name never equals its final name in edition and published-value checks.",
+      "review": "A tracked draft mention, publication dataset tags, published number tags and the external TAG each refuse against the selected final release."
+    },
+    {
+      "operation": "ci::test_design.Correspondence.test_qualified_selected_release_accepts_older_history",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:qualified-release-admits-older-history",
+      "before": "A qualified selection admits lower numbered and earlier qualified history.",
+      "after": "The history register orders lower numbered and earlier qualified releases before a qualified selection.",
+      "review": "The selected draft.10 accepts lower numbers, alpha.99 and draft.2 in the register order; a separate site joins occurrences to text."
+    },
+    {
+      "operation": "ci::test_design.Correspondence.test_qualified_selected_release_refuses_self_history",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:qualified-release-refuses-self-history",
+      "before": "A qualified release is never strictly older than itself.",
+      "after": "A qualified release is never strictly older than itself.",
+      "review": "A history row naming the selected draft.1 refuses before occurrence joining."
     },
     {
       "operation": "ci::test_design.Correspondence.test_release_projections",

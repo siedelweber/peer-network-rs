@@ -724,6 +724,124 @@ class Correspondence(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn(f'binary=2 exempt=2 historical={historical_count} refused=0', result.stdout)
 
+    def qualified_history(self, selected, releases):
+        from design import historical_references
+        register = self.root / 'ci/paper-history.json'
+        rows = [dict(path='history.md', line=f'Fixture from {release}.', release=release,
+                     **{'class': 'fixture-provenance'}, reason='Pins fixture provenance.', derived_from='')
+                for release in releases]
+        register.write_text(json.dumps(rows))
+        with patch('design.PAPER_HISTORY', register), patch('design.PAPER_TAG', selected):
+            return historical_references()
+
+    def test_qualified_selected_release_accepts_older_history(self):
+        """The history register orders lower numbered and earlier qualified releases before a qualified selection.
+        ´claim:design:qualified-release-admits-older-history´
+        ´test:integration:test-qualified-selected-release-accepts-older-history´
+        """
+        releases = ['network-v0.36.0', 'network-v0.37.0-alpha.99',
+                    'network-v0.37.0-draft.2']
+        self.assertEqual([row['release'] for row in self.qualified_history(
+            'network-v0.37.0-draft.10', releases)], releases)
+
+    def test_qualified_release_joins_before_punctuation(self):
+        """A qualified current mention and an older qualified row join before sentence punctuation.
+        ´claim:design:qualified-release-joins-before-punctuation´
+        ´test:integration:test-qualified-release-joins-before-punctuation´
+        """
+        from contextlib import redirect_stdout
+        from io import StringIO
+        from design import check_paper_editions
+        selected = 'network-v0.37.0-draft.1'
+        older = 'network-v0.37.0-alpha.99'
+        current = self.root / 'current.md'
+        historical = self.root / 'history.md'
+        current.write_text(f'Current paper {selected}.\n')
+        line = f'Fixture from {older}.'
+        historical.write_text(line + '\n')
+        git(self.root, 'add', 'current.md', 'history.md')
+        register = self.root / 'ci/paper-history.json'
+        register.write_text(json.dumps([dict(path=historical.as_posix(), line=line,
+                                             release=older, **{'class': 'fixture-provenance'},
+                                             reason='Pins fixture provenance.', derived_from='')]))
+        output = StringIO()
+        with patch('design.PAPER_HISTORY', register), patch('design.PAPER_TAG', selected), redirect_stdout(output):
+            check_paper_editions([current, historical])
+        self.assertIn('mentions=2 binary=0 exempt=0 historical=1 refused=0', output.getvalue())
+
+    def test_qualified_selected_release_refuses_self_history(self):
+        """A qualified release is never strictly older than itself.
+        ´claim:design:qualified-release-refuses-self-history´
+        ´test:integration:test-qualified-selected-release-refuses-self-history´
+        """
+        selected = 'network-v0.37.0-draft.1'
+        with self.assertRaisesRegex(ValueError, 'release is not strictly older'):
+            self.qualified_history(selected, [selected])
+
+    def test_qualified_release_precedes_final(self):
+        """A qualified release precedes its unqualified peer, never the reverse.
+        ´claim:design:qualified-release-precedes-final´
+        ´test:integration:test-qualified-release-precedes-final´
+        """
+        qualified = 'network-v0.37.0-draft.1'
+        final = 'network-v0.37.0'
+        self.assertEqual(self.qualified_history(final, [qualified])[0]['release'], qualified)
+        with self.assertRaisesRegex(ValueError, 'release is not strictly older'):
+            self.qualified_history(qualified, [final])
+
+    def test_malformed_qualified_release_refuses(self):
+        """Malformed qualifiers refuse as selected and historical release names.
+        ´claim:design:malformed-qualified-release-refuses´
+        ´test:integration:test-malformed-qualified-release-refuses´
+        """
+        from design import paper_edition_mentions
+        for malformed in ('network-v0.37.0-draft', 'network-v0.37.0-draft.01',
+                          'network-v0.37.0-draft..1', 'network-v0.37.0+draft.1',
+                          'network-v0.37.0-Draft.1', 'network-v0.37.0-draft.1-'):
+            with self.subTest(selected=malformed), self.assertRaisesRegex(ValueError, 'invalid selected release'):
+                self.qualified_history(malformed, [])
+            with self.subTest(history=malformed), self.assertRaisesRegex(ValueError, 'invalid release name'):
+                self.qualified_history('network-v1.0.0', [malformed])
+        for malformed in ('network-v0.37.0-draft..1', 'network-v0.37.0-draft.1-'):
+            self.assertEqual(paper_edition_mentions(malformed), ((1, malformed),))
+
+    def test_qualified_release_remains_distinct_from_final(self):
+        """A draft name never equals its final name in edition and published-value checks.
+        ´claim:design:qualified-release-is-distinct-from-final´
+        ´test:integration:test-qualified-release-remains-distinct-from-final´
+        """
+        from design import check_paper_editions, published_correspondence
+        qualified = 'network-v0.36.0-draft.1'
+        prose = self.root / 'draft.md'
+        prose.write_text(qualified + '\n')
+        with self.assertRaisesRegex(ValueError, 'stale paper edition'):
+            check_paper_editions([prose])
+        publication = self.root / 'docs/datasets/org.peer-network.design.publication.json'
+        original = publication.read_text()
+        for name in ('paper', 'questions'):
+            rows = json.loads(original)
+            next(row for row in rows['rows'] if row['name'] == name)['tag'] = qualified
+            publication.write_text(json.dumps(rows))
+            with self.subTest(dataset=name):
+                result = self.check()
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(f'{name}: paper release tag changed', result.stderr)
+        publication.write_text(original)
+        import tomllib
+        numbers = tomllib.loads((self.root / 'docs/inputs/numbers.toml').read_text())['rows']
+        for row in numbers:
+            if row.get('paper_tag') == PAPER_TAG:
+                row['paper_tag'] = qualified
+                break
+        with self.assertRaisesRegex(ValueError, 'missing or mismatched paper key/tag'):
+            published_correspondence(numbers)
+        values = self.root / 'values.json'
+        values.write_text('{}')
+        (self.root / 'TAG').write_text(qualified + '\n')
+        numbers = tomllib.loads((self.root / 'docs/inputs/numbers.toml').read_text())['rows']
+        with self.assertRaisesRegex(ValueError, 'missing or mismatched external TAG'):
+            published_correspondence(numbers, values)
+
     def historical_release_bindings(self):
         from design import check_paper_editions, historical_references
         source = 'Fixture derived from network-v0.1.0.'

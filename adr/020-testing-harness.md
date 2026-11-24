@@ -43,7 +43,7 @@
 | burn-records | active | integration | pn-records-rust | fast | 40 |
 | burn-verification | active | integration | pn-records-rust | fast | 40 |
 | ci::test_claims | active | unit | ci-python | fast | 26 |
-| ci::test_design | active | integration | ci-python | extended | 12 |
+| ci::test_design | active | integration | ci-python | extended | 18 |
 | ci::test_devperf | active | unit | ci-python | fast | 71 |
 | ci::test_discipline | active | integration | ci-python | fast | 41 |
 | ci::test_harness | active | unit | ci-python | fast | 16 |

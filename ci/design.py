@@ -53,6 +53,17 @@ PAPER_EDITION_FIXTURES = {
 
 PAPER_HISTORY = Path('ci/paper-history.json')
 PAPER_HISTORY_CLASSES = {'implemented-route', 'fixture-provenance', 'settled-question'}
+PAPER_RELEASE = re.compile(r'network-v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-([a-z][a-z0-9]*)\.([1-9][0-9]*))?')
+
+
+def paper_release_order(value):
+    """Order canonical release names without discarding a qualifier or its ordinal."""
+    match = PAPER_RELEASE.fullmatch(value) if isinstance(value, str) else None
+    if match is None:
+        return None
+    major, minor, patch, name, ordinal = match.groups()
+    numbers = (int(major), int(minor), int(patch))
+    return (*numbers, 1, '', 0) if name is None else (*numbers, 0, name, int(ordinal))
 
 
 def historical_references():
@@ -60,14 +71,18 @@ def historical_references():
     rows = json.loads(PAPER_HISTORY.read_text())
     if not isinstance(rows, list):
         raise ValueError('paper history: expected rows')
-    current = tuple(map(int, PAPER_TAG.removeprefix('network-v').split('.')))
+    current = paper_release_order(PAPER_TAG)
+    if current is None:
+        raise ValueError('paper history: invalid selected release')
     for row in rows:
         if not isinstance(row, dict) or set(row) != {'path', 'line', 'release', 'class', 'reason', 'derived_from'}:
             raise ValueError('paper history: invalid row fields')
         if not all(isinstance(value, str) for value in row.values()) or not row['reason'].strip():
             raise ValueError('paper history: invalid row text')
-        version = re.fullmatch(r'network-v(\d+)\.(\d+)\.(\d+)', row['release'])
-        if version is None or tuple(map(int, version.groups())) >= current:
+        version = paper_release_order(row['release'])
+        if version is None:
+            raise ValueError('paper history: invalid release name')
+        if version >= current:
             raise ValueError('paper history: release is not strictly older')
         if row['class'] not in PAPER_HISTORY_CLASSES:
             raise ValueError('paper history: unknown historical class')
@@ -143,7 +158,7 @@ def check_paper_editions(paths):
 def paper_edition_mentions(source):
     """Only identical bytes reuse lexical work; paths and the current tag remain checked."""
     return tuple((number, match.group()) for number, line in enumerate(source.splitlines(), 1)
-                 for match in re.finditer(r'network-v[0-9]+\.[0-9]+\.[0-9]+(?:[-+][a-z0-9.-]+)?', line, re.IGNORECASE))
+                 for match in re.finditer(r'network-v[0-9]+\.[0-9]+\.[0-9]+(?:[-+][a-z0-9.-]*[a-z0-9-])?', line, re.IGNORECASE))
 
 
 def bare_mint_pattern(labels):

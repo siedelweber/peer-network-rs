@@ -477,6 +477,12 @@
         "ci::test_design.Correspondence.test_pinned_decisions_under_optimization",
         "ci::test_design.Correspondence.test_release_projections",
         "ci::test_design.Correspondence.test_release_tags",
+        "ci::test_design.Correspondence.test_qualified_selected_release_accepts_older_history",
+        "ci::test_design.Correspondence.test_qualified_selected_release_refuses_self_history",
+        "ci::test_design.Correspondence.test_qualified_release_precedes_final",
+        "ci::test_design.Correspondence.test_qualified_release_joins_before_punctuation",
+        "ci::test_design.Correspondence.test_malformed_qualified_release_refuses",
+        "ci::test_design.Correspondence.test_qualified_release_remains_distinct_from_final",
         "ci::test_design.Correspondence.test_numeric_correspondence",
         "ci::test_design.Correspondence.test_numeric_word_fragments",
         "ci::test_design.Correspondence.test_tracked_prose_boundaries"
