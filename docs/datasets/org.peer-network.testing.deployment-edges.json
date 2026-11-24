@@ -757,6 +757,48 @@
     },
     {
       "conditional_on": "",
+      "reason": "This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+      "relation": "realizes",
+      "source": "ROOT::conv:lineage:paper-4",
+      "target": "def:graph:author-authority-oracle"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+      "relation": "realizes",
+      "source": "ROOT::conv:lineage:paper-5",
+      "target": "def:graph:authority-history-inputs"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+      "relation": "realizes",
+      "source": "ROOT::conv:lineage:paper-6",
+      "target": "post:graph:public-author-authority-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+      "relation": "realizes",
+      "source": "ROOT::conv:lineage:paper-7",
+      "target": "def:comparator:burn-history-inputs"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+      "relation": "realizes",
+      "source": "ROOT::conv:lineage:paper-7",
+      "target": "def:comparator:burn-provenance-oracle"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+      "relation": "realizes",
+      "source": "ROOT::conv:lineage:paper-8",
+      "target": "post:comparator:public-provenance-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "The construction uses the defined counter and sequence formats, not an inference that format establishes entropy.",
       "relation": "realizes",
       "source": "ROOT::dec:crypto:authentication-custody",

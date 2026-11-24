@@ -8,7 +8,9 @@
 
 **Section (design)** · `sec:foundation:area-design` If the implementation design fails, locally correct crates can disagree on public inputs, numerical verdicts or replay and cannot establish the concept as a whole. The design (`spec:design:implementation`) fixes contracts, mechanisms and the evidence required before their claims are implemented.
 
-**Section (author)** · `sec:foundation:area-author` Identity, token control and signing delegation have different authority. The author-token concept (`spec:author:concept`) explains their relation in an epoch, with qualification, retirement and implementation holds at their existing owners.
+**Section (lineage)** · `sec:foundation:area-lineage` The decided and unbuilt lineage concept (`spec:lineage:concept`) relates permanent Actor identity, counted signing windows, burns and marker recognition; complete chain evidence and the publication boundary remain with their named admission owners.
+
+**Section (author)** · `sec:foundation:area-author` Identity, token control and signing delegation have different authority. The author-token concept (`spec:author:concept`) explains their relation in an epoch, with qualification, retirement and implementation holds at their existing owners. The lineage concept (`spec:lineage:concept`) preserves this identity and evidence distinction while deciding the designed and unbuilt intersection-window successor; the present admission remains until the identity and development-profile owners admit its replacing cut.
 
 **Section (budget)** · `sec:foundation:area-budget` If resource admission loses its units, scope or consumed work, a refusal can hide expenditure or grant permission twice. The budgeting concept (`spec:budget:concept`) states the decided allocation and work contract, its process-containment stage and the implementations still owed.
 

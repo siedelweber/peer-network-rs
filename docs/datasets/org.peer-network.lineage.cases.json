@@ -1,0 +1,125 @@
+{
+  "namespace": "org.peer-network.lineage.cases",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "name": "first-intersection",
+      "text": "Genesis-to-intersection declarations become eligible when it reaches the marker. Decided; genesis construction remains open.",
+      "title": "First intersection"
+    },
+    {
+      "name": "declare-then-intersect",
+      "text": "Declarations before or on that intersection enter its window; declaration alone does not activate a key. Decided.",
+      "title": "Declare, then intersect"
+    },
+    {
+      "name": "change-keys",
+      "text": "A new counted intersection closes a new window; keys absent from it cease to authorize the following epoch. Decided; the latest consecutive window supplies the set, not a union of windows.",
+      "title": "Change keys"
+    },
+    {
+      "name": "window-with-no-declaration",
+      "text": "No key authorizes an act until a new counted intersection with declarations. Decided.",
+      "title": "Window with no declaration"
+    },
+    {
+      "name": "declarations-after-latest-counted-intersection",
+      "text": "No effect on this epoch's authority. Decided.",
+      "title": "Declarations after latest counted intersection"
+    },
+    {
+      "name": "later-intersection-merged-earlier-missing",
+      "text": "Later does not count; latest fully reached initial segment determines keys. Decided.",
+      "title": "Later intersection merged, earlier missing"
+    },
+    {
+      "name": "burn-before-any-counted-intersection",
+      "text": "It can wait; when a reached intersection exists, the burn is recognized if its own lineage also reaches the marker. Decided predicates; reached does not mean counted.",
+      "title": "Burn before any counted intersection"
+    },
+    {
+      "name": "third-party-burns-for-actor",
+      "text": "Attribution follows the output identifier, not the funder's identity; no signature delegation follows from paying. Decided, with token qualification required.",
+      "title": "Third party burns for Actor"
+    },
+    {
+      "name": "several-burns-in-one-transaction",
+      "text": "Each output is a separate destruction; none duplicates another by sharing a transaction. Decided; ordinary validity and representation admission remain.",
+      "title": "Several burns in one transaction"
+    },
+    {
+      "name": "burn-in-marker-transaction",
+      "text": "Reflexive reach includes it, provided the Actor-intersection predicate holds. Reflexive interpretation applies at the first marker too; transaction construction remains design work.",
+      "title": "Burn in marker transaction"
+    },
+    {
+      "name": "old-key-valid-last-epoch-absent-now",
+      "text": "Oracle does not authorize it now; a cryptographically valid signature alone is not local admission. Decided.",
+      "title": "Old key valid last epoch, absent now"
+    },
+    {
+      "name": "newly-declared-key-not-counted",
+      "text": "Same refusal of authority, without deleting the declaration or changing older acts. Decided.",
+      "title": "Newly declared key not counted"
+    },
+    {
+      "name": "no-new-counted-intersection-at-next-marker",
+      "text": "Same latest consecutive window, hence the same key set. Decided persistence.",
+      "title": "No new counted intersection at next marker"
+    },
+    {
+      "name": "third-parties-grow-ancestry",
+      "text": "Reading and retry costs grow; no partial walk may be labelled complete. Decided permission plus evidence consequence.",
+      "title": "Third parties grow ancestry"
+    },
+    {
+      "name": "token-lost",
+      "text": "The latest counted key set persists without a new token move; loss of token control alone does not revoke those keys. Decided persistence; no recovery promise and unsupported spends still end the supported path.",
+      "title": "Token lost"
+    },
+    {
+      "name": "token-under-another-s-control",
+      "text": "That control can authorize later declarations/intersections, not reassign prior burn or alter earlier recorded acts. Concept consequence of permanent identity and windows.",
+      "title": "Token under another's control"
+    },
+    {
+      "name": "chain-reorganization",
+      "text": "Re-evaluate applicable oracle evidence; old closure results remain calculations over old inputs. Paper oracle rule; deployment finality response remains separately owned.",
+      "title": "Chain reorganization"
+    },
+    {
+      "name": "first-marker",
+      "text": "No predecessor movement to compare; its reached burns are recognized by the same predicates as at every marker and supply the following epoch's gross amounts. Decided recognition; issuance construction and release-boundary correspondence remain design work.",
+      "title": "First marker"
+    },
+    {
+      "name": "burn-existing-before-the-first-marker",
+      "text": "Recognized there when its burn and Actor-intersection lineage outputs are reached; included in the epoch after that marker, without a temporal exclusion. Decided uniform recognition.",
+      "title": "Burn existing before the first marker"
+    },
+    {
+      "name": "several-burns-or-a-burn-at-a-merge",
+      "text": "One deposit belongs to the resulting lineage output, not each burn; no payout is owed. Decided deposit convention.",
+      "title": "Several burns or a burn at a merge"
+    },
+    {
+      "name": "off-lineage-marker-movement",
+      "text": "Stop epoch chain, publish no automatic continuation; manual intervention not specified. Decided halt; intervention not said.",
+      "title": "Off-lineage marker movement"
+    },
+    {
+      "name": "source-or-merge-with-no-burn",
+      "text": "Zero burn contribution, while its ancestry and token intersections still matter. Concept consequence.",
+      "title": "Source or merge with no burn"
+    },
+    {
+      "name": "missing-token-path-or-missing-merge-input",
+      "text": "Valid partial paths retain their membership evidence and recognized burns supply a lower bound; an excess over the committed amount is a discrepancy, while exact totals and authority remain unavailable. Paper evidence distinction and proposed incomplete rule.",
+      "title": "Missing token path or missing merge input"
+    }
+  ]
+}

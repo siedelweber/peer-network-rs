@@ -798,6 +798,8 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "ROOT::arg:lineage:origin-calculation",
+        "ROOT::conv:lineage:paper-3",
         "ROOT::dec:decomposition:burn",
         "ROOT::dec:design:burn-boundary",
         "ROOT::req:vision:burn-boundary",
@@ -1222,10 +1224,12 @@
       "record_routes": [],
       "records": [
         "ROOT::amend:devnet:marker-settlement",
+        "ROOT::conv:lineage:paper-10",
         "ROOT::conv:vision:burn-realization",
         "ROOT::conv:vision:deployment-declarations",
         "ROOT::dec:design:burn-boundary",
         "ROOT::model:design:declarations",
+        "ROOT::open:lineage:selection",
         "ROOT::req:vision:burn-boundary"
       ],
       "routes": [],
@@ -1266,6 +1270,7 @@
         "RECORDS::rec:burn:live-marker-evidence",
         "RECORDS::rule:burn:live-marker-settlement",
         "RECORDS::verif:burn:live-marker-semantics",
+        "ROOT::conv:lineage:paper-11",
         "ROOT::dec:design:burn-boundary",
         "ROOT::rule:design:marker-recognition"
       ],
@@ -1314,7 +1319,10 @@
         "RECORDS::rule:burn:live-marker-settlement",
         "RECORDS::verif:burn:live-marker-semantics",
         "ROOT::amend:design:test-marker-policy",
-        "ROOT::dec:design:burn-boundary"
+        "ROOT::arg:lineage:origin-calculation",
+        "ROOT::conv:lineage:paper-12",
+        "ROOT::dec:design:burn-boundary",
+        "ROOT::rem:lineage:commitment-4"
       ],
       "routes": [],
       "status": "designed",
@@ -1355,6 +1363,7 @@
         "RECORDS::rule:burn:live-marker-settlement",
         "RECORDS::verif:burn:live-marker-semantics",
         "ROOT::amend:design:test-marker-policy",
+        "ROOT::conv:lineage:paper-13",
         "ROOT::dec:design:burn-boundary",
         "ROOT::rule:design:marker-recognition"
       ],
@@ -1404,7 +1413,9 @@
         "RECORDS::rule:burn:live-marker-settlement",
         "RECORDS::verif:burn:live-marker-semantics",
         "ROOT::alg:design:burn-snapshot",
-        "ROOT::dec:design:burn-boundary"
+        "ROOT::conv:lineage:paper-14",
+        "ROOT::dec:design:burn-boundary",
+        "ROOT::rem:lineage:commitment-4"
       ],
       "routes": [
         {
@@ -1440,6 +1451,7 @@
         "EPOCH::def:compiler:final-ledger",
         "EPOCH::verif:admission:live-publication",
         "ROOT::alg:design:burn-snapshot",
+        "ROOT::conv:lineage:paper-16",
         "ROOT::dec:design:burn-boundary",
         "ROOT::rule:design:closure-marker-registration"
       ],
@@ -1493,6 +1505,7 @@
       "record_routes": [],
       "records": [
         "ROOT::alg:design:burn-snapshot",
+        "ROOT::arg:lineage:origin-calculation",
         "ROOT::dec:design:burn-boundary"
       ],
       "routes": [],
@@ -34931,6 +34944,7 @@
       "record_routes": [],
       "records": [
         "RECORDS::def:burn:recognition",
+        "ROOT::conv:lineage:paper-9",
         "ROOT::rule:design:closure-marker-registration",
         "ROOT::rule:design:marker-recognition",
         "ROOT::verif:design:marker-registration-cases"
@@ -34962,6 +34976,9 @@
         "EPOCH::def:compiler:final-ledger",
         "RECORDS::def:burn:recognition",
         "ROOT::alg:design:ledger",
+        "ROOT::arg:lineage:origin-calculation",
+        "ROOT::conv:lineage:paper-9",
+        "ROOT::open:lineage:origin",
         "ROOT::rule:design:closure-marker-registration",
         "ROOT::rule:design:marker-recognition",
         "ROOT::verif:design:marker-registration-cases"
@@ -34993,6 +35010,7 @@
         "EPOCH::verif:admission:live-publication",
         "RECORDS::def:burn:recognition",
         "ROOT::alg:design:ledger",
+        "ROOT::conv:lineage:paper-15",
         "ROOT::rule:design:closure-marker-registration",
         "ROOT::verif:design:marker-registration-cases"
       ],
@@ -35037,7 +35055,8 @@
       "record_routes": [],
       "records": [
         "EPOCH::rule:admission:live-publication",
-        "EPOCH::verif:admission:live-publication"
+        "EPOCH::verif:admission:live-publication",
+        "ROOT::conv:lineage:paper-17"
       ],
       "routes": [
         {
@@ -35553,8 +35572,10 @@
         "ci/deployment_claims.py",
         "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/design/lineage.md",
         "docs/inputs/deployment-edges.toml",
-        "docs/templates/adr/006-identity-adjudication.md.j2"
+        "docs/templates/adr/006-identity-adjudication.md.j2",
+        "docs/templates/docs/design/lineage.md.j2"
       ],
       "holds": [],
       "kind": "type",
@@ -35563,6 +35584,10 @@
         {
           "clause": "Claimed part: This admits a bounded declaration representation and its comparison, not a selected external case or its truth.",
           "record": "ROOT::amend:identity:paper-case-declaration"
+        },
+        {
+          "clause": "Claimed part: This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+          "record": "ROOT::conv:lineage:paper-7"
         }
       ],
       "record_granular": 0,
@@ -35596,12 +35621,21 @@
       "crate": "pn-host",
       "elsewhere": [
         "ci/deployment_claims.py",
-        "ci/design.py"
+        "ci/design.py",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/design/lineage.md",
+        "docs/inputs/deployment-edges.toml",
+        "docs/templates/docs/design/lineage.md.j2"
       ],
       "holds": [],
       "kind": "policy",
       "label": "post:comparator:public-provenance-replay",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+          "record": "ROOT::conv:lineage:paper-8"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -35615,12 +35649,21 @@
       "crate": "pn-host",
       "elsewhere": [
         "ci/deployment_claims.py",
-        "ci/design.py"
+        "ci/design.py",
+        "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/design/lineage.md",
+        "docs/inputs/deployment-edges.toml",
+        "docs/templates/docs/design/lineage.md.j2"
       ],
       "holds": [],
       "kind": "type",
       "label": "def:comparator:burn-history-inputs",
-      "portions": [],
+      "portions": [
+        {
+          "clause": "Claimed part: This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+          "record": "ROOT::conv:lineage:paper-7"
+        }
+      ],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -35639,10 +35682,12 @@
         "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/author-token.md",
+        "docs/design/lineage.md",
         "docs/inputs/deployment-edges.toml",
         "docs/templates/adr/006-identity-adjudication.md.j2",
         "docs/templates/adr/019-development-network.md.j2",
-        "docs/templates/docs/design/author-token.md.j2"
+        "docs/templates/docs/design/author-token.md.j2",
+        "docs/templates/docs/design/lineage.md.j2"
       ],
       "holds": [],
       "kind": "type",
@@ -35655,6 +35700,10 @@
         {
           "clause": "Claimed part: This compares the paper case with the separate local extension without binding that case or asserting external authority.",
           "record": "ROOT::conv:author:paper"
+        },
+        {
+          "clause": "Claimed part: This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+          "record": "ROOT::conv:lineage:paper-4"
         },
         {
           "clause": "Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
@@ -35685,13 +35734,19 @@
         "ci/deployment_claims.py",
         "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/design/lineage.md",
         "docs/inputs/deployment-edges.toml",
-        "docs/templates/adr/019-development-network.md.j2"
+        "docs/templates/adr/019-development-network.md.j2",
+        "docs/templates/docs/design/lineage.md.j2"
       ],
       "holds": [],
       "kind": "type",
       "label": "def:graph:authority-history-inputs",
       "portions": [
+        {
+          "clause": "Claimed part: This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+          "record": "ROOT::conv:lineage:paper-5"
+        },
         {
           "clause": "Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
           "record": "ROOT::dec:devnet:author-authority-case"
@@ -35713,13 +35768,19 @@
         "ci/deployment_claims.py",
         "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
+        "docs/design/lineage.md",
         "docs/inputs/deployment-edges.toml",
-        "docs/templates/adr/019-development-network.md.j2"
+        "docs/templates/adr/019-development-network.md.j2",
+        "docs/templates/docs/design/lineage.md.j2"
       ],
       "holds": [],
       "kind": "policy",
       "label": "post:graph:public-author-authority-replay",
       "portions": [
+        {
+          "clause": "Claimed part: This compares only the stated material boundary with the unbuilt concept; it asserts no external truth, execution or bound paper case.",
+          "record": "ROOT::conv:lineage:paper-6"
+        },
         {
           "clause": "Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
           "record": "ROOT::dec:devnet:author-authority-case"
@@ -35780,6 +35841,7 @@
       "records": [
         "ROOT::amend:decomposition:marker-settlement",
         "ROOT::amend:devnet:marker-settlement",
+        "ROOT::conv:lineage:paper-18",
         "ROOT::dec:design:burn-boundary",
         "ROOT::req:vision:burn-boundary",
         "ROOT::verif:design:burn-disclosures"
@@ -36458,9 +36520,12 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::arg:lineage:origin-calculation",
+        "ROOT::conv:lineage:paper-1"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -36492,9 +36557,11 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::conv:lineage:paper-2"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -37898,15 +37965,15 @@
     },
     {
       "category": "total",
-      "designed": 416,
+      "designed": 418,
       "held": 69,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "416",
+          "exact": "418",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "416",
+          "num": "418",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37951,10 +38018,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "885",
+          "exact": "883",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "885",
+          "num": "883",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37993,7 +38060,7 @@
       "record_granular": 33,
       "tentative": 21,
       "total": 1405,
-      "unassigned": 885
+      "unassigned": 883
     },
     {
       "category": "total",
@@ -38789,15 +38856,15 @@
     },
     {
       "category": "crate",
-      "designed": 76,
+      "designed": 78,
       "held": 17,
       "name": "pn-records",
       "number_forms": {
         "designed": {
-          "exact": "76",
+          "exact": "78",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "76",
+          "num": "78",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38842,10 +38909,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "138",
+          "exact": "136",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "138",
+          "num": "136",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38884,7 +38951,7 @@
       "record_granular": 7,
       "tentative": 6,
       "total": 233,
-      "unassigned": 138
+      "unassigned": 136
     },
     {
       "category": "crate",
@@ -39779,15 +39846,15 @@
     },
     {
       "category": "kind",
-      "designed": 63,
+      "designed": 64,
       "held": 26,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "63",
+          "exact": "64",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "63",
+          "num": "64",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39832,10 +39899,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "229",
+          "exact": "228",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "229",
+          "num": "228",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39874,7 +39941,7 @@
       "record_granular": 4,
       "tentative": 12,
       "total": 321,
-      "unassigned": 229
+      "unassigned": 228
     },
     {
       "category": "kind",
@@ -39977,15 +40044,15 @@
     },
     {
       "category": "kind",
-      "designed": 51,
+      "designed": 52,
       "held": 9,
       "name": "type",
       "number_forms": {
         "designed": {
-          "exact": "51",
+          "exact": "52",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "51",
+          "num": "52",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40030,10 +40097,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "40",
+          "exact": "39",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "40",
+          "num": "39",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40072,7 +40139,7 @@
       "record_granular": 5,
       "tentative": 0,
       "total": 101,
-      "unassigned": 40
+      "unassigned": 39
     },
     {
       "category": "bite",
@@ -41165,15 +41232,15 @@
     },
     {
       "category": "bite",
-      "designed": 303,
+      "designed": 305,
       "held": 30,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "303",
+          "exact": "305",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "303",
+          "num": "305",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41218,10 +41285,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 203",
+          "exact": "1 201",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 203",
+          "num": "1 201",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41260,7 +41327,7 @@
       "record_granular": 21,
       "tentative": 34,
       "total": 1559,
-      "unassigned": 1203
+      "unassigned": 1201
     },
     {
       "category": "classification-identities",
@@ -41931,22 +41998,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 214,
+      "exact_citing": 231,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "214",
+          "exact": "231",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "214",
+          "num": "231",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 876",
+          "exact": "1 999",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 876",
+          "num": "1 999",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41961,7 +42028,7 @@
           "exact_digits": 32
         }
       },
-      "total": 1876
+      "total": 1999
     },
     {
       "category": "record-coverage",
