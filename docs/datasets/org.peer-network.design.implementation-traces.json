@@ -26,34 +26,33 @@
     {
       "cases": "Exercise missing samples, history finality under the published settlement depth and assumptions, equality to pinned amounts at or below that depth, provenance, denomination and terms, separate event costs, applicable operator proof or explained absence, and empty pre-opening capacity. Accept positive unit costs below one. Challenge nonempty genesis acceptance and opening credit from lineage alone, skipped or duplicate successors, changed policy, copied markers without lineage, unavailable openings, invalid or out-of-lineage acceptance, dropped predecessors, duplicate destruction aliases and changed addresses; include delayed acceptance and an empty accepted increment. Distinguish market repricing from unit recoinage and reject unit-cost multiplication of action-denominated quantities while accepting numeraire-converted burn quantities.",
       "conformance": [
-        "realizes{``subsec:deployment:realization-obligations``; The finite-history oracle compares supplied disclosures and recognition; external destruction and settlement remain an explicit hold.}",
-        "realizes{``case:deployment:realization-obligations-occlusion``; The finite public-input check detects this missing or changed disclosure, without asserting external acquisition truth.}"
+        "realizes{``subsec:deployment:realization-observations``; The finite-history oracle compares supplied disclosures and recognition; external destruction and settlement remain an explicit hold.}"
       ],
       "decision": "dec:design:burn-boundary",
       "fixture": "burn-disclosures",
       "hold": "External destruction and settlement assurance remain deployment obligations.",
       "labels": [
         "rem:comparator:burn-realization-audit-evidence",
-        "def:comparator:burn-interface",
-        "subsec:deployment:realization-obligations",
-        "post:comparator:marker-bound-settlement",
+        "def:comparator:frame-inputs",
+        "subsec:deployment:realization-observations",
+        "post:comparator:marker-bound-finalization",
         "cond:comparator:marker-lineage-succession",
         "cond:comparator:marker-network-acceptance",
         "cond:comparator:marker-causal-dependence",
         "cond:comparator:marker-single-count",
         "def:comparator:marker-burn-snapshot",
         "eq:comparator:marker-burn-snapshot",
-        "prop:comparator:marker-settlement-consistency",
+        "prop:comparator:marker-finalization-consistency",
         "cond:comparator:burn-unit-cost-projection",
         "cond:comparator:burn-non-transferability",
-        "cond:comparator:burn-settlement-amount",
+        "cond:comparator:actor-entry-boundary-amount",
         "cond:comparator:burn-revision-floor",
-        "cond:comparator:burn-bootstrap-capacity",
-        "cond:comparator:burn-operator-audit-bound"
+        "def:comparator:bootstrap-capacity",
+        "cond:comparator:actor-entry-no-privileged-accrual"
       ],
       "name": "burn-boundary",
       "oracle": "Independent finite-history enumeration of lineage, policy-defined accepted sets and distinct destruction identities, plus a dimensioned cost and disclosure checklist.",
-      "property": "A recognized marker and fixed policy determine one gross snapshot and increment, counting each accepted destruction once; no later observation changes it. Gross monotonicity holds only along the same history, not for debited residual balances. Recognition supplies no liveness guarantee or fifth monetary input. The four mathematical burn-interface objects remain separate from this repository’s retained local audit disclosures under ``rem:comparator:burn-realization-audit-evidence``; no audit standard is adopted.",
+      "property": "A recognized marker and fixed policy determine one gross snapshot and increment, counting each accepted destruction once; no later observation changes it. Gross monotonicity holds only along the same history, not for debited residual balances. Recognition supplies no liveness guarantee or fifth monetary input. The historical four-object burn carrier and retained audit disclosures remain this repository’s local interface; the paper’s calculation instead consumes supplied Actor entries and named calculation inputs under ``def:comparator:frame-inputs``, and no audit standard is adopted under ``rem:comparator:burn-realization-audit-evidence``.",
       "requirements": [
         "burn-boundary"
       ],
@@ -147,7 +146,7 @@
         "rem:gates:standing-safety-scope",
         "cor:comparator:sybil-resistance-is-faithfulness",
         "cond:comparator:burn-non-transferability",
-        "thm:epoch:burn-response",
+        "thm:epoch:frame-gross-response",
         "thm:epoch:split-observational-equivalence"
       ],
       "name": "conservation",
@@ -302,7 +301,7 @@
         "rem:deployment:completeness-safety-orthogonal",
         "post:network:host-contract",
         "rem:graph:authentication-realization-out-of-scope",
-        "prop:comparator:marker-settlement-consistency"
+        "prop:comparator:marker-finalization-consistency"
       ],
       "name": "replay",
       "oracle": "A public-input verifier and independently implemented small-case mathematics, not a host-cache comparison.",

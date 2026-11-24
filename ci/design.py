@@ -325,18 +325,58 @@ def check_rendered_spacing(paths, pending=PENDING_RENDERED_SPACING, *, whole_tre
 
 MATERIAL_CLASSES = {'closure', 'oracle', 'courtesy', 'mathematics'}
 MATERIAL_EXCEPTIONS = {
+    'abs:abstract': 'courtesy',
+    'app:deployment': 'courtesy',
+    'case:comparator:unmatched-source-claim': 'oracle',
     'case:deployment:concealment-entropy-client-generated': 'courtesy',
     'case:deployment:concealment-entropy-operator-generated': 'courtesy',
     'case:deployment:concealment-entropy-secret-derived': 'courtesy',
     'case:deployment:concealment-entropy-unassigned-custody': 'courtesy',
-    'case:deployment:realization-obligations-mirror': 'courtesy',
-    'case:deployment:realization-obligations-occlusion': 'courtesy',
-    'case:deployment:realization-obligations-pointer': 'courtesy',
-    'case:deployment:realization-obligations-snapshot': 'courtesy',
+    'case:deployment:device-local-depth-four': 'courtesy',
+    'case:deployment:device-local-depth-six': 'courtesy',
+    'case:deployment:device-local-depth-three': 'courtesy',
+    'case:deployment:device-local-server-assisted': 'courtesy',
+    'case:deployment:public-availability-api-polling': 'courtesy',
+    'case:deployment:public-availability-around-creator': 'courtesy',
+    'case:deployment:public-availability-gated-access': 'courtesy',
+    'case:deployment:public-availability-gossip': 'courtesy',
+    'case:deployment:public-availability-snapshot-delta': 'courtesy',
+    'case:deployment:public-availability-streaming': 'courtesy',
+    'case:deployment:public-availability-through-creator': 'courtesy',
+    'case:deployment:realization-observations-finality-breach-follow': 'courtesy',
+    'case:deployment:realization-observations-finality-breach-reanchor': 'courtesy',
+    'case:deployment:transparency-of-protocol-formulas-edition-fixed': 'courtesy',
+    'case:deployment:transparency-of-protocol-formulas-scheduled-vote': 'courtesy',
+    'case:deployment:transparency-of-protocol-formulas-silent-tuning': 'courtesy',
+    'case:deployment:transparency-of-protocol-formulas-time-locked': 'courtesy',
     'case:graph:act-dependency-projection-full': 'courtesy',
     'case:graph:act-dependency-projection-full-empty': 'courtesy',
     'case:graph:act-dependency-projection-tombstoned': 'courtesy',
+    'case:necessity:stance-marginal-reputation-parity-reputation': 'courtesy',
+    'cond:comparator:burn-bindability': 'oracle',
+    'cond:comparator:burn-conservative-publication': 'oracle',
+    'cond:comparator:burn-costly-append-only-record': 'oracle',
+    'cond:comparator:burn-exogenous-origin': 'oracle',
+    'cond:comparator:burn-finalization-depth': 'oracle',
+    'cond:comparator:burn-finalization-pin': 'oracle',
+    'cond:comparator:burn-neutrality': 'oracle',
+    'cond:comparator:burn-no-privileged-accrual': 'oracle',
+    'cond:comparator:burn-non-negativity': 'oracle',
+    'cond:comparator:burn-non-transferability': 'oracle',
+    'cond:comparator:burn-pinned-monotonicity': 'oracle',
+    'cond:comparator:burn-provenance-auditability': 'oracle',
+    'cond:comparator:burn-revision-floor': 'oracle',
+    'cond:comparator:burn-unit-cost-projection': 'oracle',
+    'cond:comparator:finalized-burn-amount': 'oracle',
+    'cond:comparator:marker-causal-dependence': 'oracle',
+    'cond:comparator:marker-epoch-registration': 'oracle',
+    'cond:comparator:marker-lineage-succession': 'oracle',
+    'cond:comparator:marker-network-acceptance': 'oracle',
+    'cond:comparator:marker-single-count': 'oracle',
+    'cond:comparator:source-edge-event': 'courtesy',
+    'cond:deployment:boundary-search-evidence': 'courtesy',
     'cond:deployment:cadence-maturity': 'courtesy',
+    'cond:deployment:certificate-monitoring': 'courtesy',
     'cond:deployment:complete-act-conformance': 'courtesy',
     'cond:deployment:controller-performance': 'courtesy',
     'cond:deployment:emission-experience': 'courtesy',
@@ -344,9 +384,22 @@ MATERIAL_EXCEPTIONS = {
     'cond:deployment:payload-cache-envelope': 'courtesy',
     'cond:deployment:standing-work': 'courtesy',
     'cond:deployment:terminal-regression': 'courtesy',
+    'cond:deployment:title-certificate-monitoring': 'courtesy',
+    'def:comparator:bootstrap-capacity': 'oracle',
+    'def:comparator:burn-accumulator': 'oracle',
+    'def:comparator:burn-history-inputs': 'oracle',
+    'def:comparator:burn-primitive': 'oracle',
+    'def:comparator:burn-projection': 'oracle',
+    'def:comparator:burn-provenance-oracle': 'oracle',
+    'def:comparator:epoch-marker': 'oracle',
+    'def:comparator:marker-burn-snapshot': 'oracle',
+    'def:deployment:author-authority-validity-projection': 'oracle',
+    'def:deployment:provenance-validity-projection': 'oracle',
     'def:graph:act-dependency-tombstone': 'courtesy',
     'def:graph:act-payload-controller': 'courtesy',
     'def:graph:act-payload-state': 'courtesy',
+    'def:graph:author-authority-oracle': 'oracle',
+    'def:graph:authority-history-inputs': 'oracle',
     'def:graph:canonical-erasure-default': 'courtesy',
     'def:graph:carriage': 'courtesy',
     'def:graph:courtesy-handshake': 'courtesy',
@@ -355,35 +408,103 @@ MATERIAL_EXCEPTIONS = {
     'def:graph:holder': 'courtesy',
     'def:graph:requested-publication-intent': 'courtesy',
     'def:graph:storage': 'courtesy',
+    'eq:comparator:admission-benchmark-deposits': 'oracle',
+    'eq:comparator:marker-burn-snapshot': 'oracle',
     'gloss:graph:blinding-value': 'courtesy',
     'gloss:graph:commitment': 'courtesy',
     'gloss:graph:opening': 'courtesy',
     'gloss:graph:peek': 'courtesy',
+    'ins:introduction:comparator-made-human': 'courtesy',
+    'ins:introduction:equal-among-peers': 'courtesy',
+    'ins:introduction:every-platform-compares': 'courtesy',
+    'ins:introduction:neutrality-is-dignity': 'courtesy',
+    'ins:introduction:no-escape-velocity': 'courtesy',
+    'ins:introduction:only-faithful-coordinate': 'courtesy',
+    'ins:introduction:peer-claim-scope': 'courtesy',
+    'ins:introduction:price-not-detector': 'courtesy',
+    'ins:introduction:right-to-leave': 'courtesy',
+    'ins:introduction:tcp-is-unpriced-neutrality': 'courtesy',
+    'ins:introduction:the-cut-no-mechanism-can-make': 'courtesy',
+    'ins:introduction:the-detector': 'courtesy',
+    'ins:introduction:the-floor-we-name': 'courtesy',
+    'ins:introduction:vouch-not-check': 'courtesy',
+    'ins:introduction:who-owns-the-frame': 'courtesy',
+    'ins:introduction:wikipedia-is-public-auditability': 'courtesy',
+    'motto:motto': 'courtesy',
+    'post:comparator:accountability-cost': 'courtesy',
+    'post:comparator:burn-primitive': 'oracle',
+    'post:comparator:marker-bound-finalization': 'oracle',
+    'post:comparator:public-provenance-replay': 'oracle',
+    'post:deployment:calibration-evidence': 'courtesy',
+    'post:deployment:centralized-monitoring': 'courtesy',
+    'post:deployment:rejected-verdicts': 'courtesy',
     'post:deployment:verdict-issuance': 'courtesy',
+    'post:graph:public-author-authority-replay': 'oracle',
+    'post:introduction:irrevocability': 'oracle',
+    'post:introduction:public-accessibility': 'oracle',
+    'prop:comparator:marker-finalization-consistency': 'oracle',
     'rem:comparator:burn-realization-audit-evidence': 'courtesy',
+    'rem:comparator:closing-survey': 'courtesy',
+    'rem:comparator:external-outlay-projection': 'oracle',
+    'rem:comparator:external-value-necessity': 'oracle',
+    'rem:comparator:finality-breach-continuity': 'oracle',
+    'rem:comparator:numeraire-fiat-choice': 'courtesy',
+    'rem:comparator:pre-opening-capacity-warning': 'oracle',
+    'rem:comparator:sincere-audit-benefit': 'courtesy',
+    'rem:comparator:source-backing-discharge': 'oracle',
+    'rem:comparator:source-faithfulness-interpretation': 'courtesy',
+    'rem:comparator:source-limit-survey': 'courtesy',
+    'rem:comparator:surface-readings': 'oracle',
     'rem:deployment:boundary-policy-oversight': 'courtesy',
     'rem:deployment:boundary-search-courtesies': 'courtesy',
     'rem:deployment:calibration-publication-conduct': 'courtesy',
+    'rem:deployment:calibration-publication-practice': 'courtesy',
+    'rem:deployment:canonical-byte-encoding-practice': 'courtesy',
     'rem:deployment:canonical-encoding-oversight': 'courtesy',
     'rem:deployment:centralized-monitoring-conduct': 'courtesy',
     'rem:deployment:certificate-monitoring-courtesies': 'courtesy',
+    'rem:deployment:standing-publication-practice': 'courtesy',
     'rem:deployment:title-certificate-monitoring-courtesies': 'courtesy',
     'rem:deployment:wall-calibration-oversight': 'courtesy',
+    'rem:gates:optional-guild-funding': 'courtesy',
     'rem:graph:act-payload-custody-phases': 'courtesy',
     'rem:graph:dependency-nonce-concealment': 'courtesy',
     'rem:graph:payload-size-not-act-cost': 'courtesy',
+    'rem:graph:settlement-reputation': 'courtesy',
+    'rem:introduction:mechanism-agnostic': 'courtesy',
+    'rem:network:non-adoption-declaration-courtesy': 'courtesy',
+    'rem:network:optional-host-conduct': 'courtesy',
+    'rem:nodes:optional-bid-reputation': 'courtesy',
+    'rem:nodes:optional-conduct-readouts': 'courtesy',
+    'rem:verification:author-authority-oracle-witness': 'oracle',
+    'sec:introduction': 'courtesy',
+    'subsec:comparator:burn-primitive': 'oracle',
+    'subsec:deployment:calibration-declarations': 'courtesy',
+    'subsec:deployment:calibration-evidence': 'courtesy',
+    'subsec:deployment:centralized-monitoring': 'courtesy',
     'subsec:deployment:concealment-entropy': 'courtesy',
-    'subsec:deployment:realization-obligations': 'courtesy',
+    'subsec:deployment:device-local': 'courtesy',
+    'subsec:deployment:public-availability': 'courtesy',
+    'subsec:deployment:realization-observations': 'courtesy',
+    'subsec:deployment:transparency-of-protocol-formulas': 'courtesy',
+    'subsec:introduction:captured-comparator': 'courtesy',
+    'subsec:introduction:comparator-previewed': 'courtesy',
+    'subsec:introduction:dignity': 'courtesy',
+    'subsec:introduction:infrastructure': 'courtesy',
+    'subsec:introduction:reading-guide': 'courtesy',
+    'subsec:introduction:the-graph': 'courtesy',
+    'subsec:introduction:the-only-question': 'courtesy',
+    'subsec:introduction:two-layers-derived': 'courtesy',
+    'subsec:introduction:two-precedents': 'courtesy',
+    'subsec:introduction:verification-model': 'courtesy',
+    'subsec:necessity:stance-marginal-reputation': 'courtesy',
+    'subsec:necessity:time-locked-non-burnable': 'oracle',
+    'subsec:necessity:time-locked-non-redeemable': 'oracle',
+    'subsec:symbols:oracle-history': 'oracle',
+    'tbl:introduction:layer-roles': 'courtesy',
+    'ver:boundary:marker-registration': 'oracle',
     'ver:handshake:tombstoning': 'courtesy',
     'ver:revision:reduced-head-remains': 'courtesy',
-    'def:deployment:declared-verifiable-provenance-case': 'oracle',
-    'def:deployment:provenance-validity-projection': 'oracle',
-    'post:deployment:declared-provenance-replay': 'oracle',
-    'post:deployment:pinned-provenance-proof-objects': 'oracle',
-    'def:deployment:declared-author-authority-case': 'oracle',
-    'post:deployment:pinned-author-authority-proof-objects': 'oracle',
-    'post:deployment:declared-author-authority-replay': 'oracle',
-    'def:deployment:author-authority-validity-projection': 'oracle',
 }
 
 
@@ -402,7 +523,7 @@ def validate():
     inventory = data('inventory')
     constants = data('constants')
     material_classes(inventory)
-    if not (len(inventory) == 1718 and len({row['label'] for row in inventory}) == 1718):
+    if not (len(inventory) == 1751 and len({row['label'] for row in inventory}) == 1751):
         raise ValueError('inventory label census')
     placeholders = [row for row in inventory if re.search(r'^Track\s+.+\s+as a separately addressable\s+', row['statement'])]
     structural = {'section', 'subsection', 'appendix', 'motto'}
@@ -500,7 +621,7 @@ def validate():
             raise ValueError('paper edition')
         if not (imported['namespace'] == publication['namespace']):
             raise ValueError('project-neutral registry')
-        if not ('(`[PAPER-def:comparator:burn-interface]`)' in Path('adr/007-crate-decomposition.md').read_text()):
+        if not ('(`[PAPER-def:comparator:frame-inputs]`)' in Path('adr/007-crate-decomposition.md').read_text()):
             raise ValueError('paper citation witness')
     else:
         if not (not imports and (not registry.exists()) and (not template.exists())):
@@ -519,15 +640,15 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.36.0'
-CURRENT_INVENTORY_PIN = 'e6d45348a66758af482b534431d61c388e46d368f0a27a1f33a64ee34800da2d'
-REFRESHED_CONSTANTS_PIN = 'e75040c29837662595e5e24610ed05ae6cd8428af0a4eb906199f97ff9d0b45e'
-RELEASE_QUESTIONS_PIN = '703d8519ca698cf45bf61a2bddeb0e2030124a0b3e0cb2ad7aa444a40cb723b2'
+PAPER_TAG = 'network-v0.37.0-draft.1'
+CURRENT_INVENTORY_PIN = 'f6ac7bb0ab80c68a3e8b310df84824b6727bdb197cf84db350dee3a34e8576da'
+REFRESHED_CONSTANTS_PIN = '87737dda47d61c1924256298183d30f188b481006edb88743b413801daa4b4af'
+RELEASE_QUESTIONS_PIN = 'abdbade32aaae2104276dd43dbe7997aba47bdd93a0b57b5c2412eac9bfcc77d'
 
 
-CRATES_PIN = '145b9f7bb25895cfa78adeaf78bc1077f119af6c02949c2062098b7a210675cc'
-BITES_PIN = 'cba90e75dc8ddd40a02821b667e0634719aedeeda88723ac6214f5fba5e98325'
-QUESTIONS_PIN = '799b070a82fa69830afcb553f8a08bf40ad1a16d77759de0368d978f212679cf'
+CRATES_PIN = 'c0cb5f1fd48680ffd2329ccf38f0b39d39e6df77a150550c3fa471ae936175fa'
+BITES_PIN = 'c922d1dc62364566e0aeacc52fdc47a443739ad4bd296e93f4063a2f84777f09'
+QUESTIONS_PIN = '427c4ce34eef9ae382d000178ed43bfc587633699da3ea93690defa4204cd7e5'
 
 def published_correspondence(rows, path=None):
     """Join tagged published quantities to supplied external build values exactly."""

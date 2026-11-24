@@ -23,11 +23,11 @@
       ],
       "dependency": "Study judgment: follows the basic record types; may instead precede the act slice; blocked numeric-library and real-debit decisions must be settled before accepted ledger values are encoded.",
       "labels": [
-        "def:comparator:burn-interface",
+        "def:comparator:frame-inputs",
         "subsec:deployment:transparency-of-protocol-formulas"
       ],
       "ordinal": 2,
-      "records": "Study judgment: sampled four-object burn record, exact declared inputs and typed constant definitions; dependency review, constant correspondence and override records (def:comparator:burn-interface) (subsec:deployment:transparency-of-protocol-formulas).",
+      "records": "Study judgment: sampled four-object burn record, exact declared inputs and typed constant definitions; dependency review, constant correspondence and override records (def:comparator:frame-inputs) (subsec:deployment:transparency-of-protocol-formulas).",
       "slice": "pn-records: burn data, numeric representation and constants edition"
     },
     {

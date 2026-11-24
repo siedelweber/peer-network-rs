@@ -15,13 +15,13 @@
     },
     {
       "conformance": [
-        "realizes{``subsec:deployment:realization-obligations``; The requirement trace names consistency of retained local disclosures, not an audit-standard undertaking or external acquisition truth.}"
+        "realizes{``subsec:deployment:realization-observations``; The requirement trace names consistency of retained local disclosures, not an audit-standard undertaking or external acquisition truth.}"
       ],
       "labels": [
         "rem:comparator:burn-realization-audit-evidence",
-        "def:comparator:burn-interface",
-        "subsec:deployment:realization-obligations",
-        "post:comparator:marker-bound-settlement",
+        "def:comparator:frame-inputs",
+        "subsec:deployment:realization-observations",
+        "post:comparator:marker-bound-finalization",
         "cond:comparator:burn-unit-cost-projection"
       ],
       "name": "burn-boundary"
@@ -70,7 +70,7 @@
         "rem:gates:standing-safety-scope",
         "cor:comparator:sybil-resistance-is-faithfulness",
         "cond:comparator:burn-non-transferability",
-        "thm:epoch:burn-response"
+        "thm:epoch:frame-gross-response"
       ],
       "name": "conservation"
     },
@@ -154,7 +154,7 @@
         "rem:deployment:completeness-safety-orthogonal",
         "post:network:host-contract",
         "rem:graph:authentication-realization-out-of-scope",
-        "prop:comparator:marker-settlement-consistency"
+        "prop:comparator:marker-finalization-consistency"
       ],
       "name": "replay"
     },

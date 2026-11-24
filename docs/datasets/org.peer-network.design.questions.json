@@ -27,7 +27,7 @@
       "topic": "Certificate object"
     },
     {
-      "ambiguity": "The paper allows real-valued burn inputs and inverse-gain debits without fixing an exact serializable debit representation. (rem:transport:burn-granularity) (def:epoch:safety-threshold) (eq:epoch:final-residual-balance)",
+      "ambiguity": "The paper allows real-valued burn inputs and inverse-gain debits without fixing an exact serializable debit representation. (rem:transport:frame-amount-granularity) (def:epoch:safety-threshold) (eq:epoch:final-residual-balance)",
       "class": "OWNER-CALL",
       "id": "Q03",
       "instruction": "D-002(c) remains conditional, as you propose. Store no rounded rational as a substitute for the exact debit, and preserve the original debit vintage.",
@@ -61,16 +61,16 @@
       "topic": "Greatest rung versus indecision"
     },
     {
-      "ambiguity": "The four-object interface coexists with settlement-depth, provenance and conditional operator-bound publication requirements. (def:comparator:burn-interface) (post:comparator:burn-primitive) (subsec:deployment:realization-obligations)",
+      "ambiguity": "Historical question and disposition for the admitted local carrier: The four-object interface coexists with settlement-depth, provenance and conditional operator-bound publication requirements. (def:comparator:frame-inputs) (post:comparator:burn-primitive) (subsec:deployment:realization-observations)",
       "class": "DEFECT",
       "conformance": [
-        "realizes{``subsec:deployment:realization-obligations``; This uses comparison of complete supplied disclosures without adding another mathematical input or undertaking their acquisition or publication.}"
+        "realizes{``subsec:deployment:realization-observations``; This uses comparison of complete supplied disclosures without adding another mathematical input or undertaking their acquisition or publication.}"
       ],
       "id": "Q06",
-      "instruction": "Your separation of mathematical objects and required evidence is a safe provisional representation, provided none of the required disclosures is omitted. Hold any claim that ``cond:comparator:burn-operator-audit-bound`` introduces a fifth computational input until the boundary wording is corrected.",
-      "reading": "Study judgment: Represent the four mathematical objects and separate required public evidence; ask maintainers to confirm the record boundary.",
+      "instruction": "Historical question and disposition for the admitted local carrier: Your separation of mathematical objects and required evidence is a safe provisional representation, provided none of the required disclosures is omitted. Hold any claim that ``cond:comparator:actor-entry-no-privileged-accrual`` introduces a fifth computational input until the boundary wording is corrected.",
+      "reading": "Historical question and disposition for the admitted local carrier: Study judgment: Represent the four mathematical objects and separate required public evidence; ask maintainers to confirm the record boundary.",
       "section": "Q06 — Burn disclosure boundary",
-      "status": "**Status: corrected.** The burn interface has four mathematical objects. Named audit disclosures are a separate courtesy scope; the local carrier retains them without adding a fifth numerical input. Their retention makes no audit-standard claim.",
+      "status": "**Status: corrected.** The earlier four-object distinction is the historical local carrier’s contract. At network-v0.37.0-draft.1 closure consumes supplied Actor entries, acts, carried state and specified constants; source audit and price belong to the separate oracle and optional practices. Existing disclosure fields and refusals remain local, while successor membership is held at its owning admission.",
       "topic": "Burn disclosure boundary"
     },
     {
@@ -115,7 +115,7 @@
       "instruction": "Order-free standing folds are safe. Narrow your provisional “acceptance and recognition” wording: retain authoritative order for formation, but title/conflict recognition uses the specified epoch fold rather than intra-epoch latest-record order.",
       "reading": "Study judgment: Retain authoritative act order for acceptance and recognition while proposing order-free standing folds; do not claim the conflicting prose has been resolved.",
       "section": "Q10 — Order and standing",
-      "status": "**Status: corrected.** Order can affect formation, dependency validity, admission and order-sensitive raw quantities, while dependency-compliant permutations preserve standing for fixed accepted membership, final ledger, epoch title fold and constants, and conflict recognition reads membership and epoch. Network-v0.36.0, ``post:epoch:standing-epoch-set-determinism``, now explicitly names epoch inclusion as the host’s only lever over standing; order, position and intra-epoch placement reach no standing quantity.",
+      "status": "**Status: corrected.** Order can affect formation, dependency validity, admission and order-sensitive raw quantities, while dependency-compliant permutations preserve standing for fixed accepted membership, final ledger, epoch title fold and constants, and conflict recognition reads membership and epoch. network-v0.37.0-draft.1, ``post:epoch:standing-epoch-set-determinism``, now explicitly names epoch inclusion as the host’s only lever over standing; order, position and intra-epoch placement reach no standing quantity.",
       "topic": "Order and standing"
     },
     {
@@ -209,7 +209,7 @@
       "topic": "Closed-cluster units"
     },
     {
-      "ambiguity": "The inverse-gain interim rule, one-boundary width dominance, step bound and hysteresis do not fully specify a single replayable update for every case. (def:epoch:safety-threshold) (cond:deployment:wall-calibration) (rem:epoch:shared-burn-snapshot-rationale)",
+      "ambiguity": "The inverse-gain interim rule, one-boundary width dominance, step bound and hysteresis do not fully specify a single replayable update for every case. (def:epoch:safety-threshold) (cond:deployment:wall-calibration) (rem:epoch:shared-frame-gross-snapshot-rationale)",
       "class": "DEFECT",
       "conformance": [
         "realizes{``cond:deployment:wall-calibration``; The correction concerns exact floor declaration and comparisons, not economic calibration truth.}"

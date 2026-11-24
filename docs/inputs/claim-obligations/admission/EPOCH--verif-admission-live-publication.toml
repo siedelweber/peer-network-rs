@@ -1,5 +1,5 @@
 name = "EPOCH::verif:admission:live-publication"
-witnessed_labels = ["cond:comparator:marker-epoch-registration", "def:comparator:marker-burn-snapshot", "rem:comparator:finality-breach-halts"]
+witnessed_labels = ["cond:comparator:marker-epoch-registration", "def:comparator:marker-burn-snapshot", "rem:comparator:finality-breach-continuity"]
 path = "packages/epoch/README.md"
 status = "scoped-supported"
 claims = ["EPOCH::claim:admission:live-publication-retains-marker-registration", "EPOCH::claim:admission:live-snapshots-use-first-accepted-increments", "EPOCH::claim:admission:finality-loss-freezes-live-publication"]

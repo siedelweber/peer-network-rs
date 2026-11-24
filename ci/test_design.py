@@ -28,7 +28,7 @@ class DeploymentClaims(unittest.TestCase):
         from deployment_claims import Refusal, project, compare_edges, source_units, validate
         from claims import conformance_marks, StructuralError
         statement = dict(kind='statement', name='cond:deployment:standing-work',
-                         paper_tag='network-v0.36.0', classification='split',
+                         paper_tag='network-v0.37.0-draft.1', classification='split',
                          included='Accepted counts.', excluded='Clock truth.',
                          reason='Counts follow from inputs; clocks do not.',
                          witness_route='rec:testing:fixture-route', evidence_status='scope-only')
@@ -308,8 +308,8 @@ class Correspondence(unittest.TestCase):
                 validate_again.assert_called_once_with(original)
         from design import paper_edition_mentions
         paper_edition_mentions.cache_clear()
-        self.assertEqual(paper_edition_mentions('network-v0.36.0'), ((1, 'network-v0.36.0'),))
-        self.assertEqual(paper_edition_mentions('network-v0.36.0'), ((1, 'network-v0.36.0'),))
+        self.assertEqual(paper_edition_mentions('network-v0.37.0-draft.1'), ((1, 'network-v0.37.0-draft.1'),))
+        self.assertEqual(paper_edition_mentions('network-v0.37.0-draft.1'), ((1, 'network-v0.37.0-draft.1'),))
         self.assertEqual(paper_edition_mentions.cache_info().hits, 1)
         self.assertEqual(paper_edition_mentions('network-v0.31.0'), ((1, 'network-v0.31.0'),))
 
@@ -328,7 +328,7 @@ class Correspondence(unittest.TestCase):
                 tag_path.write_text(tag)
             with self.assertRaisesRegex(ValueError, 'external TAG'):
                 published_correspondence(rows, path)
-        tag_path.write_text('network-v0.36.0\n')
+        tag_path.write_text('network-v0.37.0-draft.1\n')
         published_correspondence(rows, path)
         for field in ('paper_key', 'paper_tag'):
             changed = json.loads(json.dumps(rows))
@@ -934,15 +934,15 @@ class Correspondence(unittest.TestCase):
         ´test:integration:test-release-projections´
         """
         from design import material_classes
-        material_classes([{'label': 'cond:deployment:standing-work', 'material_class': 'courtesy'}, {'label': 'case:deployment:realization-obligations-finality-breach-reanchor', 'material_class': 'closure'}])
+        material_classes([{'label': 'cond:deployment:standing-work', 'material_class': 'courtesy'}, {'label': 'post:deployment:replay-verification', 'material_class': 'closure'}])
         for selected in (None, 'unknown'):
             with self.subTest(material_class=selected), self.assertRaisesRegex(ValueError, 'missing or unknown material class'):
                 material_classes([{'label': 'cond:deployment:standing-work', 'material_class': selected}])
         with self.assertRaisesRegex(ValueError, 'exact-label material class'):
-            material_classes([{'label': 'case:deployment:realization-obligations-finality-breach-reanchor', 'material_class': 'courtesy'}])
+            material_classes([{'label': 'post:deployment:replay-verification', 'material_class': 'courtesy'}])
         baseline = self.check()
         self.assertEqual(baseline.returncode, 0, baseline.stderr)
-        self.assertIn('INVENTORY-PLACEHOLDERS rows=1718 structural=132 refused=0', baseline.stdout)
+        self.assertIn('INVENTORY-PLACEHOLDERS rows=1751 structural=133 refused=0', baseline.stdout)
         path = self.root / 'docs/datasets/org.peer-network.design.inventory.json'
         original = path.read_text()
         dataset = json.loads(original)
@@ -954,7 +954,7 @@ class Correspondence(unittest.TestCase):
         path.write_text(json.dumps(dataset))
         result = self.check()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn('INVENTORY-PLACEHOLDERS rows=1718 structural=132 refused=3', result.stdout)
+        self.assertIn('INVENTORY-PLACEHOLDERS rows=1751 structural=133 refused=3', result.stdout)
         self.assertIn('obligation-bearing inventory placeholders:', result.stderr)
         for label in labels:
             self.assertIn(label, result.stderr)
@@ -964,7 +964,7 @@ class Correspondence(unittest.TestCase):
                 path = self.root / f'docs/datasets/org.peer-network.design.{name}.json'
                 original = path.read_text()
                 dataset = json.loads(original)
-                next(row for row in dataset['rows'] if marker in row)[field] += ' changed'
+                next(row for row in dataset['rows'] if marker in row and row.get('material_class', 'closure') == 'closure')[field] += ' changed'
                 path.write_text(json.dumps(dataset))
                 result = self.check()
                 self.assertNotEqual(result.returncode, 0)
@@ -995,7 +995,7 @@ class Correspondence(unittest.TestCase):
         """
         vendor = self.root / 'vendor/example/README.md'
         vendor.parent.mkdir(parents=True)
-        vendor.write_text('`def:comparator:burn-interface`\n')
+        vendor.write_text('`def:comparator:frame-inputs`\n')
         (self.root / 'Cargo.toml').write_text('[workspace]\nmembers=[]\nexclude=["vendor/example"]\n')
         git(self.root, 'add', 'vendor/example/README.md')
         baseline = self.check()
@@ -1010,12 +1010,12 @@ class Correspondence(unittest.TestCase):
         for name in ['README.md', 'docs/templates/other.md.j2']:
             path = self.root / name
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text('`def:comparator:burn-interface`\n')
+            path.write_text('`def:comparator:frame-inputs`\n')
             git(self.root, 'add', name)
             result = self.check()
             self.assertNotEqual(result.returncode, 0)
             self.assertIn(f'{name}: bare paper mint', result.stderr)
-            path.write_text('``def:comparator:burn-interface``' + ('\n\n\n' if name == 'README.md' else '\n'))
+            path.write_text('``def:comparator:frame-inputs``' + ('\n\n\n' if name == 'README.md' else '\n'))
             result = self.check()
             self.assertEqual(result.returncode, 0, result.stderr)
 

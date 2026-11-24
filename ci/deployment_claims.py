@@ -40,7 +40,7 @@ def validate(rows, inventory, labels):
     if statements != set(inventory):
         raise Refusal('deployment inventory differs: '+str(sorted(statements ^ set(inventory))))
     for row in indexed.values():
-        if row['paper_tag'] != 'network-v0.36.0' or row['classification'] not in CLASSES:
+        if row['paper_tag'] != 'network-v0.37.0-draft.1' or row['classification'] not in CLASSES:
             raise Refusal('deployment classification or paper edition: '+row['name'])
         if row['evidence_status'] != 'scope-only' or not row['reason']:
             raise Refusal('deployment scope is not execution evidence: '+row['name'])
@@ -239,7 +239,7 @@ def check(root=Path('.'), generate=False):
         label = item.get('parent', item['name'])
         if classes.get(label) not in {'closure', 'oracle', 'courtesy', 'mathematics'}:
             raise Refusal('deployment unresolved paper class: '+label)
-    validate(rows, {r['label'] for r in inventory if ':deployment' in r['label']}, mints)
+    validate(rows, {r['label'] for r in inventory if ':deployment' in r['label'] or r['label'] in {'def:graph:author-authority-oracle', 'def:graph:authority-history-inputs', 'def:comparator:burn-history-inputs', 'post:comparator:public-provenance-replay', 'def:comparator:burn-provenance-oracle', 'post:graph:public-author-authority-replay'}}, mints)
     edges, conditional = project(rows, units)
     reviewed_claims(root, conditional)
     path = root/'docs/inputs/deployment-edges.toml'

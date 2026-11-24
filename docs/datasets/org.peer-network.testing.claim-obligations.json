@@ -44,7 +44,7 @@
       "witnessed_labels": [
         "cond:comparator:marker-epoch-registration",
         "def:comparator:marker-burn-snapshot",
-        "rem:comparator:finality-breach-halts"
+        "rem:comparator:finality-breach-continuity"
       ]
     },
     {

@@ -18,37 +18,37 @@
     },
     {
       "category": "chapter",
-      "count": 93,
+      "count": 123,
       "name": "02 Comparator"
     },
     {
       "category": "chapter",
-      "count": 38,
+      "count": 66,
       "name": "03 Network"
     },
     {
       "category": "chapter",
-      "count": 277,
+      "count": 285,
       "name": "04 Graph"
     },
     {
       "category": "chapter",
-      "count": 127,
+      "count": 129,
       "name": "05 Nodes and edges"
     },
     {
       "category": "chapter",
-      "count": 226,
+      "count": 248,
       "name": "6 Epoch"
     },
     {
       "category": "chapter",
-      "count": 44,
+      "count": 49,
       "name": "7 Sorting"
     },
     {
       "category": "chapter",
-      "count": 32,
+      "count": 37,
       "name": "8 Transport"
     },
     {
@@ -63,12 +63,12 @@
     },
     {
       "category": "chapter",
-      "count": 19,
+      "count": 20,
       "name": "A Gates"
     },
     {
       "category": "chapter",
-      "count": 65,
+      "count": 69,
       "name": "B Compositional attribution"
     },
     {
@@ -83,12 +83,12 @@
     },
     {
       "category": "chapter",
-      "count": 4,
+      "count": 5,
       "name": "E Symbols and binding ledger"
     },
     {
       "category": "chapter",
-      "count": 232,
+      "count": 233,
       "name": "F Verification"
     },
     {
@@ -103,7 +103,7 @@
     },
     {
       "category": "chapter",
-      "count": 130,
+      "count": 56,
       "name": "Appendix I — Deployment"
     },
     {
@@ -144,7 +144,7 @@
     },
     {
       "category": "totals",
-      "count": 1718,
+      "count": 1751,
       "name": "inventory"
     },
     {
@@ -154,7 +154,7 @@
     },
     {
       "category": "labels",
-      "count": 1684,
+      "count": 1717,
       "name": "explicit"
     },
     {

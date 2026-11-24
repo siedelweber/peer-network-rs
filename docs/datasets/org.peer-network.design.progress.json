@@ -10,7 +10,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "abs:abstract",
@@ -26,7 +28,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "motto:motto",
@@ -42,7 +46,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "sec:introduction",
@@ -58,7 +64,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:introduction:captured-comparator",
@@ -74,7 +82,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "ins:introduction:every-platform-compares",
@@ -90,7 +100,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "ins:introduction:the-detector",
@@ -106,7 +118,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:introduction:the-only-question",
@@ -122,7 +136,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "ins:introduction:who-owns-the-frame",
@@ -138,7 +154,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:introduction:two-precedents",
@@ -154,7 +172,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "ins:introduction:tcp-is-unpriced-neutrality",
@@ -170,7 +190,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "ins:introduction:wikipedia-is-public-auditability",
@@ -186,7 +208,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:introduction:dignity",
@@ -202,7 +226,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "ins:introduction:neutrality-is-dignity",
@@ -218,7 +244,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-epoch",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "ins:introduction:price-not-detector",
@@ -234,7 +262,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-epoch",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "ins:introduction:equal-among-peers",
@@ -250,7 +280,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-epoch",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "ins:introduction:no-escape-velocity",
@@ -266,7 +298,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-epoch",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "ins:introduction:peer-claim-scope",
@@ -282,7 +316,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-epoch",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "ins:introduction:only-faithful-coordinate",
@@ -298,7 +334,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "ins:introduction:the-floor-we-name",
@@ -314,7 +352,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "ins:introduction:the-cut-no-mechanism-can-make",
@@ -330,7 +370,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "ins:introduction:vouch-not-check",
@@ -346,7 +388,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "ins:introduction:right-to-leave",
@@ -362,7 +406,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:introduction:two-layers-derived",
@@ -378,7 +424,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "tbl:introduction:layer-roles",
@@ -394,7 +442,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:introduction:the-graph",
@@ -410,7 +460,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:introduction:infrastructure",
@@ -426,7 +478,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "post:introduction:public-accessibility",
@@ -460,7 +514,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "post:introduction:irrevocability",
@@ -508,7 +564,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "rem:introduction:mechanism-agnostic",
@@ -524,7 +582,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:introduction:comparator-previewed",
@@ -540,7 +600,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "ins:introduction:comparator-made-human",
@@ -556,7 +618,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:introduction:verification-model",
@@ -572,7 +636,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:introduction:reading-guide",
@@ -668,7 +734,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:comparator:burn-primitive",
@@ -684,7 +752,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "def:comparator:burn-primitive",
@@ -716,10 +786,14 @@
         {
           "hold": "ROOT::open:testing:obligation-evidence",
           "record": "ROOT::req:vision:burn-boundary"
+        },
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::verif:design:burn-disclosures"
         }
       ],
       "kind": "type",
-      "label": "def:comparator:burn-interface",
+      "label": "def:comparator:frame-inputs",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -727,7 +801,26 @@
         "ROOT::dec:decomposition:burn",
         "ROOT::dec:design:burn-boundary",
         "ROOT::req:vision:burn-boundary",
-        "ROOT::rule:devnet:burn-map"
+        "ROOT::rule:devnet:burn-map",
+        "ROOT::verif:design:burn-disclosures"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "post:comparator:burn-primitive",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::cav:devnet:assurance"
       ],
       "routes": [],
       "status": "designed",
@@ -738,26 +831,8 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [
-        "docs/datasets/org.peer-network.design.questions.json",
-        "docs/design/questions.md",
-        "docs/inputs/design-questions.toml"
+        "ci/design.py"
       ],
-      "holds": [],
-      "kind": "policy",
-      "label": "post:comparator:burn-primitive",
-      "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
-      "records": [],
-      "routes": [],
-      "status": "unassigned",
-      "tentative": 0
-    },
-    {
-      "bites": [],
-      "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
       "label": "cond:comparator:burn-exogenous-origin",
@@ -773,7 +848,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "cond:comparator:burn-neutrality",
@@ -832,7 +909,7 @@
         11
       ],
       "category": "statement",
-      "crate": "pn-host",
+      "crate": "pn-records",
       "elsewhere": [],
       "holds": [
         {
@@ -840,8 +917,8 @@
           "record": "ROOT::dec:design:burn-boundary"
         }
       ],
-      "kind": "invariant check",
-      "label": "cond:comparator:burn-settlement-amount",
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-boundary-amount",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -855,19 +932,17 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
+      "crate": "pn-records",
       "elsewhere": [],
       "holds": [],
-      "kind": "invariant check",
-      "label": "cond:comparator:burn-settlement-pin",
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-boundary-fixity",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "ROOT::rule:devnet:settlement"
-      ],
+      "records": [],
       "routes": [],
-      "status": "designed",
+      "status": "unassigned",
       "tentative": 0
     },
     {
@@ -947,7 +1022,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "cond:comparator:burn-settlement-depth",
+      "label": "cond:comparator:burn-finalization-depth",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -1037,7 +1112,7 @@
         11
       ],
       "category": "statement",
-      "crate": "pn-host",
+      "crate": "pn-records",
       "elsewhere": [],
       "holds": [
         {
@@ -1045,12 +1120,13 @@
           "record": "ROOT::dec:design:burn-boundary"
         }
       ],
-      "kind": "invariant check",
-      "label": "cond:comparator:burn-bootstrap-capacity",
+      "kind": "constant",
+      "label": "def:comparator:bootstrap-capacity",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "RECORDS::def:burn:disclosures",
         "ROOT::amend:devnet:marker-settlement",
         "ROOT::dec:design:burn-boundary"
       ],
@@ -1101,7 +1177,7 @@
         11
       ],
       "category": "statement",
-      "crate": "pn-host",
+      "crate": "pn-records",
       "elsewhere": [],
       "holds": [
         {
@@ -1109,17 +1185,16 @@
           "record": "ROOT::dec:design:burn-boundary"
         }
       ],
-      "kind": "invariant check",
-      "label": "cond:comparator:burn-operator-audit-bound",
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-no-privileged-accrual",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::amend:devnet:marker-settlement",
         "ROOT::dec:design:burn-boundary"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -1141,12 +1216,11 @@
         }
       ],
       "kind": "policy",
-      "label": "post:comparator:marker-bound-settlement",
+      "label": "post:comparator:marker-bound-finalization",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::amend:decomposition:marker-settlement",
         "ROOT::amend:devnet:marker-settlement",
         "ROOT::conv:vision:burn-realization",
         "ROOT::conv:vision:deployment-declarations",
@@ -1248,8 +1322,7 @@
         "RECORDS::rule:burn:live-marker-settlement",
         "RECORDS::verif:burn:live-marker-semantics",
         "ROOT::amend:design:test-marker-policy",
-        "ROOT::dec:design:burn-boundary",
-        "ROOT::rule:design:marker-recognition"
+        "ROOT::dec:design:burn-boundary"
       ],
       "routes": [
         {
@@ -1509,7 +1582,7 @@
         }
       ],
       "kind": "invariant check",
-      "label": "prop:comparator:marker-settlement-consistency",
+      "label": "prop:comparator:marker-finalization-consistency",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -1933,7 +2006,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "cond:comparator:source-edge-event",
@@ -1949,7 +2024,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "post:comparator:accountability-cost",
@@ -2318,24 +2395,6 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-records",
-      "elsewhere": [],
-      "holds": [],
-      "kind": "constant",
-      "label": "def:comparator:bootstrap-capacity",
-      "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
-      "records": [
-        "RECORDS::def:burn:disclosures"
-      ],
-      "routes": [],
-      "status": "designed",
-      "tentative": 0
-    },
-    {
-      "bites": [],
-      "category": "statement",
       "crate": "pn-verification",
       "elsewhere": [],
       "holds": [],
@@ -2404,7 +2463,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "rem:comparator:surface-readings",
@@ -4324,13 +4385,19 @@
       "category": "statement",
       "crate": "none",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::open:identity:act-realization-admission"
+        }
+      ],
       "kind": "none",
       "label": "def:graph:canonical-erasure-default",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "ROOT::open:identity:act-realization-admission",
         "ROOT::open:vision:deployment-profile"
       ],
       "routes": [],
@@ -7620,11 +7687,11 @@
         4
       ],
       "category": "statement",
-      "crate": "pn-records",
+      "crate": "pn-graph",
       "elsewhere": [],
       "holds": [],
-      "kind": "function",
-      "label": "def:graph:act-finalization-epoch",
+      "kind": "type",
+      "label": "def:graph:act-completion-epoch",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -8186,7 +8253,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-epoch",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "rem:graph:settlement-reputation",
@@ -13586,7 +13655,7 @@
         }
       ],
       "kind": "invariant check",
-      "label": "thm:epoch:burn-response",
+      "label": "thm:epoch:frame-gross-response",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -13606,11 +13675,11 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-verification",
+      "crate": "pn-epoch",
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "prop:epoch:burn-response-bound",
+      "label": "prop:epoch:frame-gross-response-bound",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -13630,7 +13699,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "cor:epoch:burn-monotone-regimes",
+      "label": "cor:epoch:frame-gross-monotone-regimes",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -13822,7 +13891,6 @@
     {
       "bites": [
         1,
-        2,
         7,
         8,
         11
@@ -13867,16 +13935,12 @@
         "EPOCH::def:compiler:completed-package",
         "EPOCH::def:compiler:joined-state",
         "EPOCH::def:compiler:standing-cells",
-        "ROOT::amend:decomposition:marker-settlement",
         "ROOT::amend:design:bite-five-close",
         "ROOT::amend:identity:paper-case-boundary",
         "ROOT::dec:design:final-membership",
         "ROOT::dec:design:publication",
-        "ROOT::model:design:frozen-epoch",
         "ROOT::req:vision:final-membership",
-        "ROOT::req:vision:publication",
-        "ROOT::rule:design:closure-common-context",
-        "ROOT::rule:design:marker-recognition"
+        "ROOT::req:vision:publication"
       ],
       "routes": [],
       "status": "designed",
@@ -13890,8 +13954,8 @@
       "crate": "pn-epoch",
       "elsewhere": [],
       "holds": [],
-      "kind": "invariant check",
-      "label": "rem:epoch:shared-burn-snapshot-rationale",
+      "kind": "policy",
+      "label": "rem:epoch:shared-frame-gross-snapshot-rationale",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -14415,11 +14479,11 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-epoch",
+      "crate": "pn-verification",
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "cor:epoch:universal-burn-benchmarks",
+      "label": "cor:epoch:universal-frame-amount-benchmarks",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -16282,7 +16346,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "none",
-      "label": "subsec:transport:commitment-via-burn",
+      "label": "subsec:transport:frame-commitment",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -16297,8 +16361,8 @@
       "crate": "pn-records",
       "elsewhere": [],
       "holds": [],
-      "kind": "function",
-      "label": "def:transport:commitment-via-burn",
+      "kind": "type",
+      "label": "def:transport:frame-commitment",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -16318,7 +16382,7 @@
       ],
       "holds": [],
       "kind": "policy",
-      "label": "rem:transport:burn-granularity",
+      "label": "rem:transport:frame-amount-granularity",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -28139,7 +28203,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
-      "label": "subsec:verification:burn-response",
+      "label": "subsec:verification:frame-gross-response",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -28155,7 +28219,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
-      "label": "ver:standing:burn-fixed-rung",
+      "label": "ver:standing:frame-gross-fixed-rung",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -28207,7 +28271,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
-      "label": "ver:standing:burn-depleted-anchor",
+      "label": "ver:standing:frame-gross-depleted-anchor",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -28237,7 +28301,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
-      "label": "ver:standing:burn-rung-switch",
+      "label": "ver:standing:frame-gross-rung-switch",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -28299,7 +28363,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
-      "label": "ver:standing:burn-response-sharpness",
+      "label": "ver:standing:frame-gross-response-sharpness",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -30479,7 +30543,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:necessity:time-locked-non-burnable",
@@ -30495,7 +30561,9 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:necessity:time-locked-non-redeemable",
@@ -30867,7 +30935,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-readouts",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "subsec:necessity:stance-marginal-reputation",
@@ -30883,7 +30953,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-readouts",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "case:necessity:stance-marginal-reputation-parity-reputation",
@@ -31861,13 +31933,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "app:deployment",
@@ -31882,13 +31951,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:public-availability",
@@ -31903,13 +31969,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-streaming",
@@ -31924,13 +31987,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-api-polling",
@@ -31945,13 +32005,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-snapshot-delta",
@@ -31966,13 +32023,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-gossip",
@@ -31987,13 +32041,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-gated-access",
@@ -32008,13 +32059,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-through-creator",
@@ -32029,13 +32077,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:public-availability-around-creator",
@@ -32119,11 +32164,11 @@
         "docs/datasets/org.peer-network.testing.deployment-claims.json",
         "docs/inputs/deployment-claims.toml"
       ],
-      "crate": "pn-replay",
+      "crate": "pn-records",
       "elsewhere": [],
       "holds": [],
-      "kind": "invariant check",
-      "label": "case:deployment:final-epoch-state-agreement-bft-finality",
+      "kind": "policy",
+      "label": "case:deployment:final-epoch-state-agreement-bft-agreement",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -32394,13 +32439,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "subsec:deployment:device-local",
@@ -32415,13 +32457,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-depth-four",
@@ -32436,13 +32475,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-depth-three",
@@ -32457,13 +32493,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-depth-six",
@@ -32478,13 +32511,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "none",
       "label": "case:deployment:device-local-server-assisted",
@@ -32581,13 +32611,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-scheduled-vote",
@@ -32602,13 +32629,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-time-locked",
@@ -32654,13 +32678,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:calibration-declarations",
@@ -33135,13 +33156,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-host",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "policy",
       "label": "subsec:deployment:centralized-monitoring",
@@ -33159,6 +33177,7 @@
       "crate": "pn-host",
       "elsewhere": [
         "adr/007-crate-decomposition.md",
+        "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/implementation.md",
         "docs/inputs/deployment-edges.toml",
@@ -33190,6 +33209,7 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [
+        "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/inputs/deployment-edges.toml"
       ],
@@ -33341,13 +33361,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "fixture",
       "label": "subsec:deployment:calibration-evidence",
@@ -33362,13 +33379,10 @@
     {
       "bites": [],
       "category": "statement",
-      "classification_elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
-      ],
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "fixture",
       "label": "post:deployment:calibration-evidence",
@@ -33431,6 +33445,7 @@
       "category": "statement",
       "crate": "pn-verification",
       "elsewhere": [
+        "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/implementation.md",
         "docs/inputs/deployment-edges.toml",
@@ -34542,10 +34557,6 @@
       "elsewhere": [],
       "holds": [
         {
-          "hold": "ROOT::open:crypto:dependency-admission",
-          "record": "ROOT::amend:design:publication-field-inventory"
-        },
-        {
           "hold": "ROOT::open:testing:obligation-evidence",
           "record": "ROOT::dec:design:burn-boundary"
         },
@@ -34555,7 +34566,7 @@
         }
       ],
       "kind": "policy",
-      "label": "subsec:deployment:realization-obligations",
+      "label": "subsec:deployment:realization-observations",
       "portions": [
         {
           "clause": "Claimed part: The carrier retains and validates disclosed audit evidence under its explicit verifier premises, without asserting external finality.",
@@ -34578,6 +34589,10 @@
           "record": "ROOT::dec:design:burn-boundary"
         },
         {
+          "clause": "Claimed part: This is the retained local evidence-presence comparison, not a claim that the paper prescribes disclosure or proves external acquisition.",
+          "record": "ROOT::model:design:burn"
+        },
+        {
           "clause": "Claimed part: The requirement trace names consistency of retained local disclosures, not an audit-standard undertaking or external acquisition truth.",
           "record": "ROOT::req:vision:burn-boundary"
         }
@@ -34585,121 +34600,8 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "EPOCH::rule:admission:semantic-carrier",
-        "ROOT::amend:design:publication-field-inventory",
-        "ROOT::cav:devnet:assurance",
         "ROOT::dec:design:burn-boundary",
         "ROOT::req:vision:burn-boundary"
-      ],
-      "routes": [],
-      "status": "designed",
-      "tentative": 0
-    },
-    {
-      "bites": [],
-      "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
-        "ci/design.py"
-      ],
-      "holds": [],
-      "kind": "policy",
-      "label": "case:deployment:realization-obligations-pointer",
-      "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
-      "records": [],
-      "routes": [],
-      "status": "unassigned",
-      "tentative": 0
-    },
-    {
-      "bites": [],
-      "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
-        "ci/design.py"
-      ],
-      "holds": [],
-      "kind": "policy",
-      "label": "case:deployment:realization-obligations-mirror",
-      "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
-      "records": [],
-      "routes": [],
-      "status": "unassigned",
-      "tentative": 0
-    },
-    {
-      "bites": [],
-      "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [
-        "ci/design.py"
-      ],
-      "holds": [],
-      "kind": "policy",
-      "label": "case:deployment:realization-obligations-snapshot",
-      "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
-      "records": [],
-      "routes": [],
-      "status": "unassigned",
-      "tentative": 0
-    },
-    {
-      "bites": [
-        2
-      ],
-      "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [],
-      "holds": [],
-      "kind": "policy",
-      "label": "case:deployment:realization-obligations-withheld-evidence",
-      "portions": [
-        {
-          "clause": "Claimed part: Missing required disclosures are detectable publication failures; their external acquisition truth is not proved.",
-          "record": "ROOT::model:design:burn"
-        }
-      ],
-      "record_granular": 0,
-      "record_routes": [],
-      "records": [
-        "ROOT::model:design:burn"
-      ],
-      "routes": [],
-      "status": "designed",
-      "tentative": 0
-    },
-    {
-      "bites": [
-        2,
-        11
-      ],
-      "category": "statement",
-      "crate": "pn-host",
-      "elsewhere": [],
-      "holds": [
-        {
-          "hold": "ROOT::open:testing:obligation-evidence",
-          "record": "ROOT::dec:design:burn-boundary"
-        }
-      ],
-      "kind": "policy",
-      "label": "case:deployment:realization-obligations-occlusion",
-      "portions": [
-        {
-          "clause": "Claimed part: The finite public-input check detects this missing or changed disclosure, without asserting external acquisition truth.",
-          "record": "ROOT::dec:design:burn-boundary"
-        }
-      ],
-      "record_granular": 0,
-      "record_routes": [],
-      "records": [
-        "ROOT::dec:design:burn-boundary"
       ],
       "routes": [],
       "status": "held",
@@ -34708,7 +34610,25 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-records",
+      "crate": "pn-host",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "case:comparator:unmatched-source-claim",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-graph",
       "elsewhere": [],
       "holds": [
         {
@@ -34717,7 +34637,7 @@
         }
       ],
       "kind": "invariant check",
-      "label": "cond:graph:act-incidence-causality-finalized-predecessors",
+      "label": "cond:graph:act-incidence-causality-completed-predecessors",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -35115,25 +35035,18 @@
       "category": "statement",
       "crate": "pn-epoch",
       "elsewhere": [],
-      "holds": [
-        {
-          "hold": "ROOT::open:testing:obligation-evidence",
-          "record": "ROOT::verif:design:marker-registration-cases"
-        }
-      ],
+      "holds": [],
       "kind": "invariant check",
       "label": "cond:comparator:marker-epoch-registration",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "EPOCH::def:compiler:completed-package",
         "EPOCH::def:compiler:final-ledger",
         "EPOCH::verif:admission:live-publication",
         "RECORDS::def:burn:recognition",
         "ROOT::alg:design:ledger",
-        "ROOT::rule:design:closure-marker-registration",
-        "ROOT::verif:design:marker-registration-cases"
+        "ROOT::rule:design:closure-marker-registration"
       ],
       "routes": [
         {
@@ -35168,21 +35081,15 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [
-        {
-          "hold": "ROOT::open:testing:obligation-evidence",
-          "record": "ROOT::verif:design:finality-breach-cases"
-        }
-      ],
+      "holds": [],
       "kind": "policy",
-      "label": "rem:comparator:finality-breach-halts",
+      "label": "rem:comparator:finality-breach-continuity",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
         "EPOCH::rule:admission:live-publication",
-        "EPOCH::verif:admission:live-publication",
-        "ROOT::verif:design:finality-breach-cases"
+        "EPOCH::verif:admission:live-publication"
       ],
       "routes": [
         {
@@ -35386,8 +35293,8 @@
       "crate": "pn-epoch",
       "elsewhere": [],
       "holds": [],
-      "kind": "invariant check",
-      "label": "rem:epoch:epoch-history-is-the-marker-sequence",
+      "kind": "policy",
+      "label": "rem:epoch:consumed-epoch-sequence",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -35430,7 +35337,7 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
+      "crate": "none",
       "elsewhere": [],
       "holds": [
         {
@@ -35439,7 +35346,7 @@
         }
       ],
       "kind": "policy",
-      "label": "case:deployment:realization-obligations-finality-breach-reanchor",
+      "label": "case:deployment:realization-observations-finality-breach-reanchor",
       "portions": [
         {
           "clause": "Claimed part: The witness checks the two declared responses to supplied breach histories, not the permanence of external finality.",
@@ -35458,7 +35365,7 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
+      "crate": "none",
       "elsewhere": [],
       "holds": [
         {
@@ -35467,7 +35374,7 @@
         }
       ],
       "kind": "policy",
-      "label": "case:deployment:realization-obligations-finality-breach-follow",
+      "label": "case:deployment:realization-observations-finality-breach-follow",
       "portions": [
         {
           "clause": "Claimed part: The witness checks the two declared responses to supplied breach histories, not the permanence of external finality.",
@@ -35632,15 +35539,13 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-replay",
-      "elsewhere": [
-        "adr/007-crate-decomposition.md",
-        "docs/datasets/org.peer-network.testing.deployment-edges.json",
-        "docs/design/implementation.md",
-        "docs/inputs/deployment-edges.toml",
-        "docs/templates/adr/007-crate-decomposition.md.j2",
-        "docs/templates/docs/design/implementation.md.j2"
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::open:identity:act-realization-admission"
+        }
       ],
-      "holds": [],
       "kind": "policy",
       "label": "def:deployment:published-epoch-replay-floor",
       "portions": [
@@ -35655,13 +35560,19 @@
         {
           "clause": "Claimed part: This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.",
           "record": "ROOT::open:design:replay-proof-fields"
+        },
+        {
+          "clause": "Claimed part: This hold concerns required public act members, not independent enclosure soundness or implementation evidence.",
+          "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::open:identity:act-realization-admission"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -35691,14 +35602,15 @@
       "crate": "pn-host",
       "elsewhere": [
         "adr/006-identity-adjudication.md",
+        "ci/deployment_claims.py",
         "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/inputs/deployment-edges.toml",
         "docs/templates/adr/006-identity-adjudication.md.j2"
       ],
       "holds": [],
-      "kind": "policy",
-      "label": "def:deployment:declared-verifiable-provenance-case",
+      "kind": "type",
+      "label": "def:comparator:burn-provenance-oracle",
       "portions": [
         {
           "clause": "Claimed part: This admits a bounded declaration representation and its comparison, not a selected external case or its truth.",
@@ -35733,31 +35645,14 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
+      "crate": "pn-host",
       "elsewhere": [
+        "ci/deployment_claims.py",
         "ci/design.py"
       ],
       "holds": [],
       "kind": "policy",
-      "label": "post:deployment:declared-provenance-replay",
-      "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
-      "records": [],
-      "routes": [],
-      "status": "unassigned",
-      "tentative": 0
-    },
-    {
-      "bites": [],
-      "category": "statement",
-      "crate": "pn-records",
-      "elsewhere": [
-        "ci/design.py"
-      ],
-      "holds": [],
-      "kind": "type",
-      "label": "post:deployment:pinned-provenance-proof-objects",
+      "label": "post:comparator:public-provenance-replay",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -35771,8 +35666,28 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [
+        "ci/deployment_claims.py",
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "type",
+      "label": "def:comparator:burn-history-inputs",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-graph",
+      "elsewhere": [
         "adr/006-identity-adjudication.md",
         "adr/019-development-network.md",
+        "ci/deployment_claims.py",
         "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/design/author-token.md",
@@ -35782,8 +35697,8 @@
         "docs/templates/docs/design/author-token.md.j2"
       ],
       "holds": [],
-      "kind": "policy",
-      "label": "def:deployment:declared-author-authority-case",
+      "kind": "type",
+      "label": "def:graph:author-authority-oracle",
       "portions": [
         {
           "clause": "Claimed part: This admits a bounded declaration representation and its comparison, not a selected external case or its truth.",
@@ -35816,9 +35731,10 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-records",
+      "crate": "pn-graph",
       "elsewhere": [
         "adr/019-development-network.md",
+        "ci/deployment_claims.py",
         "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/inputs/deployment-edges.toml",
@@ -35826,7 +35742,7 @@
       ],
       "holds": [],
       "kind": "type",
-      "label": "post:deployment:pinned-author-authority-proof-objects",
+      "label": "def:graph:authority-history-inputs",
       "portions": [
         {
           "clause": "Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
@@ -35843,17 +35759,18 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-replay",
+      "crate": "pn-graph",
       "elsewhere": [
         "adr/019-development-network.md",
+        "ci/deployment_claims.py",
         "ci/design.py",
         "docs/datasets/org.peer-network.testing.deployment-edges.json",
         "docs/inputs/deployment-edges.toml",
         "docs/templates/adr/019-development-network.md.j2"
       ],
       "holds": [],
-      "kind": "invariant check",
-      "label": "post:deployment:declared-author-authority-replay",
+      "kind": "policy",
+      "label": "post:graph:public-author-authority-replay",
       "portions": [
         {
           "clause": "Claimed part: This compares declaration, complete public inputs and result distinctions with the local extension; no paper case is bound and no external authority or execution is asserted.",
@@ -36361,6 +36278,665 @@
           "record": "ROOT::amend:design:host-operational-declaration"
         }
       ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-exogeneity",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-instantaneous-cost",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-irrecoverability",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-monotone-history",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-neutrality",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-non-negativity",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-non-repayment",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-opaque-identity-link",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-source-backing",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "cond:comparator:actor-entry-source-persistence",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "invariant check",
+      "label": "cond:comparator:burn-finalization-pin",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::rule:devnet:settlement"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "invariant check",
+      "label": "cond:comparator:burn-no-privileged-accrual",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "invariant check",
+      "label": "cond:comparator:finalized-burn-amount",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "type",
+      "label": "def:comparator:actor-entry",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "type",
+      "label": "def:comparator:burn-projection",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "post:comparator:actor-entry-assumptions",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:comparator:closing-survey",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:comparator:external-outlay-projection",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:comparator:external-value-necessity",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:comparator:numeraire-fiat-choice",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:comparator:pre-opening-capacity-warning",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:comparator:sincere-audit-benefit",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:comparator:source-backing-discharge",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:comparator:source-faithfulness-interpretation",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:comparator:source-limit-survey",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "none",
+      "label": "subsec:comparator:actor-entry-assumptions",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "classification_elsewhere": [
+        "adr/017-claim-based-testing.md",
+        "docs/datasets/org.peer-network.testing.deployment-claims.json",
+        "docs/inputs/deployment-claims.toml"
+      ],
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "post:deployment:specified-calculation-inputs",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:network:non-adoption-declaration-courtesy",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:network:optional-host-conduct",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-graph",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:graph:settlement-coordinate-conjunction",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:nodes:optional-bid-reputation",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:nodes:optional-conduct-readouts",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:gates:optional-guild-funding",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "none",
+      "label": "subsec:symbols:oracle-history",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:verification:author-authority-oracle-witness",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:deployment:calibration-publication-practice",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:deployment:canonical-byte-encoding-practice",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:deployment:standing-publication-practice",
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -37334,10 +37910,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "92",
+          "exact": "175",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "92",
+          "num": "175",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37348,19 +37924,19 @@
           "exact_digits": 32
         }
       },
-      "total": 92
+      "total": 175
     },
     {
       "category": "total",
-      "designed": 418,
+      "designed": 415,
       "held": 69,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "418",
+          "exact": "415",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "418",
+          "num": "415",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37397,18 +37973,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 389",
+          "exact": "1 405",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 389",
+          "num": "1 405",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "866",
+          "exact": "885",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "866",
+          "num": "885",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37446,13 +38022,13 @@
       "realized": 36,
       "record_granular": 32,
       "tentative": 21,
-      "total": 1389,
-      "unassigned": 866
+      "total": 1405,
+      "unassigned": 885
     },
     {
       "category": "total",
       "designed": 22,
-      "held": 0,
+      "held": 2,
       "name": "prose",
       "number_forms": {
         "designed": {
@@ -37464,10 +38040,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "0",
+          "exact": "2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "0",
+          "num": "2",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37496,18 +38072,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "329",
+          "exact": "346",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "329",
+          "num": "346",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "307",
+          "exact": "322",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "307",
+          "num": "322",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37545,13 +38121,13 @@
       "realized": 0,
       "record_granular": 0,
       "tentative": 13,
-      "total": 329,
-      "unassigned": 307
+      "total": 346,
+      "unassigned": 322
     },
     {
       "category": "crate",
       "designed": 22,
-      "held": 0,
+      "held": 2,
       "name": "none",
       "number_forms": {
         "designed": {
@@ -37563,10 +38139,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "0",
+          "exact": "2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "0",
+          "num": "2",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37595,18 +38171,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "329",
+          "exact": "346",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "329",
+          "num": "346",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "307",
+          "exact": "322",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "307",
+          "num": "322",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37644,8 +38220,8 @@
       "realized": 0,
       "record_granular": 0,
       "tentative": 13,
-      "total": 329,
-      "unassigned": 307
+      "total": 346,
+      "unassigned": 322
     },
     {
       "category": "crate",
@@ -37847,15 +38423,15 @@
     },
     {
       "category": "crate",
-      "designed": 141,
+      "designed": 142,
       "held": 8,
       "name": "pn-epoch",
       "number_forms": {
         "designed": {
-          "exact": "141",
+          "exact": "142",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "141",
+          "num": "142",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37900,10 +38476,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "207",
+          "exact": "206",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "207",
+          "num": "206",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37942,27 +38518,27 @@
       "record_granular": 13,
       "tentative": 0,
       "total": 371,
-      "unassigned": 207
+      "unassigned": 206
     },
     {
       "category": "crate",
-      "designed": 60,
-      "held": 9,
+      "designed": 61,
+      "held": 10,
       "name": "pn-graph",
       "number_forms": {
         "designed": {
-          "exact": "60",
+          "exact": "61",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "60",
+          "num": "61",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "9",
+          "exact": "10",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9",
+          "num": "10",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37991,18 +38567,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "223",
+          "exact": "229",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "223",
+          "num": "229",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "149",
+          "exact": "153",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "149",
+          "num": "153",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38040,28 +38616,28 @@
       "realized": 5,
       "record_granular": 4,
       "tentative": 0,
-      "total": 223,
-      "unassigned": 149
+      "total": 229,
+      "unassigned": 153
     },
     {
       "category": "crate",
-      "designed": 55,
-      "held": 21,
+      "designed": 52,
+      "held": 18,
       "name": "pn-host",
       "number_forms": {
         "designed": {
-          "exact": "55",
+          "exact": "52",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "55",
+          "num": "52",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "21",
+          "exact": "18",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "21",
+          "num": "18",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38098,10 +38674,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "101",
+          "exact": "107",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "101",
+          "num": "107",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38140,7 +38716,7 @@
       "record_granular": 2,
       "tentative": 7,
       "total": 182,
-      "unassigned": 101
+      "unassigned": 107
     },
     {
       "category": "crate",
@@ -38243,23 +38819,23 @@
     },
     {
       "category": "crate",
-      "designed": 77,
-      "held": 16,
+      "designed": 76,
+      "held": 17,
       "name": "pn-records",
       "number_forms": {
         "designed": {
-          "exact": "77",
+          "exact": "76",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "77",
+          "num": "76",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "16",
+          "exact": "17",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "16",
+          "num": "17",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38288,18 +38864,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "220",
+          "exact": "233",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "220",
+          "num": "233",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "125",
+          "exact": "138",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "125",
+          "num": "138",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38337,13 +38913,13 @@
       "realized": 2,
       "record_granular": 7,
       "tentative": 6,
-      "total": 220,
-      "unassigned": 125
+      "total": 233,
+      "unassigned": 138
     },
     {
       "category": "crate",
       "designed": 5,
-      "held": 3,
+      "held": 4,
       "name": "pn-replay",
       "number_forms": {
         "designed": {
@@ -38355,10 +38931,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "3",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38387,18 +38963,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "36",
+          "exact": "33",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "36",
+          "num": "33",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "27",
+          "exact": "23",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "27",
+          "num": "23",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38436,20 +39012,20 @@
       "realized": 1,
       "record_granular": 0,
       "tentative": 0,
-      "total": 36,
-      "unassigned": 27
+      "total": 33,
+      "unassigned": 23
     },
     {
       "category": "crate",
-      "designed": 69,
+      "designed": 68,
       "held": 9,
       "name": "pn-verification",
       "number_forms": {
         "designed": {
-          "exact": "69",
+          "exact": "68",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "69",
+          "num": "68",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38494,10 +39070,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "197",
+          "exact": "198",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "197",
+          "num": "198",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38536,7 +39112,7 @@
       "record_granular": 6,
       "tentative": 5,
       "total": 283,
-      "unassigned": 197
+      "unassigned": 198
     },
     {
       "category": "kind",
@@ -38936,15 +39512,15 @@
     },
     {
       "category": "kind",
-      "designed": 98,
+      "designed": 97,
       "held": 6,
       "name": "function",
       "number_forms": {
         "designed": {
-          "exact": "98",
+          "exact": "97",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "98",
+          "num": "97",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38981,18 +39557,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "216",
+          "exact": "214",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "216",
+          "num": "214",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "102",
+          "exact": "101",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "102",
+          "num": "101",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39030,28 +39606,28 @@
       "realized": 10,
       "record_granular": 8,
       "tentative": 1,
-      "total": 216,
-      "unassigned": 102
+      "total": 214,
+      "unassigned": 101
     },
     {
       "category": "kind",
-      "designed": 142,
-      "held": 23,
+      "designed": 138,
+      "held": 22,
       "name": "invariant check",
       "number_forms": {
         "designed": {
-          "exact": "142",
+          "exact": "138",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "142",
+          "num": "138",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "23",
+          "exact": "22",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "23",
+          "num": "22",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39080,10 +39656,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "521",
+          "exact": "516",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "521",
+          "num": "516",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39129,7 +39705,7 @@
       "realized": 17,
       "record_granular": 11,
       "tentative": 2,
-      "total": 521,
+      "total": 516,
       "unassigned": 339
     },
     {
@@ -39179,18 +39755,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "354",
+          "exact": "356",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "354",
+          "num": "356",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "333",
+          "exact": "335",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "333",
+          "num": "335",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39228,28 +39804,28 @@
       "realized": 0,
       "record_granular": 0,
       "tentative": 8,
-      "total": 354,
-      "unassigned": 333
+      "total": 356,
+      "unassigned": 335
     },
     {
       "category": "kind",
-      "designed": 62,
-      "held": 23,
+      "designed": 63,
+      "held": 26,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "62",
+          "exact": "63",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "62",
+          "num": "63",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "23",
+          "exact": "26",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "23",
+          "num": "26",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39278,18 +39854,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "289",
+          "exact": "321",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "289",
+          "num": "321",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "201",
+          "exact": "229",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "201",
+          "num": "229",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39327,8 +39903,8 @@
       "realized": 3,
       "record_granular": 4,
       "tentative": 12,
-      "total": 289,
-      "unassigned": 201
+      "total": 321,
+      "unassigned": 229
     },
     {
       "category": "kind",
@@ -39431,15 +40007,15 @@
     },
     {
       "category": "kind",
-      "designed": 50,
+      "designed": 51,
       "held": 9,
       "name": "type",
       "number_forms": {
         "designed": {
-          "exact": "50",
+          "exact": "51",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "50",
+          "num": "51",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39476,18 +40052,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "95",
+          "exact": "101",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "95",
+          "num": "101",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "35",
+          "exact": "40",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "35",
+          "num": "40",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39525,8 +40101,8 @@
       "realized": 1,
       "record_granular": 5,
       "tentative": 0,
-      "total": 95,
-      "unassigned": 35
+      "total": 101,
+      "unassigned": 40
     },
     {
       "category": "bite",
@@ -39629,23 +40205,23 @@
     },
     {
       "category": "bite",
-      "designed": 25,
-      "held": 4,
+      "designed": 21,
+      "held": 5,
       "name": "2",
       "number_forms": {
         "designed": {
-          "exact": "25",
+          "exact": "21",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "25",
+          "num": "21",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "4",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39674,10 +40250,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "36",
+          "exact": "33",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "36",
+          "num": "33",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39723,7 +40299,7 @@
       "realized": 7,
       "record_granular": 0,
       "tentative": 0,
-      "total": 36,
+      "total": 33,
       "unassigned": 0
     },
     {
@@ -40520,23 +41096,23 @@
     },
     {
       "category": "bite",
-      "designed": 57,
-      "held": 27,
+      "designed": 55,
+      "held": 28,
       "name": "11",
       "number_forms": {
         "designed": {
-          "exact": "57",
+          "exact": "55",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "57",
+          "num": "55",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "27",
+          "exact": "28",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "27",
+          "num": "28",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40565,10 +41141,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "94",
+          "exact": "93",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "94",
+          "num": "93",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40614,13 +41190,13 @@
       "realized": 9,
       "record_granular": 5,
       "tentative": 0,
-      "total": 94,
+      "total": 93,
       "unassigned": 1
     },
     {
       "category": "bite",
       "designed": 303,
-      "held": 29,
+      "held": 30,
       "name": "unlinked",
       "number_forms": {
         "designed": {
@@ -40632,10 +41208,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "29",
+          "exact": "30",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "29",
+          "num": "30",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40664,18 +41240,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 524",
+          "exact": "1 559",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 524",
+          "num": "1 559",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 169",
+          "exact": "1 203",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 169",
+          "num": "1 203",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40713,18 +41289,18 @@
       "realized": 23,
       "record_granular": 21,
       "tentative": 34,
-      "total": 1524,
-      "unassigned": 1169
+      "total": 1559,
+      "unassigned": 1203
     },
     {
       "category": "classification-identities",
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "62",
+          "exact": "43",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "62",
+          "num": "43",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40735,7 +41311,7 @@
           "exact_digits": 32
         }
       },
-      "total": 62
+      "total": 43
     },
     {
       "category": "record-coverage",
@@ -41385,14 +41961,14 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 216,
+      "exact_citing": 214,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "216",
+          "exact": "214",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "216",
+          "num": "214",
           "num_exact": true,
           "num_relation": "="
         },

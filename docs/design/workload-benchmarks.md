@@ -57,7 +57,7 @@
 | B8 final admission | ``post:epoch:final-act-sequence-write-rule`` fixes individual and epoch gates. No single cost proposition bounds this whole validation operation; these self-only fixtures increase acts while keeping the standing dimension fixed. |
 | B9 serial candidate trials | ``rem:scalability:boundary-search-cost`` distinguishes candidate-set count from acts per candidate and proposal iterations. The series varies search sets with a fixed per-set recipe; it does not establish optimal search or availability. |
 | B10 inverse and ridge replay | ``prop:scalability:standing-certificate-cost`` explicitly leaves scalar controller inversion additional. ``def:epoch:canonical-interim-wall-controller`` and ``ver:floor:ridge-enclosure`` fix the mathematical objects, not a universal refinement exponent. The ridge branch checks the defining certificate, not complete controller delivery. |
-| B13 marker records | ``post:comparator:marker-bound-settlement`` fixes settlement predicates. This fixture-verifier series has no paper latency or cryptographic-work proposition. |
+| B13 marker records | ``post:comparator:marker-bound-finalization`` fixes settlement predicates. This fixture-verifier series has no paper latency or cryptographic-work proposition. |
 | B14 byte decoding | ``cond:deployment:canonical-encoding`` fixes publication requirements, not a decoder complexity theorem. Compare strict and transport readers separately; transport Work must never stand in for uninstrumented strict-parser Work. |
 | B16 title | ``post:graph:boundary-accountability`` fixes independent title reconstruction, not an asymptotic bound for the whole implemented replay. |
 

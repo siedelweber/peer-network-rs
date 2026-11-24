@@ -13,7 +13,7 @@
       "surfaces": [
         "def:graph:act-identifier",
         "def:graph:act-edge-projection",
-        "def:comparator:burn-interface"
+        "def:comparator:frame-inputs"
       ]
     },
     {
