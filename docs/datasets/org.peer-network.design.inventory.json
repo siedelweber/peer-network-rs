@@ -556,7 +556,7 @@
       "label": "cond:comparator:burn-exogenous-origin",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "Source oracle condition, not a closure operand or proof of source truth: Import burn amounts from outside the graph; no graph-derived rule or network operation may compute or write them."
+      "statement": "Source oracle condition, not a closure operand or proof of source truth: Import the supplied frame gross amount from outside the graph; no graph-derived rule or network operation may compute or write it."
     },
     {
       "chapter": "02 Comparator",
@@ -676,7 +676,7 @@
       "label": "cond:comparator:burn-non-negativity",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "Source oracle condition, not a closure operand or proof of source truth: Require every address’s burn amount to lie on the same nonnegative real line."
+      "statement": "Source oracle condition, not a closure operand or proof of source truth: Require every address’s supplied frame gross amount to lie on the same nonnegative real line."
     },
     {
       "chapter": "02 Comparator",
@@ -688,7 +688,7 @@
       "label": "cond:comparator:burn-provenance-auditability",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "Source oracle condition, not a closure operand or proof of source truth: Anchor each burn unit to genuine irrecoverable destruction and cap each recording event by its backing destruction; an unbacked record contributes zero."
+      "statement": "Source oracle condition, not a closure operand or proof of source truth: Anchor each unit of the frame gross amount to genuine irrecoverable destruction and cap each recording event by its backing destruction; an unbacked record contributes zero."
     },
     {
       "chapter": "02 Comparator",
@@ -2944,7 +2944,7 @@
       "label": "prop:graph:removable-projection-invariance",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Opening availability changes no accepted act, structural quantity or finalized result."
+      "statement": "Opening availability changes no accepted act, structural quantity or completed result."
     },
     {
       "chapter": "04 Graph",
@@ -4276,7 +4276,7 @@
       "label": "def:graph:act-causal-parents",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Retain public causal parents in the non-removable structural body, including typed settlement references. Require strictly lower finalized epoch-position keys for compliance; their union determines dependent closures, while misplaced finalized parents become accountability evidence rather than grounds to rewrite history."
+      "statement": "Retain public causal parents in the non-removable structural body, including typed settlement references. Require strictly lower completed epoch-position keys for compliance; their union determines dependent closures, while misplaced completed parents become accountability evidence rather than grounds to rewrite history."
     },
     {
       "chapter": "04 Graph",
@@ -4396,7 +4396,7 @@
       "label": "def:graph:act-dependency-tombstone",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Within the optional courtesy standard: A holder removes the dependency list, the author’s dependency blinding value and other opening material, ending its storage or carriage undertaking without changing the accepted act or finalized structural history. Independently supplied authenticated opening material remains checkable against the unchanged commitment."
+      "statement": "Within the optional courtesy standard: A holder removes the dependency list, the author’s dependency blinding value and other opening material, ending its storage or carriage undertaking without changing the accepted act or structural history. Independently supplied authenticated opening material remains checkable against the unchanged commitment."
     },
     {
       "chapter": "04 Graph",
@@ -6196,7 +6196,7 @@
       "label": "itm:nodes:raw-self-edge-properties-monotonicity",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "At fixed raw maturity, require the damped Reputation weight to increase strictly with positive standing. This is an input derivative of the raw edge, not a burn-response guarantee."
+      "statement": "At fixed raw maturity, require the damped Reputation weight to increase strictly with positive standing. This is an input derivative of the raw edge, not a frame-gross-amount response guarantee."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -8092,7 +8092,7 @@
       "label": "prop:epoch:no-tilt-commitment-monotonicity",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "At zero tilt with counts, base, threshold and emission fixed, reached coordinates increase under frame gross amount and unreached coordinates stay fixed. Changing emission invalidates this premise; positive-tilt reversals are certified."
+      "statement": "At zero tilt with counts, base, threshold and emission fixed, reached coordinates increase under an increased supplied frame gross amount and unreached coordinates stay fixed. Changing emission invalidates this premise; positive-tilt reversals are certified."
     },
     {
       "chapter": "6 Epoch",
@@ -8956,7 +8956,7 @@
       "label": "case:epoch:wall-controller-covariance-fixed-ledger-migration",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Branch of ``prop:epoch:wall-controller-covariance``: Under a numeraire migration by positive c at a fixed frame amount ledger, evaluate the controller on the supplied transformed wall, width and rung, then multiply by the new numeraire for price. The same fixed source pairs have width W/c; this is not a forecast for differently debited acts."
+      "statement": "Branch of ``prop:epoch:wall-controller-covariance``: Under a numeraire migration by positive c at a fixed frame amount ledger, evaluate the controller on the supplied transformed wall, width and rung, then multiply by the new numeraire for price. The same fixed source pairs have width W/c; this is not a forecast for a differently debited epoch."
     },
     {
       "chapter": "6 Epoch",
@@ -9148,7 +9148,7 @@
       "label": "eq:sorting:relevance-score",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Combine raw max-product relevance, fixed creator standing and terminal content norm. Fixed-context scalar monotonicity supplies no general burn-response, partition, ranking or end-to-end reward guarantee. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
+      "statement": "Combine raw max-product relevance, fixed creator standing and terminal content norm. Fixed-context scalar monotonicity supplies no general frame-gross-amount response, partition, ranking or end-to-end reward guarantee. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
     },
     {
       "chapter": "7 Sorting",
@@ -9544,7 +9544,7 @@
       "label": "itm:sorting:score-monotonicity-standing",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "With every other feed factor fixed, score is nondecreasing in published creator standing. That scalar-input derivative supplies no universal burn or act response, partition invariance or ranking guarantee."
+      "statement": "With every other feed factor fixed, score is nondecreasing in published creator standing. That scalar-input derivative supplies no universal frame gross amount or act response, partition invariance or ranking guarantee."
     },
     {
       "chapter": "7 Sorting",
@@ -9892,7 +9892,7 @@
       "label": "eq:transport:reward-formula",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Inventory the normalized terminal reward formula and its positive-improvement gate. With fixed creators, positive normalization and fixed non-standing factors, conditional input bounds apply; they establish no general burn or funded-partition reward effect. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
+      "statement": "Inventory the normalized terminal reward formula and its positive-improvement gate. With fixed creators, positive normalization and fixed non-standing factors, conditional input bounds apply; they establish no general frame gross amount or funded-partition reward effect. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
     },
     {
       "chapter": "8 Transport",
@@ -10660,7 +10660,7 @@
       "label": "rem:gates:split-scope",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "For an unsupported Actor sustaining reduced rate c, each accepted act requires c times numeraire plus the action price in new frame gross amount; wall-neutral sustaining frame gross amount is twice that price. Relational support may help stamps but never reduces the own-balance debit. Additional Registration debit and incremental aggregate frame gross amount are distinct, and cost alone bounds no small standing gain. Use the separate Registration-debit and incremental-frame gross amount denominators of ``prop:epoch:split-registration-cost``."
+      "statement": "For an unsupported Actor sustaining reduced rate c, each accepted act requires c times numeraire plus the action price in new frame gross amount; wall-neutral sustaining frame gross amount is twice that price. Relational support may help stamps but never reduces the own-balance debit. Additional Registration debit and incremental aggregate frame gross amount are distinct, and cost alone bounds no small standing gain. Use the separate Registration-debit and incremental aggregate frame gross amount denominators of ``prop:epoch:split-registration-cost``."
     },
     {
       "chapter": "A Gates",
@@ -15112,7 +15112,7 @@
       "label": "ver:floor:recoinage-invariant",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Under positive recoinage, co-scale all frame gross amounts, debit vintages and the numeraire: floors and delivered reduced wall remain identical, prices scale by c and real capacity per frame gross amount unit by 1/c. Remaining integer counts, source-rate/wall ratios, emission and verdicts agree; straddling wall enclosures stay indecisive. This is covariance, not a fixed-ledger numeraire change."
+      "statement": "Under positive recoinage, co-scale all frame gross amounts, debit vintages and the numeraire: floors and delivered reduced wall remain identical, prices scale by c and real capacity per frame gross unit by 1/c. Remaining integer counts, source-rate/wall ratios, emission and verdicts agree; straddling wall enclosures stay indecisive. This is covariance, not a fixed-ledger numeraire change."
     },
     {
       "chapter": "F Verification",
@@ -15496,7 +15496,7 @@
       "label": "ver:standing:self-retention-manipulation",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Using the declared reference pairs and one vouch, append one coefficient-one self-resolved act with no new burn; check the debit/count decrease in own ledger rate and report equilibrium movement within the two completed hulls. This diagnostic proves no universal retention-strategy resistance or act-response direction."
+      "statement": "Using the declared reference pairs and one vouch, append one coefficient-one self-resolved act with no new actor entry; check the debit/count decrease in own ledger rate and report equilibrium movement within the two completed hulls. This diagnostic proves no universal retention-strategy resistance or act-response direction."
     },
     {
       "chapter": "F Verification",
@@ -18644,7 +18644,7 @@
       "label": "case:deployment:public-availability-through-creator",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Optional operating example: In the public-availability proof sketch, an absent path that would pass through the creator is indistinguishable in a gated view from one routed around the creator. The invisible path therefore prevents independent verification of that creator’s centrality. Its service property is not a condition of the calculation; retain any selected local service duty separately."
+      "statement": "Optional operating example: In the public-availability proof sketch, an absent path that would pass through the creator is indistinguishable in a gated view from one routed around the creator. The invisible path therefore prevents independent verification of that creator’s centrality."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18896,7 +18896,7 @@
       "label": "case:deployment:device-local-server-assisted",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Optional operating example: Server-assisted feed computation beyond the local cache fails device-local scope when the client needs per-request graph data from the server whose ranking it is verifying. Its service property is not a condition of the calculation; retain any selected local service duty separately."
+      "statement": "Optional operating example: Server-assisted feed computation beyond the local cache fails device-local scope when the client needs per-request graph data from the server whose ranking it is verifying."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18932,7 +18932,7 @@
       "label": "case:deployment:transparency-of-protocol-formulas-scheduled-vote",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Optional operating example: Governance-vote updates are compatible with formula transparency only on a published schedule with enough lead time for clients to recompute affected cached values before the change applies. Its service property is not a condition of the calculation; retain any selected local service duty separately."
+      "statement": "Optional operating example: Governance-vote updates are compatible with formula transparency only on a published schedule with enough lead time for clients to recompute affected cached values before the change applies."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18944,7 +18944,7 @@
       "label": "case:deployment:transparency-of-protocol-formulas-time-locked",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Optional operating example: Time-locked update windows with independent oracle attestation are compatible with formula transparency only if clients cannot be surprised by silent changes; the declaration remains fixed within its structural edition. Its service property is not a condition of the calculation; retain any selected local service duty separately."
+      "statement": "Optional operating example: Time-locked update windows with independent oracle attestation are compatible with formula transparency only if clients cannot be surprised by silent changes; the declaration remains fixed within its structural edition."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -20288,7 +20288,7 @@
       "label": "def:graph:authority-history-inputs",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "Supply the authority history and rules needed to assess the recorded keys and Actor; the epoch itself has no mandatory source-warrantor or declaration-edition field."
+      "statement": "Supply the authority history and rules needed to assess the recorded keys and Actor; the epoch itself has no authority declaration, warrantor, edition or proof object."
     },
     {
       "chapter": "04 Graph",
