@@ -7210,7 +7210,7 @@
       "after": "Claim: Declared live fixture recognition retains delayed acceptance and deduplicates consistent aliases by destruction identity; an alias with changed attribution refuses. No observed lineage total substitutes for acceptance.",
       "review": "The delayed member is in lineage but absent from the first accepted set, then present in the next. The destruction count equals record count minus the consistent alias. Changed alias attribution refuses InconsistentAlias even with its matching proof; counting both aliases or accepting changed attribution breaks these assertions.",
       "paper_witnesses": {
-        "cond:comparator:marker-single-count": "The delayed member is in lineage but absent from the first accepted set, then present in the next. The destruction count equals record count minus the consistent alias. Changed alias attribution refuses InconsistentAlias even with its matching proof; counting both aliases or accepting changed attribution breaks these assertions."
+        "cond:comparator:marker-single-count": "For the finite fixtures under the retained accepted-set containment policy, the delayed destruction is absent from first acceptance until selected, and the destruction count equals record count minus the consistent alias. These assertions witness first-common-claim counting on that restricted input class. The InconsistentAlias refusal is local policy, not the condition’s treatment of conflicting claims; independent common projection remains outside this witness."
       },
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",
@@ -7224,15 +7224,7 @@
       "claim": "RECORDS::claim:burn:live-acceptance-requires-complete-proof",
       "before": "",
       "after": "Claim: Complete lists and uniquely opened commitments yield the same accepted sets under declared fixture verifiers; missing member proof, missing or ambiguous opening, out-of-lineage acceptance and dropped predecessor acceptance refuse without substituting a smaller set.",
-      "review": "The complete-list and uniquely opened commitment accepted sets are equal. Missing and duplicate openings refuse MissingOpening and AmbiguousOpening; absent member proof refuses InvalidMember in both representations; acceptance outside lineage refuses OutOfLineage and dropped predecessor acceptance refuses RegressedAcceptance. No smaller set is substituted.",
-      "paper_witnesses": {
-        "cond:comparator:marker-network-acceptance": "The complete-list and uniquely opened commitment accepted sets are equal. Missing and duplicate openings refuse MissingOpening and AmbiguousOpening; absent member proof refuses InvalidMember in both representations; acceptance outside lineage refuses OutOfLineage and dropped predecessor acceptance refuses RegressedAcceptance. No smaller set is substituted."
-      },
-      "witness_identity": {
-        "recipe": "same-file-case-closure/v1",
-        "function": "live_marker_openings",
-        "digest": "9367f6f59e724ac7b7d2e95880be2830b88cd840823747e0c437bc07e9c54599"
-      }
+      "review": "The complete-list and uniquely opened commitment accepted sets are equal. Missing and duplicate openings refuse MissingOpening and AmbiguousOpening; absent member proof refuses InvalidMember in both representations; acceptance outside lineage refuses OutOfLineage and dropped predecessor acceptance refuses RegressedAcceptance. No smaller set is substituted."
     },
     {
       "operation": "pn-records::public::live_markers::live_marker_rules",
@@ -7242,8 +7234,8 @@
       "after": "Claim: Under a declared live fixture verifier, complete reversed disclosures retain immediate marker succession and refuse skipped, competing, lost-lineage and copied-name candidates. A name or a depth assumption alone supplies no live settlement authority.",
       "review": "A copied marker name refuses Pending under the complete-disclosure live predicate, missing lineage refuses MissingLineage, absent live evidence refuses MissingEvidence and lost settlement refuses Lost. A name or mere depth cannot pass these controls; external causal authenticity remains a verifier premise. The valid reversed history is recognized. Removing or duplicating a successor refuses Succession; deleting predecessor lineage refuses RegressedLineage; omitting the initial empty snapshot refuses Initial; substituting the policy edition refuses HistoryPolicy. Removing these checks changes the corresponding exact refusal assertion. Scope is the declared live fixture verifier, not settlement authenticity.",
       "paper_witnesses": {
-        "cond:comparator:marker-causal-dependence": "A copied marker name refuses Pending under the complete-disclosure live predicate, missing lineage refuses MissingLineage, absent live evidence refuses MissingEvidence and lost settlement refuses Lost. A name or mere depth cannot pass these controls; external causal authenticity remains a verifier premise.",
-        "cond:comparator:marker-lineage-succession": "The valid reversed history is recognized. Removing or duplicating a successor refuses Succession; deleting predecessor lineage refuses RegressedLineage; omitting the initial empty snapshot refuses Initial; substituting the policy edition refuses HistoryPolicy. Removing these checks changes the corresponding exact refusal assertion. Scope is the declared live fixture verifier, not settlement authenticity."
+        "cond:comparator:marker-causal-dependence": "Under the declared sound live verifier, removing lineage evidence refuses MissingLineage, copying a marker name into the changed disclosure refuses Pending, and lost settlement refuses Lost. These finite controls witness dependence on disclosed lineage rather than the name alone; external causal authenticity and treatment of independently selected unmatched claims are not established.",
+        "cond:comparator:marker-lineage-succession": "The reversed complete fixture is recognized; removing or duplicating a successor refuses Succession, and deleting predecessor lineage refuses RegressedLineage. These finite controls witness immediate succession and lineage extension under the declared verifier. Initial-snapshot and policy-edition refusals are local policy; independent selection and real-chain finality are outside this witness."
       },
       "witness_identity": {
         "recipe": "same-file-case-closure/v1",

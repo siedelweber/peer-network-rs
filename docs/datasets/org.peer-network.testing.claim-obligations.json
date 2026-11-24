@@ -441,7 +441,6 @@
       "witnessed_labels": [
         "cond:comparator:marker-lineage-succession",
         "cond:comparator:marker-causal-dependence",
-        "cond:comparator:marker-network-acceptance",
         "cond:comparator:marker-single-count"
       ]
     },

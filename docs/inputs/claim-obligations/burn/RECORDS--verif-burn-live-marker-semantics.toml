@@ -1,5 +1,5 @@
 name = "RECORDS::verif:burn:live-marker-semantics"
-witnessed_labels = ["cond:comparator:marker-lineage-succession", "cond:comparator:marker-causal-dependence", "cond:comparator:marker-network-acceptance", "cond:comparator:marker-single-count"]
+witnessed_labels = ["cond:comparator:marker-lineage-succession", "cond:comparator:marker-causal-dependence", "cond:comparator:marker-single-count"]
 path = "packages/records/README.md"
 status = "scoped-supported"
 claims = ["RECORDS::claim:burn:live-markers-require-complete-lineage", "RECORDS::claim:burn:live-acceptance-requires-complete-proof", "RECORDS::claim:burn:live-aliases-retain-first-acceptance"]

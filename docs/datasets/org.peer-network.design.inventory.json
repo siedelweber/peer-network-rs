@@ -1660,7 +1660,7 @@
       "label": "itm:network:conserved-standing-package-final-state",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish the proposed final epoch state: final edge set, residual balances, action counts, settled burn snapshot and constants in force."
+      "statement": "Publish the proposed final epoch state: final edge set, residual balances, action counts, supplied Actor entries fixed at the boundary and constants in force."
     },
     {
       "chapter": "03 Network",
@@ -1684,7 +1684,7 @@
       "label": "itm:network:conserved-standing-package-activation",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish responsive and wall-clamped activation formulas, the in-force wall and structural floor, and controller edition and reduced constants. Include the completed width and accepted rung as controller inputs beside its wall, proposal, delivered next wall and burn-image schedule."
+      "statement": "Publish responsive and wall-clamped activation formulas, the in-force wall and structural floor, and controller formula and reduced constants. Include the completed width and accepted rung as controller inputs beside its wall, proposal, delivered next wall and frame-image schedule."
     },
     {
       "chapter": "03 Network",
@@ -1816,7 +1816,7 @@
       "label": "itm:network:host-contract-accepted-records",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "At each accepted boundary publish the final write and edge sets, the dependent-set partition obtained by merging overlapping principal closures against prior finalized history, realized size, closure cause and asserted boundary timestamp."
+      "statement": "At each accepted boundary publish the final write and edge sets, the dependent-set partition obtained by merging overlapping principal closures against prior completed history, realized size, closure cause and asserted boundary timestamp."
     },
     {
       "chapter": "03 Network",
@@ -1828,7 +1828,7 @@
       "label": "itm:network:host-contract-final-ledger",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish settled boundary burn state, final residual balances and action counts, accepted-act count increments and debit vintages."
+      "statement": "Publish supplied boundary Actor entries and frame amounts, final residual balances and action counts, accepted-act count increments and debit vintages."
     },
     {
       "chapter": "03 Network",
@@ -1876,7 +1876,7 @@
       "label": "itm:network:host-contract-shared-policy",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish title and settlement recognition, target size and duration bounds, the policy-floor schedule (announced at boundary k and effective at k+1, valid if and only if at or above the safety wall), the threshold schedule, and the margin. Publish the in-force wall and fixed structural-floor declaration beside the numeraire before the first epoch, including its exact defining object and comparison procedure; include controller edition, reduced constants, completed width and rung, proposal and delivered led wall. No protocol formula changes silently."
+      "statement": "Publish title and settlement recognition, target size and duration bounds, the policy-floor schedule (announced at boundary k and effective at k+1, valid if and only if at or above the safety wall), the threshold schedule, and the margin. Publish the in-force wall and fixed structural-floor declaration beside the numeraire before its first epoch, including its exact defining object and comparison procedure; include controller formula, reduced constants, completed width and rung, proposal and delivered led wall under the published calculation rules."
     },
     {
       "chapter": "03 Network",
@@ -1888,7 +1888,7 @@
       "label": "itm:network:host-contract-evidence",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish formula editions, constants, interval boxes, residual bounds and verification reports, including every attempted rung’s verdict and supplied or recoverable enclosure support, sufficient for independent checking."
+      "statement": "Publish public formulas and constants, interval boxes and residual bounds, with every attempted rung’s verdict and supplied or recoverable enclosure support for replay verification."
     },
     {
       "chapter": "03 Network",
@@ -4516,7 +4516,7 @@
       "label": "itm:graph:act-authentication-requirements-transparency",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Every host-added field of the finalizable act is within the bytes covered by its recorded approval."
+      "statement": "Every host-added field of the completion-ready act is within the bytes covered by its recorded approval."
     },
     {
       "chapter": "04 Graph",
@@ -4528,7 +4528,7 @@
       "label": "itm:graph:act-authentication-requirements-approval",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Only a finalizable act covered by a well-formed recorded approval is eligible for the authoritative sequence."
+      "statement": "Only a completion-ready act covered by a well-formed recorded approval is eligible for the authoritative sequence."
     },
     {
       "chapter": "04 Graph",
@@ -4564,7 +4564,7 @@
       "label": "itm:graph:act-authentication-requirements-ordering",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Where dependency compliance is claimed, retain public evidence that can establish a violation without changing finalized history."
+      "statement": "Where dependency compliance is claimed, retain public evidence that can establish a violation without changing completed history."
     },
     {
       "chapter": "04 Graph",
@@ -4648,7 +4648,7 @@
       "label": "itm:graph:settlement-recognition-buyer-consent",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Refuse settlement recognition if a buyer Withdraw on the Offer finalizes no later than the Ratify’s epoch; a same-epoch cancellation defeats consent."
+      "statement": "Refuse settlement recognition if a buyer Withdraw on the Offer completes no later than the Ratify’s epoch; a same-epoch cancellation defeats consent."
     },
     {
       "chapter": "04 Graph",
@@ -4660,7 +4660,7 @@
       "label": "itm:graph:settlement-recognition-seller-consent",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Refuse settlement recognition if a seller Rescind on the Offer finalizes no later than the Ratify’s epoch; a same-epoch cancellation defeats consent."
+      "statement": "Refuse settlement recognition if a seller Rescind on the Offer completes no later than the Ratify’s epoch; a same-epoch cancellation defeats consent."
     },
     {
       "chapter": "04 Graph",
@@ -4912,7 +4912,7 @@
       "label": "subsec:nodes:universal-principles",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Enforce recorded act ownership and permanent frame addresses, shared time, tensor roles, complete hyper-acts, opaque payloads and census-only allocation; a frame address is not a signing key."
+      "statement": "Enforce equality of the recorded opaque Actor identity across author and initiating source, shared act time, tensor roles, complete hyper-acts, removable payload isolation and census-only standing allocation."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -8116,7 +8116,7 @@
       "label": "prop:epoch:frame-gross-response-bound",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "At a smooth saturated fixed passing rung, feedback offsets at most two thirds of the largest direct burn forcing, not necessarily of the burner own forcing; preserve the fixed counts, base, wall and numeraire premises."
+      "statement": "At a smooth saturated fixed passing rung, feedback offsets at most two thirds of the largest direct frame gross forcing, not necessarily of the source Actor’s own forcing; preserve the fixed Actor set, counts, base, wall, numeraire and other ledger entries."
     },
     {
       "chapter": "6 Epoch",
@@ -8548,7 +8548,7 @@
       "label": "cor:epoch:universal-frame-amount-benchmarks",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Compute the ``cond:epoch:write-own-balance-solvency``, safety and door burn benchmarks without promising admission."
+      "statement": "Compute the own-balance, individual-safety and aggregate-door frame amount benchmarks for an unsupported Actor proposing one or more acts; none guarantees selection into the finite write set."
     },
     {
       "chapter": "6 Epoch",
@@ -9628,7 +9628,7 @@
       "label": "itm:sorting:score-monotonicity-profile-bridge",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "On a fixed raw profile-bridged feed path, score is nondecreasing in the creator’s published standing through both the raw bridge factor and terminal amplifier. This is not a standing-transport property; burn or act changes require a separate completed-field comparison. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
+      "statement": "On a fixed raw profile-bridged feed path, score is nondecreasing in the creator’s published standing through both the raw bridge factor and terminal amplifier. This is a feed property, not a standing-transport derivative; changes to supplied frame gross amount or accepted acts require a separate completed-field comparison."
     },
     {
       "chapter": "8 Transport",
@@ -10612,7 +10612,7 @@
       "label": "itm:scalability:spam-resistance-per-action-debit",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Debit the in-force action price and retain each accepted act’s count increment: residual balance falls while its denominator rises, and merely stopping does not undo the dilution. A below-wall final stamp fails individual safety; this ledger-rate effect supplies no universal final-standing direction. Use the separate Registration-debit and incremental-burn denominators of ``prop:epoch:split-registration-cost``."
+      "statement": "Debit the in-force action price and retain each accepted act’s count increment: residual balance falls while its denominator rises, and merely stopping does not undo the dilution. A below-wall stamp fails individual safety."
     },
     {
       "chapter": "10 Scalability",
@@ -15028,7 +15028,7 @@
       "label": "subsec:verification:two-gate",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Check own debit, individual safety and aggregate door with explicit burn and reduced units."
+      "statement": "Check own debit, individual safety and aggregate door with explicit frame prices and reduced quantities."
     },
     {
       "chapter": "F Verification",
@@ -15856,7 +15856,7 @@
       "label": "subsec:verification:graph-dependent-certificate",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish the conserved reference width, evaluated fence and verdict; distinguish independent conserved equilibrium evidence from the retired staged verifier."
+      "statement": "Publish the conserved reference width, evaluated fence and verdict; distinguish independent conserved equilibrium evidence from the separate staged construction."
     },
     {
       "chapter": "F Verification",
@@ -17504,7 +17504,7 @@
       "label": "case:necessity:participation-floor-coupled-price-policy",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Refused simplification under ``subsec:necessity:participation-floor``: Keep the reduced wall, structural floor and policy dial distinct, joined to burn amounts by the numeraire; refuse one coupled price-policy constant, which forces congestion policy to reprice survivors although the door and curve are separable."
+      "statement": "Refused simplification under ``subsec:necessity:participation-floor``: Keep the reduced wall, structural floor and policy dial distinct, joined to frame amounts by the numeraire; refuse one coupled price-policy constant, which forces congestion policy to reprice survivors although the door and curve are separable."
     },
     {
       "chapter": "H Necessity",
@@ -17540,7 +17540,7 @@
       "label": "subsec:necessity:floor-as-numeraire",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Reduce burn amounts by a co-expressed numeraire for invariance under unit change; at fixed purchasing power a market price increase by a factor divides the numeric burn by that factor, without market-repricing invariance."
+      "statement": "Use the explicit numeraire to join frame amounts to action counts and co-scale it under redenomination; external price projection is not an operand of this reduction."
     },
     {
       "chapter": "H Necessity",
@@ -17588,7 +17588,7 @@
       "label": "case:necessity:nu-reduced-kernel-gate-reduction",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Refused simplification under ``subsec:necessity:nu-reduced-kernel``: Keep the bond kernel reduced by the numeraire, with the participation floor confined to gate, freeze and entry cost; refuse reducing by the gate’s burn image, which makes every policy-floor move reshape bond weights and coupled dynamics for actors who remain admitted."
+      "statement": "Refused simplification under ``subsec:necessity:nu-reduced-kernel``: Keep the bond kernel reduced by the numeraire, with the participation floor confined to gate, freeze and entry cost; refuse reducing by the gate’s frame image, which makes every policy-floor move reshape bond weights and coupled dynamics for actors who remain admitted."
     },
     {
       "chapter": "H Necessity",
@@ -17636,7 +17636,7 @@
       "label": "case:necessity:three-step-settlement-accept-commit",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Refused simplification under ``subsec:necessity:three-step-settlement``: Keep buyer Ratify after seller Accept as the authored commitment proposal, finalized at the boundary; refuse commit-at-Accept, which separates earlier buyer funding from seller commitment and permits stale terms to bind without the buyer’s current consent."
+      "statement": "Refused simplification under ``subsec:necessity:three-step-settlement``: Keep buyer Ratify after seller Accept as the authored commitment proposal, completed at the boundary; refuse commit-at-Accept, which separates earlier buyer funding from seller commitment and permits stale terms to bind without the buyer’s current consent."
     },
     {
       "chapter": "H Necessity",
@@ -18584,7 +18584,7 @@
       "label": "case:deployment:public-availability-streaming",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Optional operating example: Streaming the append-log through pub/sub satisfies public availability when every participant can retrieve the public act records, projections and standing-package data required for independent verification; streaming minimizes cache staleness. Its service property is not a condition of the calculation; retain any selected local service duty separately."
+      "statement": "Optional operating example: Streaming the append-log minimizes cache staleness among the listed data-access choices; supplying records for inspection does not promise continuous future service."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18596,7 +18596,7 @@
       "label": "case:deployment:public-availability-api-polling",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Optional operating example: Open API polling with pagination is a public-availability option: it introduces bounded staleness without breaking the requirement that participants can retrieve the records and standing-package data needed for verification. Its service property is not a condition of the calculation; retain any selected local service duty separately."
+      "statement": "Optional operating example: API polling with pagination supplies records for inspection with bounded staleness; it does not change a calculation over the same consumed data or promise continuous future access."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18608,7 +18608,7 @@
       "label": "case:deployment:public-availability-snapshot-delta",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Optional operating example: Periodic snapshots with delta encoding are a public-availability option: bounded staleness is permitted while participants retain access to the records and standing-package data needed for verification. Its service property is not a condition of the calculation; retain any selected local service duty separately."
+      "statement": "Optional operating example: Periodic snapshots with deltas supply inspection data with bounded staleness without changing a calculation over the same consumed data."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18620,7 +18620,7 @@
       "label": "case:deployment:public-availability-gossip",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Optional operating example: P2P gossip replication satisfies public availability when it makes the public records and required standing-package data continuously retrievable for independent verification. Its service property is not a condition of the calculation; retain any selected local service duty separately."
+      "statement": "Optional operating example: P2P gossip is one way to supply records for inspection, not an additional calculation input or a guarantee of continuous future service."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18632,7 +18632,7 @@
       "label": "case:deployment:public-availability-gated-access",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Optional operating example: Gating read access to act envelopes or their edge projections violates public availability; a participant must not be confined to an arbitrary unreadable subset of the graph needed for verification. Its service property is not a condition of the calculation; retain any selected local service duty separately."
+      "statement": "Optional operating example: A gated subset can omit paths needed to check a creator’s centrality. Independent inspection needs the complete consumed graph inputs; the access service adds no calculation premise or promise of continuous future service."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18656,7 +18656,7 @@
       "label": "case:deployment:public-availability-around-creator",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Optional operating example: In the public-availability proof sketch, an absent path routed around the creator has the same visible symptom as one passing through the creator: neither is visible. Continuous access to the full published edge set removes this ambiguity. Its service property is not a condition of the calculation; retain any selected local service duty separately."
+      "statement": "Optional operating example: In a gated view, an absent path around the creator is indistinguishable from an absent path through the creator. Supplying the full consumed edge set permits the specified path calculation; access choices alone do not supply its inputs."
     },
     {
       "chapter": "6 Epoch",
@@ -18680,7 +18680,7 @@
       "label": "case:deployment:final-epoch-state-agreement-linearization",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Strict append-log linearization is a final-state agreement mechanism only if honest participants converge on the same authoritative order and complete epoch package."
+      "statement": "Strict append-log linearization is compliant when honest participants converge on the authoritative order and the same complete supplied epoch operands."
     },
     {
       "chapter": "6 Epoch",
@@ -18692,7 +18692,7 @@
       "label": "case:deployment:final-epoch-state-agreement-cluster-closure",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Cluster-closure writes under the published closure rule are compliant only if honest participants converge on the same authoritative order and complete epoch package; ordered membership alone does not choose the accepted marker view."
+      "statement": "Cluster closure supplies ordered membership; compliance also requires convergence on the complete supplied epoch operands, including Actor entries fixed at the identified boundary."
     },
     {
       "chapter": "6 Epoch",
@@ -18716,7 +18716,7 @@
       "label": "case:deployment:final-epoch-state-agreement-gossip-stability",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Gossip replication with stability depth is compliant only if honest participants converge on the same authoritative order and complete epoch package."
+      "statement": "Gossip replication with stability depth is compliant when honest participants converge on the authoritative order and the same complete supplied epoch operands."
     },
     {
       "chapter": "6 Epoch",
@@ -18752,7 +18752,7 @@
       "label": "subsec:deployment:immutability",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Preserve accepted record contents while permitting changes only to removable carriage."
+      "statement": "Keep consumed edge parameters fixed for replay; later accepted acts add edges rather than rewriting those parameters."
     },
     {
       "chapter": "04 Graph",
@@ -18764,7 +18764,7 @@
       "label": "case:deployment:immutability-mutable-records",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Mutable published edge records, including parameter updates, retroactive corrections and soft deletion, violate immutability: a retrieved record must remain valid for later replay rather than silently invalidating cached computations."
+      "statement": "Parameter updates, retroactive corrections and soft deletions violate the fixed parameters of a consumed edge record: replay of that record uses the same values, while later accepted acts may add edges."
     },
     {
       "chapter": "04 Graph",
@@ -18788,7 +18788,7 @@
       "label": "subsec:deployment:feed-reproducibility",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Terminal feed reproduction obligations are recorded but no feed engine is proposed in Layer 1."
+      "statement": "Clients with identical consumed ego-network records, scoring constants and depth bound reproduce the same feed; source capacity, external unit cost and source-history depth are not ranking inputs."
     },
     {
       "chapter": "7 Sorting",
@@ -18800,7 +18800,7 @@
       "label": "case:deployment:feed-reproducibility-closed-form",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "The chosen deterministic closed-form feed formula permits clients to execute the full ranking computation without server state and avoids model-weight overhead; it must remain compatible with device-local computation."
+      "statement": "The selected closed-form feed formula lets clients reproduce the ranking from the same consumed graph data without server state or model-weight distribution."
     },
     {
       "chapter": "7 Sorting",
@@ -18812,7 +18812,7 @@
       "label": "case:deployment:feed-reproducibility-public-model",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "A model with publicly distributed, locally executable weights can satisfy feed reproducibility in principle only if the client can execute the full computation without server state. Modern-scale weight storage and inference requirements conflict with the device-local invariant described here."
+      "statement": "A publicly distributed, locally executable model can reproduce the feed when its full model and evaluation rule are supplied and the client can perform the whole computation without server state."
     },
     {
       "chapter": "7 Sorting",
@@ -19544,7 +19544,7 @@
       "label": "subsec:deployment:terminal-centrality-certificates",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Terminal centrality certificate publication does not introduce a Layer 1 centrality engine."
+      "statement": "Recompute terminal centrality from supplied graph inputs and sampled paths within the stated approximation bounds; scalar-only publication supplies no independently checkable computation."
     },
     {
       "chapter": "8 Transport",
@@ -20816,7 +20816,7 @@
       "label": "rem:comparator:pre-opening-capacity-warning",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "A pre-opening source interval can require an economic warning; the realization owes no published aggregate capacity bound, and an absent interval supplies no bound duty."
+      "statement": "An interval before external acquisition opens deserves attention to the amount attainable under the realization’s rules; without such an interval there is nothing to bound, and no realization owes a published or committed capacity bound."
     },
     {
       "chapter": "02 Comparator",
@@ -20912,7 +20912,7 @@
       "label": "rem:network:optional-host-conduct",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "Optional publication, notification, reproduction and service conduct adds no closure input or admission requirement."
+      "statement": "A host may offer cached by-products or a reproducible build account without changing the standing package or calculation-evidence replay; reputational assessment of enclosure looseness is external to the calculation."
     },
     {
       "chapter": "04 Graph",
