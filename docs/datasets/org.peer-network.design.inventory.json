@@ -18740,7 +18740,7 @@
       "label": "case:deployment:final-epoch-state-agreement-inconsistent-projection",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "A projection, envelope or admission package not deterministically derived from the agreed complete epoch package fails agreement. Mixed histories, marker-policy editions or debit vintages, out-of-lineage burns, dropped predecessor acceptance, policy deviations and double-counted ancestry violate the package requirements."
+      "statement": "A projection, envelope or admission package not deterministically derived from the agreed consumed epoch operands fails agreement. Mixing Actor entry sets from different boundaries, prior states or debit vintages, or recomputing a source history inside the closure calculation fails the supplied-input requirements."
     },
     {
       "chapter": "04 Graph",
