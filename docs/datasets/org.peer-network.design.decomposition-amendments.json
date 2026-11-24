@@ -135,7 +135,8 @@
             "pn-host",
             "pn-epoch",
             "pn-records",
-            "pn-interchange"
+            "pn-interchange",
+            "tracing"
           ],
           "name": "pn-fixtures",
           "optional": [],
