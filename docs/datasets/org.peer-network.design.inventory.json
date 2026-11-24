@@ -340,7 +340,7 @@
       "label": "post:introduction:record-integrity",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Published records and ledger entries cannot be silently changed."
+      "statement": "Consumed edge and ledger records remain fixed throughout a calculation and persist unchanged in carried state, so replay over the same records uses the same operands."
     },
     {
       "chapter": "01 Introduction",
@@ -364,7 +364,7 @@
       "label": "post:introduction:authoritative-act-order",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish each finite total epoch act sequence. The lexicographic (epoch, finalized position) pair is the order of record; logical time summarizes its replay. Place public parents and declared dependencies earlier. Agreement on the sequence and remaining shared inputs is required, while marker-policy acceptance determines the burn snapshot."
+      "statement": "The host supplies each epoch's total accepted-act order, keyed by epoch and position, with logical time derived from replay. Compliance places parents and dependencies earlier. Equal ordered sequences, Actor entries and remaining inputs reproduce equal results; order alone does not determine the separately supplied entries."
     },
     {
       "chapter": "01 Introduction",
@@ -616,7 +616,7 @@
       "label": "cond:comparator:burn-pinned-monotonicity",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "Source oracle condition, not a closure operand or proof of source truth: Require successive pinned amounts at an address to be nondecreasing, with append-only records and nonnegative contributions."
+      "statement": "Source oracle condition: gross amounts pinned to an associated identity do not decrease along connected histories, because the record is append-only and its contributions are nonnegative."
     },
     {
       "chapter": "02 Comparator",
@@ -664,7 +664,7 @@
       "label": "cond:comparator:burn-bindability",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "Source oracle condition, not a closure operand or proof of source truth: Supply opaque permanent addresses carrying no identity claim, so a consumer can bind its identities for the lifetime of its record."
+      "statement": "Source oracle condition: associate each attributed frame amount with the opaque Actor identity it denotes. The association asserts neither personhood nor signing-key authority and creates no separate address object in the calculation."
     },
     {
       "chapter": "02 Comparator",
@@ -760,7 +760,7 @@
       "label": "cond:comparator:marker-lineage-succession",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "Recognize an initial empty boundary and uniquely ordered successor lineages under the source policy and finalization premises; source recognition is oracle material."
+      "statement": "Identify one initial marker and at most one recognized successor at each later index. Each successor names its predecessor and extends its lineage; published finalization assumptions protect marker and lineage at the stated depth. Independent selection does not alter marker identity."
     },
     {
       "chapter": "02 Comparator",
@@ -856,7 +856,7 @@
       "label": "def:comparator:imported-frame",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Read a shared nonnegative burn-amount codomain at each permanently bound actor address."
+      "statement": "Consume one amount family: the supplied nonnegative gross map on opaque Actor identities. Its common ordered codomain is the comparator frame and each Actor's amount is its fibre. Exogeneity, persistence, boundary stability and identity association are supplied frame premises, not an independent address operand."
     },
     {
       "chapter": "02 Comparator",
@@ -868,7 +868,7 @@
       "label": "eq:comparator:seam",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Resolve an actor burn amount through its bound primitive address."
+      "statement": "Read an Actor’s supplied frame gross amount at that Actor’s identity."
     },
     {
       "chapter": "02 Comparator",
@@ -880,7 +880,7 @@
       "label": "rem:comparator:neutrality-from-silence",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "The imported destruction record confers no primitive-level priced claim."
+      "statement": "A supplied Actor entry names an amount without assigning standing or a use. Closure supplies its computational role; external source pricing belongs to the oracle projection and the network computes relative standing."
     },
     {
       "chapter": "02 Comparator",
@@ -892,7 +892,7 @@
       "label": "def:comparator:frame-binding",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Keep each Actor permanently bound to its opaque burn address, which is a frame address and not a signing key. Recorded burn remains bound to that address; standing is computed separately, and address portfolios can concentrate received support. Identical public records cannot distinguish legitimate separation from strategic concentration under ``thm:epoch:split-observational-equivalence``; private purpose is not a record-derived input."
+      "statement": "Associate each supplied frame amount with one opaque Actor identity, without creating a closure address object or signing key. The source retains that attribution and cannot be pooled or reassigned to another Actor. Title follows its separate fold; standing is a computed pair comparison and can concentrate under an alternative funded partition."
     },
     {
       "chapter": "02 Comparator",
@@ -928,7 +928,7 @@
       "label": "lem:comparator:frame-stability",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Settled gross burn amounts do not decrease along the recognized marker sequence in one history under its fixed policy."
+      "statement": "Fixed boundary entries, monotone gross history and nonnegative opaque-Actor attribution imply nondecreasing sampled frame gross amounts across connected consumed boundaries."
     },
     {
       "chapter": "02 Comparator",
@@ -988,7 +988,7 @@
       "label": "def:comparator:residual-balance",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Subtract historical consummated debits at their original epoch prices from imported burn."
+      "statement": "Subtract each accepted act's consummated writing-epoch debit from the Actor's imported frame gross amount. Historical debits retain their original prices; read the resulting balance at the current numeraire for solvency and the neutral source."
     },
     {
       "chapter": "02 Comparator",
@@ -1000,7 +1000,7 @@
       "label": "eq:comparator:residual-balance",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Calculate residual burn as imported burn amount less the debit schedule."
+      "statement": "Compute residual frame amount as supplied gross amount less all consummated action debits at their writing-epoch prices."
     },
     {
       "chapter": "02 Comparator",
@@ -1036,7 +1036,7 @@
       "label": "rem:comparator:vintage-read-time-state",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Evaluate current carried burn-denominated state, including the burn balance, under the constants in force when it is read."
+      "statement": "Evaluate current carried frame-denominated state, including the frame balance, under the constants in force when it is read."
     },
     {
       "chapter": "02 Comparator",
@@ -1060,7 +1060,7 @@
       "label": "rem:comparator:type-asymmetry",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Distinguish burn magnitudes from integer counts and reduce through the numeraire."
+      "statement": "Distinguish continuous frame gross amounts from discrete action counts. Their real-over-integer quotient requires numeraire reduction as the sole dimensional conversion; each write consumes its frame-denominated price."
     },
     {
       "chapter": "02 Comparator",
@@ -1072,7 +1072,7 @@
       "label": "def:comparator:numeraire",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Use a positive burn-per-action numeraire as the sole dimensional conversion."
+      "statement": "Use a positive frame-unit-per-action-credit numeraire as the sole conversion before a frame-denominated input meets a count. Each boundary consumes its structural value; a deterministic formula over consumed data is a closure calculation, while a fiat choice supplies a free input. Neither makes external price an operand."
     },
     {
       "chapter": "02 Comparator",
@@ -1096,7 +1096,7 @@
       "label": "ins:comparator:inherited-costliness",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Treat costliness and provenance as obligations supplied by the realization."
+      "statement": "Closure uses supplied frame amounts under costly-source assumptions, samples the frame and charges accepted acts at their recorded debit vintages. External supply capacity and price are oracle projections rather than calculation premises."
     },
     {
       "chapter": "02 Comparator",
@@ -1108,7 +1108,7 @@
       "label": "def:comparator:source-faithful",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Separate inherited actor-source authenticity from the bounded truth of edge claims."
+      "statement": "Source faithfulness preserves the attribution of supplied frame amount under the source assumptions and conserves intact pairs; it does not prove the source or standing invariance under Actor partition. An accepted act's title and recipient resolution likewise do not establish the truth of an external event it asserts."
     },
     {
       "chapter": "02 Comparator",
@@ -1120,7 +1120,7 @@
       "label": "cond:comparator:source-actor-mass",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Require contributing Actor mass to be genuinely destroyed and non-transferable across addresses, with instantaneous-costliness grounding at genesis and net-cost grounding after a market exists. Treat this as an inherited primitive obligation."
+      "statement": "The supplied Actor gross amount is nonnegative, costly-source-backed and persistent under the same opaque identity, subject to the Actor-entry assumptions. The calculation consumes that amount without establishing its source."
     },
     {
       "chapter": "02 Comparator",
@@ -1180,7 +1180,7 @@
       "label": "post:comparator:faithfulness",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Enforce source, dimensional, immutable-ledger, conservation, epoch-set, title, memoryless, universal, domain, tilt, cluster-rate and final-state clauses."
+      "statement": "Under supplied source assumptions, require the dimensional, immutable-ledger, pair-conservation, epoch-set, title, memoryless, universal-act, domain, tilt, cluster-mean and final-state disciplines. Routes bypassing them are unfloored injections. Construction and certificates support the calculation clauses; final-set admission's exclusive use of the completed post-debit result remains a boundary obligation. These properties imply neither partition invariance nor a universal standing-response sign."
     },
     {
       "chapter": "02 Comparator",
@@ -1192,7 +1192,7 @@
       "label": "cond:comparator:faithfulness-source",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Require real, irrecoverable contributing mass bound to its Actor; source provenance does not make standing coordinates invariant under funded address partition. Identical public records cannot distinguish legitimate separation from strategic concentration under ``thm:epoch:split-observational-equivalence``; private purpose is not a record-derived input."
+      "statement": "Assume the supplied contribution has source backing, irrecoverability and its opaque identity association. These premises preserve provenance, not standing across alternative funded partitions; identical public records cannot distinguish legitimate separation from strategic concentration."
     },
     {
       "chapter": "02 Comparator",
@@ -1204,7 +1204,7 @@
       "label": "cond:comparator:faithfulness-numeraire",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Divide every burn-denominated input by the numeraire before combining it with a count."
+      "statement": "Divide each frame-denominated input by the positive numeraire before combining it with a count."
     },
     {
       "chapter": "02 Comparator",
@@ -1336,7 +1336,7 @@
       "label": "ins:comparator:universal-amplifier",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Terminal value channels use dimensionless standing amplification without manufacturing source. Use published standing in terminal formulas only under their fixed-context premises; terminal scalar monotonicity does not imply monotonicity under a burn, act or funded partition. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
+      "statement": "Terminal value channels use dimensionless standing amplification without manufacturing source. Use published standing in terminal formulas only under their fixed-context premises; terminal scalar monotonicity does not imply monotonicity under a frame gross amount, act or funded partition. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
     },
     {
       "chapter": "02 Comparator",
@@ -1348,7 +1348,7 @@
       "label": "rem:comparator:amplifier-rendering",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Terminal amplification must not silently become an admission-policy control. Zero standing retains unit amplification; an optional guild exponent is published with canonical default one. Terminal input monotonicity implies no monotone burn, act or partition response. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
+      "statement": "Terminal amplification must not silently become an admission-policy control. Zero standing retains unit amplification; an optional guild exponent is published with canonical default one. Terminal input monotonicity implies no monotone frame gross amount, act or partition response. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
     },
     {
       "chapter": "02 Comparator",
@@ -1468,7 +1468,7 @@
       "label": "rem:comparator:inherited-limitations",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Holding all external supply does not establish zero net burn cost; neither destruction provenance nor the unit-cost projection determines holdings-adjusted cost, and nontransferability alone supplies no actor-splitting guarantee. Recorded-amount non-transferability is not standing immobility; required Registration debit differs from incremental total burn between matched histories. Under ``thm:epoch:split-observational-equivalence``, a record-based remedy imposes the same change on a legitimate completion with identical public fields, or the same distribution of changes if randomized."
+      "statement": "Closure preserves supplied amount attribution but does not make funded Actor partition neutral for standing. Aggregate export is capacity-bounded while concentration can increase a member's standing. Additional Registration debit and aggregate frame increment are different quantities."
     },
     {
       "chapter": "02 Comparator",
@@ -1480,7 +1480,7 @@
       "label": "rem:comparator:structural-ceiling",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Separate consistent marker snapshots from external truth: title-coupled counterparty allocation requires recognition, while even valid title transfers cannot authenticate the asserted event or referent."
+      "statement": "Internal act formation and title recognition are checkable, but consumed graph data cannot establish the truth of an asserted external event. Graph structure and externally supplied frame amount remain distinct."
     },
     {
       "chapter": "03 Network",
@@ -1804,7 +1804,7 @@
       "label": "post:network:host-contract",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish the complete package with the fixed marker policy, verified accepted burn snapshot and evidence, and standing enclosures that decide every binding comparison of the accepted set, without hidden state or normative digests. Reject a set whose binding comparison no refinement before publication decides; no verdict of the rejected set is part of the accepted publication."
+      "statement": "Publish a self-contained accepted final-state package with ordered records and partition, supplied Actor entries and ledger, semantic folds, transport, standing and admission evidence, title, boundary policy and controller inputs and outputs. Public operands and sound rung evidence determine binding values; hidden solver state and source or build digests are not inputs. Refine or reject an unresolved binding comparison before acceptance, and exclude rejected-set verdicts from the accepted publication."
     },
     {
       "chapter": "03 Network",
@@ -2680,7 +2680,7 @@
       "label": "prop:graph:author-source-identity",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "The act's stated author, its identifier's author and the initiating source or hyper-act A-leg agree as record data, using the Actor's permanent frame address; this equality does not establish signing-key authority."
+      "statement": "The recorded author, act-identifier author, supplied frame association and binary source or hyper-edge A-leg name the same Actor. Hyper-edge legs share the middle endpoint and retain that act author; their endpoints give the act's complete incidence. No leg has an independent author."
     },
     {
       "chapter": "04 Graph",
@@ -2740,7 +2740,7 @@
       "label": "def:graph:act-incidence-causality",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Recompute each act’s time as one plus the maximum of its incident endpoint frontiers and recomputed times of finalized parents and dependencies at strictly lower (epoch, position) keys. Missing or non-earlier predecessors contribute nothing to that maximum but retain placement faults. Update incident frontiers only, carry them across epochs, and use zero at genesis or for an empty maximum; co-legs inherit one act time. Traverse positions 1 to the authoritative act sequence’s cardinality; m_k denotes the epoch marker, not this act count."
+      "statement": "Compute one Lamport event per accepted act from its complete incidence: both binary endpoints or the hyper-edge's author, middle and target. Its time is one plus the maximum incident frontier and recursively recomputed times of completed parents and dependencies at lower epoch-position keys. Missing or non-earlier predecessors do not enter the maximum, though placement faults remain. Update only incident frontiers, carry them across boundaries and use zero for genesis or an empty maximum; co-legs share the event time. Authoritative order determines time, never conversely."
     },
     {
       "chapter": "04 Graph",
@@ -2800,7 +2800,7 @@
       "label": "def:graph:authoritative-act-order",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish a finite total sequence per epoch and use lexicographic (epoch, finalized position) as the authoritative key across and within epochs. Require parents and dependencies in finalized history at strictly lower keys; retain a violating finalized order as the order of record with accountability evidence. Co-legs share a key; time is derived from this order, never the reverse. Number positions from 1 to the sequence’s cardinality, reserving m_k for the epoch marker."
+      "statement": "The host publishes a finite total act sequence whose lexicographic epoch-position key determines precedence. Compliance requires completed parents and dependencies at lower keys; violating completed order remains the input for accountability. Hyper-edge legs share a key and logical time is derived from order. Residual ordering discretion can affect results, so agreement is on the sequence rather than only the edge set."
     },
     {
       "chapter": "04 Graph",
@@ -3760,7 +3760,7 @@
       "label": "lem:graph:ordered-replay-determinism",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "The same finalized ordered history, incidence, authenticated dependency inputs and constants reproduce recomputed act time, maturity, damped weights, path signs, SVD scores, distances, relevance and CAN. Logical time follows epoch-position order; the optional audit log position is not a scoring input."
+      "statement": "The same completed ordered history, incidence, authenticated dependency inputs and constants reproduce recomputed act time, maturity, damped weights, path signs, SVD scores, distances, relevance and CAN. Logical time follows epoch-position order; the optional audit log position is not a scoring input."
     },
     {
       "chapter": "04 Graph",
@@ -4420,7 +4420,7 @@
       "label": "def:graph:proposal-pre-commitment",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Before host additions, the recorded proposal signature covers the exact approved bytes, including the stated author and act identifier, under its recorded public key. The approved body includes opaque signed extensions and excludes host fields; the formation edition fixes verification independently of content-opening possession. Signature well-formedness does not establish Actor authority. The concrete hash transcript and initial request vocabulary belong to courtesy."
+      "statement": "Before host additions, sign a commitment to the approved structural body, content and dependency values. The body includes its identifier, author, family, incidence, semantic coordinates, protocol references and opaque signed extensions, but no host or order fields. The recorded signature binds those bytes under its key without granting inclusion or Actor authority; the specified construction checks supplied inputs without requiring a content opening."
     },
     {
       "chapter": "04 Graph",
@@ -4432,7 +4432,7 @@
       "label": "def:graph:verified-act",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Retain the approved structural body, signed proposal pre-commitment, content/dependency commitments with their formation editions and the host seal over their association; check the proposal signature under its recorded key. Eligibility does not depend on content-opening possession, and the seal promises neither inclusion nor carriage. A separate courtesy receipt does not establish act authority."
+      "statement": "Associate the approved body and signed proposal with host-blinded content and dependency commitments and the host seal. The specified construction determines formation without a separate version field. The seal attests signature and structural checks and commitment formation, not inclusion or content carriage; a failed act check yields no Layer-1 object. Acceptance and ordering do not require possession of a content opening."
     },
     {
       "chapter": "04 Graph",
@@ -4444,7 +4444,7 @@
       "label": "def:graph:approval-witness",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "A well-formed recorded approval verifies under its recorded key over the exact verified act and host seal, binding the approved body, proposal and both commitments under their formation editions. The witness names no order, epoch, membership, standing or title and does not establish that its key speaks for the stated Actor."
+      "statement": "Before approval the author checks the seal, exact proposal/body agreement, both commitments under the specified construction and consistent hyper-edge legs. The recorded witness signs that verified association and must verify under its recorded key, without establishing that key's Actor authority. It signs no order or result. Only a validly approved act is eligible for ordering; malformed headers, legs or dependencies refuse, and an unaccepted act stays off-record."
     },
     {
       "chapter": "04 Graph",
@@ -4456,7 +4456,7 @@
       "label": "def:graph:ordering-fraud-proof",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "A supplied authenticated complete dependency opening against the finalized envelope and order proves an absent or non-earlier dependency. Opening-dependent verification is conditional on authenticated supply, and reveals the whole list without selective disclosure. It changes no accepted record."
+      "statement": "Check an authenticated full dependency opening against the completed act, seal, approval and authoritative order. A proof succeeds when a dependency is absent or not at a lower key. The opening reveals the entire list, and verification remains conditional on its authenticated supply."
     },
     {
       "chapter": "04 Graph",
@@ -4468,7 +4468,7 @@
       "label": "post:graph:ordering-accountability",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Attribute proven dependency, parent-placement and stamp faults to the host, with deployment sanctions as declared. Keep the finalized order and consequences: no reordering, deletion, historical standing recomputation or reversal. Recomputing logical time supplies evidence without rewriting stamps; none of these proofs permits refusal of a finalized epoch."
+      "statement": "Completed authoritative order remains the calculation input even when dependency or parent-placement evidence proves it noncompliant. Such proofs change no records, counts, debits, historical standing or title. Recomputed logical time supplies stamp-fault evidence without rewriting the stamp or reversing consequences. None authorizes refusal of a completed epoch or a replacement-agreement calculation."
     },
     {
       "chapter": "04 Graph",
@@ -4588,7 +4588,7 @@
       "label": "def:graph:act-envelope",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish the accepted act identifier, recorded author, family, body, protocol references, causal parents, commitments, handshake, approval witness, finalization epoch and act time as the abstract envelope. The handshake and approval carry the signature-to-key map and public verification inputs without replacing the author field; optional openings remain separate and serialization is the deployment's."
+      "statement": "The abstract accepted-act envelope contains its identifier, author, family, structural body, protocol references, public parents, content and dependency commitments, handshake, approval witness, completion epoch and logical time. The handshake and witness include their signature-to-key mappings and verification inputs. Content and blinding values and dependency openings travel separately; serialization and carriage are deployment matters."
     },
     {
       "chapter": "04 Graph",
@@ -4684,7 +4684,7 @@
       "label": "rem:graph:title-order-irrelevance",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Settlement references are causal parents: compliant placement orders Bid, Accept and Ratify by epoch-position key, and correct time recomputation follows. Finalized placement or stamp violations are accountability evidence. Conflict resolution uses membership, epochs and the reference-forced chain, never residual sub-epoch ordering or removable dependencies."
+      "statement": "Settlement references are causal parents: compliant placement orders Bid, Accept and Ratify by epoch-position key, and correct time recomputation follows. Completed placement or stamp violations are accountability evidence. Conflict resolution uses membership, epochs and the reference-forced chain, never residual sub-epoch ordering or removable dependencies."
     },
     {
       "chapter": "04 Graph",
@@ -4696,7 +4696,7 @@
       "label": "post:graph:boundary-accountability",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish the partition, constraints, closure cause and timestamp while granting no inclusion rights. Publish title equal to the recomputed fold; attribute proven disagreement to the host under the declared review and sanctions, without refusing a finalized epoch or changing its order, records or other finalized quantities."
+      "statement": "Publish the dependent-set partition, constraints, asserted timestamp and closure cause so boundary consistency can be checked; no external-clock anchor or unwritten candidate's admission right follows. Publish title equal to the partition fold. A proven title discrepancy is attributable to the host but changes no order or other completed quantity and permits no refusal of the completed epoch."
     },
     {
       "chapter": "04 Graph",
@@ -4708,7 +4708,7 @@
       "label": "rem:graph:settlement-clause-structure",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Recognition clauses (i) and (ii) read membership and pointers; clause (iii) reads prior title and the Bid’s authorship; (iv) and (v) compare finalization epochs; (vi) checks the well-formed chain. None reads audit positions, residual sub-epoch order or Lamport comparability."
+      "statement": "Recognition clauses (i) and (ii) read membership and pointers; clause (iii) reads prior title and the Bid’s authorship; (iv) and (v) compare completion epochs; (vi) checks the well-formed chain. None reads audit positions, residual sub-epoch order or Lamport comparability."
     },
     {
       "chapter": "04 Graph",
@@ -4744,7 +4744,7 @@
       "label": "def:graph:title-certificate",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Map each Item to its terminal thread owner, or void until its genesis finalizes. Epochs begin at 1 and boundary 0 is empty. Before replay refuse epoch zero, a position outside 1 to the authoritative act sequence’s cardinality (not the epoch marker m_k), a repeated key or a missing position; a malformed total order is not a retained host fault. Publish title as a recomputable summary, with disagreement retained as title-certificate-fault evidence."
+      "statement": "Map each Item to its terminal thread Actor, or void until its genesis Owner edge completes. Boundary zero is empty and epochs start at one. Refuse epoch-zero acts, out-of-range positions, repeated keys or gaps before replay: they do not form a total order. Publish the recomputable title summary; a differing published value is fault evidence, distinct from malformed order."
     },
     {
       "chapter": "04 Graph",
@@ -4768,7 +4768,7 @@
       "label": "rem:graph:regret-window",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Treat the boundary certificate as finality and keep cancellation subject to inclusion."
+      "statement": "The boundary certificate, not Ratify, ends the cancellation opportunity. Either party can cancel co-epochally if included, paying the ordinary debit; completion latency follows the closure timeout and Layer-2 escrows use the certificate."
     },
     {
       "chapter": "04 Graph",
@@ -4780,7 +4780,7 @@
       "label": "rem:graph:cancellation-best-effort",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "A written cancel defeats a settlement candidate only at or before the commit’s finalization boundary; a written boundary tie favors cancellation. Submission alone guarantees no delivery, however early, and every cancel still clears the universal write gates."
+      "statement": "A written cancel defeats a settlement candidate only at or before the commit’s completion boundary; a written boundary tie favors cancellation. Submission alone guarantees no delivery, however early, and every cancel still clears the universal write gates."
     },
     {
       "chapter": "04 Graph",
@@ -4864,7 +4864,7 @@
       "label": "alg:graph:title-certificate-computation",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Initialize boundary-zero title to void. At each epoch carry prior title, then enter every Item whose genesis finalizes there with its genesis owner. Transfer to the record-derived buyer for a sole recognized candidate, consume conflicts without transfer, and publish the resulting certificate."
+      "statement": "Initialize boundary-zero title to void. At each epoch carry prior title, then enter each Item whose genesis Owner edge completes there with its genesis owner. Transfer to the record-derived buyer for a sole recognized candidate; consume conflicting candidates without transfer. Return the boundary-fold certificate, independent of settlement traversal order."
     },
     {
       "chapter": "04 Graph",
@@ -6616,7 +6616,7 @@
       "label": "def:epoch:proposed-final-act-state",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Complete proposed counts and vintage debits using the common recognized marker snapshot and increment, including newly accepted older burns even when no act is authored."
+      "statement": "Complete proposed counts and residual balances from the supplied boundary gross amounts, prior state and writing-epoch debit, counting each binary act, complete hyper-edge or Registration once. A gross increment can occur without an act and an act without an increment. Use this same tentative state for standing, emission and gates; retain prior debit vintages and the controller's one-boundary lead. Source-history evaluation is outside the calculation."
     },
     {
       "chapter": "6 Epoch",
@@ -6628,7 +6628,7 @@
       "label": "eq:epoch:final-residual-balance",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Subtract accepted-act debits from prior balance plus settled new burn."
+      "statement": "Compute proposed final residual balance from prior balance plus the supplied gross increment, less proposed authored-act count times the price in force."
     },
     {
       "chapter": "6 Epoch",
@@ -7264,7 +7264,7 @@
       "label": "rem:epoch:emission-self-inertia",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Retain the unexported share at the source once outside the depth mixture. The self share is at least its full-pair value. Burn raises own source rate and emission until saturation, not necessarily final standing; rehabilitation requires the stated response tests or a certified finite comparison."
+      "statement": "Retain the unexported share at the source once outside the depth mixture. The self share is at least its full-pair value. Frame gross amount raises own source rate and emission until saturation, not necessarily final standing; rehabilitation requires the stated response tests or a certified finite comparison."
     },
     {
       "chapter": "6 Epoch",
@@ -7828,7 +7828,7 @@
       "label": "eq:epoch:closed-cluster-mean",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "For a two-sided closed cluster, the transported-count-weighted mean standing equals total residual balance divided by total action count. Fixed-count burn raises its reduced mean by the burn increment divided by numeraire times total count; an additional act changes both debit and count. This gives no individual, unweighted-mean or reward direction. The receiving-family concentration of ``prop:epoch:split-concentration`` remains compatible with these scoped invariants."
+      "statement": "For a closed cluster, the transported-count-weighted mean of final standing equals aggregate residual frame balance divided by aggregate action count."
     },
     {
       "chapter": "6 Epoch",
@@ -7852,7 +7852,7 @@
       "label": "cor:epoch:cluster-rate-leakage",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Bound departure from the closed-cluster identity under the stated leakage premise. The error scales with boundary-flow weight times rate width; this weighted-mean estimate determines no individual burn-response sign. The receiving-family concentration of ``prop:epoch:split-concentration`` remains compatible with these scoped invariants."
+      "statement": "With boundary base-allocation weight at most epsilon in either direction, departure from the closed-cluster mean is bounded by that leakage times the rate width. This weighted-mean bound gives no individual frame gross response sign. Intact pair totals and the closed weighted mean can remain conserved while partition changes individual coordinates or maxima."
     },
     {
       "chapter": "6 Epoch",
@@ -7984,7 +7984,7 @@
       "label": "prop:epoch:split-registration-cost",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Count the additional Registration debit at its writing price; this is not incremental aggregate burn between matched histories, which may be zero. Under ``thm:epoch:split-observational-equivalence``, a record-based remedy imposes the same change on a legitimate completion with identical public fields, or the same distribution of changes if randomized."
+      "statement": "Count the additional Registration debit at its writing price; this is not incremental aggregate frame gross amount between matched histories, which may be zero. Under ``thm:epoch:split-observational-equivalence``, a record-based remedy imposes the same change on a legitimate completion with identical public fields, or the same distribution of changes if randomized."
     },
     {
       "chapter": "6 Epoch",
@@ -8020,7 +8020,7 @@
       "label": "prop:epoch:final-standing-response",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "With source rates and other transported coefficients fixed, increasing a source’s contribution lifts or dilutes the target according as its rate exceeds or falls below the target’s standing. A complete act or burn changes further inputs and needs the full finite-response comparison."
+      "statement": "With source rates and other transported coefficients fixed, increasing a source’s contribution lifts or dilutes the target according as its rate exceeds or falls below the target’s standing. A complete act or frame gross amount changes further inputs and needs the full finite-response comparison."
     },
     {
       "chapter": "6 Epoch",
@@ -8056,7 +8056,7 @@
       "label": "prop:epoch:dilution-cost",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Charge each dilution act the in-force price: n such acts cost n times that price, and total grip is bounded by spent balance divided by price. Row conservation prevents cross-target copying. Funded partition and coupled burn or act responses remain subject to capacity, shock and hull bounds, not immunity or a universal sign. Changed-history displacement has the scoped pair and concentration bounds of ``prop:epoch:split-pair-displacement`` and ``prop:epoch:split-concentration``."
+      "statement": "Charge each dilution act the in-force price: n such acts cost n times that price, and total grip is bounded by spent balance divided by price. Row conservation prevents cross-target copying. Funded partition and coupled frame gross amount or act responses remain subject to capacity, shock and hull bounds, not immunity or a universal sign. Changed-history displacement has the scoped pair and concentration bounds of ``prop:epoch:split-pair-displacement`` and ``prop:epoch:split-concentration``."
     },
     {
       "chapter": "6 Epoch",
@@ -8092,7 +8092,7 @@
       "label": "prop:epoch:no-tilt-commitment-monotonicity",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "At zero tilt with counts, base, threshold and emission fixed, reached coordinates increase under burn and unreached coordinates stay fixed. Changing emission invalidates this premise; positive-tilt reversals are certified."
+      "statement": "At zero tilt with counts, base, threshold and emission fixed, reached coordinates increase under frame gross amount and unreached coordinates stay fixed. Changing emission invalidates this premise; positive-tilt reversals are certified."
     },
     {
       "chapter": "6 Epoch",
@@ -8140,7 +8140,7 @@
       "label": "prop:epoch:finite-standing-response",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Bound two certified completed states on the same Actor set by their full forcing and both hulls; recompute emission, folds and rung for changed acts or burns instead of assuming a direction."
+      "statement": "Bound two certified completed states on the same Actor set by their full forcing and both hulls; recompute emission, folds and rung for changed acts or frame gross amounts instead of assuming a direction."
     },
     {
       "chapter": "6 Epoch",
@@ -8416,7 +8416,7 @@
       "label": "cond:epoch:write-own-balance-solvency",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Charge the act's debit to its recorded author's settled balance; changing a signing-key authority projection does not change that author."
+      "statement": "Continuously require the recorded author's residual balance to cover the price in force; only that author's own balance pays the debit on a write."
     },
     {
       "chapter": "6 Epoch",
@@ -8500,7 +8500,7 @@
       "label": "rem:epoch:band-dwell",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Reproduce the stated unsupported no-burn wall and door benchmarks."
+      "statement": "For an unendorsed Actor with no new frame gross amount, the exact own-source formulas give door and wall crossing and the stated band-dwell benchmarks, subject to headroom. Re-entry requires additional amount rather than waiting."
     },
     {
       "chapter": "6 Epoch",
@@ -8644,7 +8644,7 @@
       "label": "cond:epoch:safety-controller-publication",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Disclose the wall, controller edition and constants, proposal, delivered wall and price beside the rung and width."
+      "statement": "Publish the wall in force, controller formula and constants, proposal, next wall and its frame amount image beside the standing certificate, accepted rung and width."
     },
     {
       "chapter": "6 Epoch",
@@ -8788,7 +8788,7 @@
       "label": "cor:epoch:floor-economics",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "At a wall at or above the positive structural floor, price is at least numeraire times that floor and real capacity per burn unit is at most its reciprocal; apply integer flooring to residual-balance capacity. Full source emission requires rate at or above the delivered wall, not merely the structural floor. Floor attainment is mathematical and imposes no upper bound on every wall."
+      "statement": "A wall at or above the positive structural floor gives a price at least numeraire times that floor and bounds real remaining-action capacity per frame gross unit by its reciprocal. Apply integer flooring to a residual balance. Full emission requires a source rate at least the delivered wall; floor attainment is a mathematical bound, not a cap on every wall."
     },
     {
       "chapter": "6 Epoch",
@@ -8932,7 +8932,7 @@
       "label": "prop:epoch:wall-controller-covariance",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Under recoinage, co-scale burn values and numeraire while retaining reduced constants and counts: reduced rates, standing, width and wall stay unchanged, the next price co-scales, and old debits change representation only. A fixed-ledger numeraire migration instead evaluates the controller on its published transformed inputs; same-pair width scales inversely, compensation preserves the door product, an uncompensated move keeps its declared policy schedule, and floor and policy tests still apply. No controller homogeneity or solvency and individual-safety invariance is promised for that migration."
+      "statement": "Under recoinage, co-scale frame gross amounts and numeraire while retaining reduced constants and counts: reduced rates, standing, width and wall stay unchanged, the next price co-scales, and old debits change representation only. A fixed-ledger numeraire migration instead evaluates the controller on its published transformed inputs; same-pair width scales inversely, compensation preserves the door product, an uncompensated move keeps its declared policy schedule, and floor and policy tests still apply. No controller homogeneity or solvency and individual-safety invariance is promised for that migration."
     },
     {
       "chapter": "6 Epoch",
@@ -8944,7 +8944,7 @@
       "label": "case:epoch:wall-controller-covariance-recoinage",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Branch of ``prop:epoch:wall-controller-covariance``: For recoinage by positive c, co-scale every burn-denominated value and the numeraire while retaining reduced constants and counts; reduced ledger, standing, width and wall are unchanged, and the next price scales by c. Recorded debit changes are representational, not repricing."
+      "statement": "Branch of ``prop:epoch:wall-controller-covariance``: Co-scale every frame-denominated value and the numeraire by positive c while retaining reduced constants and counts. Reduced rates, standing, width and wall stay unchanged and the next price scales by c. Historical debits change representation, not economic charge."
     },
     {
       "chapter": "6 Epoch",
@@ -8956,7 +8956,7 @@
       "label": "case:epoch:wall-controller-covariance-fixed-ledger-migration",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Branch of ``prop:epoch:wall-controller-covariance``: For numeraire migration by c at a fixed burn ledger, evaluate the controller on the published transformed wall, width and rung, then multiply by the new numeraire for price. The same fixed source pairs have width W/c; this is not a forecast for an epoch with different debits."
+      "statement": "Branch of ``prop:epoch:wall-controller-covariance``: Under a numeraire migration by positive c at a fixed frame amount ledger, evaluate the controller on the supplied transformed wall, width and rung, then multiply by the new numeraire for price. The same fixed source pairs have width W/c; this is not a forecast for differently debited acts."
     },
     {
       "chapter": "6 Epoch",
@@ -9076,7 +9076,7 @@
       "label": "rem:epoch:two-axes",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Keep dimensionless policy and burn-denominated safety quantities distinct."
+      "statement": "Keep the dimensionless participation membrane separate from the safety wall's frame-denominated price. Recoinage preserves reduced coordinates; a fixed-ledger numeraire migration transforms them through the controller. Compensating the policy floor preserves its door product without preserving every validity margin."
     },
     {
       "chapter": "6 Epoch",
@@ -9160,7 +9160,7 @@
       "label": "rem:sorting:final-standing-input",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Expose final reduced creator standing without exposing solver intermediates to sorting. With other feed factors fixed, certified scalar changes bound score movement; burn, act and partition interventions require separate field and context comparisons. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
+      "statement": "Expose final reduced creator standing without exposing solver intermediates to sorting. With other feed factors fixed, certified scalar changes bound score movement; frame gross amount, act and partition interventions require separate field and context comparisons. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
     },
     {
       "chapter": "7 Sorting",
@@ -9928,7 +9928,7 @@
       "label": "rem:transport:cross-channel-commitment-amplification",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Expose certified standing as a fixed scalar rather than a replaceable raw-graph recomputation. Feed attention and pool funds reuse that scalar as distinct resources, not a double count; fixed-context sensitivity implies no monotone burn or act response. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
+      "statement": "Expose certified standing as a fixed scalar rather than a replaceable raw-graph recomputation. Feed attention and pool funds reuse that scalar as distinct resources, not a double count; fixed-context sensitivity implies no monotone frame gross amount or act response. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
     },
     {
       "chapter": "8 Transport",
@@ -9952,7 +9952,7 @@
       "label": "pty:transport:final-standing-input-monotonicity",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "With other creator-varying factors fixed, canonical reward share is nondecreasing in the published reduced-standing input through one plus that input. Burn, act and funded-partition effects require separate field and fixed-context comparisons. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
+      "statement": "With other creator-varying factors fixed, canonical reward share is nondecreasing in the published reduced-standing input through one plus that input. Frame gross amount, act and funded-partition effects require separate field and fixed-context comparisons. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
     },
     {
       "chapter": "8 Transport",
@@ -9964,7 +9964,7 @@
       "label": "prop:transport:standing-readout-bounds",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Bound feed and normalized reward sensitivity only with the specified creators, factors, pool and gate fixed and positive normalization; this is not an end-to-end burn, partition or ranking guarantee. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
+      "statement": "Bound feed and normalized reward sensitivity only with the specified creators, factors, pool and gate fixed and positive normalization; this is not an end-to-end frame gross amount, partition or ranking guarantee. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
     },
     {
       "chapter": "8 Transport",
@@ -10660,7 +10660,7 @@
       "label": "rem:gates:split-scope",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "For an unsupported Actor sustaining reduced rate c, each accepted act requires c times numeraire plus the action price in new burn; wall-neutral sustaining burn is twice that price. Relational support may help stamps but never reduces the own-balance debit. Additional Registration debit and incremental aggregate burn are distinct, and cost alone bounds no small standing gain. Use the separate Registration-debit and incremental-burn denominators of ``prop:epoch:split-registration-cost``."
+      "statement": "For an unsupported Actor sustaining reduced rate c, each accepted act requires c times numeraire plus the action price in new frame gross amount; wall-neutral sustaining frame gross amount is twice that price. Relational support may help stamps but never reduces the own-balance debit. Additional Registration debit and incremental aggregate frame gross amount are distinct, and cost alone bounds no small standing gain. Use the separate Registration-debit and incremental-frame gross amount denominators of ``prop:epoch:split-registration-cost``."
     },
     {
       "chapter": "A Gates",
@@ -10684,7 +10684,7 @@
       "label": "thm:gates:sustaining",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Check the exact new burn needed to preserve an unsupported actor's own rate."
+      "statement": "An unendorsed Actor preserving reduced own rate c across an accepted act needs exactly c times the numeraire plus the action price in new frame gross amount. At the safety wall this is twice the price; at the door it is the door rate's frame image plus the debit."
     },
     {
       "chapter": "A Gates",
@@ -10744,7 +10744,7 @@
       "label": "prop:gates:two-phase-transit",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Reproduce unsupported no-burn door and wall crossing formulas with integer-action interpretation unresolved."
+      "statement": "For an unendorsed Actor acting without new frame amount, the stated exact action-count formulas give door and safety-wall crossing and band dwell, subject to headroom. Re-entry needs additional amount, not elapsed time. These own-source formulas do not predict a relational stamp without replaying its standing package."
     },
     {
       "chapter": "A Gates",
@@ -10756,7 +10756,7 @@
       "label": "rem:gates:frontload",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Distinguish burn timing from long-run own-source sustaining cost."
+      "statement": "Front-loading supplied frame amount can delay an unendorsed Actor's door or wall crossing without lowering its long-run own-source sustaining average. Acquisition timing and price lie below Layer 1; relational standing can alter stamps but not the own-balance debit."
     },
     {
       "chapter": "A Gates",
@@ -10840,7 +10840,7 @@
       "label": "rem:gates:guild-funding",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "A guild may fund new burn at an Actor’s permanently bound address, but payment or lineage alone does not imply marker-policy acceptance or sufficient accepted amount. Funding changes neither recorded provenance nor the own-act debit. Discovery or recovery benefits require the response tests and terminal fixed-context premises, not merely payment. Partition displacement obeys ``prop:epoch:split-pair-displacement`` and ``prop:epoch:split-concentration``; identical records cannot identify private partition purpose under ``thm:epoch:split-observational-equivalence``."
+      "statement": "Supplied funding retains its opaque Actor attribution. Additional amount can change residual balance, but standing and terminal effects require their separate response and fixed-context comparisons; funding neither freezes allocation nor chooses an uncertified rung. Funded partitions still pay each Registration debit even when matched histories have zero aggregate frame increment."
     },
     {
       "chapter": "A Gates",
@@ -10864,7 +10864,7 @@
       "label": "rem:gates:sustaining-denomination",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Keep burn price, reduced floor and tilt changes dimensionally distinct."
+      "statement": "Keep the numeraire conversion, literal action debit, policy membrane, safety wall and tilt rung distinct. The sustaining amount is reduced own rate times numeraire plus debit; changing any one dial is not a generic cheaper action."
     },
     {
       "chapter": "B Compositional attribution",
@@ -12424,7 +12424,7 @@
       "label": "itm:bridge:monotonicity-standing",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "The terminal campaign gate/signal is nondecreasing in advertiser standing through Channel 2’s endorsement path, with paths and other inputs fixed; Channel 3 consent does not read that standing. Burn, act or funded-partition changes need not raise the input or preserve the other factors. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
+      "statement": "The terminal campaign gate/signal is nondecreasing in advertiser standing through Channel 2’s endorsement path, with paths and other inputs fixed; Channel 3 consent does not read that standing. Frame gross amount, act or funded-partition changes need not raise the input or preserve the other factors. Partition readout bounds require the matched creators and fixed non-standing context of ``prop:transport:split-terminal-readout-bounds``."
     },
     {
       "chapter": "C Bridge",
@@ -12460,7 +12460,7 @@
       "label": "rem:bridge:eligibility-cliff-primary",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "An argmax flip is the redistribution event: campaign-value degradation does not make recipient shares continuous. Deployment monitoring tracks argmax-flip frequency as distribution stability, not merely campaign-value stability; the operator reaction and share-volatility companion are stated in ``case:transport:bridge-eligibility-cliff``. The computing crate remains held in (`open:inventory:bridge-reaction-placement`)."
+      "statement": "An argmax bridge flip is the redistribution event: a runner-up can moderate campaign-value loss without making recipient shares continuous. Flip frequency measures distribution stability separately from campaign-value stability. The computing crate remains held in (`open:inventory:bridge-reaction-placement`)."
     },
     {
       "chapter": "C Bridge",
@@ -13768,7 +13768,7 @@
       "label": "prop:dynamics:standing-intervention-forcing",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Include the signed emission derivative below the wall and one-sided kink cases; for finite burn, rung or act changes recompute the complete fold, debit, count and transport before applying the response bound."
+      "statement": "Include the signed emission derivative below the wall and one-sided kink cases; for finite frame gross amount, rung or act changes recompute the complete fold, debit, count and transport before applying the response bound."
     },
     {
       "chapter": "D Dynamics",
@@ -13900,7 +13900,7 @@
       "label": "tbl:symbols:index",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Keep dimensions, identifier meanings and permission tags distinct; departure anonymity is limited by the right-to-leave statement rather than a quantitative exposure promise. The aggregate source ceiling limits available amount, not funded-partition allocation. Identical public records cannot distinguish legitimate separation from strategic concentration under ``thm:epoch:split-observational-equivalence``; private purpose is not a record-derived input. Act time is the recomputable summary of finalized epoch-position order, distinct from edge maturity. Distinguish open-lineage burn accumulators from policy-selected epoch markers m_k, empty boundary zero from pending markers, and the published title summary from its recomputed value and fault evidence. Vouch withdrawal means per-author netting of signed mandatory coordinates, order-free and priced, with no tie rule."
+      "statement": "Keep symbol dimensions, identifiers and read-site permission tags distinct. The index separates supplied Actor frame amounts from oracle source objects, completed act time from order and edge maturity, and closure outputs from evidence and terminal computations. Shared mathematics is tag-exempt; bindings and read-sites, not similar glyphs, determine each quantity's role."
     },
     {
       "chapter": "E Symbols and binding ledger",
@@ -15088,7 +15088,7 @@
       "label": "ver:floor:fixture-regime",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Evaluate the reference controller with the published gain, charter edition, rung, cumulative profile, margin and width; certify its target above the rational floor and below the default door for both declarations. Initialize the previous wall at that target so both deadbands hold it; this is a reference evaluation, not an attracting fixed-point claim."
+      "statement": "Evaluate the specified controller with the deployed gain, chartered rung/profile, margin and width. Certify the common target above the rational floor and below the door, initialize the previous wall there and verify both deadbands retain it. This is a reference evaluation, not an attracting-fixed-point claim."
     },
     {
       "chapter": "F Verification",
@@ -15112,7 +15112,7 @@
       "label": "ver:floor:recoinage-invariant",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Under positive recoinage, co-scale all burn amounts, debit vintages and the numeraire: floors and delivered reduced wall remain identical, prices scale by c and real capacity per burn unit by 1/c. Remaining integer counts, source-rate/wall ratios, emission and verdicts agree; straddling wall enclosures stay indecisive. This is covariance, not a fixed-ledger numeraire change."
+      "statement": "Under positive recoinage, co-scale all frame gross amounts, debit vintages and the numeraire: floors and delivered reduced wall remain identical, prices scale by c and real capacity per frame gross amount unit by 1/c. Remaining integer counts, source-rate/wall ratios, emission and verdicts agree; straddling wall enclosures stay indecisive. This is covariance, not a fixed-ledger numeraire change."
     },
     {
       "chapter": "F Verification",
@@ -15712,7 +15712,7 @@
       "label": "ver:standing:split-distinct-targets",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Reproduce decreased export and increased target standing without fold collisions; normalization and per-address retention suffice to change allocation. Apply ``prop:epoch:split-centered-invariance`` to test a claimed invariant; intact pairs alone do not imply one."
+      "statement": "Distinct target Opinions reproduce reduced export and higher target standing without clipping collisions: positive per-Actor base and row normalization suffice. The two-rate mixture saturates the displacement bound, so eliminating fold collisions alone does not establish partition invariance."
     },
     {
       "chapter": "F Verification",
@@ -15748,7 +15748,7 @@
       "label": "ver:standing:split-concentration",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Reproduce the certified near-hull maximum gain with one added address, fixed incoming acts, rates and aggregate burn; stronger small-gain claims need premises excluding this fixture. The same record also has the legitimate-role reading of ``ex:epoch:split-showcase``; concentration alone identifies no purpose."
+      "statement": "Reproduce the certified near-hull maximum gain with one added address, fixed incoming acts, rates and aggregate frame gross amount; stronger small-gain claims need premises excluding this fixture. The same record also has the legitimate-role reading of ``ex:epoch:split-showcase``; concentration alone identifies no purpose."
     },
     {
       "chapter": "F Verification",
@@ -15796,7 +15796,7 @@
       "label": "ver:standing:canonical-encoding",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Round-trip the declared standing package encoding, pending canonical format specification."
+      "statement": "Round-trip the fixture's supplied standing values under the canonical representation of the standing publication."
     },
     {
       "chapter": "F Verification",
@@ -15904,7 +15904,7 @@
       "label": "subsec:verification:registration-benchmarks",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Apply universal unsupported one-act burn benchmarks."
+      "statement": "Apply the universal per-act frame gross amount benchmarks."
     },
     {
       "chapter": "F Verification",
@@ -15940,7 +15940,7 @@
       "label": "ver:registration:safety-benchmark",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Check twice-threshold unsupported safety burn."
+      "statement": "Check that the unsupported one-act safety benchmark requires pre-act frame gross amount equal to twice the action price."
     },
     {
       "chapter": "F Verification",
@@ -15952,7 +15952,7 @@
       "label": "ver:registration:door-benchmark",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Check unsupported door burn equals debit plus numeraire times floor."
+      "statement": "Check that the unsupported one-act door benchmark is the action debit plus numeraire times the participation floor in pre-act frame gross amount."
     },
     {
       "chapter": "F Verification",
@@ -16432,7 +16432,7 @@
       "label": "ver:boundary:canonical-time-replay",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Fix finalized history, authoritative sequence, dependency openings, incidence and constants, varying only presentation order. Recompute identical logical times, maturity and damped weights; presentation order never becomes authoritative order."
+      "statement": "Fix completed history, authoritative sequence, dependency openings, incidence and constants, varying only presentation order. Recompute identical logical times, maturity and damped weights; presentation order never becomes authoritative order."
     },
     {
       "chapter": "F Verification",
@@ -16648,7 +16648,7 @@
       "label": "ver:handshake:fraud",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Verify dependency openings and ordering fault without reversing finalized state."
+      "statement": "Verify dependency openings and ordering fault without reversing completed state."
     },
     {
       "chapter": "F Verification",
@@ -16700,7 +16700,7 @@
       "label": "rem:frontiers:priority",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Prioritize exact conserved evaluation and the boundary mechanism as implementation and phase-dependent tasks; adopted exact reuse supplies comparison evidence under ``cond:deployment:boundary-search-evidence``. The mechanism owes its declared agreement, selection and liveness arguments; accepted certificate evidence follows ``cond:deployment:certificate-monitoring``. A replacement certificate requires the specified stronger charter."
+      "statement": "Prioritize exact conserved evaluation and the boundary mechanism. Adopted exact reuse retains its comparison evidence; the mechanism also needs its agreement, selection and liveness arguments. Accepted evidence follows replay verification, and a replacement certificate requires the specified stronger charter."
     },
     {
       "chapter": "G Frontiers",
@@ -17552,7 +17552,7 @@
       "label": "case:necessity:floor-as-numeraire-unreduced-debit",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Refused simplification under ``subsec:necessity:floor-as-numeraire``: Keep burn-balance debits in burn units and reduced-pair debits at the reduced wall; refuse subtracting the burn-denominated threshold directly from reduced pairs, which mixes burn and action units instead of using the numeraire as their unique join."
+      "statement": "Refused simplification under ``subsec:necessity:floor-as-numeraire``: Subtracting the frame-denominated threshold directly from a reduced pair mixes frame and action units. Convert through the numeraire before applying a reduced-pair debit."
     },
     {
       "chapter": "H Necessity",
@@ -17564,7 +17564,7 @@
       "label": "case:necessity:floor-as-numeraire-unreduced-bond",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Refused simplification under ``subsec:necessity:floor-as-numeraire``: Keep burn and standing reduced by the numeraire before they meet counts or the bond kernel’s literal one; refuse unreduced burn/count adjacency, whose hidden unit makes bond activation saturate under redenomination. Reduction is invariant under a unit change only when the numeraire is re-expressed too; it does not make market repricing invariant."
+      "statement": "Refused simplification under ``subsec:necessity:floor-as-numeraire``: Combining unreduced frame amount or standing directly with counts or the bond's literal one conceals a unit and makes the result depend on denomination. The numeraire is the sole conversion between frame units and the action economy."
     },
     {
       "chapter": "H Necessity",
@@ -18668,7 +18668,7 @@
       "label": "subsec:deployment:final-epoch-state-agreement",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Agree on the complete final-marker package and authoritative accepted-act sequence; act order alone cannot determine the marker-accepted burn snapshot."
+      "statement": "Agree on the authoritative accepted-act order and the complete supplied epoch operands, including Actor entries, prior state and debit vintage. Act order alone does not select the boundary amounts; equal complete operands reproduce equal results."
     },
     {
       "chapter": "6 Epoch",
@@ -18980,7 +18980,7 @@
       "label": "post:deployment:calibration-declarations",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish the edition declarations before effect and retain all material needed to replay them; a reference may be used without claiming empirical optimality."
+      "statement": "Supplied standing, wall, boundary-policy, encoding and replay inputs fix the completed epoch calculation. Their communication and selection are outside it. Standing normalization, wall comparison and debit-vintage rules, bounded candidate search and fallback, exact encoding and supported descending rung attempts determine the relevant checks."
     },
     {
       "chapter": "6 Epoch",
@@ -18992,7 +18992,7 @@
       "label": "cond:deployment:standing-parameters",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Declare tilt profile/grid, normalized nonnegative depth masses and deepest support, positive self-retention, nonnegative domain weights and normalized family profiles with admissibility evidence; deepest positive depth incurs its full cumulative tilt. Deployment declares before effect; bite 2 carries declarations, bite 5 compiles them and bite 6 certifies them. Complete-act partitions can still change author-indexed folds and normalized rows; standing invariance needs additional premises. The all-state hop-intertwining premises of ``thm:dynamics:split-hop-refinement`` are a sufficient invariance criterion, not a consequence of act partition alone."
+      "statement": "Consume the tilt profile and finite grid, normalized nonnegative depth masses, deepest support, positive self-retention, nonnegative domain weights and normalized family profiles. Deepest positive support pays its full cumulative tilt. Profile normalization removes duplicate domain counting but leaves domain-weight scale independent; row normalization conserves the allocated unit. Partition invariance needs additional premises beyond these inputs."
     },
     {
       "chapter": "6 Epoch",
@@ -19004,7 +19004,7 @@
       "label": "cond:deployment:wall-calibration",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish the exact structural floor, defining object and comparison procedure, numeraire, margin, controller edition, initialization and constants; retain debit vintage, decide exact data exactly, and reject a binding unresolved set without placing its verdict in accepted publication."
+      "statement": "Consume the numeraire, policy-floor schedule, exact structural floor and defining object, margin, controller formula, initialization, reduced constants and arithmetic/comparison rules. Refine or reject an unresolved binding-floor proposal before acceptance. Keep proposal and delivered wall distinct through floor, deadband and step cap, and charge the writing-epoch vintage. A changed structural floor changes an input, not an epoch output."
     },
     {
       "chapter": "6 Epoch",
@@ -19028,7 +19028,7 @@
       "label": "cond:deployment:canonical-encoding",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish and version the canonical encoding that fixes exact admissibility, rational and enclosure disclosures and the required fields; the paper selects no byte codec."
+      "statement": "The supplied encoding resolves exact values, Actor and support ordering, rational representations, nonexact disclosures and the profile, depth-mass, emission, controller and certificate fields. The paper chooses no byte encoding."
     },
     {
       "chapter": "03 Network",
@@ -19052,7 +19052,7 @@
       "label": "cond:deployment:canonical-replay",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish each attempted positive rung with its verdict and supplied or recoverable enclosure support, descending through the first PASS or the least positive rung; the anchor has no row, and attempts ending at the least positive rung without a PASS show its acceptance. Missing, repeated, out-of-order and below-acceptance attempts fail verification; a rung that cannot be evaluated has no verdict, cannot be skipped and admits no lower rung for that set. Exact objects and endpoint verdicts are independently recomputed; a reader unable to verify decides nothing. Reproduction under a build declaration is voluntary; an unresolved binding comparison rejects the set."
+      "statement": "Record positive rung attempts in descending order through the first PASS or the least positive rung, each with supplied or recoverable sound support; the anchor has no row. Missing, repeated, misplaced or unsupported attempts cannot justify descent or acceptance. A reader unable to check confirms and disputes nothing; an unresolved binding comparison rejects the proposed set. Partition comparisons require their explicit fibre and history inputs, which the record does not supply as person associations or counterfactual histories."
     },
     {
       "chapter": "03 Network",
@@ -19436,7 +19436,7 @@
       "label": "subsec:deployment:conserved-standing-reproducibility",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Verify marker policy, lineage, accepted-set bounds and distinct destructions before rebuilding exact ledger and compiler objects and checking every published attempt and verdict by independent sound evaluation."
+      "statement": "Derive the final ledger from supplied Actor entries, prior state, accepted acts and writing-epoch debit vintage, then reconstruct the complete standing package and check every attempted rung and verdict with independent sound evaluation. Source history and private solver state are not calculation inputs."
     },
     {
       "chapter": "6 Epoch",
@@ -19532,7 +19532,7 @@
       "label": "post:deployment:canonical-standing-publication",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Publish the complete standing package and attempted-rung verdicts and their supplied or recoverable enclosure support under a versioned encoding. Bits bind exact objects and encoded bytes, not independently evaluated endpoints. Producer metadata neither creates nor excuses a discrepancy; a participant unable to check decides nothing. Partition comparisons require explicit fibres and matched histories, not inferred common control or alternative histories."
+      "statement": "Represent the standing package with canonical Actor/support order, exact rationals and disclosures for nonexact values under the supplied encoding. Include controller inputs and outputs, debit vintage and each attempted rung with its verdict and supplied or recoverable support. Bits bind encoded objects, not a reader's independently computed endpoints; missing support prevents verification and inability proves nothing. Partition comparisons still require explicit fibres and comparison histories."
     },
     {
       "chapter": "8 Transport",
@@ -19760,7 +19760,7 @@
       "label": "case:deployment:completeness-unpublished-epoch",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "In the formula-completeness proof sketch, unpublished boundary architecture leaves write budget, liveness window and burn snapshot undefined; different boundary assumptions yield different standing and unverifiable participation decisions."
+      "statement": "In the formula-completeness proof sketch, missing boundary architecture leaves the write budget, liveness window and frame snapshot undefined. Different closure and frame assumptions then give different rates and standing from the same edge records, preventing a shared participation verdict."
     },
     {
       "chapter": "03 Network",
@@ -19844,7 +19844,7 @@
       "label": "cond:graph:authoritative-order-dependency-placement",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "For dependency compliance require each declared dependency in finalized history at a strictly lower epoch-position key."
+      "statement": "For dependency compliance, each declared dependency of an accepted act must occur in completed history at a strictly lower epoch-position key."
     },
     {
       "chapter": "04 Graph",
@@ -19856,7 +19856,7 @@
       "label": "cond:graph:authoritative-order-parent-placement",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "For parent compliance require each asserted parent in finalized history at a strictly lower epoch-position key; retain violating finalized placement with accountability evidence."
+      "statement": "For parent compliance, each public causal parent of an accepted act must occur in completed history at a strictly lower epoch-position key."
     },
     {
       "chapter": "04 Graph",
@@ -19868,7 +19868,7 @@
       "label": "cond:graph:ordering-accountability-parent-placement",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Retain proof that the host finalized an act with an absent or misplaced public parent. Formation refuses that placement; finalized replay preserves order, records and consequences, with deployment sanctions rather than reversal."
+      "statement": "A parent-placement proof shows that the host completed an act violating its public parents. Formation refuses such placement, but replay keeps the published order and every completed consequence; the proof authorizes no reordering, deletion or reversal."
     },
     {
       "chapter": "04 Graph",
@@ -19880,7 +19880,7 @@
       "label": "cond:graph:ordering-accountability-stamp",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Attribute a differing published stamp to the host. Recompute its summary as evidence without rewriting the stamp, order or finalized consequences; no stamp proof authorizes refusal of a finalized epoch."
+      "statement": "A stamp discrepancy leaves the order and all derived quantities unchanged. Recomputing its summary provides evidence, not a replacement stamp or a reversal of completed consequences."
     },
     {
       "chapter": "04 Graph",
@@ -19892,7 +19892,7 @@
       "label": "def:graph:parent-placement-fault",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Represent a finalized act’s public parent that is absent or has an equal or greater epoch-position key. The structural references and published sequences prove the fault without a removable dependency opening."
+      "statement": "A completed act has a parent-placement fault when a public parent is absent from completed history or occurs at an equal or greater key. Structural parent references and published sequences prove it without an optional opening."
     },
     {
       "chapter": "04 Graph",
@@ -19916,7 +19916,7 @@
       "label": "prop:graph:act-time-finite",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Check finite logical time for every finalized act, including absent or misplaced predecessors: finite incidence and predecessor sets read only finite earlier recomputed values, with zero for empty maxima."
+      "statement": "Check finite logical time for every completed act, including absent or misplaced predecessors: finite incidence and predecessor sets read only finite earlier recomputed values, with zero for empty maxima."
     },
     {
       "chapter": "04 Graph",
@@ -19928,7 +19928,7 @@
       "label": "rem:graph:act-time-is-summary",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Recompute time from the same finalized sequence, incidence and authenticated dependency inputs. A hidden opening limits evidence, not the value’s definition. Time never decides precedence or finalized consequences, and disjoint incidence can give a later act a lower time."
+      "statement": "Recompute logical time from the completed ordered history, incidence and supplied dependency projections. It has no authority over order or completed consequences; a lower time is necessary but insufficient evidence of ancestry, and disjoint incidence can give a later act a lower time."
     },
     {
       "chapter": "04 Graph",
@@ -19976,7 +19976,7 @@
       "label": "def:comparator:burn-accumulator",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "Source oracle condition, not a closure operand or proof of source truth: Represent a record carrying or accumulating burn that depends on and extends predecessor finalization lineage. Any party may append it, with no privilege over the lineage; retain the burn records it depends on and the burn primitive’s append-only, nonnegative, finalization-pinned, auditable provenance requirements."
+      "statement": "An oracle-history record carries source events and extends a dependency lineage. Its lineage in a public history comprises the source-event claims it depends on; it is neither a closure accumulator nor a calculation input."
     },
     {
       "chapter": "02 Comparator",
@@ -19988,7 +19988,7 @@
       "label": "def:comparator:epoch-marker",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "Source oracle condition, not a closure operand or proof of source truth: Recognize as an epoch marker only a burn accumulator meeting the published marker policy’s form, one per epoch index and read at closure past finalization depth. A host-only form is permitted; a nonconforming accumulator remains history but closes nothing and takes no epoch index. m_0 names the empty initial boundary."
+      "statement": "A recognized burn-history commitment has an epoch index and a predecessor in its source lineage. Recognition fixes that marker and lineage; the independently published accepted selection is outside its identity and dependency cone. The initial marker has an empty source projection. Recognition and selection are replayable oracle operations, not closure policy or warrantor fields."
     },
     {
       "chapter": "02 Comparator",
@@ -20036,7 +20036,7 @@
       "label": "def:graph:title-certificate-fault",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Retain a published Item owner differing from title recomputed from the finalized partition and genesis record, together with both values and replay inputs establishing the difference. Recognition inputs held in committed dependencies require authenticated openings."
+      "statement": "A published Item title differs from the fold of the completed epoch partition and genesis record. Evidence supplies the published value and replay inputs proving the difference; committed recognition dependencies require authenticated openings."
     },
     {
       "chapter": "04 Graph",
@@ -20048,7 +20048,7 @@
       "label": "cond:graph:boundary-accountability-title-certificate",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Require published title to equal the fold of the certified partition. Attribute proven disagreement to the host under published review and sanctions; title means the recomputed fold. The fault neither reorders nor deletes records, recomputes another finalized quantity, nor permits refusal of a finalized epoch."
+      "statement": "The published title certificate must equal the fold of its certified partition. A proven discrepancy is attributable to its publisher, while title denotes the recomputed fold. Such evidence changes no record order or other completed quantity and authorizes no refusal of the completed epoch."
     },
     {
       "chapter": "04 Graph",
@@ -20180,7 +20180,7 @@
       "label": "def:network:material-classification",
       "label_source": "explicit",
       "material_class": "closure",
-      "statement": "Default every exact label to closure; apply only explicit oracle, courtesy or mathematics exceptions, with independent child classes and no closure or oracle dependence on courtesy."
+      "statement": "Every exact label defaults to closure unless expressly oracle or courtesy; mathematics is closure material. Closure checks supplied operands, including adjacent epochs and carried state, without evaluating an oracle warrant. Oracle replay projects public second-party data and rules; courtesy standards are optional and their failure does not invalidate an epoch. Child labels classify independently, unlabeled text inherits its enclosing owner, and neither closure nor oracle depends on courtesy."
     },
     {
       "chapter": "04 Graph",
@@ -20240,7 +20240,7 @@
       "label": "def:deployment:provenance-validity-projection",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "Validity at pin projects the immutable account under pinned rules; current validity projects present second-party state, and materialization has no authority."
+      "statement": "Assess a supplied Actor entry against the applicable public source history and source rules. Historical assessment uses the event's history; current assessment can change with public source state or rules. Neither is an epoch property, and a materialized result has no independent authority."
     },
     {
       "chapter": "02 Comparator",
@@ -20312,7 +20312,7 @@
       "label": "def:deployment:author-authority-validity-projection",
       "label_source": "explicit",
       "material_class": "oracle",
-      "statement": "Validity at pin uses immutable proof and rules; current validity is independently re-evaluable and any cache has no authority. Neither changed current results nor declarations reattribute acts or recompute finalized consequences."
+      "statement": "Assess an accepted act's signing keys against the applicable public authority history. Formation-time and current assessments can differ; neither is stored authority in the act and a materialized result is only a cache. A changed assessment neither reattributes the act nor recomputes its finalized consequences."
     },
     {
       "chapter": "02 Comparator",
@@ -20324,7 +20324,7 @@
       "label": "rem:comparator:burn-realization-audit-evidence",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "An adopting realization publishes provenance quantities, the empty pre-opening explanation, dimensioned unit cost and separate event costs, and the applicable operator proof or explained absence, as audit evidence rather than numerical inputs."
+      "statement": "Public source history can be inspected for provenance and external price. Source projection and no-privileged-accrual discharge are oracle claims; independent auditing is optional courtesy, adding no calculation operand, publication duty or operator bound."
     },
     {
       "chapter": "04 Graph",
@@ -20336,7 +20336,7 @@
       "label": "def:graph:courtesy-handshake",
       "label_source": "explicit",
       "material_class": "courtesy",
-      "statement": "The optional edition fixes the reference hash/signature transcript, independent author and host blinding values, exact approval, separate carriage receipts and concrete fraud openings. Its Actor-indexed signing notation identifies the key used, not the Actor's frame address or that key's authority; closure properties remain separate."
+      "statement": "The reference wire construction uses canonical serialization, separated hashes, signatures and independent author and host blinding values for proposal, commitments, seal and exact approval. Its signing notation identifies a key, not an Actor or authority proof. Optional content-pair carriage has separate checks and receipts; dependency fraud proofs open the complete list against its commitment. Wire choices and entropy formats are courtesy matters, distinct from the structural closure contract."
     },
     {
       "chapter": "04 Graph",

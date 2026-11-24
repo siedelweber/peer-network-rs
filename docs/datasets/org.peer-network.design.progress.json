@@ -34983,7 +34983,12 @@
       "category": "statement",
       "crate": "pn-epoch",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::verif:design:marker-registration-cases"
+        }
+      ],
       "kind": "invariant check",
       "label": "cond:comparator:marker-epoch-registration",
       "portions": [],
@@ -34994,7 +34999,8 @@
         "EPOCH::verif:admission:live-publication",
         "RECORDS::def:burn:recognition",
         "ROOT::alg:design:ledger",
-        "ROOT::rule:design:closure-marker-registration"
+        "ROOT::rule:design:closure-marker-registration",
+        "ROOT::verif:design:marker-registration-cases"
       ],
       "routes": [
         {
