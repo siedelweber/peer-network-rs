@@ -140,7 +140,7 @@
           ],
           "name": "pn-fixtures",
           "optional": [],
-          "role": "Designed code-built served input, independent assertions and explicit synthetic premises for the disposable fixture instance; not built"
+          "role": "Code-built served input, independent assertions and explicit synthetic premises for the disposable fixture instance; library built, node integration designed"
         }
       ],
       "host_dependencies": [],

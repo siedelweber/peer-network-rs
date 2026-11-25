@@ -362,7 +362,18 @@ reader = "public-git"
 locator = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum/commit/2628abd36f8b700c60a35e5a9134b7f7c8ed2367"
 commit = "2628abd36f8b700c60a35e5a9134b7f7c8ed2367"
 definition = "The public main commit supplies nrz-scalar, nrz-accuracy and nrz-cas. The manifest rev and Cargo.lock fix the same reviewed source revision; the accepting record and numeric dependency dataset retain the licence, resolved features and representation limits reviewed before numeric carriers."
-paths = ["Cargo.toml", "Cargo.lock", "ci/hash-citation-families.toml", "ci/installation-notices.json", "docs/inputs/numeric-dependencies.toml", "docs/datasets/org.peer-network.numeric.dependencies.json", "docs/templates/adr/007-crate-decomposition.md.j2", "adr/007-crate-decomposition.md", "packages/records/NOTICE-NUMERIC", "docs/templates/docs/design/implementation.md.j2", "docs/design/implementation.md"]
+paths = ["Cargo.toml", "Cargo.lock", "ci/hash-citation-families.toml", "ci/installation-notices.json", "docs/inputs/numeric-dependencies.toml", "docs/datasets/org.peer-network.numeric.dependencies.json", "docs/templates/adr/007-crate-decomposition.md.j2", "adr/007-crate-decomposition.md", "packages/records/NOTICE-NUMERIC", "docs/templates/docs/design/implementation.md.j2", "docs/design/implementation.md", "docs/templates/adr/015-durable-storage.md.j2", "adr/015-durable-storage.md"]
+
+[[rows]]
+family = "fixture-library-measurement-source"
+group = "fixture library measurement evidence"
+measures = "Public commit identifying the built fixture library whose allowance sweeps are cited"
+producer = "Git"
+establishment = "resolvable"
+reader = "ancestor-commit"
+commit = "223e23486522c8ddab7faa93f1e95c978b2ec7f9"
+definition = "The full commit must be reachable from HEAD and identifies the built library to which the cited measurements apply. Reachability does not establish the measurements, their dates or field classifications, or assert that the runs used this imported commit identity; the citing record states their scope and the retained run artifacts supply the evidence."
+paths = ["ci/hash-citation-families.toml", "docs/templates/adr/015-durable-storage.md.j2", "adr/015-durable-storage.md"]
 
 [[rows]]
 family = "numeric-prepared-evaluator-source"
