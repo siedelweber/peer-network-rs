@@ -302,6 +302,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This locates the designed static input boundary and its held successor admission; it supplies no execution evidence or oracle premise.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:closure-record-scope",
+      "target": "def:deployment:published-epoch-replay-floor"
+    },
+    {
+      "conditional_on": "",
       "reason": "This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
       "relation": "realizes",
       "source": "ROOT::amend:design:epoch-authentication-fields",
@@ -462,46 +469,11 @@
       "target": "ROOT::open:identity:act-realization-admission"
     },
     {
-      "conditional_on": "case:deployment:concealment-entropy-client-generated",
-      "reason": "Content hiding depends on actual client entropy and private custody.",
-      "relation": "relies",
-      "source": "ROOT::amend:identity:act-concealment",
-      "target": "case:deployment:concealment-entropy-client-generated"
-    },
-    {
-      "conditional_on": "case:deployment:concealment-entropy-operator-generated",
-      "reason": "Salt hiding depends on actual host entropy and custody.",
-      "relation": "relies",
-      "source": "ROOT::amend:identity:act-concealment",
-      "target": "case:deployment:concealment-entropy-operator-generated"
-    },
-    {
-      "conditional_on": "subsec:deployment:concealment-entropy",
-      "reason": "Private entropy and custody are premises, not consequences of format checks.",
-      "relation": "relies",
-      "source": "ROOT::amend:identity:act-concealment",
-      "target": "subsec:deployment:concealment-entropy"
-    },
-    {
       "conditional_on": "",
       "reason": "The legacy format and held new content recipe use the declared construction; actual entropy is not established.",
       "relation": "realizes",
       "source": "ROOT::amend:identity:act-content-admission",
       "target": "ROOT::amend:identity:act-concealment"
-    },
-    {
-      "conditional_on": "case:deployment:concealment-entropy-operator-generated",
-      "reason": "Content hiding depends on actual host salt entropy and custody.",
-      "relation": "relies",
-      "source": "ROOT::amend:identity:act-content-admission",
-      "target": "case:deployment:concealment-entropy-operator-generated"
-    },
-    {
-      "conditional_on": "",
-      "reason": "The immutable legacy format and held new content recipe are specified here; actual entropy is not established.",
-      "relation": "realizes",
-      "source": "ROOT::amend:identity:act-content-admission",
-      "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "",
@@ -523,20 +495,6 @@
       "relation": "realizes",
       "source": "ROOT::amend:identity:act-proposal-admission",
       "target": "ROOT::open:identity:act-realization-admission"
-    },
-    {
-      "conditional_on": "case:deployment:concealment-entropy-client-generated",
-      "reason": "Proposal hiding depends on actual Actor nonce entropy and private handling.",
-      "relation": "relies",
-      "source": "ROOT::amend:identity:act-proposal-admission",
-      "target": "case:deployment:concealment-entropy-client-generated"
-    },
-    {
-      "conditional_on": "",
-      "reason": "The Actor nonce and proposal format is specified here; the particular excluded entropy premise is named separately.",
-      "relation": "realizes",
-      "source": "ROOT::amend:identity:act-proposal-admission",
-      "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "",
@@ -600,13 +558,6 @@
       "relation": "realizes",
       "source": "ROOT::amend:identity:formation-three",
       "target": "ROOT::open:identity:act-production-concealment"
-    },
-    {
-      "conditional_on": "subsec:deployment:concealment-entropy",
-      "reason": "The optional hiding assurance depends on private entropy and custody, not closure binding or supplied-input equality.",
-      "relation": "relies",
-      "source": "ROOT::amend:identity:formation-three",
-      "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "",
@@ -838,6 +789,13 @@
       "relation": "realizes",
       "source": "ROOT::dec:design:constants",
       "target": "subsec:deployment:transparency-of-protocol-formulas"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This bounds the designed successor’s publication scope, not its implementation or independent enclosure soundness.",
+      "relation": "realizes",
+      "source": "ROOT::dec:design:epoch-record-order",
+      "target": "def:deployment:published-epoch-replay-floor"
     },
     {
       "conditional_on": "",
@@ -1093,7 +1051,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "This hold concerns required public act members, not independent enclosure soundness or implementation evidence.",
+      "reason": "This locates the designed static input boundary and its held successor admission; it supplies no execution evidence or oracle premise.",
       "relation": "realizes",
       "source": "ROOT::open:identity:act-realization-admission",
       "target": "def:deployment:published-epoch-replay-floor"
@@ -1104,34 +1062,6 @@
       "relation": "realizes",
       "source": "ROOT::open:identity:act-realization-admission",
       "target": "def:graph:author-authority-oracle"
-    },
-    {
-      "conditional_on": "subsec:deployment:concealment-entropy",
-      "reason": "Content hiding depends on sufficient private content-nonce entropy and assigned custody.",
-      "relation": "relies",
-      "source": "ROOT::open:identity:act-realization-admission",
-      "target": "subsec:deployment:concealment-entropy"
-    },
-    {
-      "conditional_on": "case:deployment:concealment-entropy-client-generated,subsec:deployment:concealment-entropy",
-      "reason": "The optional derivation depends on the client's published nonce form and entropy obligation; it does not replace client generation.",
-      "relation": "relies",
-      "source": "ROOT::open:identity:host-contribution-option",
-      "target": "ROOT::rule:devnet:content-nonce"
-    },
-    {
-      "conditional_on": "case:deployment:concealment-entropy-client-generated",
-      "reason": "The optional derivation retains the client's private entropy obligation, not a checked property of its nonce.",
-      "relation": "relies",
-      "source": "ROOT::open:identity:host-contribution-option",
-      "target": "case:deployment:concealment-entropy-client-generated"
-    },
-    {
-      "conditional_on": "subsec:deployment:concealment-entropy",
-      "reason": "Hiding depends on actual private entropy and custody under each carriage path.",
-      "relation": "relies",
-      "source": "ROOT::open:identity:host-contribution-option",
-      "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "",
@@ -1170,27 +1100,6 @@
     },
     {
       "conditional_on": "",
-      "reason": "This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
-      "relation": "realizes",
-      "source": "ROOT::open:vision:deployment-profile",
-      "target": "case:deployment:concealment-entropy-client-generated"
-    },
-    {
-      "conditional_on": "",
-      "reason": "This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
-      "relation": "realizes",
-      "source": "ROOT::open:vision:deployment-profile",
-      "target": "case:deployment:concealment-entropy-operator-generated"
-    },
-    {
-      "conditional_on": "",
-      "reason": "This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
-      "relation": "realizes",
-      "source": "ROOT::open:vision:deployment-profile",
-      "target": "case:deployment:concealment-entropy-unassigned-custody"
-    },
-    {
-      "conditional_on": "",
       "reason": "This hold names missing declarations and evidence; it asserts neither economic suitability nor controller performance.",
       "relation": "realizes",
       "source": "ROOT::open:vision:deployment-profile",
@@ -1202,13 +1111,6 @@
       "relation": "realizes",
       "source": "ROOT::open:vision:deployment-profile",
       "target": "rem:deployment:wall-calibration-oversight"
-    },
-    {
-      "conditional_on": "",
-      "reason": "This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
-      "relation": "realizes",
-      "source": "ROOT::open:vision:deployment-profile",
-      "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "",
@@ -1391,27 +1293,6 @@
       "relation": "realizes",
       "source": "ROOT::rule:devnet:content-nonce",
       "target": "ROOT::amend:identity:act-concealment"
-    },
-    {
-      "conditional_on": "case:deployment:concealment-entropy-client-generated,subsec:deployment:concealment-entropy",
-      "reason": "Only the optional path depends on this held recipe; plain client generation does not.",
-      "relation": "relies",
-      "source": "ROOT::rule:devnet:content-nonce",
-      "target": "ROOT::open:identity:host-contribution-option"
-    },
-    {
-      "conditional_on": "case:deployment:concealment-entropy-client-generated",
-      "reason": "Sufficient client entropy and private custody remain deployment premises.",
-      "relation": "relies",
-      "source": "ROOT::rule:devnet:content-nonce",
-      "target": "case:deployment:concealment-entropy-client-generated"
-    },
-    {
-      "conditional_on": "subsec:deployment:concealment-entropy",
-      "reason": "Actual entropy and private custody cannot be established by form checks.",
-      "relation": "relies",
-      "source": "ROOT::rule:devnet:content-nonce",
-      "target": "subsec:deployment:concealment-entropy"
     },
     {
       "conditional_on": "",
@@ -1607,7 +1488,7 @@
       "reason": "The correction concerns deterministic standing for fixed accepted membership and inputs, not distributed convergence.",
       "relation": "realizes",
       "source": "input:org.peer-network.design.questions:Q10",
-      "target": "subsec:deployment:final-epoch-state-agreement"
+      "target": "subsec:deployment:epoch-calculation-input-agreement"
     },
     {
       "conditional_on": "",

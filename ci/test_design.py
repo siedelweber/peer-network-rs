@@ -28,7 +28,7 @@ class DeploymentClaims(unittest.TestCase):
         from deployment_claims import Refusal, project, compare_edges, source_units, validate
         from claims import conformance_marks, StructuralError
         statement = dict(kind='statement', name='cond:deployment:standing-work',
-                         paper_tag='network-v0.37.0-draft.1', classification='split',
+                         paper_tag='network-v0.37.0-draft.2', classification='split',
                          included='Accepted counts.', excluded='Clock truth.',
                          reason='Counts follow from inputs; clocks do not.',
                          witness_route='rec:testing:fixture-route', evidence_status='scope-only')
@@ -308,8 +308,8 @@ class Correspondence(unittest.TestCase):
                 validate_again.assert_called_once_with(original)
         from design import paper_edition_mentions
         paper_edition_mentions.cache_clear()
-        self.assertEqual(paper_edition_mentions('network-v0.37.0-draft.1'), ((1, 'network-v0.37.0-draft.1'),))
-        self.assertEqual(paper_edition_mentions('network-v0.37.0-draft.1'), ((1, 'network-v0.37.0-draft.1'),))
+        self.assertEqual(paper_edition_mentions('network-v0.37.0-draft.2'), ((1, 'network-v0.37.0-draft.2'),))
+        self.assertEqual(paper_edition_mentions('network-v0.37.0-draft.2'), ((1, 'network-v0.37.0-draft.2'),))
         self.assertEqual(paper_edition_mentions.cache_info().hits, 1)
         self.assertEqual(paper_edition_mentions('network-v0.31.0'), ((1, 'network-v0.31.0'),))
 
@@ -328,7 +328,7 @@ class Correspondence(unittest.TestCase):
                 tag_path.write_text(tag)
             with self.assertRaisesRegex(ValueError, 'external TAG'):
                 published_correspondence(rows, path)
-        tag_path.write_text('network-v0.37.0-draft.1\n')
+        tag_path.write_text('network-v0.37.0-draft.2\n')
         published_correspondence(rows, path)
         for field in ('paper_key', 'paper_tag'):
             changed = json.loads(json.dumps(rows))
@@ -752,7 +752,7 @@ class Correspondence(unittest.TestCase):
         from contextlib import redirect_stdout
         from io import StringIO
         from design import check_paper_editions
-        selected = 'network-v0.37.0-draft.1'
+        selected = 'network-v0.37.0-draft.2'
         older = 'network-v0.37.0-alpha.99'
         current = self.root / 'current.md'
         historical = self.root / 'history.md'
@@ -774,7 +774,7 @@ class Correspondence(unittest.TestCase):
         ´claim:design:qualified-release-refuses-self-history´
         ´test:integration:test-qualified-selected-release-refuses-self-history´
         """
-        selected = 'network-v0.37.0-draft.1'
+        selected = 'network-v0.37.0-draft.2'
         with self.assertRaisesRegex(ValueError, 'release is not strictly older'):
             self.qualified_history(selected, [selected])
 
@@ -783,7 +783,7 @@ class Correspondence(unittest.TestCase):
         ´claim:design:qualified-release-precedes-final´
         ´test:integration:test-qualified-release-precedes-final´
         """
-        qualified = 'network-v0.37.0-draft.1'
+        qualified = 'network-v0.37.0-draft.2'
         final = 'network-v0.37.0'
         self.assertEqual(self.qualified_history(final, [qualified])[0]['release'], qualified)
         with self.assertRaisesRegex(ValueError, 'release is not strictly older'):
@@ -942,7 +942,7 @@ class Correspondence(unittest.TestCase):
             material_classes([{'label': 'post:deployment:replay-verification', 'material_class': 'courtesy'}])
         baseline = self.check()
         self.assertEqual(baseline.returncode, 0, baseline.stderr)
-        self.assertIn('INVENTORY-PLACEHOLDERS rows=1751 structural=133 refused=0', baseline.stdout)
+        self.assertIn('INVENTORY-PLACEHOLDERS rows=1759 structural=132 refused=0', baseline.stdout)
         path = self.root / 'docs/datasets/org.peer-network.design.inventory.json'
         original = path.read_text()
         dataset = json.loads(original)
@@ -954,7 +954,7 @@ class Correspondence(unittest.TestCase):
         path.write_text(json.dumps(dataset))
         result = self.check()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn('INVENTORY-PLACEHOLDERS rows=1751 structural=133 refused=3', result.stdout)
+        self.assertIn('INVENTORY-PLACEHOLDERS rows=1759 structural=132 refused=3', result.stdout)
         self.assertIn('obligation-bearing inventory placeholders:', result.stderr)
         for label in labels:
             self.assertIn(label, result.stderr)

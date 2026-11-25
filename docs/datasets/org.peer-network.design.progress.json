@@ -2239,7 +2239,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "cond:comparator:faithfulness-final-set-admission",
+      "label": "cond:comparator:faithfulness-complete-set-admission",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -2775,7 +2775,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "type",
-      "label": "itm:network:conserved-standing-package-final-state",
+      "label": "itm:network:conserved-standing-package-evaluated-state",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -3116,7 +3116,7 @@
         }
       ],
       "kind": "type",
-      "label": "itm:network:host-contract-final-ledger",
+      "label": "itm:network:host-contract-ledger-inputs",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -3188,7 +3188,7 @@
         }
       ],
       "kind": "type",
-      "label": "itm:network:host-contract-final-standing",
+      "label": "itm:network:host-contract-standing-support",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -3349,25 +3349,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [
-        "adr/006-identity-adjudication.md",
-        "docs/design/implementation.md",
-        "docs/templates/adr/006-identity-adjudication.md.j2",
-        "docs/templates/docs/design/implementation.md.j2"
-      ],
+      "elsewhere": [],
       "holds": [],
       "kind": "type",
       "label": "ax:graph:authored-act-ontology",
-      "portions": [
-        {
-          "clause": "Premise only: the accepted act owns exactly the listed fields",
-          "record": "ROOT::amend:design:act-envelope-field-inventory"
-        },
-        {
-          "clause": "Premise only: an act owns exactly its listed fields including admission-handshake authentication",
-          "record": "ROOT::amend:identity:act-proposal-admission"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -4617,10 +4603,6 @@
       "holds": [
         {
           "hold": "ROOT::open:design:dependency-opening-recipe",
-          "record": "RECORDS::amend:acts:retained-finalization-time"
-        },
-        {
-          "hold": "ROOT::open:design:dependency-opening-recipe",
           "record": "ROOT::amend:decomposition:retained-ordering-metadata"
         },
         {
@@ -4640,7 +4622,6 @@
         }
       ],
       "records": [
-        "RECORDS::amend:acts:retained-finalization-time",
         "ROOT::amend:decomposition:retained-ordering-metadata",
         "ROOT::open:design:noncompliant-logical-time"
       ],
@@ -4652,7 +4633,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-graph",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "function",
       "label": "case:graph:act-incidence-causality-incident-update",
@@ -4668,7 +4651,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-graph",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "function",
       "label": "case:graph:act-incidence-causality-unchanged-endpoint",
@@ -4684,7 +4669,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-graph",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "rem:graph:causal-frontier-not-ancestry",
@@ -4776,7 +4763,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "prop:graph:act-clock-path-order",
+      "label": "prop:graph:act-order-path-order",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -4789,7 +4776,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-graph",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "rem:graph:act-time-not-wall-clock",
@@ -5094,10 +5083,6 @@
         {
           "hold": "ROOT::open:identity:act-realization-admission",
           "record": "ROOT::amend:identity:act-concealment"
-        },
-        {
-          "hold": "ROOT::open:identity:act-production-concealment",
-          "record": "ROOT::rule:devnet:content-nonce"
         }
       ],
       "kind": "policy",
@@ -5106,8 +5091,7 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::amend:identity:act-concealment",
-        "ROOT::rule:devnet:content-nonce"
+        "ROOT::amend:identity:act-concealment"
       ],
       "routes": [],
       "status": "held",
@@ -7100,6 +7084,10 @@
           "record": "ROOT::dec:design:replay"
         },
         {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::open:identity:act-realization-admission"
+        },
+        {
           "hold": "ROOT::open:testing:obligation-evidence",
           "record": "ROOT::req:vision:replay"
         }
@@ -7114,10 +7102,6 @@
         {
           "clause": "Premise only: authentication serialization and key management are deployment concerns",
           "record": "ROOT::amend:identity:act-proposal-admission"
-        },
-        {
-          "clause": "Premise only: The reference permits deployment encodings satisfying the seven requirements.",
-          "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
       "record_granular": 0,
@@ -7125,6 +7109,7 @@
       "records": [
         "ROOT::dec:crypto:base-library",
         "ROOT::dec:design:replay",
+        "ROOT::open:identity:act-realization-admission",
         "ROOT::req:vision:replay"
       ],
       "routes": [],
@@ -7137,14 +7122,6 @@
       "crate": "pn-records",
       "elsewhere": [],
       "holds": [
-        {
-          "hold": "ROOT::open:crypto:dependency-admission",
-          "record": "RECORDS::def:acts:authentication-disclosure"
-        },
-        {
-          "hold": "ROOT::open:identity:act-realization-admission",
-          "record": "RECORDS::def:acts:authentication-disclosure"
-        },
         {
           "hold": "ROOT::open:identity:act-realization-admission",
           "record": "ROOT::amend:decomposition:act-profile"
@@ -7167,27 +7144,16 @@
         }
       ],
       "kind": "type",
-      "label": "def:graph:proposal-pre-commitment",
+      "label": "def:graph:author-commitment-preparation",
       "portions": [
         {
-          "clause": "Premise only: the proposal commits its Actor-chosen body before host fields",
-          "record": "ROOT::amend:identity:act-proposal-admission"
-        },
-        {
-          "clause": "Premise only: I and the Actor-chosen B exist before the nonces; P and final commitments do not.",
+          "clause": "Premise only: I and the Actor-chosen B exist before the commitments.",
           "record": "ROOT::open:identity:host-contribution-option"
         }
       ],
-      "record_granular": 1,
-      "record_routes": [
-        {
-          "kind": "record",
-          "record": "RECORDS::def:acts:authentication-disclosure",
-          "scope": "RECORDS::verif:acts:authentication-disclosures"
-        }
-      ],
+      "record_granular": 0,
+      "record_routes": [],
       "records": [
-        "RECORDS::def:acts:authentication-disclosure",
         "ROOT::amend:decomposition:act-profile",
         "ROOT::amend:design:publication-field-inventory",
         "ROOT::amend:identity:act-proposal-admission",
@@ -7207,14 +7173,6 @@
       "crate": "pn-records",
       "elsewhere": [],
       "holds": [
-        {
-          "hold": "ROOT::open:crypto:dependency-admission",
-          "record": "RECORDS::def:acts:authentication-disclosure"
-        },
-        {
-          "hold": "ROOT::open:identity:act-realization-admission",
-          "record": "RECORDS::def:acts:authentication-disclosure"
-        },
         {
           "hold": "ROOT::open:identity:act-realization-admission",
           "record": "ROOT::alg:design:authentication-handoff"
@@ -7260,16 +7218,9 @@
           "record": "ROOT::open:identity:optional-act-carriage"
         }
       ],
-      "record_granular": 1,
-      "record_routes": [
-        {
-          "kind": "record",
-          "record": "RECORDS::def:acts:authentication-disclosure",
-          "scope": "RECORDS::verif:acts:authentication-disclosures"
-        }
-      ],
+      "record_granular": 0,
+      "record_routes": [],
       "records": [
-        "RECORDS::def:acts:authentication-disclosure",
         "ROOT::alg:design:authentication-handoff",
         "ROOT::alg:design:formation",
         "ROOT::amend:decomposition:act-profile",
@@ -7290,14 +7241,6 @@
       "crate": "pn-records",
       "elsewhere": [],
       "holds": [
-        {
-          "hold": "ROOT::open:crypto:dependency-admission",
-          "record": "RECORDS::def:acts:authentication-disclosure"
-        },
-        {
-          "hold": "ROOT::open:identity:act-realization-admission",
-          "record": "RECORDS::def:acts:authentication-disclosure"
-        },
         {
           "hold": "ROOT::open:identity:act-realization-admission",
           "record": "ROOT::alg:design:authentication-handoff"
@@ -7323,16 +7266,9 @@
           "record": "ROOT::amend:harness:actor-retry-proposal"
         }
       ],
-      "record_granular": 1,
-      "record_routes": [
-        {
-          "kind": "record",
-          "record": "RECORDS::def:acts:authentication-disclosure",
-          "scope": "RECORDS::verif:acts:authentication-disclosures"
-        }
-      ],
+      "record_granular": 0,
+      "record_routes": [],
       "records": [
-        "RECORDS::def:acts:authentication-disclosure",
         "ROOT::alg:design:authentication-handoff",
         "ROOT::amend:design:publication-field-inventory",
         "ROOT::open:identity:act-realization-admission"
@@ -7413,28 +7349,17 @@
         {
           "hold": "ROOT::open:design:dependency-opening-recipe",
           "record": "ROOT::amend:design:finalized-records-replay"
-        },
-        {
-          "hold": "ROOT::open:design:dependency-opening-recipe",
-          "record": "ROOT::open:design:noncompliant-logical-time"
         }
       ],
       "kind": "policy",
       "label": "post:graph:ordering-accountability",
       "portions": [],
-      "record_granular": 1,
-      "record_routes": [
-        {
-          "kind": "record",
-          "record": "ROOT::open:design:noncompliant-logical-time",
-          "scope": "ROOT::gate:design:bite-4"
-        }
-      ],
+      "record_granular": 0,
+      "record_routes": [],
       "records": [
         "ROOT::alg:design:formation",
         "ROOT::amend:decomposition:authoritative-history-carrier",
-        "ROOT::amend:design:finalized-records-replay",
-        "ROOT::open:design:noncompliant-logical-time"
+        "ROOT::amend:design:finalized-records-replay"
       ],
       "routes": [],
       "status": "designed",
@@ -7465,6 +7390,10 @@
         {
           "hold": "ROOT::open:crypto:dependency-admission",
           "record": "ROOT::dec:crypto:base-library"
+        },
+        {
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
       "kind": "policy",
@@ -7487,7 +7416,8 @@
         "RECORDS::def:acts:authentication-disclosure",
         "ROOT::alg:design:authentication-handoff",
         "ROOT::amend:design:act-envelope-field-inventory",
-        "ROOT::dec:crypto:base-library"
+        "ROOT::dec:crypto:base-library",
+        "ROOT::open:identity:act-realization-admission"
       ],
       "routes": [],
       "status": "held",
@@ -7519,7 +7449,7 @@
       ],
       "holds": [],
       "kind": "policy",
-      "label": "itm:graph:act-authentication-requirements-proposal-integrity",
+      "label": "itm:graph:act-authentication-requirements-approved-act-integrity",
       "portions": [
         {
           "clause": "Premise only: substitution of the approved proposal is detectable",
@@ -7670,16 +7600,7 @@
       ],
       "kind": "type",
       "label": "def:graph:act-envelope",
-      "portions": [
-        {
-          "clause": "Premise only: the envelope has that exact field inventory",
-          "record": "ROOT::amend:design:act-envelope-field-inventory"
-        },
-        {
-          "clause": "Premise only: the envelope retains exactly those fields",
-          "record": "ROOT::amend:identity:act-proposal-admission"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -10743,7 +10664,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "none",
-      "label": "subsec:epoch:final-state",
+      "label": "subsec:epoch:evaluated-state",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -10767,7 +10688,7 @@
         }
       ],
       "kind": "function",
-      "label": "def:epoch:proposed-final-act-state",
+      "label": "def:epoch:evaluated-epoch-state",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -10790,7 +10711,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "function",
-      "label": "eq:epoch:final-residual-balance",
+      "label": "eq:epoch:computed-residual-balance",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -10808,7 +10729,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "function",
-      "label": "eq:epoch:final-action-count",
+      "label": "eq:epoch:computed-action-count",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -12891,7 +12812,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "subsec:epoch:final-standing",
+      "label": "subsec:epoch:computed-standing",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -12911,7 +12832,7 @@
       ],
       "holds": [],
       "kind": "function",
-      "label": "def:epoch:final-standing",
+      "label": "def:epoch:computed-standing",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -12927,7 +12848,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "function",
-      "label": "eq:epoch:final-standing",
+      "label": "eq:epoch:computed-standing",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -12943,7 +12864,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "function",
-      "label": "eq:epoch:final-standing-mediant",
+      "label": "eq:epoch:computed-standing-mediant",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -12977,7 +12898,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "prop:epoch:final-standing-hull",
+      "label": "prop:epoch:computed-standing-hull",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -13479,7 +13400,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "prop:epoch:final-standing-response",
+      "label": "prop:epoch:computed-standing-response",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -13495,7 +13416,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "prop:epoch:final-standing-embedding",
+      "label": "prop:epoch:computed-standing-embedding",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -13773,7 +13694,7 @@
         }
       ],
       "kind": "policy",
-      "label": "post:epoch:final-act-sequence-closure",
+      "label": "post:epoch:act-sequence-evaluation",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -13794,7 +13715,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
-      "label": "itm:epoch:final-act-sequence-closure-formation",
+      "label": "itm:epoch:act-sequence-evaluation-formation",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -13812,7 +13733,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
-      "label": "itm:epoch:final-act-sequence-closure-safety",
+      "label": "itm:epoch:act-sequence-evaluation-safety",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -13832,7 +13753,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
-      "label": "itm:epoch:final-act-sequence-closure-policy",
+      "label": "itm:epoch:act-sequence-evaluation-policy",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -13880,7 +13801,7 @@
         }
       ],
       "kind": "policy",
-      "label": "post:epoch:final-edge-set",
+      "label": "post:epoch:computed-edge-set",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -13939,7 +13860,7 @@
       "label": "def:epoch:raw-self-edge-reading",
       "portions": [
         {
-          "clause": "derivation from final standing and registration tenure rather than an authored Self act",
+          "clause": "derivation from computed standing and registration tenure rather than an authored Self act",
           "record": "ROOT::sig:design:readouts"
         }
       ],
@@ -14165,7 +14086,7 @@
         }
       ],
       "kind": "policy",
-      "label": "post:epoch:final-act-sequence-write-rule",
+      "label": "post:epoch:act-sequence-write-rule",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -14406,7 +14327,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
-      "label": "rem:epoch:registration-final-set-admission",
+      "label": "rem:epoch:registration-complete-set-admission",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -15400,7 +15321,7 @@
         }
       ],
       "kind": "function",
-      "label": "def:epoch:final-act-stamps",
+      "label": "def:epoch:computed-standing-stamps",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -15420,7 +15341,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "function",
-      "label": "eq:epoch:final-action-stamp",
+      "label": "eq:epoch:computed-action-stamp",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -15436,7 +15357,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "function",
-      "label": "eq:epoch:final-epoch-stamp",
+      "label": "eq:epoch:computed-epoch-stamp",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -15452,7 +15373,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "function",
-      "label": "eq:epoch:final-epoch-headroom",
+      "label": "eq:epoch:computed-epoch-headroom",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -15635,7 +15556,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
-      "label": "rem:sorting:final-standing-input",
+      "label": "rem:sorting:computed-standing-input",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -16722,7 +16643,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "none",
-      "label": "pty:transport:final-standing-input-monotonicity",
+      "label": "pty:transport:computed-standing-input-monotonicity",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -17648,7 +17569,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "itm:scalability:spam-resistance-final-gates-record-budget",
+      "label": "itm:scalability:spam-resistance-epoch-write-gates-record-budget",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -18086,7 +18007,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
-      "label": "rem:can:final-standing-scope",
+      "label": "rem:can:computed-standing-scope",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -19261,7 +19182,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
-      "label": "rem:bridge:final-standing-and-raw-paths",
+      "label": "rem:bridge:computed-standing-and-raw-paths",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -26635,7 +26556,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
-      "label": "subsec:verification:final-epoch-fixture",
+      "label": "subsec:verification:epoch-evaluation-fixture",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -26673,7 +26594,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
-      "label": "ver:epoch:final-ledger",
+      "label": "ver:epoch:computed-ledger",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -26689,7 +26610,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
-      "label": "ver:epoch:registration-final-set-admission",
+      "label": "ver:epoch:registration-complete-set-admission",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -27798,7 +27719,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
-      "label": "subsec:verification:final-epoch-gates",
+      "label": "subsec:verification:epoch-write-gates",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -27821,7 +27742,7 @@
         }
       ],
       "kind": "fixture",
-      "label": "ver:epoch:final-stamps",
+      "label": "ver:epoch:computed-standing-stamps",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -27860,7 +27781,7 @@
         }
       ],
       "kind": "fixture",
-      "label": "ver:epoch:final-backpressure",
+      "label": "ver:epoch:computed-backpressure",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -28835,7 +28756,9 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-verification",
-      "elsewhere": [],
+      "elsewhere": [
+        "ci/design.py"
+      ],
       "holds": [],
       "kind": "fixture",
       "label": "ver:boundary:canonical-time-replay",
@@ -29039,19 +28962,11 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-verification",
-      "elsewhere": [
-        "adr/006-identity-adjudication.md",
-        "docs/templates/adr/006-identity-adjudication.md.j2"
-      ],
+      "elsewhere": [],
       "holds": [],
       "kind": "fixture",
-      "label": "ver:handshake:pre-commitment",
-      "portions": [
-        {
-          "clause": "recomputation of the supplied proposal pre-commitment",
-          "record": "ROOT::amend:identity:act-proposal-admission"
-        }
-      ],
+      "label": "ver:handshake:approved-act-integrity",
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [],
@@ -29066,7 +28981,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "fixture",
-      "label": "ver:handshake:salting",
+      "label": "ver:handshake:commitment-binding",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -31678,7 +31593,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "subsec:necessity:pre-commitment-before-salting",
+      "label": "subsec:necessity:complete-act-approval",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -31694,39 +31609,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "case:necessity:pre-commitment-before-salting-host-first",
-      "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
-      "records": [],
-      "routes": [],
-      "status": "unassigned",
-      "tentative": 0
-    },
-    {
-      "bites": [],
-      "category": "statement",
-      "crate": "pn-records",
-      "elsewhere": [],
-      "holds": [],
-      "kind": "invariant check",
-      "label": "subsec:necessity:approval-after-salting",
-      "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
-      "records": [],
-      "routes": [],
-      "status": "unassigned",
-      "tentative": 0
-    },
-    {
-      "bites": [],
-      "category": "statement",
-      "crate": "pn-records",
-      "elsewhere": [],
-      "holds": [],
-      "kind": "invariant check",
-      "label": "case:necessity:approval-after-salting-no-approval",
+      "label": "case:necessity:complete-act-approval-no-approval",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -32060,7 +31943,7 @@
       ],
       "holds": [],
       "kind": "invariant check",
-      "label": "subsec:deployment:final-epoch-state-agreement",
+      "label": "subsec:deployment:epoch-calculation-input-agreement",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -32081,7 +31964,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "case:deployment:final-epoch-state-agreement-linearization",
+      "label": "case:deployment:epoch-calculation-input-agreement-linearization",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -32102,7 +31985,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "case:deployment:final-epoch-state-agreement-cluster-closure",
+      "label": "case:deployment:epoch-calculation-input-agreement-cluster-closure",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -32123,7 +32006,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
-      "label": "case:deployment:final-epoch-state-agreement-bft-agreement",
+      "label": "case:deployment:epoch-calculation-input-agreement-bft-agreement",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -32144,7 +32027,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "case:deployment:final-epoch-state-agreement-gossip-stability",
+      "label": "case:deployment:epoch-calculation-input-agreement-gossip-stability",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -32165,7 +32048,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "case:deployment:final-epoch-state-agreement-disagreement",
+      "label": "case:deployment:epoch-calculation-input-agreement-disagreement",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -32183,7 +32066,7 @@
       "elsewhere": [],
       "holds": [],
       "kind": "invariant check",
-      "label": "case:deployment:final-epoch-state-agreement-inconsistent-projection",
+      "label": "case:deployment:epoch-calculation-input-agreement-inconsistent-projection",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
@@ -32795,17 +32678,12 @@
       "holds": [],
       "kind": "policy",
       "label": "cond:deployment:canonical-encoding",
-      "portions": [
-        {
-          "clause": "Premise only: the deployment selects the byte encoding",
-          "record": "ROOT::amend:design:epoch-authentication-fields"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
         "ROOT::amend:decomposition:deployment-evidence",
-        "ROOT::model:design:storage-history",
+        "ROOT::amend:design:epoch-authentication-fields",
         "ROOT::rule:design:binary64-evidence"
       ],
       "routes": [],
@@ -32902,7 +32780,7 @@
           "record": "ROOT::amend:design:replay-roles"
         },
         {
-          "clause": "The released principle requires public attempted evidence and the reader’s own sound evaluation; it requires neither a producer build nor reproduction of independently evaluated endpoints.",
+          "clause": "Bound support, its attempt order and the threshold determine exact recomputation and the computed verdict. Soundness of the enclosure requires the reader’s independent evaluation, and an unavailable evaluation decides nothing.",
           "record": "ROOT::amend:testing:canonical-replay-verification"
         },
         {
@@ -32945,7 +32823,6 @@
         "ROOT::amend:design:applied-dyadic-solve",
         "ROOT::amend:design:host-operational-declaration",
         "ROOT::dec:design:rung-anchor-representation",
-        "ROOT::model:design:storage-history",
         "ROOT::rule:design:refinement"
       ],
       "routes": [],
@@ -33583,57 +33460,18 @@
           "record": "ROOT::amend:identity:act-concealment"
         },
         {
-          "hold": "ROOT::open:identity:act-realization-admission",
-          "record": "ROOT::amend:identity:act-proposal-admission"
-        },
-        {
           "hold": "ROOT::open:identity:act-production-concealment",
           "record": "ROOT::rule:devnet:content-nonce"
         }
       ],
       "kind": "policy",
       "label": "subsec:deployment:concealment-entropy",
-      "portions": [
-        {
-          "clause": "Conformance reliance: Private entropy and custody are premises, not consequences of format checks.",
-          "record": "ROOT::amend:identity:act-concealment"
-        },
-        {
-          "clause": "Claimed part: The immutable legacy format and held new content recipe are specified here; actual entropy is not established.",
-          "record": "ROOT::amend:identity:act-content-admission"
-        },
-        {
-          "clause": "Claimed part: The Actor nonce and proposal format is specified here; the particular excluded entropy premise is named separately.",
-          "record": "ROOT::amend:identity:act-proposal-admission"
-        },
-        {
-          "clause": "Conformance reliance: The optional hiding assurance depends on private entropy and custody, not closure binding or supplied-input equality.",
-          "record": "ROOT::amend:identity:formation-three"
-        },
-        {
-          "clause": "Conformance reliance: Content hiding depends on sufficient private content-nonce entropy and assigned custody.",
-          "record": "ROOT::open:identity:act-realization-admission"
-        },
-        {
-          "clause": "Conformance reliance: Hiding depends on actual private entropy and custody under each carriage path.",
-          "record": "ROOT::open:identity:host-contribution-option"
-        },
-        {
-          "clause": "Claimed part: This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
-          "record": "ROOT::open:vision:deployment-profile"
-        },
-        {
-          "clause": "Conformance reliance: Actual entropy and private custody cannot be established by form checks.",
-          "record": "ROOT::rule:devnet:content-nonce"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
         "ROOT::amend:identity:act-concealment",
         "ROOT::amend:identity:act-content-admission",
-        "ROOT::amend:identity:act-proposal-admission",
-        "ROOT::open:identity:host-contribution-option",
         "ROOT::open:vision:deployment-profile",
         "ROOT::rule:devnet:content-nonce"
       ],
@@ -33654,20 +33492,7 @@
       ],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-operator-generated",
-      "portions": [
-        {
-          "clause": "Conformance reliance: Salt hiding depends on actual host entropy and custody.",
-          "record": "ROOT::amend:identity:act-concealment"
-        },
-        {
-          "clause": "Conformance reliance: Content hiding depends on actual host salt entropy and custody.",
-          "record": "ROOT::amend:identity:act-content-admission"
-        },
-        {
-          "clause": "Claimed part: This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
-          "record": "ROOT::open:vision:deployment-profile"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
@@ -33695,33 +33520,11 @@
       ],
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-client-generated",
-      "portions": [
-        {
-          "clause": "Conformance reliance: Content hiding depends on actual client entropy and private custody.",
-          "record": "ROOT::amend:identity:act-concealment"
-        },
-        {
-          "clause": "Conformance reliance: Proposal hiding depends on actual Actor nonce entropy and private handling.",
-          "record": "ROOT::amend:identity:act-proposal-admission"
-        },
-        {
-          "clause": "Conformance reliance: The optional derivation retains the client's private entropy obligation, not a checked property of its nonce.",
-          "record": "ROOT::open:identity:host-contribution-option"
-        },
-        {
-          "clause": "Claimed part: This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
-          "record": "ROOT::open:vision:deployment-profile"
-        },
-        {
-          "clause": "Conformance reliance: Sufficient client entropy and private custody remain deployment premises.",
-          "record": "ROOT::rule:devnet:content-nonce"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
         "ROOT::amend:identity:act-concealment",
-        "ROOT::open:identity:host-contribution-option",
         "ROOT::open:vision:deployment-profile",
         "ROOT::rule:devnet:content-nonce"
       ],
@@ -33757,23 +33560,24 @@
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
-      "kind": "policy",
-      "label": "case:deployment:concealment-entropy-unassigned-custody",
-      "portions": [
+      "holds": [
         {
-          "clause": "Claimed part: This enumerates the adopted scope and its held implementation; it asserts no private entropy, custody or executed evidence.",
-          "record": "ROOT::open:vision:deployment-profile"
+          "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-concealment"
         }
       ],
+      "kind": "policy",
+      "label": "case:deployment:concealment-entropy-unassigned-custody",
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "ROOT::amend:identity:act-concealment",
         "ROOT::open:vision:deployment-profile"
       ],
       "routes": [],
-      "status": "designed",
-      "tentative": 1
+      "status": "held",
+      "tentative": 0
     },
     {
       "bites": [
@@ -33978,27 +33782,18 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [
-        "docs/datasets/org.peer-network.design.questions.json",
-        "docs/design/implementation.md",
-        "docs/design/questions.md",
-        "docs/inputs/design-questions.toml",
-        "docs/templates/docs/design/implementation.md.j2"
-      ],
+      "elsewhere": [],
       "holds": [],
       "kind": "serialization",
       "label": "subsec:deployment:canonical-standing-encoding",
-      "portions": [
-        {
-          "clause": "Premise only: serialization is a deployment concern",
-          "record": "ROOT::amend:design:epoch-authentication-fields"
-        }
-      ],
+      "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::amend:design:epoch-authentication-fields"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -34031,10 +33826,6 @@
           "record": "ROOT::amend:design:epoch-authentication-fields"
         },
         {
-          "clause": "Premise only: publication requires complete versioned deterministic bytes",
-          "record": "ROOT::amend:design:epoch-authentication-fields"
-        },
-        {
           "clause": "Claimed part: This statement uses the exact public-record and endpoint-verdict scope; enclosure soundness remains conditional on the reader’s own sound evaluation, and no execution evidence follows.",
           "record": "ROOT::dec:design:publication"
         },
@@ -34047,7 +33838,7 @@
           "record": "ROOT::resol:design:replay-paper-contract"
         },
         {
-          "clause": "Premise only: exact objects and canonical encoded bytes agree, independently evaluated endpoints need not",
+          "clause": "Premise only: bound static inputs and sound support determine computed standing, independently evaluated endpoints need not agree",
           "record": "ROOT::resol:design:replay-paper-contract"
         }
       ],
@@ -34055,6 +33846,7 @@
       "record_routes": [],
       "records": [
         "EPOCH::def:compiler:completed-package",
+        "ROOT::amend:design:epoch-authentication-fields",
         "ROOT::dec:design:publication",
         "ROOT::req:vision:publication"
       ],
@@ -34584,46 +34376,36 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-graph",
-      "elsewhere": [],
-      "holds": [
-        {
-          "hold": "ROOT::open:design:dependency-opening-recipe",
-          "record": "RECORDS::amend:acts:retained-finalization-time"
-        }
+      "elsewhere": [
+        "ci/design.py"
       ],
+      "holds": [],
       "kind": "invariant check",
       "label": "cond:graph:act-incidence-causality-completed-predecessors",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "RECORDS::amend:acts:retained-finalization-time"
-      ],
+      "records": [],
       "routes": [],
-      "status": "held",
+      "status": "unassigned",
       "tentative": 0
     },
     {
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
-      "holds": [
-        {
-          "hold": "ROOT::open:design:dependency-opening-recipe",
-          "record": "RECORDS::amend:acts:retained-finalization-time"
-        }
+      "elsewhere": [
+        "ci/design.py"
       ],
+      "holds": [],
       "kind": "invariant check",
-      "label": "cond:graph:act-incidence-causality-frontier-carry",
+      "label": "cond:graph:act-incidence-causality-fold-accumulator",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "RECORDS::amend:acts:retained-finalization-time"
-      ],
+      "records": [],
       "routes": [],
-      "status": "held",
+      "status": "unassigned",
       "tentative": 0
     },
     {
@@ -34691,23 +34473,18 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
-      "holds": [
-        {
-          "hold": "ROOT::open:design:dependency-opening-recipe",
-          "record": "RECORDS::amend:acts:retained-finalization-time"
-        }
+      "elsewhere": [
+        "ci/design.py"
       ],
+      "holds": [],
       "kind": "invariant check",
       "label": "cond:graph:ordering-accountability-stamp",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "RECORDS::amend:acts:retained-finalization-time"
-      ],
+      "records": [],
       "routes": [],
-      "status": "held",
+      "status": "unassigned",
       "tentative": 0
     },
     {
@@ -34743,58 +34520,36 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [],
-      "holds": [
-        {
-          "hold": "ROOT::open:design:dependency-opening-recipe",
-          "record": "ROOT::open:design:noncompliant-logical-time"
-        }
+      "elsewhere": [
+        "ci/design.py"
       ],
+      "holds": [],
       "kind": "type",
       "label": "def:graph:stamp-fault",
       "portions": [],
-      "record_granular": 1,
-      "record_routes": [
-        {
-          "kind": "record",
-          "record": "ROOT::open:design:noncompliant-logical-time",
-          "scope": "ROOT::gate:design:bite-4"
-        }
-      ],
-      "records": [
-        "ROOT::open:design:noncompliant-logical-time"
-      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
       "routes": [],
-      "status": "held",
+      "status": "unassigned",
       "tentative": 0
     },
     {
       "bites": [],
       "category": "statement",
       "crate": "pn-verification",
-      "elsewhere": [],
-      "holds": [
-        {
-          "hold": "ROOT::open:design:dependency-opening-recipe",
-          "record": "ROOT::open:design:noncompliant-logical-time"
-        }
+      "elsewhere": [
+        "ci/design.py"
       ],
+      "holds": [],
       "kind": "invariant check",
       "label": "prop:graph:act-time-finite",
       "portions": [],
-      "record_granular": 1,
-      "record_routes": [
-        {
-          "kind": "record",
-          "record": "ROOT::open:design:noncompliant-logical-time",
-          "scope": "ROOT::gate:design:bite-4"
-        }
-      ],
-      "records": [
-        "ROOT::open:design:noncompliant-logical-time"
-      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
       "routes": [],
-      "status": "held",
+      "status": "unassigned",
       "tentative": 0
     },
     {
@@ -34803,10 +34558,6 @@
       "crate": "pn-records",
       "elsewhere": [],
       "holds": [
-        {
-          "hold": "ROOT::open:design:dependency-opening-recipe",
-          "record": "RECORDS::amend:acts:retained-finalization-time"
-        },
         {
           "hold": "ROOT::open:crypto:dependency-admission",
           "record": "ROOT::open:design:dependency-opening-recipe"
@@ -34830,7 +34581,6 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "RECORDS::amend:acts:retained-finalization-time",
         "ROOT::open:design:dependency-opening-recipe"
       ],
       "routes": [],
@@ -34879,12 +34629,23 @@
       "category": "statement",
       "crate": "pn-verification",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:design:dependency-opening-recipe",
+          "record": "ROOT::open:design:noncompliant-logical-time"
+        }
+      ],
       "kind": "fixture",
       "label": "ver:boundary:act-time-recomputation",
       "portions": [],
-      "record_granular": 0,
-      "record_routes": [],
+      "record_granular": 1,
+      "record_routes": [
+        {
+          "kind": "record",
+          "record": "ROOT::open:design:noncompliant-logical-time",
+          "scope": "ROOT::gate:design:bite-4"
+        }
+      ],
       "records": [
         "CONSTANTS::act_time_fixture",
         "CONSTANTS::result.act_time.alpha_epoch",
@@ -34918,7 +34679,8 @@
         "CONSTANTS::result.act_time.zeta_position",
         "CONSTANTS::result.act_time.zeta_published",
         "CONSTANTS::result.act_time.zeta_recomputed",
-        "ROOT::obs:inventory:constants"
+        "ROOT::obs:inventory:constants",
+        "ROOT::open:design:noncompliant-logical-time"
       ],
       "routes": [],
       "status": "designed",
@@ -35010,6 +34772,7 @@
         "EPOCH::verif:admission:live-publication",
         "RECORDS::def:burn:recognition",
         "ROOT::alg:design:ledger",
+        "ROOT::amend:devnet:marker-settlement",
         "ROOT::conv:lineage:paper-15",
         "ROOT::rule:design:closure-marker-registration",
         "ROOT::verif:design:marker-registration-cases"
@@ -35372,10 +35135,6 @@
       "label": "ver:boundary:marker-registration",
       "portions": [
         {
-          "clause": "consecutive local admission",
-          "record": "ROOT::rule:design:closure-marker-registration"
-        },
-        {
           "clause": "preservation after a finality breach",
           "record": "ROOT::verif:design:finality-breach-cases"
         }
@@ -35383,10 +35142,11 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "ROOT::rule:design:closure-marker-registration",
         "ROOT::verif:design:marker-registration-cases"
       ],
       "routes": [],
-      "status": "held",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -35509,6 +35269,10 @@
       "elsewhere": [],
       "holds": [
         {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::dec:design:epoch-record-order"
+        },
+        {
           "hold": "ROOT::open:identity:act-realization-admission",
           "record": "ROOT::open:identity:act-realization-admission"
         }
@@ -35521,6 +35285,14 @@
           "record": "ROOT::amend:decomposition:numeric-representation"
         },
         {
+          "clause": "Claimed part: This locates the designed static input boundary and its held successor admission; it supplies no execution evidence or oracle premise.",
+          "record": "ROOT::amend:design:closure-record-scope"
+        },
+        {
+          "clause": "Claimed part: This bounds the designed successor’s publication scope, not its implementation or independent enclosure soundness.",
+          "record": "ROOT::dec:design:epoch-record-order"
+        },
+        {
           "clause": "Claimed part: This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.",
           "record": "ROOT::open:design:publication-profile"
         },
@@ -35529,17 +35301,19 @@
           "record": "ROOT::open:design:replay-proof-fields"
         },
         {
-          "clause": "Claimed part: This hold concerns required public act members, not independent enclosure soundness or implementation evidence.",
+          "clause": "Claimed part: This locates the designed static input boundary and its held successor admission; it supplies no execution evidence or oracle premise.",
           "record": "ROOT::open:identity:act-realization-admission"
         }
       ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "ROOT::amend:design:closure-record-scope",
+        "ROOT::dec:design:epoch-record-order",
         "ROOT::open:identity:act-realization-admission"
       ],
       "routes": [],
-      "status": "held",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -35858,10 +35632,6 @@
       "holds": [
         {
           "hold": "ROOT::open:identity:act-realization-admission",
-          "record": "ROOT::amend:identity:act-concealment"
-        },
-        {
-          "hold": "ROOT::open:identity:act-realization-admission",
           "record": "ROOT::amend:identity:act-proposal-admission"
         }
       ],
@@ -35871,7 +35641,6 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::amend:identity:act-concealment",
         "ROOT::amend:identity:act-proposal-admission",
         "ROOT::open:vision:deployment-profile"
       ],
@@ -36960,6 +36729,202 @@
       "tentative": 0
     },
     {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "type",
+      "label": "def:comparator:marker-lineage-epoch-history",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::dec:design:epoch-record-order"
+        }
+      ],
+      "kind": "type",
+      "label": "def:comparator:successor-standard",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::amend:devnet:marker-settlement",
+        "ROOT::dec:design:epoch-record-order",
+        "ROOT::rule:lineage:commitments"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::dec:design:epoch-record-order"
+        }
+      ],
+      "kind": "type",
+      "label": "def:epoch:document-set-commitment",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::dec:design:epoch-record-order",
+        "ROOT::rule:lineage:commitments"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "type",
+      "label": "def:graph:act-incidence",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-replay",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "function",
+      "label": "def:network:history-closure",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::amend:design:closure-record-scope",
+        "ROOT::conv:lineage:paper-3"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-replay",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "function",
+      "label": "def:network:static-closure",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::amend:design:closure-record-scope",
+        "ROOT::conv:lineage:paper-3"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-records",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "type",
+      "label": "def:network:static-commitment-set",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::amend:design:closure-record-scope",
+        "ROOT::amend:design:replay-version-three-fields"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-replay",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "invariant check",
+      "label": "post:epoch:declared-history-consistency",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::amend:design:closure-record-scope"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [
+        9
+      ],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "rem:deployment:computed-copy-accountability",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::alg:design:reconstruction"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "none",
+      "elsewhere": [
+        "ci/design.py"
+      ],
+      "holds": [],
+      "kind": "none",
+      "label": "subsec:symbols:courtesy-readings",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [],
+      "routes": [],
+      "status": "unassigned",
+      "tentative": 0
+    },
+    {
       "category": "obligation-support",
       "claim_count": 3,
       "name": "EPOCH::verif:admission:live-publication",
@@ -37947,10 +37912,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "175",
+          "exact": "184",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "175",
+          "num": "184",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37961,27 +37926,27 @@
           "exact_digits": 32
         }
       },
-      "total": 175
+      "total": 184
     },
     {
       "category": "total",
-      "designed": 418,
-      "held": 69,
+      "designed": 427,
+      "held": 63,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "418",
+          "exact": "427",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "418",
+          "num": "427",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "69",
+          "exact": "63",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "69",
+          "num": "63",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37994,34 +37959,34 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "33",
+          "exact": "28",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "33",
+          "num": "28",
           "num_exact": true,
           "num_relation": "="
         },
         "tentative": {
-          "exact": "21",
+          "exact": "20",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "21",
+          "num": "20",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 405",
+          "exact": "1 412",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 405",
+          "num": "1 412",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "883",
+          "exact": "887",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "883",
+          "num": "887",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38057,10 +38022,10 @@
         }
       },
       "realized": 35,
-      "record_granular": 33,
-      "tentative": 21,
-      "total": 1405,
-      "unassigned": 883
+      "record_granular": 28,
+      "tentative": 20,
+      "total": 1412,
+      "unassigned": 887
     },
     {
       "category": "total",
@@ -38109,18 +38074,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "346",
+          "exact": "347",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "346",
+          "num": "347",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "322",
+          "exact": "323",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "322",
+          "num": "323",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38158,8 +38123,8 @@
       "realized": 0,
       "record_granular": 0,
       "tentative": 13,
-      "total": 346,
-      "unassigned": 322
+      "total": 347,
+      "unassigned": 323
     },
     {
       "category": "crate",
@@ -38208,18 +38173,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "346",
+          "exact": "347",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "346",
+          "num": "347",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "322",
+          "exact": "323",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "322",
+          "num": "323",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38257,8 +38222,8 @@
       "realized": 0,
       "record_granular": 0,
       "tentative": 13,
-      "total": 346,
-      "unassigned": 322
+      "total": 347,
+      "unassigned": 323
     },
     {
       "category": "crate",
@@ -38560,7 +38525,7 @@
     {
       "category": "crate",
       "designed": 61,
-      "held": 10,
+      "held": 9,
       "name": "pn-graph",
       "number_forms": {
         "designed": {
@@ -38572,10 +38537,10 @@
           "num_relation": "="
         },
         "held": {
-          "exact": "10",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38612,10 +38577,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "153",
+          "exact": "154",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "153",
+          "num": "154",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38654,27 +38619,27 @@
       "record_granular": 4,
       "tentative": 0,
       "total": 229,
-      "unassigned": 153
+      "unassigned": 154
     },
     {
       "category": "crate",
-      "designed": 53,
-      "held": 18,
+      "designed": 54,
+      "held": 19,
       "name": "pn-host",
       "number_forms": {
         "designed": {
-          "exact": "53",
+          "exact": "54",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "53",
+          "num": "54",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "18",
+          "exact": "19",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "18",
+          "num": "19",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38687,34 +38652,34 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "3",
+          "exact": "2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "2",
           "num_exact": true,
           "num_relation": "="
         },
         "tentative": {
-          "exact": "7",
+          "exact": "6",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7",
+          "num": "6",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "182",
+          "exact": "183",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "182",
+          "num": "183",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "107",
+          "exact": "106",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "107",
+          "num": "106",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38750,10 +38715,10 @@
         }
       },
       "realized": 4,
-      "record_granular": 3,
-      "tentative": 7,
-      "total": 182,
-      "unassigned": 107
+      "record_granular": 2,
+      "tentative": 6,
+      "total": 183,
+      "unassigned": 106
     },
     {
       "category": "crate",
@@ -38856,23 +38821,23 @@
     },
     {
       "category": "crate",
-      "designed": 78,
-      "held": 17,
+      "designed": 81,
+      "held": 14,
       "name": "pn-records",
       "number_forms": {
         "designed": {
-          "exact": "78",
+          "exact": "81",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "78",
+          "num": "81",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "17",
+          "exact": "14",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "17",
+          "num": "14",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38885,10 +38850,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "7",
+          "exact": "3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7",
+          "num": "3",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38901,18 +38866,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "233",
+          "exact": "236",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "233",
+          "num": "236",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "136",
+          "exact": "139",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "136",
+          "num": "139",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38948,30 +38913,30 @@
         }
       },
       "realized": 2,
-      "record_granular": 7,
+      "record_granular": 3,
       "tentative": 6,
-      "total": 233,
-      "unassigned": 136
+      "total": 236,
+      "unassigned": 139
     },
     {
       "category": "crate",
-      "designed": 5,
-      "held": 4,
+      "designed": 9,
+      "held": 3,
       "name": "pn-replay",
       "number_forms": {
         "designed": {
-          "exact": "5",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "4",
+          "exact": "3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "3",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39000,10 +38965,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "33",
+          "exact": "36",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "33",
+          "num": "36",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39049,28 +39014,28 @@
       "realized": 1,
       "record_granular": 0,
       "tentative": 0,
-      "total": 33,
+      "total": 36,
       "unassigned": 23
     },
     {
       "category": "crate",
-      "designed": 68,
-      "held": 9,
+      "designed": 69,
+      "held": 7,
       "name": "pn-verification",
       "number_forms": {
         "designed": {
-          "exact": "68",
+          "exact": "69",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "68",
+          "num": "69",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "9",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39107,10 +39072,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "198",
+          "exact": "199",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "198",
+          "num": "199",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39149,7 +39114,7 @@
       "record_granular": 6,
       "tentative": 5,
       "total": 283,
-      "unassigned": 198
+      "unassigned": 199
     },
     {
       "category": "kind",
@@ -39450,23 +39415,23 @@
     },
     {
       "category": "kind",
-      "designed": 50,
-      "held": 6,
+      "designed": 51,
+      "held": 5,
       "name": "fixture",
       "number_forms": {
         "designed": {
-          "exact": "50",
+          "exact": "51",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "50",
+          "num": "51",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "6",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39479,10 +39444,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "3",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "3",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39542,22 +39507,22 @@
         }
       },
       "realized": 5,
-      "record_granular": 3,
+      "record_granular": 4,
       "tentative": 7,
       "total": 220,
       "unassigned": 159
     },
     {
       "category": "kind",
-      "designed": 97,
+      "designed": 99,
       "held": 6,
       "name": "function",
       "number_forms": {
         "designed": {
-          "exact": "97",
+          "exact": "99",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "97",
+          "num": "99",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39594,10 +39559,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "214",
+          "exact": "216",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "214",
+          "num": "216",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39643,28 +39608,28 @@
       "realized": 10,
       "record_granular": 8,
       "tentative": 1,
-      "total": 214,
+      "total": 216,
       "unassigned": 101
     },
     {
       "category": "kind",
-      "designed": 139,
-      "held": 22,
+      "designed": 140,
+      "held": 18,
       "name": "invariant check",
       "number_forms": {
         "designed": {
-          "exact": "139",
+          "exact": "140",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "139",
+          "num": "140",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "22",
+          "exact": "18",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "22",
+          "num": "18",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39677,10 +39642,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "12",
+          "exact": "10",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "12",
+          "num": "10",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39693,18 +39658,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "516",
+          "exact": "515",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "516",
+          "num": "515",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "339",
+          "exact": "341",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "339",
+          "num": "341",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39740,10 +39705,10 @@
         }
       },
       "realized": 16,
-      "record_granular": 12,
+      "record_granular": 10,
       "tentative": 2,
-      "total": 516,
-      "unassigned": 339
+      "total": 515,
+      "unassigned": 341
     },
     {
       "category": "kind",
@@ -39792,18 +39757,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "356",
+          "exact": "357",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "356",
+          "num": "357",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "335",
+          "exact": "336",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "335",
+          "num": "336",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39841,20 +39806,20 @@
       "realized": 0,
       "record_granular": 0,
       "tentative": 8,
-      "total": 356,
-      "unassigned": 335
+      "total": 357,
+      "unassigned": 336
     },
     {
       "category": "kind",
-      "designed": 64,
+      "designed": 65,
       "held": 26,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "64",
+          "exact": "65",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "64",
+          "num": "65",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39875,26 +39840,26 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "4",
+          "exact": "3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "4",
+          "num": "3",
           "num_exact": true,
           "num_relation": "="
         },
         "tentative": {
-          "exact": "12",
+          "exact": "11",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "12",
+          "num": "11",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "321",
+          "exact": "322",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "321",
+          "num": "322",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39938,22 +39903,22 @@
         }
       },
       "realized": 3,
-      "record_granular": 4,
-      "tentative": 12,
-      "total": 321,
+      "record_granular": 3,
+      "tentative": 11,
+      "total": 322,
       "unassigned": 228
     },
     {
       "category": "kind",
-      "designed": 8,
+      "designed": 9,
       "held": 0,
       "name": "serialization",
       "number_forms": {
         "designed": {
-          "exact": "8",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39998,10 +39963,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1",
+          "exact": "0",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1",
+          "num": "0",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40040,27 +40005,27 @@
       "record_granular": 0,
       "tentative": 4,
       "total": 9,
-      "unassigned": 1
+      "unassigned": 0
     },
     {
       "category": "kind",
-      "designed": 52,
-      "held": 9,
+      "designed": 55,
+      "held": 8,
       "name": "type",
       "number_forms": {
         "designed": {
-          "exact": "52",
+          "exact": "55",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "52",
+          "num": "55",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "9",
+          "exact": "8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "9",
+          "num": "8",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40073,10 +40038,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "5",
+          "exact": "2",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5",
+          "num": "2",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40089,18 +40054,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "101",
+          "exact": "106",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "101",
+          "num": "106",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "39",
+          "exact": "42",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "39",
+          "num": "42",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40136,10 +40101,10 @@
         }
       },
       "realized": 1,
-      "record_granular": 5,
+      "record_granular": 2,
       "tentative": 0,
-      "total": 101,
-      "unassigned": 39
+      "total": 106,
+      "unassigned": 42
     },
     {
       "category": "bite",
@@ -40370,10 +40335,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "5",
+          "exact": "3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5",
+          "num": "3",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40433,7 +40398,7 @@
         }
       },
       "realized": 0,
-      "record_granular": 5,
+      "record_granular": 3,
       "tentative": 0,
       "total": 22,
       "unassigned": 1
@@ -40469,10 +40434,10 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "5",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40532,7 +40497,7 @@
         }
       },
       "realized": 2,
-      "record_granular": 5,
+      "record_granular": 4,
       "tentative": 0,
       "total": 36,
       "unassigned": 0
@@ -40935,15 +40900,15 @@
     },
     {
       "category": "bite",
-      "designed": 6,
+      "designed": 7,
       "held": 4,
       "name": "9",
       "number_forms": {
         "designed": {
-          "exact": "6",
+          "exact": "7",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6",
+          "num": "7",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40980,10 +40945,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "11",
+          "exact": "12",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11",
+          "num": "12",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41029,7 +40994,7 @@
       "realized": 1,
       "record_granular": 1,
       "tentative": 0,
-      "total": 11,
+      "total": 12,
       "unassigned": 0
     },
     {
@@ -41232,23 +41197,23 @@
     },
     {
       "category": "bite",
-      "designed": 305,
-      "held": 30,
+      "designed": 313,
+      "held": 24,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "305",
+          "exact": "313",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "305",
+          "num": "313",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "30",
+          "exact": "24",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "30",
+          "num": "24",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41261,34 +41226,34 @@
           "num_relation": "="
         },
         "record_granular": {
-          "exact": "21",
+          "exact": "18",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "21",
+          "num": "18",
           "num_exact": true,
           "num_relation": "="
         },
         "tentative": {
-          "exact": "34",
+          "exact": "33",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "34",
+          "num": "33",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "1 559",
+          "exact": "1 566",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 559",
+          "num": "1 566",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 201",
+          "exact": "1 206",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 201",
+          "num": "1 206",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41324,10 +41289,10 @@
         }
       },
       "realized": 23,
-      "record_granular": 21,
-      "tentative": 34,
-      "total": 1559,
-      "unassigned": 1201
+      "record_granular": 18,
+      "tentative": 33,
+      "total": 1566,
+      "unassigned": 1206
     },
     {
       "category": "classification-identities",
@@ -41828,14 +41793,14 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 20,
+      "exact_citing": 19,
       "name": "pn-records",
       "number_forms": {
         "exact_citing": {
-          "exact": "20",
+          "exact": "19",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "20",
+          "num": "19",
           "num_exact": true,
           "num_relation": "="
         },
@@ -42032,14 +41997,14 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 231,
+      "exact_citing": 235,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "231",
+          "exact": "235",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "231",
+          "num": "235",
           "num_exact": true,
           "num_relation": "="
         },

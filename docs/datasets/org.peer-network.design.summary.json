@@ -18,12 +18,12 @@
     },
     {
       "category": "chapter",
-      "count": 123,
+      "count": 125,
       "name": "02 Comparator"
     },
     {
       "category": "chapter",
-      "count": 66,
+      "count": 69,
       "name": "03 Network"
     },
     {
@@ -38,7 +38,7 @@
     },
     {
       "category": "chapter",
-      "count": 248,
+      "count": 250,
       "name": "6 Epoch"
     },
     {
@@ -83,7 +83,7 @@
     },
     {
       "category": "chapter",
-      "count": 5,
+      "count": 6,
       "name": "E Symbols and binding ledger"
     },
     {
@@ -98,12 +98,12 @@
     },
     {
       "category": "chapter",
-      "count": 148,
+      "count": 146,
       "name": "H Necessity"
     },
     {
       "category": "chapter",
-      "count": 56,
+      "count": 58,
       "name": "Appendix I — Deployment"
     },
     {
@@ -144,7 +144,7 @@
     },
     {
       "category": "totals",
-      "count": 1751,
+      "count": 1759,
       "name": "inventory"
     },
     {
@@ -154,7 +154,7 @@
     },
     {
       "category": "labels",
-      "count": 1717,
+      "count": 1725,
       "name": "explicit"
     },
     {

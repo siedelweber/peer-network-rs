@@ -352,6 +352,8 @@ MATERIAL_EXCEPTIONS = {
     'case:graph:act-dependency-projection-full': 'courtesy',
     'case:graph:act-dependency-projection-full-empty': 'courtesy',
     'case:graph:act-dependency-projection-tombstoned': 'courtesy',
+    'case:graph:act-incidence-causality-incident-update': 'courtesy',
+    'case:graph:act-incidence-causality-unchanged-endpoint': 'courtesy',
     'case:necessity:stance-marginal-reputation-parity-reputation': 'courtesy',
     'cond:comparator:burn-bindability': 'oracle',
     'cond:comparator:burn-conservative-publication': 'oracle',
@@ -385,6 +387,10 @@ MATERIAL_EXCEPTIONS = {
     'cond:deployment:standing-work': 'courtesy',
     'cond:deployment:terminal-regression': 'courtesy',
     'cond:deployment:title-certificate-monitoring': 'courtesy',
+    'cond:graph:act-incidence-causality-completed-predecessors': 'courtesy',
+    'cond:graph:act-incidence-causality-fold-accumulator': 'courtesy',
+    'cond:graph:boundary-accountability-title-certificate': 'courtesy',
+    'cond:graph:ordering-accountability-stamp': 'courtesy',
     'def:comparator:bootstrap-capacity': 'oracle',
     'def:comparator:burn-accumulator': 'oracle',
     'def:comparator:burn-history-inputs': 'oracle',
@@ -393,9 +399,12 @@ MATERIAL_EXCEPTIONS = {
     'def:comparator:burn-provenance-oracle': 'oracle',
     'def:comparator:epoch-marker': 'oracle',
     'def:comparator:marker-burn-snapshot': 'oracle',
+    'def:comparator:marker-lineage-epoch-history': 'oracle',
+    'def:comparator:successor-standard': 'oracle',
     'def:deployment:author-authority-validity-projection': 'oracle',
     'def:deployment:provenance-validity-projection': 'oracle',
     'def:graph:act-dependency-tombstone': 'courtesy',
+    'def:graph:act-incidence-causality': 'courtesy',
     'def:graph:act-payload-controller': 'courtesy',
     'def:graph:act-payload-state': 'courtesy',
     'def:graph:author-authority-oracle': 'oracle',
@@ -407,7 +416,9 @@ MATERIAL_EXCEPTIONS = {
     'def:graph:dependency-list-order': 'courtesy',
     'def:graph:holder': 'courtesy',
     'def:graph:requested-publication-intent': 'courtesy',
+    'def:graph:stamp-fault': 'courtesy',
     'def:graph:storage': 'courtesy',
+    'def:graph:title-certificate-fault': 'courtesy',
     'eq:comparator:admission-benchmark-deposits': 'oracle',
     'eq:comparator:marker-burn-snapshot': 'oracle',
     'gloss:graph:blinding-value': 'courtesy',
@@ -443,6 +454,7 @@ MATERIAL_EXCEPTIONS = {
     'post:introduction:irrevocability': 'oracle',
     'post:introduction:public-accessibility': 'oracle',
     'prop:comparator:marker-finalization-consistency': 'oracle',
+    'prop:graph:act-time-finite': 'courtesy',
     'rem:comparator:burn-realization-audit-evidence': 'courtesy',
     'rem:comparator:closing-survey': 'courtesy',
     'rem:comparator:external-outlay-projection': 'oracle',
@@ -463,11 +475,15 @@ MATERIAL_EXCEPTIONS = {
     'rem:deployment:canonical-encoding-oversight': 'courtesy',
     'rem:deployment:centralized-monitoring-conduct': 'courtesy',
     'rem:deployment:certificate-monitoring-courtesies': 'courtesy',
+    'rem:deployment:computed-copy-accountability': 'courtesy',
     'rem:deployment:standing-publication-practice': 'courtesy',
     'rem:deployment:title-certificate-monitoring-courtesies': 'courtesy',
     'rem:deployment:wall-calibration-oversight': 'courtesy',
     'rem:gates:optional-guild-funding': 'courtesy',
     'rem:graph:act-payload-custody-phases': 'courtesy',
+    'rem:graph:act-time-is-summary': 'courtesy',
+    'rem:graph:act-time-not-wall-clock': 'courtesy',
+    'rem:graph:causal-frontier-not-ancestry': 'courtesy',
     'rem:graph:dependency-nonce-concealment': 'courtesy',
     'rem:graph:payload-size-not-act-cost': 'courtesy',
     'rem:graph:settlement-reputation': 'courtesy',
@@ -500,10 +516,15 @@ MATERIAL_EXCEPTIONS = {
     'subsec:necessity:stance-marginal-reputation': 'courtesy',
     'subsec:necessity:time-locked-non-burnable': 'oracle',
     'subsec:necessity:time-locked-non-redeemable': 'oracle',
+    'subsec:symbols:courtesy-readings': 'courtesy',
     'subsec:symbols:oracle-history': 'oracle',
     'tbl:introduction:layer-roles': 'courtesy',
+    'ver:boundary:act-time-recomputation': 'courtesy',
+    'ver:boundary:canonical-time-replay': 'courtesy',
     'ver:boundary:marker-registration': 'oracle',
+    'ver:boundary:title-certificate-recomputation': 'courtesy',
     'ver:handshake:tombstoning': 'courtesy',
+    'ver:ownership:one-time': 'courtesy',
     'ver:revision:reduced-head-remains': 'courtesy',
 }
 
@@ -523,7 +544,7 @@ def validate():
     inventory = data('inventory')
     constants = data('constants')
     material_classes(inventory)
-    if not (len(inventory) == 1751 and len({row['label'] for row in inventory}) == 1751):
+    if not (len(inventory) == 1759 and len({row['label'] for row in inventory}) == 1759):
         raise ValueError('inventory label census')
     placeholders = [row for row in inventory if re.search(r'^Track\s+.+\s+as a separately addressable\s+', row['statement'])]
     structural = {'section', 'subsection', 'appendix', 'motto'}
@@ -640,15 +661,15 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.37.0-draft.1'
-CURRENT_INVENTORY_PIN = '286a9b488679677467297e579bbe7e4771cf854aa6b6d5d51d81556e220204b4'
-REFRESHED_CONSTANTS_PIN = '87737dda47d61c1924256298183d30f188b481006edb88743b413801daa4b4af'
-RELEASE_QUESTIONS_PIN = 'abdbade32aaae2104276dd43dbe7997aba47bdd93a0b57b5c2412eac9bfcc77d'
+PAPER_TAG = 'network-v0.37.0-draft.2'
+CURRENT_INVENTORY_PIN = 'aef03303123287f6f6008e47b49f2a24a664ac22419ae6e313a8ee3c72533e32'
+REFRESHED_CONSTANTS_PIN = '921c3b7276a935cdb183eaa0f68b7580a0a7d6858cdda6de0ee45e2469cebdb0'
+RELEASE_QUESTIONS_PIN = '8d7b218100fb057d82534e30cf25cbad61c3e7c494fcfd4fe844313b8118b4d3'
 
 
-CRATES_PIN = 'c0cb5f1fd48680ffd2329ccf38f0b39d39e6df77a150550c3fa471ae936175fa'
-BITES_PIN = 'c922d1dc62364566e0aeacc52fdc47a443739ad4bd296e93f4063a2f84777f09'
-QUESTIONS_PIN = '427c4ce34eef9ae382d000178ed43bfc587633699da3ea93690defa4204cd7e5'
+CRATES_PIN = '134b9943c2133eeadf987dbdfaa98f2c8785b4264802d1a8b3c65e4af1c5c9f7'
+BITES_PIN = '003bc70fe0527d814d8a79c26485298a4d3e3f7c4d2934b18eb8fb33eaec3543'
+QUESTIONS_PIN = '1cef50068caab7fc33e4754f42e7084bcbeed32837ab08ee8bc958ff96e8e644'
 
 def published_correspondence(rows, path=None):
     """Join tagged published quantities to supplied external build values exactly."""

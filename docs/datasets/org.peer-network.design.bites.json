@@ -55,12 +55,12 @@
     {
       "dependency": "Study judgment: requires bites 2–4; unresolved Invitation/domain/fold semantics hold the affected compiler case.",
       "labels": [
-        "eq:epoch:final-residual-balance",
+        "eq:epoch:computed-residual-balance",
         "def:epoch:standing-recipient-resolution",
         "ver:standing:epoch-permutation-invariance"
       ],
       "ordinal": 5,
-      "records": "Study judgment: final balances/counts/vintages, recipient resolutions, fold cells, coefficients, base allocation and emission; ledger, conservation and order-invariance fixture records (eq:epoch:final-residual-balance) (def:epoch:standing-recipient-resolution) (ver:standing:epoch-permutation-invariance).",
+      "records": "Study judgment: final balances/counts/vintages, recipient resolutions, fold cells, coefficients, base allocation and emission; ledger, conservation and order-invariance fixture records (eq:epoch:computed-residual-balance) (def:epoch:standing-recipient-resolution) (ver:standing:epoch-permutation-invariance).",
       "slice": "pn-epoch: final ledger and standing compiler"
     },
     {
@@ -77,13 +77,13 @@
     {
       "dependency": "Study judgment: certified standing is supplied by the scoped bite-six close; the tagged canonical interim controller fixes the formula, while delivery arithmetic, initialization and deployment calibration must be declared. Do not invent final-set search or consensus.",
       "labels": [
-        "post:epoch:final-act-sequence-write-rule",
+        "post:epoch:act-sequence-write-rule",
         "def:network:door-headroom",
         "def:epoch:safety-threshold",
-        "ver:epoch:final-stamps"
+        "ver:epoch:computed-standing-stamps"
       ],
       "ordinal": 7,
-      "records": "Study judgment: action/epoch stamps, ``cond:epoch:write-own-balance-solvency``, ``cond:epoch:write-individual-safety`` and ``cond:epoch:write-epoch-admission``, door headroom and declared next-boundary schedules; gate and boundary-policy fixture records (post:epoch:final-act-sequence-write-rule) (def:network:door-headroom) (def:epoch:safety-threshold) (ver:epoch:final-stamps).",
+      "records": "Study judgment: action/epoch stamps, ``cond:epoch:write-own-balance-solvency``, ``cond:epoch:write-individual-safety`` and ``cond:epoch:write-epoch-admission``, door headroom and declared next-boundary schedules; gate and boundary-policy fixture records (post:epoch:act-sequence-write-rule) (def:network:door-headroom) (def:epoch:safety-threshold) (ver:epoch:computed-standing-stamps).",
       "slice": "pn-epoch: final admission and schedules"
     },
     {
@@ -113,7 +113,7 @@
       "slice": "pn-replay"
     },
     {
-      "dependency": "Study judgment: requires published final standing and graph geometry; may move after bite 6 for a diagnostic prototype, but cannot feed standing. Resolve simple-path/walk semantics before asserting exact traversal.",
+      "dependency": "Study judgment: requires computed standing and graph geometry; may move after bite 6 for a diagnostic prototype, but cannot feed standing. Resolve simple-path/walk semantics before asserting exact traversal.",
       "labels": [
         "def:graph:raw-traversal-snapshot",
         "alg:epoch:exact-signed-raw-traversal",

@@ -24,7 +24,7 @@
       "name": "pn-act-profile",
       "responsibility": "Shared pure act profile, canonical commitment recipes and supplied-opening comparison; no host or authentication dependency",
       "surfaces": [
-        "def:graph:proposal-pre-commitment",
+        "def:graph:author-commitment-preparation",
         "def:graph:verified-act",
         "def:graph:ordering-fraud-proof"
       ]
@@ -59,7 +59,7 @@
       "responsibility": "Compile and certify one final epoch state and its admission result",
       "surfaces": [
         "alg:epoch:conserved-standing-computation",
-        "post:epoch:final-act-sequence-write-rule"
+        "post:epoch:act-sequence-write-rule"
       ]
     },
     {
