@@ -1,0 +1,11 @@
+name = "ROOT::dec:identity:actor-document-name"
+witnessed_labels = []
+path = "adr/006-identity-adjudication.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:identity:chain-actor-binding"
+owner = "Act-and-epoch document and identity designers"
+missing = "Actor-document namespace, exact bytes, hash recipe, prefix values, admission and burn-to-name binding"
+closing_condition = "Admit the actor document and its burn-to-name binding through the identity admission record, then publish the scoped implementation and independent evidence; the naming decision alone is designed and unbuilt."
+closing_step = "Actor-document design and identity admission, followed by its implementation cut"

@@ -1142,6 +1142,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "Admit the actor document and its burn-to-name binding through the identity admission record, then publish the scoped implementation and independent evidence; the naming decision alone is designed and unbuilt.",
+      "closing_step": "Actor-document design and identity admission, followed by its implementation cut",
+      "hold": "ROOT::open:identity:chain-actor-binding",
+      "missing": "Actor-document namespace, exact bytes, hash recipe, prefix values, admission and burn-to-name binding",
+      "name": "ROOT::dec:identity:actor-document-name",
+      "owner": "Act-and-epoch document and identity designers",
+      "path": "adr/006-identity-adjudication.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Publish the scoped implementation and independent controls; retain unimplemented production duties as held. Here only the deciding design is recorded.",
       "closing_step": "Public verification cut",
       "hold": "ROOT::open:identity:act-production-concealment",
