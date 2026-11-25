@@ -31,13 +31,15 @@ fn node(namespace: &str, name: &str) -> PublicReference {
 /// ´test:integration:paper-time-fixture´
 #[test]
 fn paper_time_fixture() {
-    let path = pn_testkit::runtime_path(pn_testkit::RuntimePath::Workspace(
-        "docs/datasets/org.peer-network.design.constants.json",
-    ))
-    .unwrap();
-    let data: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
-    let rows = data["rows"].as_array().unwrap();
-    let fixture = &rows.iter().find(|row| row["id"] == "act_time_fixture").unwrap()["definition"];
+    let data: serde_json::Value = serde_json::from_str(include_str!("data/paper-time-v0.32.0.json")).unwrap();
+    let fixture = &data["definition"];
+    let published_ids: BTreeSet<_> = data["result_ids"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|id| id.as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(published_ids.len(), 31);
     let identity = |key: &str| ActId {
         author: key.into(),
         sequence: 1,
@@ -100,7 +102,7 @@ fn paper_time_fixture() {
             ("recomputed", recomputed, recomputed),
         ] {
             let id = format!("result.act_time.{key}_{field}");
-            assert!(rows.iter().any(|row| row["id"] == id));
+            assert!(published_ids.contains(&id));
             assert_eq!(actual, expected, "{id}");
             compared.insert(id);
         }
@@ -119,11 +121,12 @@ fn paper_time_fixture() {
         ),
     ] {
         let id = format!("result.act_time.{field}");
-        assert!(rows.iter().any(|row| row["id"] == id));
+        assert!(published_ids.contains(&id));
         assert_eq!(actual, expected, "{id}");
         compared.insert(id);
     }
     assert_eq!(compared.len(), 31);
+    assert_eq!(compared, published_ids);
     let reversed: Vec<_> = inputs.into_iter().rev().collect();
     let replay = validate_history(&reversed, &[]).unwrap();
     assert_eq!(replay.time_evidence(), history.time_evidence());

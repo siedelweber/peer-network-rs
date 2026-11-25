@@ -118,5 +118,13 @@
     "class": "fixture-provenance",
     "reason": "This existing formatting fixture retains its input release; the paper move changes no product test.",
     "derived_from": ""
+  },
+  {
+    "path": "packages/verification/tests/data/paper-time-v0.32.0.json",
+    "line": "  \"provenance\": \"This fixture reproduces network-v0.32.0's ver:boundary:act-time-recomputation seven carried acts and 31 published result names.\",",
+    "release": "network-v0.32.0",
+    "class": "fixture-provenance",
+    "reason": "This test-owned fixture keeps the admitted earlier-edition inputs and result names after the reference dataset moves.",
+    "derived_from": ""
   }
 ]

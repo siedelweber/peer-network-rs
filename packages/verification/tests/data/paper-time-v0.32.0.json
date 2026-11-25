@@ -1,0 +1,132 @@
+{
+  "provenance": "This fixture reproduces network-v0.32.0's ver:boundary:act-time-recomputation seven carried acts and 31 published result names.",
+  "definition": {
+    "acts": [
+      {
+        "dependencies": [],
+        "epoch": 1,
+        "incidence": [
+          "a",
+          "b"
+        ],
+        "key": "alpha",
+        "parents": [],
+        "published": 1
+      },
+      {
+        "dependencies": [],
+        "epoch": 1,
+        "incidence": [
+          "a",
+          "b"
+        ],
+        "key": "beta",
+        "parents": [
+          "alpha"
+        ],
+        "published": 2
+      },
+      {
+        "dependencies": [],
+        "epoch": 1,
+        "incidence": [
+          "c",
+          "d"
+        ],
+        "key": "gamma",
+        "parents": [],
+        "published": 1
+      },
+      {
+        "dependencies": [],
+        "epoch": 2,
+        "incidence": [
+          "a",
+          "b"
+        ],
+        "key": "delta",
+        "parents": [],
+        "published": 3
+      },
+      {
+        "dependencies": [
+          "gamma"
+        ],
+        "epoch": 2,
+        "incidence": [
+          "x",
+          "y"
+        ],
+        "key": "epsilon",
+        "parents": [
+          "beta"
+        ],
+        "published": 2
+      },
+      {
+        "dependencies": [
+          "omega"
+        ],
+        "epoch": 2,
+        "incidence": [
+          "u",
+          "v"
+        ],
+        "key": "zeta",
+        "parents": [
+          "omega",
+          "eta"
+        ],
+        "published": 1
+      },
+      {
+        "dependencies": [
+          "delta"
+        ],
+        "epoch": 2,
+        "incidence": [
+          "u",
+          "w"
+        ],
+        "key": "eta",
+        "parents": [],
+        "published": 4
+      }
+    ],
+    "initial_frontier": 0,
+    "schema": "peer-act-time-inputs-1"
+  },
+  "result_ids": [
+    "result.act_time.alpha_epoch",
+    "result.act_time.alpha_position",
+    "result.act_time.alpha_published",
+    "result.act_time.alpha_recomputed",
+    "result.act_time.beta_epoch",
+    "result.act_time.beta_position",
+    "result.act_time.beta_published",
+    "result.act_time.beta_recomputed",
+    "result.act_time.delta_epoch",
+    "result.act_time.delta_position",
+    "result.act_time.delta_published",
+    "result.act_time.delta_recomputed",
+    "result.act_time.dependency_fault_count",
+    "result.act_time.epsilon_epoch",
+    "result.act_time.epsilon_position",
+    "result.act_time.epsilon_published",
+    "result.act_time.epsilon_recomputed",
+    "result.act_time.eta_epoch",
+    "result.act_time.eta_position",
+    "result.act_time.eta_published",
+    "result.act_time.eta_recomputed",
+    "result.act_time.gamma_epoch",
+    "result.act_time.gamma_position",
+    "result.act_time.gamma_published",
+    "result.act_time.gamma_recomputed",
+    "result.act_time.mismatch_count",
+    "result.act_time.parent_fault_count",
+    "result.act_time.zeta_epoch",
+    "result.act_time.zeta_position",
+    "result.act_time.zeta_published",
+    "result.act_time.zeta_recomputed"
+  ]
+}
