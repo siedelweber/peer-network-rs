@@ -410,7 +410,7 @@
       "kind": "statement",
       "name": "subsec:deployment:epoch-calculation-input-agreement",
       "paper_tag": "network-v0.37.0-draft.2",
-      "reason": "The selected deterministic supplied-record predicate is restated on its current subject, without advancing execution or adopting an external or courtesy service.",
+      "reason": "Equality of the complete supplied calculation inputs and their interpretation is decidable from those records; actual convergence, finality and receipt by every participant are network conduct outside them.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
@@ -432,7 +432,7 @@
       "kind": "statement",
       "name": "case:deployment:epoch-calculation-input-agreement-cluster-closure",
       "paper_tag": "network-v0.37.0-draft.2",
-      "reason": "The selected deterministic supplied-record predicate is restated on its current subject, without advancing execution or adopting an external or courtesy service.",
+      "reason": "The supplied authoritative order and complete calculation operands determine the cluster calculation; agreement and delivery among participants require evidence beyond those operands.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
@@ -465,7 +465,7 @@
       "kind": "statement",
       "name": "case:deployment:epoch-calculation-input-agreement-disagreement",
       "paper_tag": "network-v0.37.0-draft.2",
-      "reason": "The selected deterministic supplied-record predicate is restated on its current subject, without advancing execution or adopting an external or courtesy service.",
+      "reason": "Different supplied authoritative orders or calculation operands can be detected by comparing the records; equality of the records inspected does not establish agreement among unseen participants.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
@@ -476,7 +476,7 @@
       "kind": "statement",
       "name": "case:deployment:epoch-calculation-input-agreement-inconsistent-projection",
       "paper_tag": "network-v0.37.0-draft.2",
-      "reason": "The selected deterministic supplied-record predicate is restated on its current subject, without advancing execution or adopting an external or courtesy service.",
+      "reason": "The supplied selected inputs fix their interpretation; an optional projection is compared with them and cannot replace the committed input object.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
@@ -1430,7 +1430,7 @@
       "kind": "statement",
       "name": "post:deployment:replay-floor-scope",
       "paper_tag": "network-v0.37.0-draft.2",
-      "reason": "The complete public input set determines static support form, binding and self-consistency. History, oracle and courtesy checks have separate input domains, and a missing private opening cannot supply missing required public support.",
+      "reason": "The complete public input set determines static support form, binding and self-consistency. History, oracle and courtesy checks have separate input domains. An authenticated private opening is needed only by its dependent check; its absence does not excuse missing required public support.",
       "witness_route": "rec:testing:deployment-replay-route"
     },
     {
