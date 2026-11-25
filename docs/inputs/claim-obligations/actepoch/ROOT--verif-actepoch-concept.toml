@@ -1,0 +1,11 @@
+name = "ROOT::verif:actepoch:concept"
+witnessed_labels = []
+path = "docs/design/act-epoch-concept.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Document, identity, publication and oracle designers"
+missing = "Successor representation and reviewed execution evidence for the concept checks; the concept is decided and unbuilt."
+closing_condition = "Admit the successor subjects and operations, attach reviewed test-site claims and passing source/configuration-matched evidence without reinterpreting historical controls."
+closing_step = "Successor document design and admission cuts under gate:actepoch:design"

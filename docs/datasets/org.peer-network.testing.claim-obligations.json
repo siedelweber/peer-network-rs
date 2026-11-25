@@ -1142,7 +1142,7 @@
     },
     {
       "claims": [],
-      "closing_condition": "Admit the actor document and its burn-to-name binding through the identity admission record, then publish the scoped implementation and independent evidence; the naming decision alone is designed and unbuilt.",
+      "closing_condition": "Admit the actor document and its burn-to-name binding through the identity admission record, then publish the scoped implementation and independent evidence; the naming decision alone is designed and unbuilt. The first two prefix assignments are decided by (`conv:actepoch:actor-prefix`); their admission under (`req:identity:admission-record`) remains owed.",
       "closing_step": "Actor-document design and identity admission, followed by its implementation cut",
       "hold": "ROOT::open:identity:chain-actor-binding",
       "missing": "Actor-document namespace, exact bytes, hash recipe, prefix values, admission and burn-to-name binding",
@@ -1825,6 +1825,19 @@
       "premises": "The checked crate root has no `no_std` attribute and the manifest declares one library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
       "realizers": [],
       "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Admit the successor subjects and operations, attach reviewed test-site claims and passing source/configuration-matched evidence without reinterpreting historical controls.",
+      "closing_step": "Successor document design and admission cuts under gate:actepoch:design",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Successor representation and reviewed execution evidence for the concept checks; the concept is decided and unbuilt.",
+      "name": "ROOT::gate:actepoch:design",
+      "owner": "Document, identity, publication and oracle designers",
+      "path": "docs/design/act-epoch-concept.md",
+      "realizers": [],
+      "status": "held",
       "witnessed_labels": []
     },
     {
@@ -3564,6 +3577,19 @@
         "ROOT::verif:testing:foundation-admissions"
       ],
       "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Admit the successor subjects and operations, attach reviewed test-site claims and passing source/configuration-matched evidence without reinterpreting historical controls.",
+      "closing_step": "Successor document design and admission cuts under gate:actepoch:design",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Successor representation and reviewed execution evidence for the concept checks; the concept is decided and unbuilt.",
+      "name": "ROOT::verif:actepoch:concept",
+      "owner": "Document, identity, publication and oracle designers",
+      "path": "docs/design/act-epoch-concept.md",
+      "realizers": [],
+      "status": "held",
       "witnessed_labels": []
     },
     {

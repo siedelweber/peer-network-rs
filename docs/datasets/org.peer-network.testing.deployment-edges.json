@@ -869,6 +869,20 @@
     },
     {
       "conditional_on": "",
+      "reason": "This retains irreducible public support and recomputation in the design; no implemented numerical route or external premise is established.",
+      "relation": "realizes",
+      "source": "ROOT::def:actepoch:standing",
+      "target": "post:deployment:replay-verification"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This uses exact authored coordinate pairs, not private entropy, custody or production selection.",
+      "relation": "realizes",
+      "source": "ROOT::def:actepoch:typed-acts",
+      "target": "ROOT::amend:identity:formation-three"
+    },
+    {
+      "conditional_on": "",
       "reason": "The header reuses the exact typed projection and its bounds, not its concealment assertion.",
       "relation": "realizes",
       "source": "ROOT::def:identity:verified-header-name",
@@ -915,6 +929,13 @@
       "relation": "realizes",
       "source": "ROOT::model:design:wall-floor",
       "target": "ROOT::open:design:verdict-issuance"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This retains the historical required fields and the successor admission hold, not private entropy or a new authority implementation.",
+      "relation": "realizes",
+      "source": "ROOT::open:actepoch:authority-boundary",
+      "target": "ROOT::amend:identity:act-proposal-admission"
     },
     {
       "conditional_on": "",
@@ -1202,6 +1223,41 @@
       "relation": "realizes",
       "source": "ROOT::resol:design:verification-canonical-amendment",
       "target": "post:deployment:replay-verification"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This designs checking complete supplied static inputs and support, not external truth or implemented replay.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:checking",
+      "target": "post:deployment:replay-verification"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This designs complete public static input carriage and separates optional computed copies; it asserts no implemented successor or oracle truth.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:computed-publication",
+      "target": "def:deployment:published-epoch-replay-floor"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This states the successor public-input duty without importing historical host constructions; exact successor approval admission remains held.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:host-conformance",
+      "target": "def:deployment:published-epoch-replay-floor"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This designs assessment of supplied history separately from calculation, without proving external history or implementation.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:oracle-checking",
+      "target": "post:comparator:public-provenance-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This designs key authority assessment separately from recorded signature verification, without proving external history or implementation.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:oracle-checking",
+      "target": "post:graph:public-author-authority-replay"
     },
     {
       "conditional_on": "",

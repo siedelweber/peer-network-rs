@@ -1,0 +1,70 @@
+{
+  "namespace": "org.peer-network.actepoch.documents",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "document": "Actor — subject, outside the set",
+      "members": "Asset identifier and 32-byte blinder, namespace and version",
+      "references": "Hash names the Actor; oracle opens it, checks prefix and unique asset binding"
+    },
+    {
+      "document": "Act — common",
+      "members": "Author name, sequence, type, typed part, parents, content, dependencies",
+      "references": "Seven 32-byte members; no retirement or host member"
+    },
+    {
+      "document": "Witnessed act — common",
+      "members": "Act hash, signing key, signature half one, half two",
+      "references": "Four 32-byte members; complete-act approval under the recorded key"
+    },
+    {
+      "document": "Typed and public parts",
+      "members": "Type coordinates, incidence, optional license, settlement and public parents",
+      "references": "Nineteen act types; required public documents inside the set"
+    },
+    {
+      "document": "Removable parts",
+      "members": "Act identity, client randomness, content or dependencies",
+      "references": "Commitments stay; private openings are not required public inputs"
+    },
+    {
+      "document": "Acts",
+      "members": "Ordered pairs of act hash and witnessed-act hash",
+      "references": "Pair equality; containment supplies completion, position is place"
+    },
+    {
+      "document": "Epoch — common",
+      "members": "Acts, frame",
+      "references": "Two references; no counter, predecessor, marker, signature or seal"
+    },
+    {
+      "document": "Frame — subject",
+      "members": "Actor-document hash to cumulative gross amount",
+      "references": "Keys and amounts 32 bytes; no Actor document or authority map"
+    },
+    {
+      "document": "Entering state and selected evidence",
+      "members": "Cumulative facts for touched subjects and irreducible inputs",
+      "references": "Derive outgoing values; no stored epoch ordinal by default"
+    },
+    {
+      "document": "Epoch result/root — common",
+      "members": "Epoch, entering state, selected inputs/evidence",
+      "references": "Three references; complete static set, no computed-copy branch"
+    },
+    {
+      "document": "Static and history closure",
+      "members": "Internal validity / declared-run accounting consistency",
+      "references": "History receives validated epochs and their computed states; no parent link"
+    },
+    {
+      "document": "Oracle and optional displays",
+      "members": "Accepted roots, authority and chain gross / computed copies",
+      "references": "Oracle marker points inward; courtesy copies outside root, consumer/name mapping held"
+    }
+  ]
+}
