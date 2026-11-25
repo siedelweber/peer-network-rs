@@ -1,0 +1,18 @@
+[package]
+name = "pn-fixtures"
+description = "Code-built inputs for the disposable fixture instance"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+version.workspace = true
+
+[dependencies]
+pn-host = { path = "../host" }
+pn-epoch = { path = "../epoch" }
+pn-records = { path = "../records" }
+pn-interchange = { path = "../interchange" }
+tracing.workspace = true
+
+[lints]
+workspace = true

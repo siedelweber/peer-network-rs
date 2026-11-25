@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "Fixture",
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/lib.rs",
+    "syntax": "# [doc = \" The single closed fixture selection. Its bytes are encoded anew for each construction.\"] # [derive (Debug)] pub struct Fixture { disclosure : Disclosure , bytes : Vec < u8 > , verifier : root :: Check , generation : Generation , uses : Vec < AssertedUse > , }"
+  }
+}

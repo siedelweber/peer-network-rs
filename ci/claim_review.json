@@ -1546,6 +1546,14 @@
       "review": "Read the injected cutoff and channel rendezvous: the blocked transport reserves one in-flight publication, while the paused pre-publication record cannot cross the cutoff. The assertions reconcile disjoint counts without an elapsed-time predicate."
     },
     {
+      "operation": "cli-common::observation::tests::fixture_owner_accounting",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:fixture-operations-retain-owner-accounting",
+      "before": "",
+      "after": "Claim: A FIXTURES-labelled operation is counted and timed at default and trace under its own stem, an explicit refusal wins over return-error inference, and no other owner receives its invocation.",
+      "review": "Read the injected clock, FIXTURES owner dispatch and counted series at both levels; the explicit refusal event precedes an Err return and no other owner has a started invocation."
+    },
+    {
       "operation": "cli-common::observation::tests::graph_owner_accounting",
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:graph-operations-retain-owner-accounting",
@@ -3961,6 +3969,22 @@
       "before": "Claim: Previous-pass memoization independently replays identical scalar evidence, reduces charged Work on two small histories, and refuses altered hit counters and revision substitutions.",
       "after": "Claim: Previous-pass memoization independently replays identical scalar evidence, reduces charged Work on two small histories, and refuses altered hit counters and revision substitutions.",
       "review": "Two distinct histories and a third 16-bit plan compare independent v3 and v4 exact primitive bounds, outcome and attachment, as well as bounded records. Scratch mutation evidence is reported separately."
+    },
+    {
+      "operation": "pn-fixtures::tests::fixture_root_correspondence",
+      "path": "packages/fixtures/src/tests.rs",
+      "claim": "FIXTURES::claim:history:fixture-root-correspondence",
+      "before": "",
+      "after": "Claim: The code-built root satisfies the admitted publication shape and separately authored complete replay assertions under its declared premises; changing one candidate constant, its numeric policy or its arithmetic alone refuses while the unchanged root passes.",
+      "review": "Two fresh root constructions agree; canonical and strict decoding, a separate CDDL restriction, an authored preimage and selected-version table, complete memory replay, independently composed inventory and exact and height-based reads execute on one root. Candidate-only constant, policy and arithmetic mutations refuse with their exact causes beside the unchanged root."
+    },
+    {
+      "operation": "pn-fixtures::tests::fixture_root_independent_assertions",
+      "path": "packages/fixtures/src/tests.rs",
+      "claim": "FIXTURES::claim:history:fixture-root-independent-assertions",
+      "before": "",
+      "after": "Claim: Changed identity and selected-version-coordinate assertions refuse with distinct pre-write causes under fixed candidate bytes and premises.",
+      "review": "The unaltered root passes beside separate identity and coordinate alterations to independently authored assertions. Both altered inputs use the ordinary preparation route and retain NotTouched."
     },
     {
       "operation": "pn-graph::formation::affinity_coordinates",

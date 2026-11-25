@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "base::Published",
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/base.rs",
+    "syntax": "# [derive (Debug)] pub (super) struct Published (pub (super) Procedure) ;"
+  }
+}

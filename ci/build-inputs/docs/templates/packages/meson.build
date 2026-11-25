@@ -25,3 +25,4 @@ subdir('credential-derivation')
 subdir('node')
 
 subdir('credential-generator')
+subdir('fixtures')

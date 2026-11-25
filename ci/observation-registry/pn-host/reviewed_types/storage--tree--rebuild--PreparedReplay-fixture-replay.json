@@ -4,6 +4,6 @@
     "item": "storage::tree::rebuild::PreparedReplay",
     "package": "pn-host",
     "path": "packages/host/src/storage/tree/rebuild.rs",
-    "syntax": "# [doc = \" Owned, immutable result and declaration input after all pre-write checks.\"] pub struct PreparedReplay { generations : Vec < Generation > , results : Vec < PreparedResult > , reader_order : Vec < usize > , }"
+    "syntax": "# [doc = \" Owned, immutable result and declaration input after all pre-write checks.\"] # [derive (Debug)] pub struct PreparedReplay { generations : Vec < Generation > , results : Vec < PreparedResult > , reader_order : Vec < usize > , }"
   }
 }

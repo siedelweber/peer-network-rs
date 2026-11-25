@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "root::Prelude",
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/root.rs",
+    "syntax": "struct Prelude { raw : BurnCase , causes : publication :: Causes , parameters : pn_epoch :: ParameterInput , price : pn_records :: numerics :: ChargedPrice , candidate_input : package :: CandidateInput , }"
+  }
+}

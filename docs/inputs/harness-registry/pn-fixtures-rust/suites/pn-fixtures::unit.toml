@@ -1,0 +1,9 @@
+kind = "suite"
+name = "pn-fixtures::unit"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "pn-fixtures-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-fixtures::tests::fixture_root_correspondence", "pn-fixtures::tests::fixture_root_independent_assertions"]

@@ -280,6 +280,26 @@
         {
           "owner": "HOST",
           "target": "ACTAUTH"
+        },
+        {
+          "owner": "FIXTURES",
+          "target": "ROOT"
+        },
+        {
+          "owner": "FIXTURES",
+          "target": "HOST"
+        },
+        {
+          "owner": "FIXTURES",
+          "target": "EPOCH"
+        },
+        {
+          "owner": "FIXTURES",
+          "target": "RECORDS"
+        },
+        {
+          "owner": "FIXTURES",
+          "target": "INTERCHANGE"
         }
       ],
       "name": "declaration",
@@ -302,7 +322,8 @@
         "ACTAUTH",
         "DERIVATION",
         "NODE",
-        "GENERATOR"
+        "GENERATOR",
+        "FIXTURES"
       ],
       "partitions": [
         {
@@ -419,6 +440,11 @@
           "name": "credential-generator-package",
           "owner": "GENERATOR",
           "pattern": "%s\"packages/credential-generator/\" *VCHAR"
+        },
+        {
+          "name": "fixtures-package",
+          "owner": "FIXTURES",
+          "pattern": "%s\"packages/fixtures/\" *VCHAR"
         }
       ],
       "root_owner": "ROOT"

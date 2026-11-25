@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/lib.rs",
+    "item": "Fixture::replay_memory",
+    "owner": "FIXTURES",
+    "signature": "fn replay_memory < 'p > (prepared : & 'p PreparedReplay , usage : & mut ReplayUsage ,) -> Result < rebuild :: CompletedMemory < 'p > , ReplayFailure >",
+    "claim": "ROOT::amend:storage:fixture-replay-interface",
+    "shape": "shape-fixture-root",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-fixtures::packages/fixtures/src/lib.rs::Fixture::replay_memory",
+    "body": "{ let schedule = Self :: memory_schedule (prepared) ; let result = rebuild :: replay_memory (prepared , & mut ReplayExecution { schedule : & schedule , usage , } ,) ; if result . is_err () { tracing :: event ! (name : \"amend:storage:fixture-replay-interface\" , tracing :: Level :: TRACE , execution_owner = \"FIXTURES\" , claim_owner = \"ROOT\" , claim_label = \"amend:storage:fixture-replay-interface\" , operation = \"fixture-replay-memory\" , event_kind = \"completion\" , outcome = \"refusal\") ; } result }",
+    "class_decision": "fixture-root-public",
+    "item_premise": "This operation handles the publicly disclosed root or its synthetic verifier premise and records its full public arguments and result.",
+    "assessments": {
+      "full_recording": "fixture-root-full_recording",
+      "secret_flow": "fixture-root-secret_flow",
+      "exposure_consumers": "fixture-root-exposure_consumers"
+    }
+  }
+}

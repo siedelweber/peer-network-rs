@@ -2056,6 +2056,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "pn-fixtures"
+version = "0.1.0"
+dependencies = [
+ "pn-epoch",
+ "pn-host",
+ "pn-interchange",
+ "pn-records",
+ "tracing",
+]
+
+[[package]]
 name = "pn-graph"
 version = "0.1.0"
 dependencies = [

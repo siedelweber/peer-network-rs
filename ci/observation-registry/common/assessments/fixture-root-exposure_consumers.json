@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "name": "fixture-root-exposure_consumers",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "The optional fixture selection is a library boundary; no node selection or installed use is admitted here.",
+    "negative_probe": "FIXTURES::claim:history:fixture-root-independent-assertions"
+  }
+}

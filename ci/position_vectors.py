@@ -4,8 +4,10 @@ No Rust process, host helper or interchange encoder is called. These fixtures
 describe the existing host publication fixture's root and ordinary child, plus
 component projections over recognized marker fixtures; they prove no settlement.
 """
+import ast
 import hashlib
 import json
+import re
 from pathlib import Path
 
 RECIPE = 'pn-host/result-position/v1'
@@ -76,6 +78,25 @@ def check(path):
     expected = vectors()
     if json.loads(Path(path).read_text()) != expected:
         raise ValueError('position fixtures differ from independent public projection')
+    root = Path(path).resolve().parents[5]
+    projection = bytes.fromhex(expected[0]['canonical'])
+    projection_path = root/'packages/fixtures/src/root_preimage.txt'
+    declared = f'projection_bytes={len(projection)}\nprojection_hex={projection.hex()}\n'
+    if projection_path.read_text() != declared:
+        raise ValueError('fixture root projection differs from independent vector')
+    preimage = RECIPE.encode() + b'\0' + projection
+    residue = hashlib.sha256(preimage).digest()
+    if preimage.hex() != expected[0]['preimage'] or residue.hex() != expected[0]['residue']:
+        raise ValueError('fixture root preimage or residue differs from vector')
+    source = (root/'packages/fixtures/src/expected.rs').read_text()
+    text_match = re.search(r'const IDENTITY_TEXT: &str = "([0-9a-f]{64})";', source)
+    array_match = re.search(r'pub\(super\) const IDENTITY: \[u8; 32\] = \[(.*?)\];', source, re.S)
+    if text_match is None or array_match is None:
+        raise ValueError('fixture root identity literals absent')
+    octets = ast.literal_eval('[' + array_match[1] + ']')
+    if (len(octets) != 32 or any(type(octet) is not int or not 0 <= octet <= 255 for octet in octets)
+            or bytes(octets) != residue or text_match[1] != residue.hex()):
+        raise ValueError('fixture root identity forms differ from independently framed residue')
     return {row['residue'] for row in expected}
 
 if __name__ == '__main__':
@@ -85,6 +106,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
     path = Path('packages/host/src/admitted_result/position/vectors.json')
     if args.write:
-        path.write_text(json.dumps(vectors(), indent=2) + '\n')
+        rows = vectors()
+        path.write_text(json.dumps(rows, indent=2) + '\n')
+        projection = bytes.fromhex(rows[0]['canonical'])
+        Path('packages/fixtures/src/root_preimage.txt').write_text(
+            f'projection_bytes={len(projection)}\nprojection_hex={projection.hex()}\n'
+        )
     check(path)
     print(f'POSITION-VECTORS distinct={len(vectors())} order=unsorted')

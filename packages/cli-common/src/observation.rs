@@ -1178,6 +1178,8 @@ pub enum OperationKind {
     Wallet,
     /// Graph formation and dependency partition operations.
     Graph,
+    /// Code-built disposable fixture operations.
+    Fixtures,
     /// Epoch compiler parameter and ledger operations.
     Epoch,
     /// Shared act commitment and opening comparisons.
@@ -1203,6 +1205,7 @@ impl OperationKind {
             Self::Host => "host__root__sig__design__storage",
             Self::Wallet => "wallet__root__sig__design__devnet",
             Self::Graph => "graph__root__sig__design__graph",
+            Self::Fixtures => "fixtures__root__amend__storage__fixture_replay_interface",
             Self::Epoch => "epoch__root__sig__design__epoch",
             Self::ActProfile => "actprofile__root__amend__decomposition__act_profile",
             Self::SecretHome => "secrethome__root__amend__crypto__secret_home",
@@ -1220,6 +1223,7 @@ impl OperationKind {
             Self::Host => "sig:design:storage",
             Self::Wallet => "sig:design:devnet",
             Self::Graph => "sig:design:graph",
+            Self::Fixtures => "amend:storage:fixture-replay-interface",
             Self::Epoch => "sig:design:epoch",
             Self::ActProfile => "amend:decomposition:act-profile",
             Self::SecretHome => "amend:crypto:secret-home",
@@ -1236,6 +1240,7 @@ impl OperationKind {
             Self::Host => "HOST",
             Self::Wallet => "WALLET",
             Self::Graph => "GRAPH",
+            Self::Fixtures => "FIXTURES",
             Self::Epoch => "EPOCH",
             Self::ActProfile => "ACTPROFILE",
             Self::SecretHome => "SECRETHOME",
@@ -1639,6 +1644,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                     Some("HOST") => Some(OperationKind::Host),
                     Some("WALLET") => Some(OperationKind::Wallet),
                     Some("GRAPH") => Some(OperationKind::Graph),
+                    Some("FIXTURES") => Some(OperationKind::Fixtures),
                     Some("EPOCH") => Some(OperationKind::Epoch),
                     Some("ACTPROFILE") => Some(OperationKind::ActProfile),
                     Some("SECRETHOME") => Some(OperationKind::SecretHome),

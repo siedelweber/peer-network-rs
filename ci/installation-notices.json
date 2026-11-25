@@ -43802,6 +43802,62 @@
     },
     {
       "source": "path",
+      "identity": "pn-fixtures@0.1.0",
+      "path": "packages/fixtures",
+      "review": {
+        "source_identity": {
+          "name": "pn-fixtures",
+          "version": "0.1.0",
+          "origin": "path",
+          "package_path": "packages/fixtures"
+        },
+        "declarations": [
+          {
+            "path": "Cargo.toml",
+            "member": "license",
+            "license": "AGPL-3.0-only",
+            "license_file": null
+          }
+        ],
+        "selected_evidence": [
+          {
+            "kind": "notice-file",
+            "path": "LICENSE-CODE",
+            "sha256": "939ceb0a95d92ca4e96ee2c090c66e9ca15404e5ae7439985b251bb9dc63e251"
+          }
+        ],
+        "inspection": "Examined the complete verified source member map, manifest declarations and licence-file references; selected all applicable upstream evidence.",
+        "absence": false,
+        "scope": "first-party-notice",
+        "declaration_projection": {
+          "manifest": "packages/fixtures/Cargo.toml",
+          "name": "pn-fixtures",
+          "version": "0.1.0",
+          "member": "license",
+          "raw": {
+            "workspace": true
+          },
+          "workspace_member": "workspace.package.license",
+          "workspace_value": "AGPL-3.0-only",
+          "resolved": "AGPL-3.0-only",
+          "license_file": null,
+          "license_files": [],
+          "notice_paths": []
+        },
+        "declaration_projection_sha256": "31571c952d7c6866201f826f1bd003c74f8af30fd38fbd406d65a455b8d17b06",
+        "required_owners": []
+      },
+      "evidence": [
+        {
+          "kind": "notice-file",
+          "path": "LICENSE-CODE",
+          "sha256": "939ceb0a95d92ca4e96ee2c090c66e9ca15404e5ae7439985b251bb9dc63e251"
+        }
+      ],
+      "owners": []
+    },
+    {
+      "source": "path",
       "identity": "pn-graph@0.1.0",
       "path": "packages/graph",
       "review": {

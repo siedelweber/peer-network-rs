@@ -655,6 +655,78 @@
       "operations": 107
     },
     {
+      "exceptions": 0,
+      "generators": 6,
+      "helpers": 0,
+      "instrumented": 24,
+      "name": "pn-fixtures",
+      "number_forms": {
+        "exceptions": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "generators": {
+          "exact": "6",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "6",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "helpers": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "instrumented": {
+          "exact": "24",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "24",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "operations": {
+          "exact": "24",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "24",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "exceptions": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "generators": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "helpers": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "instrumented": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "operations": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "operations": 24
+    },
+    {
       "exceptions": 15,
       "generators": 71,
       "helpers": 0,
@@ -728,7 +800,7 @@
     },
     {
       "exceptions": 276,
-      "generators": 244,
+      "generators": 248,
       "helpers": 0,
       "instrumented": 100,
       "name": "pn-host",
@@ -742,10 +814,10 @@
           "num_relation": "="
         },
         "generators": {
-          "exact": "244",
+          "exact": "248",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "244",
+          "num": "248",
           "num_exact": true,
           "num_relation": "="
         },

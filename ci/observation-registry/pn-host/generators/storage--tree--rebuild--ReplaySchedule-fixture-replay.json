@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "storage::tree::rebuild::ReplaySchedule",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/storage/tree/rebuild.rs",
+    "syntax": "# [derive (Debug)]",
+    "class_decision": "host-fixture-replay",
+    "expansion_review": "Derived full Debug of the owned prepared replay, call schedule, call usage and completed memory reference. The derived representation adds no operation; host replay spans keep their existing count and typed-result form."
+  }
+}

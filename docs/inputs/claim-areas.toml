@@ -318,6 +318,13 @@ register = "HOST::sec:history:area-history"
 contract = "HOST::sec:history:area-history"
 
 [[rows]]
+owner = "FIXTURES"
+area = "history"
+stake = "A fixture whose independent assertion differs from its authored publication could serve an unreviewed root or misstate its origin."
+register = "FIXTURES::sec:fixtures:area-root"
+contract = "FIXTURES::sec:fixtures:area-root"
+
+[[rows]]
 owner = "HOST"
 area = "declarations"
 stake = "Persisting a later edition must not replace the exact constants selected at an earlier boundary."

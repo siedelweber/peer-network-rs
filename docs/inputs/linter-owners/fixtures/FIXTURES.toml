@@ -1,0 +1,10 @@
+name = "FIXTURES"
+position = 19
+partitions = [{ position = 23, value = { name = "fixtures-package", owner = "FIXTURES", pattern = '%s"packages/fixtures/" *VCHAR' } }]
+may_cite = [
+  { position = 68, value = { owner = "FIXTURES", target = "ROOT" } },
+  { position = 69, value = { owner = "FIXTURES", target = "HOST" } },
+  { position = 70, value = { owner = "FIXTURES", target = "EPOCH" } },
+  { position = 71, value = { owner = "FIXTURES", target = "RECORDS" } },
+  { position = 72, value = { owner = "FIXTURES", target = "INTERCHANGE" } },
+]

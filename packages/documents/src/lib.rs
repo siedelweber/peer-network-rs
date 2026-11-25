@@ -409,6 +409,7 @@ fn validate_output(document: &str, vendors: &[PathBuf]) -> Result<()> {
                 | "packages/records/README.md"
                 | "packages/verification/README.md"
                 | "packages/host/README.md"
+                | "packages/fixtures/README.md"
                 | "packages/wallet/README.md"
                 | "packages/graph/README.md"
                 | "packages/epoch/README.md"

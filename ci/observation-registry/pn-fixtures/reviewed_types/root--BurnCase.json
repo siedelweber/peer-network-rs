@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "root::BurnCase",
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/root.rs",
+    "syntax": "# [derive (Clone)] pub (super) struct BurnCase { pub (super) burn : burn :: BurnInput , pub (super) policy : burn :: PolicyInput , pub (super) history : burn :: HistoryInput , }"
+  }
+}

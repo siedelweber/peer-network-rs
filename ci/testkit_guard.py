@@ -16,6 +16,7 @@ FEATURE_CLASSES = {
     'documents': {'debug-observation': 'production'}, 'execwrap': {}, 'pn-act-authentication': {}, 'pn-act-profile': {},
     'pn-credential-derivation': {}, 'pn-credential-generator': {'debug-observation': 'production'},
     'pn-epoch': {'default': 'production', 'test-support': 'development-only'},
+    'pn-fixtures': {},
     'pn-graph': {},
     'pn-host': {'default': 'production', 'development-network': 'production'},
     'pn-interchange': {},

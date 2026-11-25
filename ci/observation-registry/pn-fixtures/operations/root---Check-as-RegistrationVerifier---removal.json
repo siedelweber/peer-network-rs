@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/root.rs",
+    "item": "root::<Check as RegistrationVerifier>::removal",
+    "owner": "FIXTURES",
+    "signature": "fn removal (& self , act : & ValidatedAct , kind : OpeningKind , position : Position) -> bool",
+    "claim": "ROOT::amend:storage:fixture-replay-interface",
+    "shape": "shape-fixture-root",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-fixtures::packages/fixtures/src/root.rs::root::<Check as RegistrationVerifier>::removal",
+    "body": "{ let _ = (act , kind , position) ; false }",
+    "class_decision": "fixture-root-public",
+    "item_premise": "This operation handles the publicly disclosed root or its synthetic verifier premise and records its full public arguments and result.",
+    "assessments": {
+      "full_recording": "fixture-root-full_recording",
+      "secret_flow": "fixture-root-secret_flow",
+      "exposure_consumers": "fixture-root-exposure_consumers"
+    }
+  }
+}

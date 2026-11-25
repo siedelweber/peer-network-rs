@@ -492,6 +492,7 @@ fn prepare_inner(
     })
 }
 
+#[derive(Debug)]
 struct PreparedResult {
     retained: Retained,
     label: String,
@@ -500,6 +501,7 @@ struct PreparedResult {
 }
 
 /// Owned, immutable result and declaration input after all pre-write checks.
+#[derive(Debug)]
 pub struct PreparedReplay {
     generations: Vec<Generation>,
     results: Vec<PreparedResult>,
@@ -540,6 +542,7 @@ impl PreparedReplay {
 }
 
 /// Call-indexed allowances; the whole route shape is checked before a target exists.
+#[derive(Debug)]
 pub struct ReplaySchedule {
     pub installation: Vec<ReadBudget>,
     pub commit: Vec<ReadBudget>,
@@ -550,7 +553,7 @@ pub struct ReplaySchedule {
 }
 
 /// Retained usage of every attempted call; absent slots were not attempted.
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct ReplayUsage {
     pub installation: Vec<Option<Usage>>,
     pub commit: Vec<Option<Usage>>,
@@ -566,6 +569,7 @@ pub struct ReplayExecution<'a> {
 }
 
 /// A completed, audited memory reference borrows its prepared owner for every retained writer input.
+#[derive(Debug)]
 pub struct CompletedMemory<'p> {
     prepared: &'p PreparedReplay,
     tree: MemoryTree<'p>,

@@ -5,8 +5,8 @@
     "kind": "derive",
     "package": "pn-host",
     "path": "packages/host/src/storage/tree/rebuild.rs",
-    "syntax": "# [derive (Default)]",
+    "syntax": "# [derive (Debug , Default)]",
     "class_decision": "host-fixture-replay",
-    "expansion_review": "Derived replay carriers only implement structural traits. They add no independent acquisition, observation or operation; the preparation and replay boundaries own the complete values."
+    "expansion_review": "Derived full Debug of the owned prepared replay, call schedule, call usage and completed memory reference. The derived representation adds no operation; host replay spans keep their existing count and typed-result form."
   }
 }

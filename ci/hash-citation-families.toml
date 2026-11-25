@@ -1321,8 +1321,8 @@ producer = "ci/position_vectors.py with independent RFC 8949 framing and hashlib
 establishment = "defined"
 reader = "result-position-vectors"
 source = "packages/host/src/admitted_result/position/vectors.json"
-definition = "Regenerate the seven distinct unsorted projection fixtures without the host carrier, its helpers or the interchange encoder. The root and ordinary child use the public admitted fixture; other cases control recognized marker projections. No transition continuity, settlement, store admission or collision proof is established."
-paths = ["packages/host/src/admitted_result/position/vectors.json"]
+definition = "Regenerate the seven distinct unsorted projection fixtures without the host carrier, its helpers or the interchange encoder. The selected root projection is checked against the vector's canonical bytes, the recipe-prefixed preimage and residue, and both textual and byte-array fixture identity literals. Other cases control recognized marker projections. No transition continuity, settlement, store admission or collision proof is established."
+paths = ["packages/host/src/admitted_result/position/vectors.json", "packages/fixtures/src/root_preimage.txt", "packages/fixtures/src/expected.rs", "packages/fixtures/src/tests.rs"]
 
 [[rows]]
 family = "named-receiver-denial-filter"

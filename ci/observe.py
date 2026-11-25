@@ -14,7 +14,7 @@ from devperf import StructuralError
 from harness import source_id
 from registry_fragments import read as read_fragments
 
-OWNERS={'node':'NODE','credential-generator':'GENERATOR','credential-derivation':'DERIVATION','act-authentication':'ACTAUTH','secret-home':'SECRETHOME','cli-common':'CLICOMMON','documents':'DOCUMENTS','execwrap':'EXECWRAP','interchange':'INTERCHANGE','testkit':'TESTKIT','act-profile': 'ACTPROFILE', 'epoch': 'EPOCH', 'graph': 'GRAPH', 'wallet':'WALLET','host':'HOST','records':'RECORDS'}
+OWNERS={'node':'NODE','credential-generator':'GENERATOR','credential-derivation':'DERIVATION','act-authentication':'ACTAUTH','secret-home':'SECRETHOME','cli-common':'CLICOMMON','documents':'DOCUMENTS','execwrap':'EXECWRAP','interchange':'INTERCHANGE','testkit':'TESTKIT','act-profile': 'ACTPROFILE', 'epoch': 'EPOCH', 'graph': 'GRAPH', 'wallet':'WALLET','host':'HOST','records':'RECORDS','fixtures':'FIXTURES'}
 HELPERS={
     'cli-common::packages/cli-common/src/observation.rs::observation::scope',
     'cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation',
@@ -208,7 +208,7 @@ def syntax_census(binary=None):
     result['source']=source_id()
     result['declared_configuration']='nine production packages, host target, default and no-default features with the admitted debug-observation forwarders; development-only pn-testkit, pn-verification and records/epoch test-support are outside this production configuration'
     for package in metadata['packages']:
-        admitted={'cli-common':{'debug-observation':[],'observation-test-hook':[]},'pn':{'debug-observation':['cli-common/debug-observation']},'pn-credential-generator':{'debug-observation':['cli-common/debug-observation']},'documents':{'debug-observation':['cli-common/debug-observation']},'pn-records':{'test-support':[]},'pn-epoch':{'default':[],'test-support':['pn-records/test-support']},'pn-host':{'default':[],'development-network':['dep:pn-wallet']},'pn-wallet':{'default':[],'fuzzing':[]}}
+        admitted={'cli-common':{'debug-observation':[],'observation-test-hook':[]},'pn':{'debug-observation':['cli-common/debug-observation']},'pn-credential-generator':{'debug-observation':['cli-common/debug-observation']},'documents':{'debug-observation':['cli-common/debug-observation']},'pn-records':{'test-support':[]},'pn-epoch':{'default':[],'test-support':['pn-records/test-support']},'pn-host':{'default':[],'development-network':['dep:pn-wallet']},'pn-wallet':{'default':[],'fuzzing':[]},'pn-fixtures':{}}
         if package['id'] in metadata['workspace_members'] and '/packages/' in package['manifest_path'] and package['features'] and package['features']!=admitted.get(package['name']):
             raise StructuralError('new first-party feature configuration requires census admission')
     return result

@@ -4,6 +4,6 @@
     "item": "storage::tree::rebuild::ReplayUsage",
     "package": "pn-host",
     "path": "packages/host/src/storage/tree/rebuild.rs",
-    "syntax": "# [doc = \" Retained usage of every attempted call; absent slots were not attempted.\"] # [derive (Default)] pub struct ReplayUsage { pub installation : Vec < Option < Usage > > , pub commit : Vec < Option < Usage > > , pub target_read : Vec < Option < Usage > > , pub reference_read : Vec < Option < Usage > > , pub opening_audit : Option < AuditUsage > , pub final_audit : Option < AuditUsage > , }"
+    "syntax": "# [doc = \" Retained usage of every attempted call; absent slots were not attempted.\"] # [derive (Debug , Default)] pub struct ReplayUsage { pub installation : Vec < Option < Usage > > , pub commit : Vec < Option < Usage > > , pub target_read : Vec < Option < Usage > > , pub reference_read : Vec < Option < Usage > > , pub opening_audit : Option < AuditUsage > , pub final_audit : Option < AuditUsage > , }"
   }
 }

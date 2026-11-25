@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "root::Check",
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/root.rs",
+    "syntax": "# [derive (Debug)] pub (crate) struct Check { numeric : NumericPolicy , pub (super) ridge_profile : Option < publication :: RidgeReplayProfile > , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "assessments",
+  "name": "fixture-root-full_recording",
+  "value": {
+    "status": "reviewer-confirmed",
+    "premises": "Full trace records complete fixture arguments, results and synthetic verifier decisions, including the encoded root and typed replay failure.",
+    "negative_probe": "FIXTURES::claim:history:fixture-root-independent-assertions"
+  }
+}

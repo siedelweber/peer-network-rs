@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/lib.rs",
+    "item": "select",
+    "owner": "FIXTURES",
+    "signature": "fn select (name : & str) -> Option < Fixture >",
+    "claim": "ROOT::amend:storage:fixture-replay-interface",
+    "shape": "shape-fixture-root",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-fixtures::packages/fixtures/src/lib.rs::select",
+    "body": "{ if name != \"root\" { return None ; } let (closed , carrier , verifier) = root :: fixture () ; let admitted = pn_epoch :: publication :: assemble (& closed , carrier , & verifier) . unwrap () ; let disclosure = admitted . disclosures () ; let mut numeric = encoding_numeric () ; let bytes = publication :: encode (& disclosure , & mut numeric , encoding_limits ()) . unwrap () ; let uses = expected :: uses () ; let generation = expected :: generation (& uses) ; Some (Fixture { disclosure , bytes , verifier , generation , uses , }) }",
+    "class_decision": "fixture-root-public",
+    "item_premise": "This operation handles the publicly disclosed root or its synthetic verifier premise and records its full public arguments and result.",
+    "assessments": {
+      "full_recording": "fixture-root-full_recording",
+      "secret_flow": "fixture-root-secret_flow",
+      "exposure_consumers": "fixture-root-exposure_consumers"
+    }
+  }
+}

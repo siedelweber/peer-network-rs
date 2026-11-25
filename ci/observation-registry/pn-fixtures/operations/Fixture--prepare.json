@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/lib.rs",
+    "item": "Fixture::prepare",
+    "owner": "FIXTURES",
+    "signature": "fn prepare (& self) -> Result < PreparedReplay , ReplayFailure >",
+    "claim": "ROOT::amend:storage:fixture-replay-interface",
+    "shape": "shape-fixture-root",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-fixtures::packages/fixtures/src/lib.rs::Fixture::prepare",
+    "body": "{ let entry = ReplayEntry { bytes : & self . bytes , assertion : ReplayAssertion { label : Some (\"unstable\") , ordinal : 1 , scope : expected :: scope () , identity : expected :: IDENTITY , parent : None , depth : 1 , uses : & self . uses , } , } ; let mut numeric = preparation_numeric () ; let mut encoding_usage = EncodingUsage :: default () ; let mut reserved = 0usize ; let mut reserve = | requested : usize | { reserved = reserved . checked_add (requested) . ok_or (()) ? ; if reserved <= 8_192 { Ok (()) } else { Err (()) } } ; let mut resources = ReplayPreparation { numeric : & mut numeric , encoding_usage : & mut encoding_usage , reservation : & mut reserve , limits : preparation_limits () , position_ceiling : 4_096 , } ; let result = rebuild :: prepare (ReplayInput { generations : std :: slice :: from_ref (& self . generation) , entries : std :: slice :: from_ref (& entry) , } , & self . verifier , & mut resources ,) ; if result . is_err () { tracing :: event ! (name : \"amend:storage:fixture-replay-interface\" , tracing :: Level :: TRACE , execution_owner = \"FIXTURES\" , claim_owner = \"ROOT\" , claim_label = \"amend:storage:fixture-replay-interface\" , operation = \"fixture-prepare\" , event_kind = \"completion\" , outcome = \"refusal\") ; } result }",
+    "class_decision": "fixture-root-public",
+    "item_premise": "This operation handles the publicly disclosed root or its synthetic verifier premise and records its full public arguments and result.",
+    "assessments": {
+      "full_recording": "fixture-root-full_recording",
+      "secret_flow": "fixture-root-secret_flow",
+      "exposure_consumers": "fixture-root-exposure_consumers"
+    }
+  }
+}

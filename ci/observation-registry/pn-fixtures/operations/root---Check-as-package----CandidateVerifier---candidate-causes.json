@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/root.rs",
+    "item": "root::<Check as package :: CandidateVerifier>::candidate_causes",
+    "owner": "FIXTURES",
+    "signature": "fn candidate_causes (& self , input : & package :: CandidateInput) -> bool",
+    "claim": "ROOT::amend:storage:fixture-replay-interface",
+    "shape": "shape-fixture-root",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-fixtures::packages/fixtures/src/root.rs::root::<Check as package :: CandidateVerifier>::candidate_causes",
+    "body": "{ let acts = input . causes . history . acts () ; acts . len () == 2 && acts . iter () . any (| act | act . id () . family == \"Registration\" && act . id () . author == \"a\" && act . id () . sequence == 1) && acts . iter () . any (| act | act . id () . family == \"Opinion\" && act . id () . author == \"a\" && act . id () . sequence == 2) && input . causes . bindings . len () == 1 && input . causes . inputs . len () == 1 && input . causes . prices . len () == 1 && input . causes . bindings [0] . marker . name == \"m1\" }",
+    "class_decision": "fixture-root-public",
+    "item_premise": "This operation handles the publicly disclosed root or its synthetic verifier premise and records its full public arguments and result.",
+    "assessments": {
+      "full_recording": "fixture-root-full_recording",
+      "secret_flow": "fixture-root-secret_flow",
+      "exposure_consumers": "fixture-root-exposure_consumers"
+    }
+  }
+}

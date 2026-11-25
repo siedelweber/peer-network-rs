@@ -53,6 +53,7 @@
 | pn-credential-derivation | 7 | 0 |
 | pn-credential-generator | 9 | 0 |
 | pn-epoch | 55 | 19 |
+| pn-fixtures | 5 | 0 |
 | pn-graph | 78 | 34 |
 | pn-host | 34 | 0 |
 | pn-interchange | 29 | 0 |

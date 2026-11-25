@@ -97,6 +97,13 @@
       "name": "pn-epoch-rust"
     },
     {
+      "contract": "code-built root and independent replay assertions",
+      "edition": "fixture-root-1",
+      "evidence": "pure",
+      "kind": "implementation",
+      "name": "pn-fixtures-rust"
+    },
+    {
       "contract": "records-level dependent-act partition, scoped Registration formation and the declared rational-endpoint numeric fragment",
       "edition": "0.1",
       "evidence": "pure",
@@ -956,6 +963,7 @@
         "cli-common::observation::tests::explicit_refusal_precedence",
         "cli-common::observation::tests::explicit_utc",
         "cli-common::observation::tests::filtered_accounting",
+        "cli-common::observation::tests::fixture_owner_accounting",
         "cli-common::observation::tests::graph_owner_accounting",
         "cli-common::observation::tests::host_owner_accounting",
         "cli-common::observation::tests::inclusive_metering",
@@ -2660,6 +2668,20 @@
       "kind": "suite",
       "level": "integration",
       "name": "pn-epoch::workload_correctness",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-fixtures::tests::fixture_root_correspondence",
+        "pn-fixtures::tests::fixture_root_independent_assertions"
+      ],
+      "implementation": "pn-fixtures-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-fixtures::unit",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"

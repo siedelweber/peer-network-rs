@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "base::Causes",
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/base.rs",
+    "syntax": "# [derive (Debug)] pub (super) struct Causes (pub (super) package :: CandidateInput) ;"
+  }
+}

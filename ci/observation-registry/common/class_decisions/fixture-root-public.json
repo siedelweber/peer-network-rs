@@ -1,0 +1,11 @@
+{
+  "section": "class_decisions",
+  "value": {
+    "name": "fixture-root-public",
+    "status": "reviewer-confirmed",
+    "premises": "Code-built root and verifier decisions are publicly disclosed synthetic inputs. Full arguments, returns, bytes and replay errors are public test material; no private credential, account or installed custody enters this package.",
+    "membership": {
+      "labelled_package": "pn-fixtures"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "metrics",
+  "value": {
+    "name": "fixtures__root__amend__storage__fixture_replay_interface__work_bytes",
+    "kind": "counter",
+    "unit": "bytes",
+    "attributes": {}
+  }
+}

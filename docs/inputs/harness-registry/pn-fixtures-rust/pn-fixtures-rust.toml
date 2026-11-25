@@ -1,0 +1,5 @@
+kind = "implementation"
+name = "pn-fixtures-rust"
+evidence = "pure"
+contract = "code-built root and independent replay assertions"
+edition = "fixture-root-1"

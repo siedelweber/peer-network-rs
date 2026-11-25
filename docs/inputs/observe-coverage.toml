@@ -92,6 +92,16 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 
 [[rows]]
+name = "pn-fixtures"
+operations = 24
+instrumented = 24
+exceptions = 0
+helpers = 0
+generators = 6
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
+
+
+[[rows]]
 name = "pn-graph"
 operations = 72
 instrumented = 57
@@ -107,7 +117,7 @@ operations = 376
 instrumented = 100
 exceptions = 276
 helpers = 0
-generators = 244
+generators = 248
 numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 

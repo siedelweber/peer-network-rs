@@ -663,3 +663,39 @@ allowances = []
 
 [ACTAUTH."profile.claims-conform"]
 allowances = []
+
+[FIXTURES."labels.citations-import-form"]
+allowances = []
+
+[FIXTURES."labels.citations-imported-resolve"]
+allowances = []
+
+[FIXTURES."labels.citations-layer-conform"]
+allowances = []
+
+[FIXTURES."labels.citations-local-resolve"]
+allowances = []
+
+[FIXTURES."labels.generated-regions-conform"]
+allowances = []
+
+[FIXTURES."labels.heads-conform"]
+allowances = []
+
+[FIXTURES."labels.mints-kind-conform"]
+allowances = []
+
+[FIXTURES."labels.mints-unique"]
+allowances = []
+
+[FIXTURES."labels.mints-well-formed"]
+allowances = []
+
+[FIXTURES."labels.outlines-conform"]
+allowances = []
+
+[FIXTURES."profile.tests-conform"]
+allowances = []
+
+[FIXTURES."profile.claims-conform"]
+allowances = []

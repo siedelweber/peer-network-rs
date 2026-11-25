@@ -322,6 +322,13 @@
       "stake": "A partial succession, rewritten edition or mixed boundary snapshot can change an earlier verdict or erase the evidence needed to reconstruct it."
     },
     {
+      "area": "history",
+      "contract": "FIXTURES::sec:fixtures:area-root",
+      "owner": "FIXTURES",
+      "register": "FIXTURES::sec:fixtures:area-root",
+      "stake": "A fixture whose independent assertion differs from its authored publication could serve an unreviewed root or misstate its origin."
+    },
+    {
       "area": "declarations",
       "contract": "HOST::sec:declarations:area-declarations",
       "owner": "HOST",

@@ -1,0 +1,23 @@
+{
+  "section": "shapes",
+  "name": "shape-fixture-root",
+  "value": {
+    "fields": [
+      "complete public synthetic fixture arguments and returns at trace",
+      "bounded outcome",
+      "inclusive duration_seconds",
+      "one invoked operation of work and workload"
+    ],
+    "metrics": [
+      "fixtures__root__amend__storage__fixture_replay_interface__started_operations",
+      "fixtures__root__amend__storage__fixture_replay_interface__completed_operations",
+      "fixtures__root__amend__storage__fixture_replay_interface__work_bytes",
+      "fixtures__root__amend__storage__fixture_replay_interface__work_operations",
+      "fixtures__root__amend__storage__fixture_replay_interface__active_operations",
+      "fixtures__root__amend__storage__fixture_replay_interface__resource_current_bytes",
+      "fixtures__root__amend__storage__fixture_replay_interface__elapsed_seconds",
+      "fixtures__root__amend__storage__fixture_replay_interface__workload_bytes",
+      "fixtures__root__amend__storage__fixture_replay_interface__workload_operations"
+    ]
+  }
+}

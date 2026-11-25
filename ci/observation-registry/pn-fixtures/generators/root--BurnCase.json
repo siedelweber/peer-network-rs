@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "root::BurnCase",
+    "kind": "derive",
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/root.rs",
+    "syntax": "# [derive (Clone)]",
+    "class_decision": "fixture-root-public",
+    "expansion_review": "Derived Debug or Clone for public synthetic fixture values; the complete generated representation is retained within the fixture root observation class and its independently checked root controls."
+  }
+}

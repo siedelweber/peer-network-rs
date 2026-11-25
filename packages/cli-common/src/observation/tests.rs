@@ -2719,6 +2719,58 @@ fn graph_owner_accounting() {
     }
 }
 
+/// Claim: A FIXTURES-labelled operation is counted and timed at default and trace under its own stem, an explicit refusal wins over return-error inference, and no other owner receives its invocation.
+/// ´claim:cli:fixture-operations-retain-owner-accounting´
+/// ´test:unit:fixture-owner-accounting´
+#[test]
+fn fixture_owner_accounting() {
+    for trace in [false, true] {
+        let (mut observation, clock, capture) = fixture();
+        observation.full_trace = trace;
+        let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
+        tracing::subscriber::with_default(subscriber, || {
+            let operation = scope("FIXTURES", "amend:storage:fixture-replay-interface", "fixture-prepare", &());
+            clock.0.store(250, Ordering::Relaxed);
+            tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+            operation.finish(&Err::<(), _>("fixture-refusal"));
+        });
+        drop(BootstrapGuard(Some(observation.clone())));
+        let rows = records(&observation, &capture);
+        let mut instruments = rows.iter().find(|row| row["kind"] == "metric_summary").unwrap()["metrics"]["instruments"].clone();
+        if let Some(path) = instruments["artifact"]["path"].as_str() {
+            let bytes = std::fs::read(path).unwrap();
+            assert_eq!(instruments["artifact"]["length_bytes"], bytes.len());
+            assert_eq!(instruments["artifact"]["digest"], digest_hex(&bytes));
+            instruments = serde_json::from_slice(&bytes).unwrap();
+        }
+        let series = instruments.as_array().unwrap();
+        let stem = "fixtures__root__amend__storage__fixture_replay_interface__";
+        let started = series
+            .iter()
+            .find(|row| row["name"] == format!("{stem}started_operations"))
+            .unwrap();
+        assert_eq!(started["counter"], 1);
+        let completed = series
+            .iter()
+            .find(|row| row["name"] == format!("{stem}completed_operations") && row["outcome"] == "refusal")
+            .unwrap();
+        assert_eq!(completed["counter"], 1);
+        let elapsed = series
+            .iter()
+            .find(|row| row["name"] == format!("{stem}elapsed_seconds"))
+            .unwrap();
+        assert_eq!(elapsed["count"], 1);
+        assert_eq!(elapsed["sum"], 0.25);
+        assert!(
+            series
+                .iter()
+                .filter(|row| row["name"].as_str().unwrap().ends_with("started_operations")
+                    && !row["name"].as_str().unwrap().starts_with(stem))
+                .all(|row| row["counter"] == 0)
+        );
+    }
+}
+
 /// Claim: A EPOCH-labelled compiler operation is counted and timed under its own registered stem at default and trace, and never charged to a different owner.
 /// ´claim:cli:epoch-operations-retain-owner-accounting´
 /// ´test:unit:epoch-owner-accounting´
