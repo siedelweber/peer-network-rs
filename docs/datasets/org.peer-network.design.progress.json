@@ -42053,10 +42053,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "2 098",
+          "exact": "2 119",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 098",
+          "num": "2 119",
           "num_exact": true,
           "num_relation": "="
         }
@@ -42071,7 +42071,7 @@
           "exact_digits": 32
         }
       },
-      "total": 2098
+      "total": 2119
     },
     {
       "category": "record-coverage",

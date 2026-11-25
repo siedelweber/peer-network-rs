@@ -1,0 +1,11 @@
+name = "ROOT::verif:identity:actor-document-controls"
+witnessed_labels = []
+path = "adr/006-identity-adjudication.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:identity:actor-document-admission"
+owner = "Identity, client, oracle and successor document implementers"
+missing = "Published test theory and confusable-name review, security and hiding review, independent vectors, operation admission and the designed Actor-document controls, including application patch-zero generation and opening; no executed witness exists."
+closing_condition = "Complete the actor-document admission dossier and coordinated consumers, register independent assertions at the admitted owning sites, and provide source/configuration-matched passing evidence without reinterpreting historical carriers."
+closing_step = "Actor-document identity and operation admission followed by the coordinated successor consumer cut"

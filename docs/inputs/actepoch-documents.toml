@@ -4,7 +4,7 @@ version = [1, 0, 0]
 [[rows]]
 document = "Actor — subject, outside the set"
 members = "Asset identifier and 32-byte blinder, namespace and version"
-references = "Hash names the Actor; oracle opens it, checks prefix and unique asset binding"
+references = "Hash names the Actor; oracle opens it, checks prefix and one accepted document per token at a time"
 
 [[rows]]
 document = "Act — common"

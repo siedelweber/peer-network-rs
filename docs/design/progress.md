@@ -64,7 +64,7 @@
 | pn-testkit | 18 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 44 | 0 |
-| ROOT (repository-wide) | 2 098 | 252 |
+| ROOT (repository-wide) | 2 119 | 252 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`

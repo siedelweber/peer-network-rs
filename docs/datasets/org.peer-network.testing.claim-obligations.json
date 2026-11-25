@@ -1143,10 +1143,10 @@
     },
     {
       "claims": [],
-      "closing_condition": "Admit the actor document and its burn-to-name binding through the identity admission record, then publish the scoped implementation and independent evidence; the naming decision alone is designed and unbuilt. The first two prefix assignments are decided by (`conv:actepoch:actor-prefix`); their admission under (`req:identity:admission-record`) remains owed.",
+      "closing_condition": "Admit the actor document and its burn-to-name binding through the identity admission record, then publish the scoped implementation and independent evidence; the naming decision and representation design under amend:identity:actor-document-design are designed and unbuilt, with the remaining dossier under open:identity:actor-document-admission. The test prefix assignment and production prefix reservation are stated by (`conv:actepoch:actor-prefix`); registry publication and identity admission under (`req:identity:admission-record`) remain owed.",
       "closing_step": "Actor-document design and identity admission, followed by its implementation cut",
       "hold": "ROOT::open:identity:chain-actor-binding",
-      "missing": "Actor-document namespace, exact bytes, hash recipe, prefix values, admission and burn-to-name binding",
+      "missing": "Test registry publication and confusable-name review; production allocation; artifact-class role binding, candidate recipe security/hiding review and independent vectors; generation, complete oracle association and burn-to-name consumer admission; oracle context evidence under the limited chain-separation assumption; the run-to-lineage relation and later succession representation, frame attribution and flows remain held",
       "name": "ROOT::dec:identity:actor-document-name",
       "owner": "Act-and-epoch document and identity designers",
       "path": "adr/006-identity-adjudication.md",
@@ -4430,6 +4430,19 @@
       "premises": "BDB regtest fixture, producer-funded independent confirmed inputs, disabled study broadcasting and separately provisioned method-whitelisted identity.",
       "realizers": [],
       "status": "scoped-supported",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
+      "closing_condition": "Complete the actor-document admission dossier and coordinated consumers, register independent assertions at the admitted owning sites, and provide source/configuration-matched passing evidence without reinterpreting historical carriers.",
+      "closing_step": "Actor-document identity and operation admission followed by the coordinated successor consumer cut",
+      "hold": "ROOT::open:identity:actor-document-admission",
+      "missing": "Published test theory and confusable-name review, security and hiding review, independent vectors, operation admission and the designed Actor-document controls, including application patch-zero generation and opening; no executed witness exists.",
+      "name": "ROOT::verif:identity:actor-document-controls",
+      "owner": "Identity, client, oracle and successor document implementers",
+      "path": "adr/006-identity-adjudication.md",
+      "realizers": [],
+      "status": "held",
       "witnessed_labels": []
     },
     {
