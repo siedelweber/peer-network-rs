@@ -6,4 +6,4 @@ level = "unit"
 implementation = "pn-fixtures-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-fixtures::tests::fixture_root_correspondence", "pn-fixtures::tests::fixture_root_independent_assertions"]
+cases = ["pn-fixtures::tests::fixture_root_correspondence", "pn-fixtures::tests::fixture_root_independent_assertions", "pn-fixtures::tests::fixture_name_membership_matches_selection"]

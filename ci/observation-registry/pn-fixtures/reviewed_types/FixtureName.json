@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "FixtureName",
+    "package": "pn-fixtures",
+    "path": "packages/fixtures/src/lib.rs",
+    "syntax": "enum FixtureName { Root , }"
+  }
+}

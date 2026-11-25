@@ -141,7 +141,7 @@
 | pn-epoch::semantic-publication-extended | active | public-surface | pn-epoch-rust | extended | 2 |
 | pn-epoch::support | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::workload_correctness | active | integration | pn-epoch-rust | fast | 10 |
-| pn-fixtures::unit | active | unit | pn-fixtures-rust | fast | 2 |
+| pn-fixtures::unit | active | unit | pn-fixtures-rust | fast | 3 |
 | pn-graph | active | unit | pn-graph-rust | fast | 3 |
 | pn-graph::bounded-activation-contracts | active | integration | pn-graph-rust | extended | 2 |
 | pn-graph::bounded-power-domain | active | integration | pn-graph-rust | extended | 1 |

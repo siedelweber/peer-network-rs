@@ -12,7 +12,7 @@
   },
   "review": {
     "operation": "pn-fixtures::packages/fixtures/src/lib.rs::select",
-    "body": "{ if name != \"root\" { return None ; } let (closed , carrier , verifier) = root :: fixture () ; let admitted = pn_epoch :: publication :: assemble (& closed , carrier , & verifier) . unwrap () ; let disclosure = admitted . disclosures () ; let mut numeric = encoding_numeric () ; let bytes = publication :: encode (& disclosure , & mut numeric , encoding_limits ()) . unwrap () ; let uses = expected :: uses () ; let generation = expected :: generation (& uses) ; Some (Fixture { disclosure , bytes , verifier , generation , uses , }) }",
+    "body": "{ let fixture = resolve_name (name) ? ; match fixture { FixtureName :: Root => { let (closed , carrier , verifier) = root :: fixture () ; let admitted = pn_epoch :: publication :: assemble (& closed , carrier , & verifier) . unwrap () ; let disclosure = admitted . disclosures () ; let mut numeric = encoding_numeric () ; let bytes = publication :: encode (& disclosure , & mut numeric , encoding_limits ()) . unwrap () ; let uses = expected :: uses () ; let generation = expected :: generation (& uses) ; Some (Fixture { disclosure , bytes , verifier , generation , uses , }) } } }",
     "class_decision": "fixture-root-public",
     "item_premise": "This operation handles the publicly disclosed root or its synthetic verifier premise and records its full public arguments and result.",
     "assessments": {

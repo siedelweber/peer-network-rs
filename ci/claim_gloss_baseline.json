@@ -676,6 +676,7 @@
     "pn-epoch::workload_correctness::solve_replay_inputs": "Claim: The solve record and replay share one frozen candidate and produced transcript; proposal counts and replay Work agree, and an altered replay count refuses.",
     "pn-epoch::workload_correctness::solve_resource_cause": "Claim: A producing solve retains an exhausted Work request's typed budget, limit, needed charge and operation; a changed activation declaration still refuses as Declaration, and the separately bounded fixture procedure completes and replays the same candidate.",
     "pn-epoch::workload_correctness::trial_inputs": "Claim: Each serial-trial input is a separately verified complete context with one dependency-closed four-act block; changing the seed changes that block without changing its counts.",
+    "pn-fixtures::tests::fixture_name_membership_matches_selection": "",
     "pn-fixtures::tests::fixture_root_correspondence": "",
     "pn-fixtures::tests::fixture_root_independent_assertions": "",
     "pn-graph::formation::affinity_coordinates": "",

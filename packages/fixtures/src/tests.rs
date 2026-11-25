@@ -468,3 +468,23 @@ fn fixture_root_independent_assertions() {
     assert_eq!(refused.disposition, TargetDisposition::NotTouched);
     assert!(prepare_with(&fixture, crate::expected::IDENTITY, &fixture.uses).is_ok());
 }
+
+/// Claim: The fixture-name membership check and selection agree with the declared closed set and the selected absent-name neighbours.
+/// ´claim:history:fixture-name-membership-matches-selection´
+/// ´test:unit:fixture-name-membership-matches-selection´
+#[test]
+fn fixture_name_membership_matches_selection() {
+    for (name, expected) in [
+        ("root", true),
+        ("", false),
+        ("other", false),
+        ("Root", false),
+        (" root", false),
+        ("root ", false),
+        ("root\0", false),
+        ("rooté", false),
+    ] {
+        assert_eq!(crate::recognizes_name(name), expected, "membership: {name:?}");
+        assert_eq!(select(name).is_some(), expected, "selection: {name:?}");
+    }
+}

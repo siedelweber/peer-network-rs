@@ -3971,6 +3971,14 @@
       "review": "Two distinct histories and a third 16-bit plan compare independent v3 and v4 exact primitive bounds, outcome and attachment, as well as bounded records. Scratch mutation evidence is reported separately."
     },
     {
+      "operation": "pn-fixtures::tests::fixture_name_membership_matches_selection",
+      "path": "packages/fixtures/src/tests.rs",
+      "claim": "FIXTURES::claim:history:fixture-name-membership-matches-selection",
+      "before": "",
+      "after": "Claim: The fixture-name membership check and selection agree with the declared closed set and the selected absent-name neighbours.",
+      "review": "The test states the root and seven absent names independently of the resolver, checks membership before selection for each, and retains the root as its passing neighbour. Source review establishes that membership only resolves a borrowed name and select dispatches the same discriminant exhaustively."
+    },
+    {
       "operation": "pn-fixtures::tests::fixture_root_correspondence",
       "path": "packages/fixtures/src/tests.rs",
       "claim": "FIXTURES::claim:history:fixture-root-correspondence",

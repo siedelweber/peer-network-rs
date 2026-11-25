@@ -32,6 +32,34 @@ pub struct Fixture {
     uses: Vec<AssertedUse>,
 }
 
+enum FixtureName {
+    Root,
+}
+
+fn resolve_name(name: &str) -> Option<FixtureName> {
+    match name {
+        "root" => Some(FixtureName::Root),
+        _ => None,
+    }
+}
+
+/// Whether a borrowed name identifies a fixture construction attempt.
+#[must_use]
+#[tracing::instrument(
+    name = "amend:storage:fixture-replay-interface",
+    fields(
+        execution_owner = "FIXTURES",
+        claim_owner = "ROOT",
+        claim_label = "amend:storage:fixture-replay-interface",
+        operation = "fixture-name-membership",
+        source_item = "recognizes_name"
+    ),
+    ret
+)]
+pub fn recognizes_name(name: &str) -> bool {
+    resolve_name(name).is_some()
+}
+
 /// Choose one admitted, code-built fixture by its closed name.
 /// # Panics
 /// Panics only if the fixed root's public owner validations or canonical encoding refuse their authored constant inputs.
@@ -48,23 +76,25 @@ pub struct Fixture {
     ret
 )]
 pub fn select(name: &str) -> Option<Fixture> {
-    if name != "root" {
-        return None;
+    let fixture = resolve_name(name)?;
+    match fixture {
+        FixtureName::Root => {
+            let (closed, carrier, verifier) = root::fixture();
+            let admitted = pn_epoch::publication::assemble(&closed, carrier, &verifier).unwrap();
+            let disclosure = admitted.disclosures();
+            let mut numeric = encoding_numeric();
+            let bytes = publication::encode(&disclosure, &mut numeric, encoding_limits()).unwrap();
+            let uses = expected::uses();
+            let generation = expected::generation(&uses);
+            Some(Fixture {
+                disclosure,
+                bytes,
+                verifier,
+                generation,
+                uses,
+            })
+        }
     }
-    let (closed, carrier, verifier) = root::fixture();
-    let admitted = pn_epoch::publication::assemble(&closed, carrier, &verifier).unwrap();
-    let disclosure = admitted.disclosures();
-    let mut numeric = encoding_numeric();
-    let bytes = publication::encode(&disclosure, &mut numeric, encoding_limits()).unwrap();
-    let uses = expected::uses();
-    let generation = expected::generation(&uses);
-    Some(Fixture {
-        disclosure,
-        bytes,
-        verifier,
-        generation,
-        uses,
-    })
 }
 
 fn encoding_numeric() -> NumericContext {

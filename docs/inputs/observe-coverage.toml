@@ -93,8 +93,8 @@ numeric_display = { operations = { display = "exact", exact_digits = 32 }, instr
 
 [[rows]]
 name = "pn-fixtures"
-operations = 24
-instrumented = 24
+operations = 25
+instrumented = 25
 exceptions = 0
 helpers = 0
 generators = 6
