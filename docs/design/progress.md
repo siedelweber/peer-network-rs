@@ -14,13 +14,13 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Classification row identities and their generated copies are reported separately when they are the only exact mentions; they are neither realization citations nor design gaps. Other exact inventory labels in tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 182 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route. 42 further unassigned rows have classification identities only, retained separately in the statement table.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 181 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route. 42 further unassigned rows have classification identities only, retained separately in the statement table.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 412 | 35 | 56 | 438 | 20 | 28 | 883 |
+| implementation | 1 412 | 35 | 56 | 440 | 20 | 28 | 881 |
 | prose | 347 | 0 | 2 | 22 | 13 | 0 | 323 |
 
 ## By crate · `sec:progress:crates`
@@ -34,7 +34,7 @@
 | pn-graph | 229 | 5 | 8 | 63 | 0 | 4 | 153 |
 | pn-host | 183 | 4 | 19 | 56 | 6 | 2 | 104 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
-| pn-records | 236 | 2 | 10 | 86 | 6 | 3 | 138 |
+| pn-records | 236 | 2 | 10 | 88 | 6 | 3 | 136 |
 | pn-replay | 36 | 1 | 3 | 9 | 0 | 0 | 23 |
 | pn-verification | 283 | 8 | 6 | 70 | 5 | 6 | 199 |
 
@@ -64,7 +64,7 @@
 | pn-testkit | 18 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 44 | 0 |
-| ROOT (repository-wide) | 2 138 | 252 |
+| ROOT (repository-wide) | 2 151 | 253 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -82,7 +82,7 @@
 | 9 | 12 | 1 | 4 | 7 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
 | 11 | 93 | 8 | 28 | 56 | 0 | 6 | 1 |
-| unlinked | 1 566 | 23 | 18 | 323 | 33 | 18 | 1 202 |
+| unlinked | 1 566 | 23 | 18 | 325 | 33 | 18 | 1 200 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -95,9 +95,9 @@
 | function | 216 | 10 | 5 | 100 | 1 | 8 | 101 |
 | invariant check | 515 | 16 | 15 | 143 | 2 | 10 | 341 |
 | none | 357 | 0 | 0 | 21 | 8 | 0 | 336 |
-| policy | 322 | 3 | 25 | 69 | 11 | 3 | 225 |
+| policy | 322 | 3 | 25 | 70 | 11 | 3 | 224 |
 | serialization | 9 | 0 | 0 | 9 | 4 | 0 | 0 |
-| type | 106 | 1 | 6 | 58 | 0 | 2 | 41 |
+| type | 106 | 1 | 6 | 59 | 0 | 2 | 40 |
 
 ## Obligation support · `sec:progress:obligations`
 
@@ -228,7 +228,7 @@
 | ``eq:comparator:marker-burn-snapshot`` | pn-records; function | designed | ``ROOT::alg:design:burn-snapshot`` ``ROOT::arg:lineage:origin-calculation`` ``ROOT::dec:design:burn-boundary`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 11 | | |
 | ``prop:comparator:marker-finalization-consistency`` | pn-host; invariant check | designed | ``ROOT::alg:design:burn-snapshot`` ``ROOT::dec:design:burn-boundary`` ``ROOT::dec:design:replay`` ``ROOT::open:design:wall-performance`` ``ROOT::open:vision:deployment-profile`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 9, 11 | | |
 | ``subsec:comparator:imported-frame`` | pn-host; policy | unassigned | | | | |  | | |
-| ``def:comparator:imported-frame`` | pn-records; type | unassigned | | | | |  | | |
+| ``def:comparator:imported-frame`` | pn-records; type | designed | ``ROOT::amend:identity:frame-document-design`` | | | |  | | |
 | ``eq:comparator:seam`` | pn-records; function | unassigned | | | | |  | | |
 | ``rem:comparator:neutrality-from-silence`` | pn-host; policy | unassigned | | | | |  | | |
 | ``def:comparator:frame-binding`` | pn-records; type | unassigned | | | | |  | | |
@@ -963,7 +963,7 @@
 | ``sec:transport`` | none; none | unassigned | | | | |  | | |
 | ``subsec:transport:frame-commitment`` | none; none | unassigned | | | | |  | | |
 | ``def:transport:frame-commitment`` | pn-records; type | unassigned | | | | |  | | |
-| ``rem:transport:frame-amount-granularity`` | pn-records; policy | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
+| ``rem:transport:frame-amount-granularity`` | pn-records; policy | designed | ``ROOT::amend:identity:frame-document-design`` | | | |  | | |
 | ``subsec:transport:guild-model`` | pn-records; policy | unassigned | | | | |  | | |
 | ``post:transport:guild-grant`` | pn-host; policy | held | ``ROOT::dec:design:terminal-separation`` ``ROOT::req:vision:terminal-separation`` | | | ``ROOT::dec:design:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>| 10, 11 | | |
 | ``rem:transport:guild-grant-preconditions`` | pn-host; policy | unassigned | | | | |  | | |

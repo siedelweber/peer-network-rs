@@ -1581,9 +1581,11 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::amend:identity:frame-document-design"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -16285,20 +16287,18 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-records",
-      "elsewhere": [
-        "docs/datasets/org.peer-network.design.questions.json",
-        "docs/design/questions.md",
-        "docs/inputs/design-questions.toml"
-      ],
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "rem:transport:frame-amount-granularity",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::amend:identity:frame-document-design"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -37977,10 +37977,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "182",
+          "exact": "181",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "182",
+          "num": "181",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37991,19 +37991,19 @@
           "exact_digits": 32
         }
       },
-      "total": 182
+      "total": 181
     },
     {
       "category": "total",
-      "designed": 438,
+      "designed": 440,
       "held": 56,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "438",
+          "exact": "440",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "438",
+          "num": "440",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38048,10 +38048,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "883",
+          "exact": "881",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "883",
+          "num": "881",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38090,7 +38090,7 @@
       "record_granular": 28,
       "tentative": 20,
       "total": 1412,
-      "unassigned": 883
+      "unassigned": 881
     },
     {
       "category": "total",
@@ -38886,15 +38886,15 @@
     },
     {
       "category": "crate",
-      "designed": 86,
+      "designed": 88,
       "held": 10,
       "name": "pn-records",
       "number_forms": {
         "designed": {
-          "exact": "86",
+          "exact": "88",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "86",
+          "num": "88",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38939,10 +38939,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "138",
+          "exact": "136",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "138",
+          "num": "136",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38981,7 +38981,7 @@
       "record_granular": 3,
       "tentative": 6,
       "total": 236,
-      "unassigned": 138
+      "unassigned": 136
     },
     {
       "category": "crate",
@@ -39876,15 +39876,15 @@
     },
     {
       "category": "kind",
-      "designed": 69,
+      "designed": 70,
       "held": 25,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "69",
+          "exact": "70",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "69",
+          "num": "70",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39929,10 +39929,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "225",
+          "exact": "224",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "225",
+          "num": "224",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39971,7 +39971,7 @@
       "record_granular": 3,
       "tentative": 11,
       "total": 322,
-      "unassigned": 225
+      "unassigned": 224
     },
     {
       "category": "kind",
@@ -40074,15 +40074,15 @@
     },
     {
       "category": "kind",
-      "designed": 58,
+      "designed": 59,
       "held": 6,
       "name": "type",
       "number_forms": {
         "designed": {
-          "exact": "58",
+          "exact": "59",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "58",
+          "num": "59",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40127,10 +40127,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "41",
+          "exact": "40",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "41",
+          "num": "40",
           "num_exact": true,
           "num_relation": "="
         }
@@ -40169,7 +40169,7 @@
       "record_granular": 2,
       "tentative": 0,
       "total": 106,
-      "unassigned": 41
+      "unassigned": 40
     },
     {
       "category": "bite",
@@ -41262,15 +41262,15 @@
     },
     {
       "category": "bite",
-      "designed": 323,
+      "designed": 325,
       "held": 18,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "323",
+          "exact": "325",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "323",
+          "num": "325",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41315,10 +41315,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 202",
+          "exact": "1 200",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 202",
+          "num": "1 200",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41357,7 +41357,7 @@
       "record_granular": 18,
       "tentative": 33,
       "total": 1566,
-      "unassigned": 1202
+      "unassigned": 1200
     },
     {
       "category": "classification-identities",
@@ -42062,22 +42062,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 252,
+      "exact_citing": 253,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "252",
+          "exact": "253",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "252",
+          "num": "253",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "2 138",
+          "exact": "2 151",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 138",
+          "num": "2 151",
           "num_exact": true,
           "num_relation": "="
         }
@@ -42092,7 +42092,7 @@
           "exact_digits": 32
         }
       },
-      "total": 2138
+      "total": 2151
     },
     {
       "category": "record-coverage",

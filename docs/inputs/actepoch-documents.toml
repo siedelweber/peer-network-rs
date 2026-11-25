@@ -39,7 +39,7 @@ references = "Two references; no counter, predecessor, marker, signature or seal
 [[rows]]
 document = "Frame — subject"
 members = "Actor-document hash to cumulative gross amount"
-references = "Keys and amounts 32 bytes; no Actor document or authority map"
+references = "Keys and amounts 32 bytes; gross is unsigned big-endian minimal-unit count; no Actor document, unit member or authority map"
 
 [[rows]]
 document = "Entering state and selected evidence"

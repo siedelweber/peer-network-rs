@@ -44,7 +44,7 @@
     {
       "document": "Frame — subject",
       "members": "Actor-document hash to cumulative gross amount",
-      "references": "Keys and amounts 32 bytes; no Actor document or authority map"
+      "references": "Keys and amounts 32 bytes; gross is unsigned big-endian minimal-unit count; no Actor document, unit member or authority map"
     },
     {
       "document": "Entering state and selected evidence",

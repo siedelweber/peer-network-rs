@@ -4490,6 +4490,19 @@
       "witnessed_labels": []
     },
     {
+      "claims": [],
+      "closing_condition": "Complete the frame admission and coordinated consumers, register independent assertions at their owning sites, and provide source/configuration-matched passing evidence without reinterpreting historical amounts or identities.",
+      "closing_step": "Frame identity and operation admission followed by the coordinated successor consumer cut",
+      "hold": "ROOT::open:identity:frame-document-admission",
+      "missing": "Concrete test theory publication and complete identity dossier, application of the selected chain premises, operation placement, independent preimages and vectors, exact source and numeric conversion, and the five designed frame controls; no executed witness exists.",
+      "name": "ROOT::verif:identity:frame-document-controls",
+      "owner": "Identity, publication, numerical and oracle implementers",
+      "path": "adr/006-identity-adjudication.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
       "case_census": [
         "daemon asset identifiers",
         "opaque key digest and canonical scripts",
