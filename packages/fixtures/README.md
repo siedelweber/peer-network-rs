@@ -2,6 +2,8 @@
 
 **Setup (Scope)** · `setup:fixtures:scope` This library constructs the closed `root` selection as code for the disposable first instance under (`[ROOT-amend:storage:fixture-replay-interface]`) and (`[ROOT-amend:decomposition:fixture-input-package]`). It encodes a fresh public disclosure, supplies independently authored selected references and synthetic verifier premises, and offers finite preparation and replay schedules. The library, its registrations and its three private controls are implemented; the additional non-constructing Boolean name check and its shared resolver with select are implemented under (`[ROOT-amend:storage:fixture-replay-interface]`); the node's optional edge, default-off feature, attached-name entry check and unbound Configuration ending are built; served startup remains designed and unbuilt under (`[ROOT-amend:api:node-package]`) and (`[ROOT-amend:api:health-lifecycle]`), and no runtime path is enabled by this library alone.
 
+The node owns the designed direct host connection and server replay under (`[ROOT-amend:api:fixture-store-start]`); this library adds no session wrapper, credential acquisition or runtime effect. Its input and schedule surface is unchanged.
+
 **Section (Fixture claim area)** · `sec:fixtures:area-root` A fixture whose independent assertion differs from its authored publication could serve an unreviewed root or misstate its origin.
 
 **Verification (Root correspondence)** · `verif:fixtures:root` The three private controls under (`crit:fixtures:root-evidence`) check the selected root, the distinct pre-write assertion refusals and the agreement of name membership with selection; they do not certify the disclosed synthetic premises as external proofs.

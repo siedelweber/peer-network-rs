@@ -3640,6 +3640,21 @@
       "witnessed_labels": []
     },
     {
+      "claims": [],
+      "closing_condition": "Implement and independently review the selected direct edge, one-acquisition protected directory route, closed refusal matrix and source-local exits; execute the focused controls and host termination/wakeup evidence, integrate full replay before readiness and session-ending retirement without retry, and retain separate executable and installation holds.",
+      "closing_step": "Host termination indication followed by node fixture start binding before executable admission",
+      "evidence_paragraph": "ROOT::amend:api:fixture-store-start",
+      "hold": "ROOT::open:observe:credential-installation",
+      "missing": "Fixture-only direct host edge and protected directory acquisition; focused advertisement and private acquisition controls with exact feature selections; host waitable session-ending indication and real ready-loop transport-reported session-loss evidence; executable storage, resource and installation evidence remains separate.",
+      "name": "ROOT::verif:api:fixture-store-start",
+      "owner": "Node implementer with host storage and secret-boundary reviewers",
+      "path": "adr/018-public-api.md",
+      "premises": "Test-written inputs and supplied-fact lifecycle controls establish no installation delivery, access policy, service authentication or installed readiness.",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
       "case_census": [
         "publication validity at all lengths",
         "wrapper admission at exactly 32 bytes",

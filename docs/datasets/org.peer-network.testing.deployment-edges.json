@@ -204,6 +204,20 @@
     },
     {
       "conditional_on": "",
+      "reason": "The library interface only, not executable persistence admission.",
+      "relation": "realizes",
+      "source": "ROOT::amend:api:fixture-store-start",
+      "target": "ROOT::amend:storage:library-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The declared transport case only, not its installation witness.",
+      "relation": "realizes",
+      "source": "ROOT::amend:api:fixture-store-start",
+      "target": "ROOT::amend:storage:transport-evidence-boundary"
+    },
+    {
+      "conditional_on": "",
       "reason": "This surface enforces the carriage hold and claims no entropy or admitted replacement process.",
       "relation": "realizes",
       "source": "ROOT::amend:api:listener-bootstrap",
@@ -1356,6 +1370,20 @@
       "relation": "realizes",
       "source": "ROOT::rule:identity:author-chain-view",
       "target": "def:graph:author-authority-oracle"
+    },
+    {
+      "conditional_on": "",
+      "reason": "Repository acquisition ordering and custody only.",
+      "relation": "realizes",
+      "source": "ROOT::verif:api:fixture-store-start",
+      "target": "ROOT::amend:observe:supervisor-entry"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The boundary of the unestablished installation facts, not their truth.",
+      "relation": "realizes",
+      "source": "ROOT::verif:api:fixture-store-start",
+      "target": "ROOT::open:observe:credential-installation"
     },
     {
       "conditional_on": "",
