@@ -36,8 +36,52 @@
       "name": "act",
       "namespace": "org.peer-network.test.act",
       "owner": "lane/design",
-      "status": "reserved; complete theory and independent vectors pending",
-      "theory": "act-envelope"
+      "status": "test common-act theory designed; registry publication, confusable-name review and independent vectors pending; retained act-envelope has no namespace reservation",
+      "theory": "common-act"
+    },
+    {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "act-witness",
+      "namespace": "org.peer-network.test.act.witness",
+      "owner": "lane/design",
+      "status": "test theory designed; registry publication, confusable-name review and independent vectors pending",
+      "theory": "witnessed-act"
+    },
+    {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "epoch",
+      "namespace": "org.peer-network.test.epoch",
+      "owner": "lane/design",
+      "status": "test theory designed; registry publication, confusable-name review and independent vectors pending",
+      "theory": "epoch"
+    },
+    {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "epoch-acts",
+      "namespace": "org.peer-network.test.epoch.acts",
+      "owner": "lane/design",
+      "status": "test theory designed; registry publication, confusable-name review and independent vectors pending",
+      "theory": "acts-list"
+    },
+    {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "epoch-root",
+      "namespace": "org.peer-network.test.epoch.root",
+      "owner": "lane/design",
+      "status": "test theory designed; registry publication, confusable-name review and independent vectors pending",
+      "theory": "epoch-root"
     },
     {
       "category": "choice",

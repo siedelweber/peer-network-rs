@@ -52,7 +52,7 @@
       "references": "Derive outgoing values; no stored epoch ordinal by default"
     },
     {
-      "document": "Epoch result/root — common",
+      "document": "Epoch root — common",
       "members": "Epoch, entering state, selected inputs/evidence",
       "references": "Three references; complete static set, no computed-copy branch"
     },

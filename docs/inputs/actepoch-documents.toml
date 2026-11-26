@@ -47,7 +47,7 @@ members = "Cumulative facts for touched subjects and irreducible inputs"
 references = "Derive outgoing values; no stored epoch ordinal by default"
 
 [[rows]]
-document = "Epoch result/root — common"
+document = "Epoch root — common"
 members = "Epoch, entering state, selected inputs/evidence"
 references = "Three references; complete static set, no computed-copy branch"
 

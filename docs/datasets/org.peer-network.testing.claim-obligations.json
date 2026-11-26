@@ -4477,6 +4477,19 @@
       "witnessed_labels": []
     },
     {
+      "claims": [],
+      "closing_condition": "Complete each candidate dossier and coordinated producer/consumer cut, register the independent assertions at admitted owning sites and supply source/configuration-matched passing evidence without converting historical carriers.",
+      "closing_step": "Common-document registry publication and identity admission followed by coordinated successor construction, approval and static-consumer implementation",
+      "hold": "ROOT::open:identity:common-document-admission",
+      "missing": "Published concrete theories and confusable-name review, artifact role binding, independently reproduced vectors, operation and dependency admission, resource/refusal contracts and the designed common-document controls; no executed witness exists.",
+      "name": "ROOT::verif:identity:common-document-controls",
+      "owner": "Identity, authentication, epoch and successor static-check implementers",
+      "path": "adr/006-identity-adjudication.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
       "case_census": [
         "daemon asset identifiers",
         "opaque key digest and canonical scripts",

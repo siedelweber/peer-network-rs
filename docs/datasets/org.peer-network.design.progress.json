@@ -4724,6 +4724,10 @@
         {
           "hold": "ROOT::open:design:dependency-opening-recipe",
           "record": "ROOT::amend:design:finalized-records-replay"
+        },
+        {
+          "hold": "ROOT::open:identity:common-document-admission",
+          "record": "ROOT::def:actepoch:acts"
         }
       ],
       "kind": "type",
@@ -7147,6 +7151,10 @@
           "record": "ROOT::amend:identity:proposal-signature"
         },
         {
+          "hold": "ROOT::open:identity:common-document-admission",
+          "record": "ROOT::open:actepoch:host-association"
+        },
+        {
           "hold": "ROOT::open:identity:act-realization-admission",
           "record": "ROOT::open:identity:act-realization-admission"
         }
@@ -7259,6 +7267,10 @@
         {
           "hold": "ROOT::open:crypto:dependency-admission",
           "record": "ROOT::amend:design:publication-field-inventory"
+        },
+        {
+          "hold": "ROOT::open:identity:common-document-admission",
+          "record": "ROOT::open:actepoch:host-association"
         },
         {
           "hold": "ROOT::open:identity:act-realization-admission",
@@ -7587,7 +7599,12 @@
       "category": "statement",
       "crate": "pn-graph",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:common-document-admission",
+          "record": "ROOT::def:actepoch:acts"
+        }
+      ],
       "kind": "type",
       "label": "def:graph:act-completion-epoch",
       "portions": [],
@@ -36818,6 +36835,10 @@
         {
           "hold": "ROOT::open:testing:obligation-evidence",
           "record": "ROOT::dec:design:epoch-record-order"
+        },
+        {
+          "hold": "ROOT::open:identity:common-document-admission",
+          "record": "ROOT::def:actepoch:epoch"
         }
       ],
       "kind": "type",
@@ -42053,10 +42074,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "2 119",
+          "exact": "2 138",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 119",
+          "num": "2 138",
           "num_exact": true,
           "num_relation": "="
         }
@@ -42071,7 +42092,7 @@
           "exact_digits": 32
         }
       },
-      "total": 2119
+      "total": 2138
     },
     {
       "category": "record-coverage",

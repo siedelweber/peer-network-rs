@@ -30,8 +30,52 @@ namespace = "org.peer-network.test.act"
 major = 1
 minor = 0
 allocator = "repository maintainers for the centralized test deployment"
-theory = "act-envelope"
-status = "reserved; complete theory and independent vectors pending"
+theory = "common-act"
+status = "test common-act theory designed; registry publication, confusable-name review and independent vectors pending; retained act-envelope has no namespace reservation"
+owner = "lane/design"
+
+[[rows]]
+name = "act-witness"
+category = "allocation"
+namespace = "org.peer-network.test.act.witness"
+major = 1
+minor = 0
+allocator = "repository maintainers for the centralized test deployment"
+theory = "witnessed-act"
+status = "test theory designed; registry publication, confusable-name review and independent vectors pending"
+owner = "lane/design"
+
+[[rows]]
+name = "epoch"
+category = "allocation"
+namespace = "org.peer-network.test.epoch"
+major = 1
+minor = 0
+allocator = "repository maintainers for the centralized test deployment"
+theory = "epoch"
+status = "test theory designed; registry publication, confusable-name review and independent vectors pending"
+owner = "lane/design"
+
+[[rows]]
+name = "epoch-acts"
+category = "allocation"
+namespace = "org.peer-network.test.epoch.acts"
+major = 1
+minor = 0
+allocator = "repository maintainers for the centralized test deployment"
+theory = "acts-list"
+status = "test theory designed; registry publication, confusable-name review and independent vectors pending"
+owner = "lane/design"
+
+[[rows]]
+name = "epoch-root"
+category = "allocation"
+namespace = "org.peer-network.test.epoch.root"
+major = 1
+minor = 0
+allocator = "repository maintainers for the centralized test deployment"
+theory = "epoch-root"
+status = "test theory designed; registry publication, confusable-name review and independent vectors pending"
 owner = "lane/design"
 
 [[rows]]
