@@ -7642,7 +7642,10 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-graph",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/act-epoch-concept.md",
+        "docs/templates/docs/design/act-epoch-concept.md.j2"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "rem:graph:settlement-clause-structure",
@@ -7714,7 +7717,10 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-graph",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/act-epoch-concept.md",
+        "docs/templates/docs/design/act-epoch-concept.md.j2"
+      ],
       "holds": [],
       "kind": "invariant check",
       "label": "thm:graph:settlement-order-freeness",
@@ -34287,7 +34293,8 @@
         "ROOT::amend:decomposition:title-marker-evidence",
         "ROOT::def:actepoch:title-state",
         "ROOT::def:actepoch:title-transfer",
-        "ROOT::open:design:settlement-partner-clause"
+        "ROOT::open:design:settlement-partner-clause",
+        "ROOT::prop:actepoch:title-local-equivalence"
       ],
       "routes": [],
       "status": "designed",
@@ -34344,7 +34351,12 @@
       "category": "statement",
       "crate": "pn-graph",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:actepoch:title-admission",
+          "record": "ROOT::rule:actepoch:title-transition"
+        }
+      ],
       "kind": "invariant check",
       "label": "rem:graph:settlement-party-mismatch",
       "portions": [],
@@ -34354,7 +34366,7 @@
         "ROOT::rule:actepoch:title-transition"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -36303,7 +36315,10 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-graph",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/act-epoch-concept.md",
+        "docs/templates/docs/design/act-epoch-concept.md.j2"
+      ],
       "holds": [],
       "kind": "function",
       "label": "alg:graph:branch-certificate-computation",
@@ -36557,6 +36572,7 @@
         "ROOT::dec:design:formation-title",
         "ROOT::def:actepoch:title-state",
         "ROOT::def:actepoch:title-transfer",
+        "ROOT::prop:actepoch:title-local-equivalence",
         "ROOT::req:vision:formation-title",
         "ROOT::rule:actepoch:title-completion"
       ],
@@ -36626,7 +36642,10 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-graph",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/act-epoch-concept.md",
+        "docs/templates/docs/design/act-epoch-concept.md.j2"
+      ],
       "holds": [],
       "kind": "function",
       "label": "itm:graph:settlement-structure-completeness",
@@ -36642,7 +36661,10 @@
       "bites": [],
       "category": "statement",
       "crate": "pn-graph",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/act-epoch-concept.md",
+        "docs/templates/docs/design/act-epoch-concept.md.j2"
+      ],
       "holds": [],
       "kind": "function",
       "label": "itm:graph:settlement-structure-reference-binding",
@@ -36675,7 +36697,12 @@
       "category": "statement",
       "crate": "pn-graph",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:actepoch:title-admission",
+          "record": "ROOT::rule:actepoch:title-transition"
+        }
+      ],
       "kind": "function",
       "label": "itm:graph:settlement-structure-well-formedness",
       "portions": [],
@@ -36685,7 +36712,7 @@
         "ROOT::rule:actepoch:title-transition"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -36794,6 +36821,10 @@
         {
           "hold": "ROOT::open:testing:obligation-evidence",
           "record": "ROOT::req:vision:formation-title"
+        },
+        {
+          "hold": "ROOT::open:actepoch:title-admission",
+          "record": "ROOT::rule:actepoch:title-transition"
         }
       ],
       "kind": "invariant check",
@@ -37768,10 +37799,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "178",
+          "exact": "183",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "178",
+          "num": "183",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37782,27 +37813,27 @@
           "exact_digits": 32
         }
       },
-      "total": 178
+      "total": 183
     },
     {
       "category": "total",
-      "designed": 438,
-      "held": 54,
+      "designed": 436,
+      "held": 56,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "438",
+          "exact": "436",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "438",
+          "num": "436",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "54",
+          "exact": "56",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "54",
+          "num": "56",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38380,23 +38411,23 @@
     },
     {
       "category": "crate",
-      "designed": 66,
-      "held": 2,
+      "designed": 64,
+      "held": 4,
       "name": "pn-graph",
       "number_forms": {
         "designed": {
-          "exact": "66",
+          "exact": "64",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "66",
+          "num": "64",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "2",
+          "exact": "4",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2",
+          "num": "4",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39370,23 +39401,23 @@
     },
     {
       "category": "kind",
-      "designed": 98,
-      "held": 2,
+      "designed": 97,
+      "held": 3,
       "name": "function",
       "number_forms": {
         "designed": {
-          "exact": "98",
+          "exact": "97",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "98",
+          "num": "97",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "2",
+          "exact": "3",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2",
+          "num": "3",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39469,23 +39500,23 @@
     },
     {
       "category": "kind",
-      "designed": 141,
-      "held": 13,
+      "designed": 140,
+      "held": 14,
       "name": "invariant check",
       "number_forms": {
         "designed": {
-          "exact": "141",
+          "exact": "140",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "141",
+          "num": "140",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "13",
+          "exact": "14",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "13",
+          "num": "14",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41053,23 +41084,23 @@
     },
     {
       "category": "bite",
-      "designed": 334,
-      "held": 24,
+      "designed": 332,
+      "held": 26,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "334",
+          "exact": "332",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "334",
+          "num": "332",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "24",
+          "exact": "26",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "24",
+          "num": "26",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41853,22 +41884,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 266,
+      "exact_citing": 267,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "266",
+          "exact": "267",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "266",
+          "num": "267",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "2 212",
+          "exact": "2 215",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 212",
+          "num": "2 215",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41883,7 +41914,7 @@
           "exact_digits": 32
         }
       },
-      "total": 2212
+      "total": 2215
     },
     {
       "category": "record-coverage",
