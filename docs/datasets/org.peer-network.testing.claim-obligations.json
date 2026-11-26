@@ -791,7 +791,7 @@
     {
       "claims": [],
       "closing_condition": "Attach independent controls for the admitted payload, binding and query operation with reviewed premises and source-matched results.",
-      "closing_step": "Owned query-model admissions and implementation, before the publication switch",
+      "closing_step": "Successor document admissions and implementation under ROOT::gate:actepoch:design, with marker admission under ROOT::open:lineage:marker-placement",
       "hold": "ROOT::open:testing:obligation-evidence",
       "missing": "Reviewed scoped implementation evidence for dec:design:epoch-record-order",
       "name": "ROOT::dec:design:epoch-record-order",
@@ -3113,8 +3113,8 @@
     },
     {
       "claims": [],
-      "closing_condition": "Specify and witness the authority publication and reader authentication route before public rebuild and next-publication-version executable persistence. The disposable first read-only version-one fixture instance alone is excepted until the coordinated publication switch, with no authenticated provenance or external judgement-publication claim and no waiver of other admission duties.",
-      "closing_step": "Public rebuild and next-publication-version instance admission",
+      "closing_condition": "Specify and witness the authority publication and reader authentication route before public rebuild and first-successor-instance executable persistence. The disposable first read-only version-one fixture instance alone is excepted; the exception ends when the successor document cut's coordinated producer and consumer replace the version-one instance, with no authenticated provenance or external judgement-publication claim and no waiver of other admission duties.",
+      "closing_step": "Public rebuild and first-successor-instance admission",
       "hold": "ROOT::open:testing:obligation-evidence",
       "missing": "Reader authentication of the complete public generation declaration is held; database possession grants no authority.",
       "name": "ROOT::req:storage:generation-authentication",
@@ -3129,8 +3129,8 @@
     },
     {
       "claims": [],
-      "closing_condition": "Specify and witness complete external judgement carriage to rebuild, retaining scope, result identity, required label and its declared ordinal, references, coordinates and origins without changing existing package or recipe bytes, before public rebuild and next-publication-version executable persistence. The disposable first read-only version-one fixture instance alone is excepted until the coordinated publication switch, with no authenticated provenance or external judgement-publication claim and no waiver of other admission duties.",
-      "closing_step": "Public rebuild and next-publication-version instance admission",
+      "closing_condition": "Specify and witness complete external judgement carriage to rebuild, retaining scope, result identity, required label and its declared ordinal, references, coordinates and origins without changing existing package or recipe bytes, before public rebuild and first-successor-instance executable persistence. The disposable first read-only version-one fixture instance alone is excepted; the exception ends when the successor document cut's coordinated producer and consumer replace the version-one instance, with no authenticated provenance or external judgement-publication claim and no waiver of other admission duties.",
+      "closing_step": "Public rebuild and first-successor-instance admission",
       "hold": "ROOT::open:testing:obligation-evidence",
       "missing": "External carrier, source and transport of each required public generation label and complete judgement are held.",
       "name": "ROOT::req:storage:judgement-publication",
