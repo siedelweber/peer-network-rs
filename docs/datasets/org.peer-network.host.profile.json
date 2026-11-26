@@ -84,6 +84,28 @@
       "theory": "epoch-root"
     },
     {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "epoch-state",
+      "namespace": "org.peer-network.test.epoch.state",
+      "owner": "lane/design",
+      "status": "test name reserved; envelope and role structure designed and unbuilt; complete theory, subject types, registry publication and identity admission held",
+      "theory": "epoch-state"
+    },
+    {
+      "allocator": "repository maintainers for the centralized test deployment",
+      "category": "allocation",
+      "major": 1,
+      "minor": 0,
+      "name": "epoch-evidence",
+      "namespace": "org.peer-network.test.epoch.evidence",
+      "owner": "lane/design",
+      "status": "test name reserved; envelope and role structure designed and unbuilt; complete theory, subject types, registry publication and identity admission held",
+      "theory": "epoch-evidence"
+    },
+    {
       "category": "choice",
       "name": "accepted-set",
       "owner": "lane/design and lane/graph",

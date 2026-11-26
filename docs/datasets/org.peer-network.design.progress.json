@@ -2749,6 +2749,7 @@
         "EPOCH::rule:admission:publication-disclosures",
         "ROOT::amend:design:publication-field-inventory",
         "ROOT::amend:design:test-publication-profile",
+        "ROOT::def:actepoch:evidence",
         "ROOT::def:actepoch:standing",
         "ROOT::model:design:package"
       ],
@@ -14255,7 +14256,8 @@
       "records": [
         "ROOT::dec:design:policy-schedules",
         "ROOT::model:design:wall-floor",
-        "ROOT::req:vision:policy-schedules"
+        "ROOT::req:vision:policy-schedules",
+        "ROOT::rule:actepoch:parent-connection"
       ],
       "routes": [],
       "status": "designed",
@@ -14326,6 +14328,7 @@
         "ROOT::alg:design:effective-schedules",
         "ROOT::dec:design:policy-schedules",
         "ROOT::req:vision:policy-schedules",
+        "ROOT::rule:actepoch:parent-connection",
         "ROOT::rule:design:reference-wall-branches"
       ],
       "routes": [],
@@ -14436,6 +14439,7 @@
         "ROOT::amend:decomposition:wall-reference",
         "ROOT::dec:design:policy-schedules",
         "ROOT::req:vision:policy-schedules",
+        "ROOT::rule:actepoch:parent-connection",
         "ROOT::rule:design:reference-wall-branches",
         "ROOT::rule:design:ridge-charge-contract"
       ],
@@ -15032,9 +15036,11 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::rule:actepoch:parent-connection"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -31792,12 +31798,17 @@
         {
           "clause": "Claimed part: The selected constants edition is resolved from its published identity and effective boundary.",
           "record": "RECORDS::def:declarations:constants-edition"
+        },
+        {
+          "clause": "Claimed part: This designs equality checks on edition-fixed selections and holds structural-change comparison until admission; it establishes no implemented run check or external announcement conduct.",
+          "record": "ROOT::rule:actepoch:parent-connection"
         }
       ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "RECORDS::def:declarations:constants-edition"
+        "RECORDS::def:declarations:constants-edition",
+        "ROOT::rule:actepoch:parent-connection"
       ],
       "routes": [],
       "status": "designed",
@@ -32016,12 +32027,17 @@
         {
           "clause": "A duration measurement is not attested by the record.",
           "record": "ROOT::amend:testing:boundary-policy-timeout"
+        },
+        {
+          "clause": "Claimed part: This retains the supplied boundary policy as a design input while holding the triple’s classification and seam transition; no implemented comparison or external conduct is claimed.",
+          "record": "ROOT::rule:actepoch:parent-connection"
         }
       ],
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "ROOT::amend:design:host-operational-declaration"
+        "ROOT::amend:design:host-operational-declaration",
+        "ROOT::rule:actepoch:parent-connection"
       ],
       "routes": [],
       "status": "designed",
@@ -32065,6 +32081,10 @@
           "record": "ROOT::dec:design:comparison-verdict-record"
         },
         {
+          "clause": "Claimed part: This designs the supplied independent operand and attempted-support groups; no replay implementation or executed evidence is claimed.",
+          "record": "ROOT::def:actepoch:evidence"
+        },
+        {
           "clause": "Claimed part: This retains irreducible public support and recomputation in the design; no implemented numerical route or external premise is established.",
           "record": "ROOT::def:actepoch:standing"
         },
@@ -32093,6 +32113,7 @@
       "record_routes": [],
       "records": [
         "ROOT::amend:design:rung-proof-contract",
+        "ROOT::def:actepoch:evidence",
         "ROOT::def:actepoch:standing",
         "ROOT::resol:design:replay-paper-contract",
         "ROOT::resol:design:verification-canonical-amendment",
@@ -37755,15 +37776,15 @@
     },
     {
       "category": "total",
-      "designed": 439,
+      "designed": 440,
       "held": 52,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "439",
+          "exact": "440",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "439",
+          "num": "440",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37808,10 +37829,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "895",
+          "exact": "894",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "895",
+          "num": "894",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37850,7 +37871,7 @@
       "record_granular": 22,
       "tentative": 20,
       "total": 1417,
-      "unassigned": 895
+      "unassigned": 894
     },
     {
       "category": "total",
@@ -38448,15 +38469,15 @@
     },
     {
       "category": "crate",
-      "designed": 56,
+      "designed": 57,
       "held": 19,
       "name": "pn-host",
       "number_forms": {
         "designed": {
-          "exact": "56",
+          "exact": "57",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "56",
+          "num": "57",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38501,10 +38522,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "103",
+          "exact": "102",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "103",
+          "num": "102",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38543,7 +38564,7 @@
       "record_granular": 2,
       "tentative": 6,
       "total": 182,
-      "unassigned": 103
+      "unassigned": 102
     },
     {
       "category": "crate",
@@ -39636,15 +39657,15 @@
     },
     {
       "category": "kind",
-      "designed": 70,
+      "designed": 71,
       "held": 25,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "70",
+          "exact": "71",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "70",
+          "num": "71",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39689,10 +39710,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "223",
+          "exact": "222",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "223",
+          "num": "222",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39731,7 +39752,7 @@
       "record_granular": 2,
       "tentative": 11,
       "total": 321,
-      "unassigned": 223
+      "unassigned": 222
     },
     {
       "category": "kind",
@@ -41022,15 +41043,15 @@
     },
     {
       "category": "bite",
-      "designed": 335,
+      "designed": 336,
       "held": 22,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "335",
+          "exact": "336",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "335",
+          "num": "336",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41075,10 +41096,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 214",
+          "exact": "1 213",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 214",
+          "num": "1 213",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41117,7 +41138,7 @@
       "record_granular": 17,
       "tentative": 32,
       "total": 1592,
-      "unassigned": 1214
+      "unassigned": 1213
     },
     {
       "category": "classification-identities",
@@ -41822,22 +41843,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 265,
+      "exact_citing": 266,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "265",
+          "exact": "266",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "265",
+          "num": "266",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "2 196",
+          "exact": "2 203",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 196",
+          "num": "2 203",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41852,7 +41873,7 @@
           "exact_digits": 32
         }
       },
-      "total": 2196
+      "total": 2203
     },
     {
       "category": "record-coverage",

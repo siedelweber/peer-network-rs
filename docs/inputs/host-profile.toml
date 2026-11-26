@@ -79,6 +79,28 @@ status = "test theory designed; registry publication, confusable-name review and
 owner = "lane/design"
 
 [[rows]]
+name = "epoch-state"
+category = "allocation"
+namespace = "org.peer-network.test.epoch.state"
+major = 1
+minor = 0
+allocator = "repository maintainers for the centralized test deployment"
+theory = "epoch-state"
+status = "test name reserved; envelope and role structure designed and unbuilt; complete theory, subject types, registry publication and identity admission held"
+owner = "lane/design"
+
+[[rows]]
+name = "epoch-evidence"
+category = "allocation"
+namespace = "org.peer-network.test.epoch.evidence"
+major = 1
+minor = 0
+allocator = "repository maintainers for the centralized test deployment"
+theory = "epoch-evidence"
+status = "test name reserved; envelope and role structure designed and unbuilt; complete theory, subject types, registry publication and identity admission held"
+owner = "lane/design"
+
+[[rows]]
 name = "accepted-set"
 category = "choice"
 value = "complete-list"

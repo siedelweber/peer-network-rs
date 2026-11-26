@@ -883,6 +883,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This designs the supplied independent operand and attempted-support groups; no replay implementation or executed evidence is claimed.",
+      "relation": "realizes",
+      "source": "ROOT::def:actepoch:evidence",
+      "target": "post:deployment:replay-verification"
+    },
+    {
+      "conditional_on": "",
       "reason": "This retains irreducible public support and recomputation in the design; no implemented numerical route or external premise is established.",
       "relation": "realizes",
       "source": "ROOT::def:actepoch:standing",
@@ -1272,6 +1279,20 @@
       "relation": "realizes",
       "source": "ROOT::rule:actepoch:oracle-checking",
       "target": "post:graph:public-author-authority-replay"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This designs equality checks on edition-fixed selections and holds structural-change comparison until admission; it establishes no implemented run check or external announcement conduct.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:parent-connection",
+      "target": "case:deployment:transparency-of-protocol-formulas-edition-fixed"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This retains the supplied boundary policy as a design input while holding the triple’s classification and seam transition; no implemented comparison or external conduct is claimed.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:parent-connection",
+      "target": "cond:deployment:boundary-policy"
     },
     {
       "conditional_on": "",
