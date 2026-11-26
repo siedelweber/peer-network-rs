@@ -76,8 +76,10 @@ class Registry:
         self.tiers = {}
         self.suites = {}
         self.cases = {}
+        self.configurations = {}
+        self.selection_cases = {}
         destinations = {'level': self.levels, 'implementation': self.implementations,
-                        'tier': self.tiers, 'suite': self.suites}
+                        'tier': self.tiers, 'suite': self.suites, 'configuration': self.configurations}
         for row in rows:
             if row.get('kind') not in destinations or not row.get('name'):
                 raise StructuralError('unknown or unnamed registry declaration')
@@ -102,6 +104,25 @@ class Registry:
         for implementation in self.implementations.values():
             if implementation.get('evidence') not in {'pure', 'vendor', 'mock', 'real'}:
                 raise StructuralError('unknown implementation evidence class')
+        for configuration in self.configurations.values():
+            if (not isinstance(configuration.get('package'), str)
+                    or not isinstance(configuration.get('target'), str)
+                    or type(configuration.get('default_features')) is not bool
+                    or configuration.get('profile') != 'gate'
+                    or not isinstance(configuration.get('features'), list)
+                    or any(not isinstance(feature, str) or not feature for feature in configuration['features'])
+                    or configuration['features'] != sorted(set(configuration['features']))):
+                raise StructuralError('invalid package configuration: '+configuration['name'])
+        by_package = {}
+        for configuration in self.configurations.values():
+            key = (configuration['package'], configuration['target'], configuration['profile'])
+            if configuration['default_features'] and not configuration['features']:
+                if key in by_package:
+                    raise StructuralError('duplicate default package configuration')
+                by_package[key] = configuration['name']
+        if any((row['package'], row['target'], row['profile']) not in by_package
+               for row in self.configurations.values()):
+            raise StructuralError('package configuration lacks explicit default')
         for suite in self.suites.values():
             if suite.get('tier') not in self.tiers or suite.get('status') not in {'active', 'held'}:
                 raise StructuralError('unknown suite tier or status')
@@ -156,6 +177,17 @@ class Registry:
                 self.cases[case] = dict(suite,level=overrides.get(case,suite['level']))
                 if case in case_budgets:
                     self.cases[case]['case_budget'] = case_budgets[case]
+            selections = suite.get('configurations', {})
+            if not isinstance(selections, dict):
+                raise StructuralError('suite configurations must map declared selections')
+            for name, cases in selections.items():
+                if name not in self.configurations or not isinstance(cases, list) or len(cases) != len(set(cases)) or not cases:
+                    raise StructuralError('unknown or empty suite configuration: '+str(name))
+                for case in cases:
+                    key = (case, name)
+                    if not isinstance(case, str) or key in self.selection_cases:
+                        raise StructuralError('duplicate or malformed configuration case')
+                    self.selection_cases[key] = dict(suite, level=overrides.get(case, suite['level']))
         if not set(self.properties).issubset(self.cases):
             raise StructuralError('unregistered property case')
         threshold = self.tiers.get('fast', {}).get('extended_case_threshold_ms')
@@ -180,26 +212,39 @@ class Registry:
                 raise StructuralError('contract case mapping lacks parent, edition or establishing claim')
         calibration_defaults(declared, self)
 
-    def case_budget(self, name):
-        suite = self.cases[name]
+    def case(self, name, configuration=CONFIGURATION):
+        if configuration == CONFIGURATION or not self.configurations:
+            return self.cases[name]
+        if configuration not in self.configurations:
+            raise StructuralError('unknown package configuration: '+configuration)
+        return self.selection_cases[name, configuration]
+
+    def case_budget(self, name, configuration=CONFIGURATION):
+        suite = self.case(name, configuration)
         return suite.get('case_budget', self.levels[suite['level']]['budget'])
 
-    def expected(self, runner):
-        return {name for name, suite in self.cases.items() if suite['runner'] == runner}
+    def expected(self, runner, configuration=CONFIGURATION):
+        if configuration != CONFIGURATION and self.configurations and configuration not in self.configurations:
+            raise StructuralError('unknown package configuration: '+configuration)
+        cases = self.cases if configuration == CONFIGURATION or not self.configurations else {
+            name: suite for (name, selected), suite in self.selection_cases.items() if selected == configuration}
+        return {name for name, suite in cases.items() if suite['runner'] == runner}
 
-    def roster(self, runner, observed):
+    def roster(self, runner, observed, configuration=CONFIGURATION):
         actual = list(observed)
-        expected = self.expected(runner)
+        expected = self.expected(runner, configuration)
         if len(actual) != len(set(actual)) or set(actual) != expected:
-            raise StructuralError(f'{runner}: case inventory differs; missing={sorted(expected-set(actual))} extra={sorted(set(actual)-expected)}')
+            raise StructuralError(f'{runner}/{configuration}: case inventory differs; missing={sorted(expected-set(actual))} extra={sorted(set(actual)-expected)}')
 
     def aggregate_budgets(self, tier):
         budget = self.tiers[tier].get('invocation_budget')
         return [budget] if budget and tier != 'fast' else ['test-command', 'gate']
 
-    def producing_step(self, name):
+    def producing_step(self, name, configuration=CONFIGURATION):
         """Join the runner to the declared gate command, not the receipt's claim."""
-        suite = self.cases[name]
+        if configuration != CONFIGURATION and self.configurations:
+            return 'test-evidence'
+        suite = self.case(name)
         runner = suite['runner']
         if runner == 'contract':
             return self.producing_step(suite['parent_case'])
@@ -239,15 +284,22 @@ class Registry:
         from properties import validate
         validate(record, self.properties)
         name = record.get('operation')
-        if name not in self.cases:
+        selected = configuration != CONFIGURATION and bool(self.configurations)
+        cases = self.selection_cases if selected else self.cases
+        key = (name, configuration) if selected else name
+        if key not in cases:
             raise StructuralError(f'unregistered case: {name}')
-        suite = self.cases[name]
+        suite = cases[key]
         implementation = self.implementations[suite['implementation']]
-        budget = self.case_budget(name)
-        fields = dict(source=source, configuration=configuration, level=suite['level'], step=self.producing_step(name),
+        budget = self.case_budget(name, configuration)
+        fields = dict(source=source, configuration=configuration, level=suite['level'], step=self.producing_step(name, configuration),
                       suite=suite['name'], implementation=suite['implementation'], tier=suite['tier'],
                       evidence=implementation['evidence'], budget=budget,
                       applicable_budgets=[budget, suite['budget'], *self.aggregate_budgets(suite['tier'])])
+        if selected:
+            selection = self.configurations[configuration]
+            fields.update({key: selection[key] for key in ('package', 'target', 'default_features', 'features', 'profile')})
+            fields['invocation'] = __import__('os').environ.get('PN_BUILDGRAPH_RUN')
         fields.update({key: suite[key] for key in ('contract_edition', 'claim', 'claim_owner', 'parent_case') if key in suite})
         for key, value in fields.items():
             if key in record and record[key] != value:
@@ -267,7 +319,7 @@ class Registry:
         for record in records:
             if record.get('source') != source:
                 raise StructuralError('stale or misreported source')
-            if record.get('configuration') != CONFIGURATION:
+            if record.get('configuration') not in {CONFIGURATION, *self.configurations}:
                 raise StructuralError('stale or misreported configuration')
             if record.get('scope') == 'suite':
                 suite = self.suites.get(record.get('suite'))
@@ -277,11 +329,13 @@ class Registry:
                     if record.get(key) != suite[key]:
                         raise StructuralError('misreported suite ' + key)
         cases = [r for r in records if r.get('scope') == 'case']
-        if len(cases) != len(self.cases) or {r['operation'] for r in cases} != set(self.cases):
+        identities = [(r['operation'], r['configuration']) for r in cases]
+        expected = {(name, CONFIGURATION) for name in self.cases} | set(self.selection_cases)
+        if len(cases) != len(expected) or set(identities) != expected:
             raise StructuralError('dropped or duplicate suite case')
         if any('step' not in row for row in cases):
             raise StructuralError('case receipt lacks producing step')
-        joined = [self.join(r, source) for r in cases]
+        joined = [self.join(r, source, r['configuration']) for r in cases]
         from build_graph_evidence import held_service, retained_service
         if any(r.get('retained') and not retained_service(r, Path.cwd()) for r in joined):
             raise StructuralError('invalid retained service evidence')
@@ -289,21 +343,24 @@ class Registry:
             raise StructuralError('ignored or incomplete required test')
         result = []
         for suite in self.suites.values():
-            row = dict(source=source, configuration=CONFIGURATION, suite=suite['name'],
+            for configuration in [CONFIGURATION, *suite.get('configurations', {})]:
+                configured_cases = suite['cases'] if configuration == CONFIGURATION else suite['configurations'][configuration]
+                matching = [r for r in joined if r['suite'] == suite['name'] and r['configuration'] == configuration]
+                row = dict(source=source, configuration=configuration, suite=suite['name'],
                        implementation=suite.get('implementation') or None, tier=suite['tier'],
                        contract_edition=suite.get('contract_edition'))
-            if 'observation' in suite:
-                row['observation'] = suite['observation']
-                row['property_observations'] = [dict(operation=r['operation'], seed=r['seed'], consumer=r.get('seed_consumer'))
-                                                for r in joined if r['suite']==suite['name'] and 'seed' in r]
-            if suite['status'] == 'held':
-                result.append({**row, 'status': 'held', 'reason': suite['reason'], 'expected': 0, 'observed': 0})
-            else:
-                outcomes = Counter(r['outcome'] for r in joined if r['suite'] == suite['name'])
-                result.append({**row, 'status': 'failed' if outcomes['failed'] else ('held' if outcomes['held'] else 'passed'),
-                               'expected': len(suite['cases']), 'observed': sum(r['outcome'] in {'passed', 'failed'} and not r.get('retained', False) for r in joined if r['suite']==suite['name']), 'outcomes': dict(outcomes),
-                               'retained': [dict(operation=r['operation'], source=r['execution_source']) for r in joined if r['suite']==suite['name'] and r.get('retained')],
-                               'holds': [dict(operation=r['operation'], hold=r['hold'], reason=r['reason']) for r in joined if r['suite']==suite['name'] and r['outcome']=='held']})
+                if 'observation' in suite:
+                    row['observation'] = suite['observation']
+                    row['property_observations'] = [dict(operation=r['operation'], seed=r['seed'], consumer=r.get('seed_consumer'))
+                                                    for r in matching if 'seed' in r]
+                if suite['status'] == 'held':
+                    result.append({**row, 'status': 'held', 'reason': suite['reason'], 'expected': 0, 'observed': 0})
+                else:
+                    outcomes = Counter(r['outcome'] for r in matching)
+                    result.append({**row, 'status': 'failed' if outcomes['failed'] else ('held' if outcomes['held'] else 'passed'),
+                                   'expected': len(configured_cases), 'observed': sum(r['outcome'] in {'passed', 'failed'} and not r.get('retained', False) for r in matching), 'outcomes': dict(outcomes),
+                                   'retained': [dict(operation=r['operation'], source=r['execution_source']) for r in matching if r.get('retained')],
+                                   'holds': [dict(operation=r['operation'], hold=r['hold'], reason=r['reason']) for r in matching if r['outcome']=='held']})
         for tier in self.tiers.values():
             if tier['status'] == 'held':
                 result.append(dict(source=source, configuration=CONFIGURATION, suite=None, implementation=None,
@@ -343,7 +400,7 @@ def main():
             editions = passing_editions(matrix)
             print(f'HARNESS-MATRIX cases={len(registry.cases)} passed={counts["passed"]} failed={counts["failed"]} held={counts["held"]} passed_by_edition={json.dumps(editions, sort_keys=True, separators=(",", ":"))} artifact=.lane/harness-matrix.json')
             return int(bool(counts['failed']))
-        print(f'HARNESS-REGISTRY levels={len(registry.levels)} suites={len(registry.suites)} implementations={len(registry.implementations)} cases={len(registry.cases)}')
+        print(f'HARNESS-REGISTRY levels={len(registry.levels)} suites={len(registry.suites)} implementations={len(registry.implementations)} cases={len(registry.cases)} configurations={len(registry.configurations)} selection_cases={len(registry.selection_cases)}')
         return 0
     except (ValueError, KeyError, TypeError, OSError) as error:
         print(f'HARNESS-STRUCTURAL-ERROR {error}', file=sys.stderr)

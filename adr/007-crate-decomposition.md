@@ -139,7 +139,7 @@ The created library has workspace membership and inherited lints, the manifest a
 
 | Outer package | Responsibility | Direct prerequisites | Optional prerequisites |
 | --- | --- | --- | --- |
-| pn-fixtures | Code-built served input, independent assertions and explicit synthetic premises for the disposable fixture instance; library built, node integration designed | pn-host, pn-epoch, pn-records, pn-interchange, tracing | None |
+| pn-fixtures | Code-built served input, independent assertions and explicit synthetic premises for the disposable fixture instance; library and node optional edge, feature, name check and unbound ending built; served node integration designed | pn-host, pn-epoch, pn-records, pn-interchange, tracing | None |
 
 **Decision (Bite order)** · `dec:decomposition:bites` The eleven slices establish public records, constants, formation and title before the epoch compiler and certified solve, then admission, package and replay before optional raw services. Each slice writes its implementation decision, label mapping, exact fixture inputs and gate evidence. The integrated corpus grows alongside the slices and closes only after their public surfaces are covered.
 

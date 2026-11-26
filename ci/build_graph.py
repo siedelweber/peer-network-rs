@@ -1959,15 +1959,27 @@ def evidence_statuses(root):
         for line in path.read_text().splitlines():
             row = json.loads(line)
             if row.get('scope') == 'case':
-                if row['operation'] in cases: raise ValueError('duplicate case in baseline evidence')
-                cases[row['operation']] = row['outcome']
+                identity = case_identity(row)
+                if identity in cases: raise ValueError('duplicate case in baseline evidence')
+                cases[identity] = row['outcome']
     evidence = json.loads((root/'.lane/claim-evidence.json').read_text())
     return dict(case=cases, obligation={row['name']:row['status'] for row in evidence['obligations']})
 
 
+def case_identity(row):
+    """Keep workspace identities and distinguish package selection receipts."""
+    from harness import CONFIGURATION
+    configuration = row.get('configuration', CONFIGURATION)
+    return row['operation'] if configuration == CONFIGURATION else row['operation']+'@'+configuration
+
+
 def case_producer_tier(registry, groups, row):
     """CPU belongs to the executing step even if a case's declared tier differs."""
-    if row.get('step') != registry.producing_step(row['operation']):
+    from harness import CONFIGURATION
+    configuration = row.get('configuration', CONFIGURATION)
+    expected = (registry.producing_step(row['operation']) if configuration == CONFIGURATION
+                else registry.producing_step(row['operation'], configuration))
+    if row.get('step') != expected:
         raise ValueError('case producing step differs: '+row['operation'])
     tiers = [tier for tier, steps in groups.items() if row['step'] in steps]
     if len(tiers) != 1:
@@ -2047,11 +2059,12 @@ def tier_summary(root, registry, worker_statuses):
             row = json.loads(line)
             if row.get('scope') == 'case' and row.get('outcome') != 'held' and not row.get('retained'):
                 producing_tier = case_producer_tier(registry, groups, row)
-                case_steps[producing_tier][row['operation']] = row['step']
-                selected_cases[producing_tier].append(row['operation'])
+                identity = case_identity(row)
+                case_steps[producing_tier][identity] = row['step']
+                selected_cases[producing_tier].append(identity)
                 cpu = (row.get('own_user_s'), row.get('own_sys_s'))
                 valid = all(isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and value >= 0 for value in cpu)
-                case_costs[producing_tier][row['operation']] = sum(cpu) if valid else None
+                case_costs[producing_tier][identity] = sum(cpu) if valid else None
     from harness import build_cache_state
     cache = build_cache_state(root, os.environ['PN_GATE_SOURCE'], os.environ.get('PN_BUILDGRAPH_RUN'))
     for tier, names in groups.items():

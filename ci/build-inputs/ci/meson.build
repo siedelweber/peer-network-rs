@@ -4,6 +4,8 @@ local_inputs = [
   ['ci/credential_guard_witnesses.py', 'build-graph,discipline-tests,token,hash-citations', ''],
   ['ci/protected-packages/pn-credential-generator.json', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],
   ['ci/protected-packages/pn-credential-generator-debug.json', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],
+  ['ci/protected-packages/pn-fixture.json', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],
+  ['ci/protected-packages/pn-fixture-debug.json', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],
   ['ci/credential-receiver-types.json', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],
   ['ci/protected_packages.py', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],
   ['ci/protected-packages/pn-secret-home.json', 'build-graph,protected-packages,discipline-tests,token,hash-citations', ''],

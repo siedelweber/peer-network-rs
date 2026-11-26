@@ -719,6 +719,65 @@ def run_clippy(root, advisory=False):
     return result, count
 
 
+def lint_selection_command(selection, target):
+    """Give one declared package selection its own test-target lint invocation."""
+    if selection['target'] != 'package-tests' or selection['profile'] != 'gate':
+        raise ValueError('unsupported conditional lint target or profile')
+    command = ['cargo', 'clippy', '--offline', '--locked', '--profile', selection['profile'],
+               '-p', selection['package'], '--all-targets']
+    if not selection['default_features']:
+        command.append('--no-default-features')
+    if selection['features']:
+        command.extend(['--features', ','.join(selection['features'])])
+    command.extend(['--no-deps', '--message-format=json', '--target-dir', str(target), '--', '-D', 'warnings'])
+    return command
+
+
+def validate_lint_receipts(selections, receipts, source, invocation):
+    """A missing or denied conditional compiler selection cannot be a lint pass."""
+    if len(receipts) != len(selections) or {row.get('configuration') for row in receipts} != set(selections):
+        raise ValueError('conditional lint selection missing or duplicated')
+    for row in receipts:
+        selection = selections[row['configuration']]
+        if (row.get('source') != source or row.get('invocation') != invocation
+                or any(row.get(key) != selection[key] for key in
+                       ('package', 'target', 'default_features', 'features', 'profile'))
+                or row.get('status') != 0):
+            raise ValueError('conditional lint selection stale, foreign or denied')
+
+
+def run_conditional_clippy(root):
+    import re
+    from harness import load as load_registry
+    selections = load_registry().configurations
+    source = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+    invocation = os.environ.get('PN_BUILDGRAPH_RUN')
+    directory = root/'.lane/lint-configurations'
+    directory.mkdir(parents=True, exist_ok=True)
+    target = pathlib.Path(os.environ.get('CARGO_TARGET_DIR', str(root/'target'))).resolve()/'lint-conditional'
+    receipts = []
+    for name, selection in sorted(selections.items()):
+        command = lint_selection_command(selection, target)
+        started = time.monotonic()
+        result = subprocess.run(command, cwd=root, capture_output=True, text=True)
+        slug = re.sub(r'[^a-zA-Z0-9-]', '-', name)
+        (directory/(slug+'.stdout')).write_text(result.stdout)
+        (directory/(slug+'.stderr')).write_text(result.stderr)
+        receipt = dict(source=source, invocation=invocation, configuration=name,
+                       **{key: selection[key] for key in ('package', 'target', 'default_features', 'features', 'profile')},
+                       status=result.returncode, command=command)
+        (directory/(slug+'.json')).write_text(json.dumps(receipt, indent=2)+'\n')
+        receipts.append(receipt)
+        print(f'FEATURE-CLIPPY configuration={name} status={result.returncode} wall={time.monotonic()-started:.6f}s artifact={directory/(slug+".json")}', flush=True)
+        if result.returncode:
+            for line in result.stdout.splitlines():
+                message = json.loads(line)
+                if message.get('reason') == 'compiler-message':
+                    print(message['message'].get('rendered', ''), end='')
+            print(result.stderr, end='')
+    validate_lint_receipts(selections, receipts, source, invocation)
+
+
 def cargo_config_findings(value):
     if isinstance(value, dict):
         if any(key in value for key in ('source', 'patch', 'paths')):
@@ -880,13 +939,14 @@ def main():
             return 0
         if result.returncode:
             return result.returncode
-        for package in ('cli-common', 'pn', 'pn-credential-generator', 'documents'):
+        for package in ('cli-common', 'pn-credential-generator', 'documents'):
             command = ['cargo', 'clippy', '--offline', '--locked', '--profile', 'gate', '-p', package,
                        '--all-targets', '--features', 'debug-observation', '--no-deps', '--', '-D', 'warnings']
             checked = subprocess.run(command, cwd=pathlib.Path.cwd())
             print(f'FEATURE-CLIPPY package={package} status={checked.returncode}', flush=True)
             if checked.returncode:
                 return checked.returncode
+        run_conditional_clippy(pathlib.Path.cwd())
         return 0
     if mode == "toolchain":
         revision = git("rev-parse", "HEAD")

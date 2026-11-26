@@ -35,6 +35,46 @@ def fixture():
 
 
 class Evidence(unittest.TestCase):
+    def test_conditional_claim_requires_each_pair(self):
+        """Claim: A claim spanning selected configurations passes only with each reviewed site/configuration result; missing, ignored, foreign, stale, duplicate and failed halves cannot borrow a pass.
+        ´claim:testing:conditional-claim-requires-each-pair´
+        ´test:integration:test-conditional-claim-requires-each-pair´
+        """
+        data = fixture()
+        claim = data['sites'][0]['claim']
+        selections = ('selection/one', 'selection/two')
+        data['conditions'] = {claim: [f'{operation}@{selection}' for operation in ('first', 'sibling')
+                                      for selection in selections]}
+        data['registry'] = SimpleNamespace(selection_cases={
+            (operation, selection): {} for operation in ('first', 'sibling') for selection in selections})
+        data['results'] = [dict(operation=operation, configuration=selection, source='current', outcome='passed')
+                           for operation in ('first', 'sibling') for selection in selections]
+        self.assertEqual(evaluate(**data)['claims'][0]['status'], 'passed')
+        missing = deepcopy(data)
+        missing['results'].pop()
+        with self.assertRaisesRegex(StructuralError, 'missing test results'):
+            evaluate(**missing)
+        for outcome in ('ignored', 'incomplete'):
+            changed = deepcopy(data)
+            changed['results'][-1]['outcome'] = outcome
+            with self.assertRaisesRegex(StructuralError, 'unexecuted or ignored'):
+                evaluate(**changed)
+        changed = deepcopy(data)
+        changed['results'][-1]['outcome'] = 'failed'
+        self.assertEqual(evaluate(**changed)['claims'][0]['status'], 'failed')
+        foreign = deepcopy(data)
+        foreign['results'][-1]['configuration'] = 'selection/foreign'
+        with self.assertRaisesRegex(StructuralError, 'stale result'):
+            evaluate(**foreign)
+        stale = deepcopy(data)
+        stale['results'][-1]['source'] = 'previous'
+        with self.assertRaisesRegex(StructuralError, 'stale result'):
+            evaluate(**stale)
+        duplicate = deepcopy(data)
+        duplicate['results'].append(dict(duplicate['results'][0]))
+        with self.assertRaisesRegex(StructuralError, 'duplicate case/configuration'):
+            evaluate(**duplicate)
+
     def test_register_canonical_form(self):
         """Claim: Unsorted, duplicate or non-canonical claim registers refuse before evidence evaluation without rewriting, while the explicit canonicalizer preserves entries, reaches a byte-stable form and reports its wall time on success and refusal.
         ´claim:testing:register-order-and-form-are-checked´

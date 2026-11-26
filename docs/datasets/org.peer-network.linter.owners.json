@@ -300,6 +300,10 @@
         {
           "owner": "FIXTURES",
           "target": "INTERCHANGE"
+        },
+        {
+          "owner": "NODE",
+          "target": "FIXTURES"
         }
       ],
       "name": "declaration",

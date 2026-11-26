@@ -37,6 +37,6 @@ name = "fixture-input"
 status = "accepted"
 host_dependencies = []
 added_crates = [
-  { name = "pn-fixtures", role = "Code-built served input, independent assertions and explicit synthetic premises for the disposable fixture instance; library built, node integration designed", dependencies = ["pn-host", "pn-epoch", "pn-records", "pn-interchange", "tracing"], optional = [] },
+  { name = "pn-fixtures", role = "Code-built served input, independent assertions and explicit synthetic premises for the disposable fixture instance; library and node optional edge, feature, name check and unbound ending built; served node integration designed", dependencies = ["pn-host", "pn-epoch", "pn-records", "pn-interchange", "tracing"], optional = [] },
 ]
 refinements = []

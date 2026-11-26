@@ -2123,6 +2123,10 @@ wait
             case_producer_tier(producer, groups, dict(receipt, step='tests'))
         with self.assertRaisesRegex(ValueError, 'no unique accounting tier'):
             case_producer_tier(producer, {'fast':['tests']}, receipt)
+        selected = SimpleNamespace(producing_step=lambda _, configuration: 'test-evidence'
+                                   if configuration == 'pn/gate/fixture' else 'tests')
+        self.assertEqual(case_producer_tier(selected, {'finalize':['test-evidence']},
+            dict(receipt, configuration='pn/gate/fixture', step='test-evidence')), 'finalize')
         own, old, comparable, evidence = case_intersection(
             ['common', 'new'], ['common', 'retained'], {'new': 80}, {'retained': 20}, 180, 120)
         self.assertEqual((own, old, comparable), (100, 100, True))

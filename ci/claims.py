@@ -81,7 +81,8 @@ def unique_members(pairs):
 def register_form(text, field):
     """Validate without discarding content, then build the one permitted form."""
     data = json.loads(text, object_pairs_hook=unique_members)
-    allowed = ({'schema', field}, {'schema', field, 'conditional_claims'}) if field == 'sites' else ({'schema', field},)
+    allowed = ({'schema', field}, {'schema', field, 'conditional_claims'},
+               {'schema', field, 'conditional_claims', 'configuration_claims'}) if field == 'sites' else ({'schema', field},)
     if not isinstance(data, dict) or set(data) not in allowed or type(data['schema']) is not int or data['schema'] != 1:
         raise StructuralError('register root requires schema 1 and '+field)
     if field == 'sites':
@@ -123,6 +124,15 @@ def register_form(text, field):
                 or len(values) != len(set(values)) for name, values in conditions.items()):
             raise StructuralError('conditional claim review requires names and nonempty distinct conditions')
         canonical['conditional_claims'] = {name: sorted(values) for name, values in sorted(conditions.items())}
+    if 'configuration_claims' in data:
+        conditions = data['configuration_claims']
+        if not isinstance(conditions, dict) or any(
+                not isinstance(name, str) or not re.fullmatch(r'[A-Z]+::claim:[a-z0-9-]+:[a-z0-9.-]+', name)
+                or not isinstance(values, list) or not values
+                or any(not isinstance(value, str) or '@' not in value for value in values)
+                or len(values) != len(set(values)) for name, values in conditions.items()):
+            raise StructuralError('configuration claim review requires names and nonempty distinct pairs')
+        canonical['configuration_claims'] = {name: sorted(values) for name, values in sorted(conditions.items())}
     return data, canonical, json.dumps(canonical, ensure_ascii=False, indent=2, allow_nan=False)+'\n'
 
 
@@ -356,19 +366,62 @@ def registrations(sites, expected_sites, areas, obligations, declared, paragraph
     return claims, combined, order
 
 
-def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, results, source, configuration=CONFIGURATION):
-    claims, combined, order = registrations(sites, expected_sites, areas, obligations, declared, paragraphs)
-    if len({r['operation'] for r in results}) != len(results): raise StructuralError('duplicate result')
-    actual = {r['operation']:r for r in results}
-    missing = set(expected_sites)-set(actual)
-    if missing: raise StructuralError('missing test results: '+str(sorted(missing)))
+def required_pairs(sites, conditions, registry, default_configuration=CONFIGURATION):
+    """Resolve a claim's reviewed case/configuration references at its sites."""
+    by_claim = defaultdict(list)
     for site in sites:
-        result = actual[site['operation']]
-        if result.get('source') != source or result.get('configuration') != configuration: raise StructuralError('stale result')
-        from build_graph_evidence import held_service, retained_service
-        if result.get('retained') and not retained_service(result, Path.cwd()): raise StructuralError('invalid retained service evidence')
-        if result.get('outcome') not in {'passed','failed'} and not held_service(result, Path.cwd()): raise StructuralError('unexecuted or ignored result')
-    states = {claim: ('failed' if any(actual[s['operation']]['outcome']=='failed' for s in members) else ('held' if any(actual[s['operation']]['outcome']=='held' for s in members) else 'passed')) for claim,members in claims.items()}
+        by_claim[site['claim']].append(site['operation'])
+    if set(conditions) - set(by_claim):
+        raise StructuralError('conditional claim lacks an authored site')
+    result = {}
+    for claim, operations in by_claim.items():
+        if claim not in conditions:
+            result[claim] = {(operation, default_configuration) for operation in operations}
+            continue
+        pairs = set()
+        for reference in conditions[claim]:
+            if '@' not in reference:
+                raise StructuralError('conditional claim lacks a case/configuration pair')
+            operation, configuration = reference.rsplit('@', 1)
+            if operation not in operations or registry is None or (operation, configuration) not in registry.selection_cases:
+                raise StructuralError('unregistered conditional claim pair: '+reference)
+            pairs.add((operation, configuration))
+        if set(operations) != {operation for operation, _ in pairs}:
+            raise StructuralError('conditional claim omits a supporting site')
+        result[claim] = pairs
+    return result
+
+
+def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, results, source,
+             configuration=CONFIGURATION, conditions=None, registry=None):
+    claims, combined, order = registrations(sites, expected_sites, areas, obligations, declared, paragraphs)
+    conditions = conditions or {}
+    pairs = required_pairs(sites, conditions, registry, configuration)
+    if len({(r['operation'], r['configuration']) for r in results}) != len(results):
+        raise StructuralError('duplicate case/configuration result')
+    actual = {(r['operation'], r['configuration']): r for r in results}
+    expected = set().union(*pairs.values())
+    missing = expected-set(actual)
+    if missing:
+        if any(any(operation == found and (found, selected) not in expected for found, selected in actual)
+               for operation, _ in missing):
+            raise StructuralError('stale result: wrong configuration')
+        raise StructuralError('missing test results: '+str(sorted(missing)))
+    for site in sites:
+        for pair in pairs[site['claim']]:
+            if pair[0] != site['operation']:
+                continue
+            result = actual[pair]
+            if result.get('source') != source:
+                raise StructuralError('stale result')
+            from build_graph_evidence import held_service, retained_service
+            if result.get('retained') and not retained_service(result, Path.cwd()):
+                raise StructuralError('invalid retained service evidence')
+            if result.get('outcome') not in {'passed','failed'} and not held_service(result, Path.cwd()):
+                raise StructuralError('unexecuted or ignored result')
+    states = {claim: ('failed' if any(actual[pair]['outcome']=='failed' for pair in pairs[claim]) else
+                      'held' if any(actual[pair]['outcome']=='held' for pair in pairs[claim]) else 'passed')
+              for claim in claims}
     for claim in order:
         outcomes = [states[claim], *(states[member] for member in combined.get(claim, []))]
         states[claim] = 'failed' if 'failed' in outcomes else ('held' if 'held' in outcomes else 'passed')
@@ -385,7 +438,9 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
             state = 'failed' if 'failed' in dependencies or row['status']=='failed' else ('held' if 'held' in dependencies or row['status']=='held' else 'scoped-passed')
             if state != row['status']: row['status']=state; changed=True
         if not changed: break
-    evidence = dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]],members=combined.get(n, [])) for n,s in sorted(states.items())], obligations=obligation_results)
+    evidence = dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]],
+                                 required_pairs=[dict(operation=op, configuration=config) for op, config in sorted(pairs[n])],
+                                 members=combined.get(n, [])) for n,s in sorted(states.items())], obligations=obligation_results)
     retained = [dict(operation=row['operation'], execution_source=row['execution_source'])
                 for row in results if row.get('retained')]
     if retained: evidence['retained_execution'] = retained
@@ -943,6 +998,8 @@ def registration_check(root, registers, registry, sites, *, structure=True):
     vendor_implementations = {row['name'] + '-rust' for row in vendor_packages(root)}
     expected = {n: case for n, case in registry.cases.items() if case['runner'] == 'ci'
                 or (case['runner'] == 'nextest' and case['implementation'] not in vendor_implementations)}
+    expected.update({name: case for (name, _), case in getattr(registry, 'selection_cases', {}).items()
+                     if case['runner'] == 'nextest' and case['implementation'] not in vendor_implementations})
     registrations(sites, expected, areas, obligations, declared, paragraphs)
     reviewed_sites(sites, registers['sites'], registers['glosses'])
     from wallet_cases import repository_check
@@ -969,6 +1026,8 @@ def main(argv=None):
             evidence = json.loads(Path('.lane/claim-evidence.json').read_text())
             if evidence.get('source') != source_id() or evidence.get('configuration') != CONFIGURATION:
                 raise StructuralError('tracker requires current-source checked execution evidence')
+            if evidence.get('configurations') != sorted(getattr(load_registry(), 'configurations', {})):
+                raise StructuralError('tracker requires the complete checked configuration set')
             if any(row['status'] == 'failed' for field in ('claims', 'obligations') for row in evidence[field]):
                 raise StructuralError('tracker refuses failed execution evidence')
             Path('docs/inputs/specification-progress.toml').write_text(tracker_input('.', evidence))
@@ -991,6 +1050,8 @@ def main(argv=None):
         reconcile_mints(sites, claim_mints(root))
         expected, paragraphs, obligations, areas, declared = registration_check(
             root, registers, registry, sites, structure=args.command == 'registration')
+        conditions = registers['sites'].get('configuration_claims', {})
+        required_pairs(sites, conditions, registry)
         if args.command == 'registration':
             return 0
         checked_linter('.lane/gate-linter.log',sites)
@@ -999,7 +1060,8 @@ def main(argv=None):
         source = source_id()
         registry.matrix(records, source)
         result = evaluate(sites, expected, areas, obligations, declared, paragraphs,
-                          [r for r in records if r.get('scope')=='case'], source)
+                          [r for r in records if r.get('scope')=='case'], source,
+                          conditions=conditions, registry=registry)
         from wallet_cases import repository_check
         repository_check(sites, [r for r in records if r.get('scope') == 'case'])
         entry = paragraphs['ROOT::amend:decomposition:bite-one-entry-evidence']['citations'] & set(obligations)
@@ -1012,14 +1074,24 @@ def main(argv=None):
         offenders = [{k:s[k] for k in ('owner','path','line','function','operation','claim','gloss')} for s in sites if respells(s)]
         Path('.lane/claim-respellings.json').write_text(json.dumps({'schema':1,'source':source,'offenders':offenders},indent=2)+'\n')
         local_contracts={(a['owner'],a['area']):a['contract'] for a in areas}
+        site_pairs = required_pairs(sites, conditions, registry)
         for site in sites:
             site['local_contract']=local_contracts[site['owner'],site['area']]
-            site['execution']=next(r for r in records if r.get('scope')=='case' and r['operation']==site['operation'])
+            if site['claim'] in conditions:
+                site['configuration_executions'] = [r for r in records if r.get('scope') == 'case'
+                                                   and r['operation'] == site['operation']
+                                                   and (r['operation'], r['configuration']) in site_pairs[site['claim']]]
+                site['execution'] = site['configuration_executions'][0]
+            else:
+                site['execution'] = next(r for r in records if r.get('scope') == 'case'
+                                         and r['operation'] == site['operation'] and r['configuration'] == CONFIGURATION)
         missing_glosses=[s['operation'] for s in sites if not s['gloss']]
         observation=json.loads(Path('.lane/observation-coverage.json').read_text())
         if observation.get('source')!=source or observation.get('mechanical_status')!='passed':
             raise StructuralError('observation coverage is missing, stale or failed')
-        Path('.lane/claim-evidence.json').write_text(json.dumps({'schema':1,'source':source,'configuration':CONFIGURATION,'sites':sites,'sibling_gloss_review':missing_glosses,'observation_declarations':observation,**result},indent=2)+'\n')
+        Path('.lane/claim-evidence.json').write_text(json.dumps({'schema':1,'source':source,'configuration':CONFIGURATION,
+            'configurations':sorted(getattr(registry, 'configurations', {})),'sites':sites,'sibling_gloss_review':missing_glosses,
+            'observation_declarations':observation,**result},indent=2)+'\n')
         counts = Counter(r['status'] for r in result['obligations'])
         print(f'CLAIM-REVIEW sites={len(reviews)} artifact=.lane/claim-gloss-review.json')
         print(f'CLAIM-RESPELLINGS count={len(offenders)} artifact=.lane/claim-respellings.json enforcement={args.fail_respellings}')

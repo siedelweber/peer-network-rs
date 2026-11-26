@@ -22,7 +22,7 @@ import json
 import re
 from unittest.mock import patch
 
-from discipline import build_observation_recipe, cargo_config_findings, exposure_registry_findings, exposure_sites, http_admission_findings, inherits_lints, main, run_clippy, secret_dependency_findings, source_findings, test_sources, validate_build_policy, validate_toolchain
+from discipline import build_observation_recipe, cargo_config_findings, exposure_registry_findings, exposure_sites, http_admission_findings, inherits_lints, lint_selection_command, main, run_clippy, secret_dependency_findings, source_findings, test_sources, validate_build_policy, validate_lint_receipts, validate_toolchain
 from clippy_fixture import crate
 from hash_citations import audit, establish, occurrences
 
@@ -196,6 +196,32 @@ def _installation_fixture(base):
 
 
 class WorkspaceChecks(unittest.TestCase):
+    def test_conditional_clippy_requires_each_selection(self):
+        """Claim: A declared conditional Clippy selection names its package, test targets, default flag, features and profile, and missing or denied receipts cannot substitute for it.
+        ´claim:discipline:conditional-clippy-requires-each-selection´
+        ´test:integration:test-conditional-clippy-requires-each-selection´
+        """
+        from pathlib import Path
+        default = dict(package='pn', target='package-tests', default_features=True, features=[], profile='gate')
+        fixture = dict(package='pn', target='package-tests', default_features=False, features=['fixture'], profile='gate')
+        selections = {'pn/default': default, 'pn/fixture': fixture}
+        command = lint_selection_command(fixture, Path('/private/lint-target'))
+        self.assertIn('--all-targets', command)
+        self.assertIn('--no-default-features', command)
+        self.assertEqual(command[command.index('--features')+1], 'fixture')
+        self.assertEqual(command[-2:], ['-D', 'warnings'])
+        self.assertNotIn('--no-default-features', lint_selection_command(default, Path('/private/lint-target')))
+        receipts = [dict(source='current', invocation='gate-run', configuration=name, status=0, **row)
+                    for name, row in selections.items()]
+        validate_lint_receipts(selections, receipts, 'current', 'gate-run')
+        for changed in (receipts[:1], [*receipts, receipts[1]],
+                        [receipts[0], dict(receipts[1], status=1)],
+                        [receipts[0], dict(receipts[1], source='old')],
+                        [receipts[0], dict(receipts[1], features=[])],
+                        [receipts[0], dict(receipts[1], configuration='pn/foreign')]):
+            with self.assertRaises(ValueError):
+                validate_lint_receipts(selections, changed, 'current', 'gate-run')
+
     def test_installation_inventory(self):
         """Locked source and reviewed notices define expected bytes independently of the captured source view.
         ´claim:discipline:installation-inventory-independent´

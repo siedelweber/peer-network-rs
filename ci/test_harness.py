@@ -964,6 +964,60 @@ assert (root/'payload').read_text() == 'committed'
             with self.assertRaises(StructuralError):
                 identities(bad)
 
+    def test_package_configuration_inventory(self):
+        """Claim: Declared package selections retain their own exact case inventory and result keys, so absent, foreign and duplicate selection receipts cannot fill a required half.
+        ´claim:harness:package-configuration-inventory-is-exact´
+        ´test:integration:test-package-configuration-inventory´
+        """
+        declarations = rows()
+        declarations += [dict(kind='configuration', name='example/default', package='example',
+                              target='package-tests', default_features=True, features=[], profile='gate'),
+                         dict(kind='configuration', name='example/optional', package='example',
+                              target='package-tests', default_features=False, features=['optional'], profile='gate')]
+        declarations[7]['configurations'] = {
+            'example/default': ['example::case'],
+            'example/optional': ['example::case', 'example::optional'],
+        }
+        registry = Registry(declarations, globals()['declarations']())
+        registry.roster('nextest', ['example::case'], 'example/default')
+        registry.roster('nextest', ['example::case', 'example::optional'], 'example/optional')
+        with self.assertRaisesRegex(StructuralError, 'inventory differs'):
+            registry.roster('nextest', ['example::case'], 'example/optional')
+        with self.assertRaisesRegex(StructuralError, 'inventory differs'):
+            registry.roster('nextest', ['example::case', 'example::optional'], 'example/default')
+        with self.assertRaisesRegex(StructuralError, 'unknown package configuration'):
+            registry.roster('nextest', [], 'example/foreign')
+        workspace = result(registry)
+        selected = [registry.join(dict(operation=case, outcome='passed', duration_ms=1), 'current', config)
+                    for config, cases in [('example/default', ['example::case']),
+                                          ('example/optional', ['example::case', 'example::optional'])]
+                    for case in cases]
+        self.assertEqual([row['status'] for row in registry.matrix([workspace, *selected], 'current')],
+                         ['passed', 'passed', 'passed', 'held'])
+        with self.assertRaisesRegex(StructuralError, 'dropped or duplicate'):
+            registry.matrix([workspace, *selected[:-1]], 'current')
+        with self.assertRaisesRegex(StructuralError, 'dropped or duplicate'):
+            registry.matrix([workspace, *selected, selected[0]], 'current')
+        foreign = dict(selected[0], configuration='example/unknown')
+        with self.assertRaisesRegex(StructuralError, 'misreported configuration'):
+            registry.matrix([workspace, foreign, *selected[1:]], 'current')
+
+    def test_package_selection_command_is_scoped(self):
+        """Claim: A package selection names only its package and declared features in a gate-profile test invocation, keeping workspace-only host features out of the node run.
+        ´claim:harness:package-selection-command-is-scoped´
+        ´test:integration:test-package-selection-command-is-scoped´
+        """
+        from run_tests import package_selection_flags
+        base = dict(package='pn', target='package-tests', profile='gate')
+        self.assertEqual(package_selection_flags(dict(base, default_features=True, features=[])), ['--package', 'pn'])
+        self.assertEqual(package_selection_flags(dict(base, default_features=False, features=['fixture'])),
+                         ['--package', 'pn', '--no-default-features', '--features', 'fixture'])
+        self.assertEqual(package_selection_flags(dict(base, default_features=False,
+                                                      features=['debug-observation', 'fixture'])),
+                         ['--package', 'pn', '--no-default-features', '--features', 'debug-observation,fixture'])
+        with self.assertRaisesRegex(StructuralError, 'target or profile'):
+            package_selection_flags(dict(base, target='unknown', default_features=False, features=[]))
+
 
 if __name__ == '__main__':
     unittest.main()

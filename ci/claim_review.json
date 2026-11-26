@@ -10,6 +10,14 @@
       "review": "Read the entry guard and both basis fixtures: this site proves activation and structural fields; the separate basis claims prove resolving admission and execution requirements."
     },
     {
+      "operation": "ci::test_claims.Evidence.test_conditional_claim_requires_each_pair",
+      "path": "ci/test_claims.py",
+      "claim": "ROOT::claim:testing:conditional-claim-requires-each-pair",
+      "before": "",
+      "after": "Claim: A claim spanning selected configurations passes only with each reviewed site/configuration result; missing, ignored, foreign, stale, duplicate and failed halves cannot borrow a pass.",
+      "review": "The controlled pass and refusal neighbours bind this configuration rule to executable evidence."
+    },
+    {
       "operation": "ci::test_claims.Evidence.test_portion_citations",
       "path": "ci/test_claims.py",
       "claim": "ROOT::claim:testing:portion-citations-cannot-design",
@@ -682,6 +690,14 @@
       "review": "Read the dated-channel and component witnesses, full answering rustc commit acceptance, and wrong, missing, repeated or shortened commit-hash refusals. The expected public identity comes from build policy; a channel file alone cannot admit a different answering nightly. These assertions do not establish older-compiler compatibility or artifact reproducibility."
     },
     {
+      "operation": "ci::test_discipline.WorkspaceChecks.test_conditional_clippy_requires_each_selection",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:conditional-clippy-requires-each-selection",
+      "before": "",
+      "after": "Claim: A declared conditional Clippy selection names its package, test targets, default flag, features and profile, and missing or denied receipts cannot substitute for it.",
+      "review": "The controlled pass and refusal neighbours bind this configuration rule to executable evidence."
+    },
+    {
       "operation": "ci::test_discipline.WorkspaceChecks.test_credential_fixture_census",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:credential-fixture-binds-test-only-resolution",
@@ -776,6 +792,22 @@
       "before": "Claim: The current shared interchange library has no feature or binary branch and no unreviewed production dependency; its source-bound Value enum remains exhaustive, keeping one declared public configuration.",
       "after": "Claim: The current shared interchange library has no feature or binary branch and no unreviewed production dependency; its source-bound Value enum remains exhaustive, keeping one declared public configuration.",
       "review": "Read the secret-aware encoding dependency edge and isolated complete trace children; public encoding remains unchanged, private fixed values are compared without recording their content, and the manifest admits only the declared production dependency."
+    },
+    {
+      "operation": "ci::test_harness.Harness.test_package_configuration_inventory",
+      "path": "ci/test_harness.py",
+      "claim": "ROOT::claim:harness:package-configuration-inventory-is-exact",
+      "before": "",
+      "after": "Claim: Declared package selections retain their own exact case inventory and result keys, so absent, foreign and duplicate selection receipts cannot fill a required half.",
+      "review": "The controlled pass and refusal neighbours bind this configuration rule to executable evidence."
+    },
+    {
+      "operation": "ci::test_harness.Harness.test_package_selection_command_is_scoped",
+      "path": "ci/test_harness.py",
+      "claim": "ROOT::claim:harness:package-selection-command-is-scoped",
+      "before": "",
+      "after": "Claim: A package selection names only its package and declared features in a gate-profile test invocation, keeping workspace-only host features out of the node run.",
+      "review": "The controlled pass and refusal neighbours bind this configuration rule to executable evidence."
     },
     {
       "operation": "ci::test_harness.Harness.test_reference_tier",
@@ -8317,6 +8349,30 @@
       "review": "The one-process private control uses test-written public inputs or injected outcomes at the exact adapter seam; it does not claim installed signal delivery or supervisor behavior."
     },
     {
+      "operation": "pn::bin/pn::tests::fixture_arguments_select_only_named_input",
+      "path": "packages/node/src/main.rs",
+      "claim": "NODE::claim:lifecycle:fixture-arguments-select-only-named-input",
+      "before": "",
+      "after": "Claim: Closed attached fixture selection accepts the library's name only in the fixture build and refuses missing, malformed, repeated and wrong-operation selections while the plain build keeps the unknown-option route.",
+      "review": "The fixture-only test calls the library membership predicate for an accepted attached name, selects usage for invalid names and operations, and the separate plain build confirms clap retains the unknown-option diagnostic."
+    },
+    {
+      "operation": "pn::bin/pn::tests::fixture_entry_terminal_precedence",
+      "path": "packages/node/src/main.rs",
+      "claim": "NODE::claim:lifecycle:fixture-entry-terminal-precedence",
+      "before": "",
+      "after": "Claim: Shared grammar and returned help or version terminals keep their entry priority over a deferred fixture refusal, which prevents later public-input acquisition.",
+      "review": "The whole-entry test pairs fixture refusal with help, version and a shared grammar error; its injected acquisition ledger shows fixture refusal precedes public inputs. The process-level observation-setting priority remains the production entry order."
+    },
+    {
+      "operation": "pn::bin/pn::tests::fixture_unbound_start_never_runs",
+      "path": "packages/node/src/main.rs",
+      "claim": "NODE::claim:lifecycle:fixture-unbound-start-never-runs",
+      "before": "",
+      "after": "Claim: An accepted fixture name ends synchronous preparation as Configuration failure without continuing into command work, while a missing edition still wins.",
+      "review": "The injected preparation ledger reaches only the standing Configuration terminal for an accepted fixture name; its missing-edition neighbour refuses before notification acquisition. The runner owns the process exit and output."
+    },
+    {
       "operation": "pn::executor::register_fixed_messages_fit",
       "path": "packages/node/src/executor.rs",
       "claim": "NODE::claim:executor:register-fixed-messages-fit",
@@ -8605,5 +8661,25 @@
       "review": "Both public source forms use production checked construction and fixed request bytes; malformed witness text and the extra argument refuse during preparation, while fresh supported and unembedded start neighbours preserve distinct outcomes."
     }
   ],
-  "conditional_claims": {}
+  "conditional_claims": {},
+  "configuration_claims": {
+    "NODE::claim:lifecycle:fixture-arguments-select-only-named-input": [
+      "pn::bin/pn::tests::fixture_arguments_select_only_named_input@pn/gate/debug",
+      "pn::bin/pn::tests::fixture_arguments_select_only_named_input@pn/gate/default",
+      "pn::bin/pn::tests::fixture_arguments_select_only_named_input@pn/gate/fixture",
+      "pn::bin/pn::tests::fixture_arguments_select_only_named_input@pn/gate/fixture-debug",
+      "pn::bin/pn::tests::fixture_arguments_select_only_named_input@pn/gate/no-default"
+    ],
+    "NODE::claim:lifecycle:fixture-entry-terminal-precedence": [
+      "pn::bin/pn::tests::fixture_entry_terminal_precedence@pn/gate/debug",
+      "pn::bin/pn::tests::fixture_entry_terminal_precedence@pn/gate/default",
+      "pn::bin/pn::tests::fixture_entry_terminal_precedence@pn/gate/fixture",
+      "pn::bin/pn::tests::fixture_entry_terminal_precedence@pn/gate/fixture-debug",
+      "pn::bin/pn::tests::fixture_entry_terminal_precedence@pn/gate/no-default"
+    ],
+    "NODE::claim:lifecycle:fixture-unbound-start-never-runs": [
+      "pn::bin/pn::tests::fixture_unbound_start_never_runs@pn/gate/fixture",
+      "pn::bin/pn::tests::fixture_unbound_start_never_runs@pn/gate/fixture-debug"
+    ]
+  }
 }

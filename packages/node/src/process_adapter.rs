@@ -26,7 +26,7 @@ use pn::lifecycle::{
 use secrecy::{ExposeSecret, SecretBox};
 use serde_json::{Value, json};
 
-use crate::Command;
+use crate::{Command, FixtureRequest};
 
 const MAX_EDITION_BYTES: usize = "schema=org.peer-network.test.api-control-schema@".len()
     + ";register=org.peer-network.test.api-control-register@".len()
@@ -249,7 +249,38 @@ fn no_notification() -> NotificationValidity {
 
 /// Acquire only the selected public inputs before handing a checked decision to the runner.
 /// (´[ROOT-amend:api:health-lifecycle]´)
-pub(super) fn prepare(command: &Command, arguments: &[OsString], clock: Instant) -> OriginPreparation<Prepared> {
+pub(super) fn prepare(
+    command: &Command,
+    arguments: &[OsString],
+    shared: &[OsString],
+    clock: Instant,
+    fixture: &FixtureRequest,
+) -> OriginPreparation<Prepared> {
+    prepare_with(
+        command,
+        (arguments, shared),
+        clock,
+        fixture,
+        acquire_actual_public_inputs,
+        || {
+            let address = NotificationAddress::acquire();
+            let validity = address.as_ref().map_or_else(no_notification, NotificationAddress::validity);
+            (address, validity)
+        },
+        |flag| signal_hook::flag::register(signal_hook::consts::SIGTERM, flag).map(|_| ()),
+    )
+}
+
+fn prepare_with(
+    command: &Command,
+    argument_views: (&[OsString], &[OsString]),
+    clock: Instant,
+    fixture: &FixtureRequest,
+    acquire_public: impl FnOnce() -> PublicInputs,
+    notification: impl FnOnce() -> (Option<NotificationAddress>, NotificationValidity),
+    register_stop: impl FnOnce(Arc<AtomicBool>) -> io::Result<()>,
+) -> OriginPreparation<Prepared> {
+    let (arguments, shared) = argument_views;
     let mut initial_arguments = json!({
         "arguments": arguments.iter().map(|value| value.as_encoded_bytes().to_vec()).collect::<Vec<_>>()
     });
@@ -257,9 +288,16 @@ pub(super) fn prepare(command: &Command, arguments: &[OsString], clock: Instant)
     if controller.advance(Event::Prepare { at: 0 }).is_err() {
         return terminal(runtime_terminal("Configuration"), initial_arguments);
     }
+    let fixture_selected = match fixture.accepted(command) {
+        super::FixtureAdmission::Unselected => false,
+        #[cfg(feature = "fixture")]
+        super::FixtureAdmission::Selected => true,
+        #[cfg(feature = "fixture")]
+        super::FixtureAdmission::Refused(exit) => return terminal(*exit, initial_arguments),
+    };
     let stop = if matches!(command, Command::Start) {
         let flag = Arc::new(AtomicBool::new(false));
-        if let Err(error) = signal_hook::flag::register(signal_hook::consts::SIGTERM, Arc::clone(&flag)) {
+        if let Err(error) = register_stop(Arc::clone(&flag)) {
             initial_arguments["failure"] = json!({
                 "reason": "signal_registration_failed",
                 "kind": format!("{:?}", error.kind()),
@@ -271,9 +309,9 @@ pub(super) fn prepare(command: &Command, arguments: &[OsString], clock: Instant)
     } else {
         None
     };
-    let public = acquire_actual_public_inputs();
+    let public = acquire_public();
     let mut observed = public.observed(arguments);
-    let Some(argument_text) = arguments.iter().map(|argument| argument.to_str()).collect::<Option<Vec<_>>>() else {
+    let Some(argument_text) = shared.iter().map(|argument| argument.to_str()).collect::<Option<Vec<_>>>() else {
         return terminal(usage(PreparationRefusal::Arguments), observed);
     };
     match command {
@@ -311,8 +349,7 @@ pub(super) fn prepare(command: &Command, arguments: &[OsString], clock: Instant)
             } else {
                 return terminal(runtime_terminal("Configuration"), observed);
             }
-            let address = NotificationAddress::acquire();
-            let validity = address.as_ref().map_or_else(no_notification, NotificationAddress::validity);
+            let (address, validity) = notification();
             observed["notification"] = validity.public_detail();
             let facts = match public.facts(&argument_text, &validity) {
                 Ok(facts) => facts,
@@ -322,6 +359,9 @@ pub(super) fn prepare(command: &Command, arguments: &[OsString], clock: Instant)
                 Ok(bootstrap) => bootstrap,
                 Err(reason) => return terminal(usage(reason), observed),
             };
+            if fixture_selected {
+                return terminal(runtime_terminal("Configuration"), observed);
+            }
             if controller.advance(Event::PreparedStart(bootstrap)).is_err() {
                 return terminal(runtime_terminal("Configuration"), observed);
             }
@@ -996,6 +1036,57 @@ fn acquire_public_inputs(
     inputs.listen_pidfdid = lookup("LISTEN_PIDFDID").is_some();
     inputs.connection_input = lookup("PN_CONNECTION_INPUT").is_some();
     inputs
+}
+
+#[cfg(test)]
+pub(super) fn tested_prepare(
+    command: &Command,
+    argument_views: (&[OsString], &[OsString]),
+    clock: Instant,
+    fixture: &FixtureRequest,
+    edition: Option<&str>,
+    valid_notification: bool,
+    calls: &std::cell::RefCell<Vec<&'static str>>,
+) -> OriginPreparation<Prepared> {
+    prepare_with(
+        command,
+        argument_views,
+        clock,
+        fixture,
+        || {
+            calls.borrow_mut().push("public_inputs");
+            PublicInputs {
+                edition: edition.map(OsString::from),
+                edition_file: None,
+                file_bytes: None,
+                file_refused: false,
+                listen_pid: None,
+                listen_fds: None,
+                listen_fdnames: None,
+                listen_pidfdid: false,
+                connection_input: false,
+            }
+        },
+        || {
+            calls.borrow_mut().push("notification");
+            (
+                None,
+                NotificationValidity {
+                    present: true,
+                    form_valid: valid_notification,
+                    final_symlink: false,
+                    is_socket: valid_notification,
+                    reason: if valid_notification { "valid_socket" } else { "form_refused" },
+                    error_kind: None,
+                    os_code: None,
+                },
+            )
+        },
+        |_| {
+            calls.borrow_mut().push("signal_registration");
+            Ok(())
+        },
+    )
 }
 
 #[cfg(test)]

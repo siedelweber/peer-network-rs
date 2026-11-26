@@ -1,0 +1,7 @@
+kind = "configuration"
+name = "pn/gate/no-default"
+package = "pn"
+target = "package-tests"
+default_features = false
+features = []
+profile = "gate"

@@ -94,11 +94,11 @@ def nextest_events(text, inventory, metadata, source, configuration, registry=No
             if raw_name in expected:
                 raise StructuralError(f'ambiguous structured test identity: {raw_name}')
             operation = f'{binary}::{name}'
-            if operation not in registry.cases:
+            if operation not in registry.expected('nextest', configuration):
                 raise StructuralError(f'unregistered case: {operation}')
-            level = registry.case_budget(operation)
+            level = registry.case_budget(operation, configuration)
             expected[raw_name] = (operation, level, details['ignored'])
-    registry.roster('nextest', [v[0] for v in expected.values()])
+    registry.roster('nextest', [v[0] for v in expected.values()], configuration)
     if selected is not None:
         if not selected <= {value[0] for value in expected.values()}:
             raise StructuralError('tier selection exceeds the full inventory')
@@ -288,6 +288,116 @@ def invocation_tier(suite, registry):
     return registry.tiers[suite['tier']].get('execution_tier', suite['tier'])
 
 
+def package_selection_flags(selection):
+    if selection['target'] != 'package-tests' or selection['profile'] != 'gate':
+        raise StructuralError('unsupported package test target or profile')
+    flags = ['--package', selection['package']]
+    if not selection['default_features']:
+        flags.append('--no-default-features')
+    if selection['features']:
+        flags += ['--features', ','.join(selection['features'])]
+    return flags
+
+
+def package_selections(run, registry, source):
+    """Build, inventory and execute each declared package selection in isolation."""
+    import re
+    policy = Path(__file__).with_name('nextest.toml')
+    results = []
+    for name, selection in sorted(registry.configurations.items()):
+        directory = run/'configurations'/re.sub(r'[^a-zA-Z0-9-]', '-', name)
+        directory.mkdir(parents=True, exist_ok=True)
+        flags = package_selection_flags(selection)
+        env = {**{key: value for key, value in os.environ.items() if not key.startswith('PROPTEST_')},
+               'CARGO_NET_OFFLINE': 'true', 'NEXTEST_EXPERIMENTAL_LIBTEST_JSON': '1',
+               'PN_HARNESS_SOURCE': source, 'PN_HARNESS_CONFIGURATION': name,
+               'PN_HARNESS_UTC': instant(), 'PN_TEST_PYTHON': str(Path(sys.executable).resolve()),
+               'PN_GATE_STEP': 'test-evidence'}
+        def execute(operation, argv):
+            started = time.monotonic()
+            with (directory/(operation+'.stdout')).open('w') as out, (directory/(operation+'.stderr')).open('w') as err:
+                process = invoke(argv, out, err, env)
+            (directory/(operation+'.observations.json')).write_text(json.dumps(process.observations))
+            duration = time.monotonic()-started
+            print(f'PACKAGE-SELECTION configuration={name} operation={operation} status={process.returncode} wall={duration:.6f}s', flush=True)
+            if process.returncode:
+                print((directory/(operation+'.stderr')).read_text(), file=sys.stderr)
+                print((directory/(operation+'.stdout')).read_text(), file=sys.stderr)
+            results.append(event(name+':'+operation, 'test-command', duration*1000,
+                                 f'exit:{process.returncode}', source, name))
+            return process.returncode
+        build = ['cargo', 'nextest', 'list', *flags, '--locked', '--offline', '--cargo-profile', selection['profile'],
+                 '--config-file', str(policy), '--profile', 'default', '--user-config-file', 'none',
+                 '--list-type', 'binaries-only', '--message-format', 'json']
+        status = execute('build', build)
+        if status:
+            raise StructuralError('package selection build failed: '+name)
+        inventory_command = ['cargo', 'nextest', 'list', '--binaries-metadata', str(directory/'build.stdout'),
+                             '--config-file', str(policy), '--profile', 'default', '--user-config-file', 'none',
+                             '--message-format', 'json']
+        status = execute('inventory', inventory_command)
+        if status:
+            raise StructuralError('package selection inventory failed: '+name)
+        inventory = json.loads((directory/'inventory.stdout').read_text())
+        if {suite['package-name'] for suite in inventory['rust-suites'].values()} != {selection['package']}:
+            raise StructuralError('package selection contains another package: '+name)
+        registry.roster('nextest', [f'{binary}::{case}' for binary, suite in inventory['rust-suites'].items()
+                                   for case in suite['testcases']], name)
+        config_path = directory/'nextest.toml'
+        config_path.write_text(policy.read_text().replace('dir = ".lane/nextest"',
+                                                         'dir = '+json.dumps(str(directory.resolve()/'nextest'))))
+        cpu_directory = case_cpu_environment(env, directory/'case-cpu')
+        runner = ['cargo', 'nextest', 'run', '--config-file', str(config_path), '--user-config-file', 'none',
+                  '--profile', 'default', '--retries', '0', '--no-fail-fast', '--ignore-default-filter',
+                  '--run-ignored', 'default', '--message-format', 'libtest-json-plus',
+                  '--message-format-version', '0.1', '--binaries-metadata', str(directory/'build.stdout')]
+        status = execute('run', runner)
+        cases = nextest_events((directory/'run.stdout').read_text(), inventory, {}, source, name, registry)
+        if cpu_directory is not None:
+            join_case_cpu(cases, cpu_directory, source)
+        if any(row['outcome'] != 'passed' for row in cases):
+            raise StructuralError('package selection omitted or failed a required case: '+name)
+        tree_command = ['cargo', 'tree', '--offline', '--locked', *flags, '-e', 'normal,build']
+        if execute('tree', tree_command):
+            raise StructuralError('package selection resolution failed: '+name)
+        executable_command = ['cargo', 'build', '--offline', '--locked', '--profile', selection['profile'],
+                              *flags, '--bin', selection['package'], '--message-format=json']
+        if execute('executable', executable_command):
+            raise StructuralError('package selection executable build failed: '+name)
+        artifacts = [item for line in (directory/'executable.stdout').read_text().splitlines()
+                     if (item := json.loads(line)).get('reason') == 'compiler-artifact'
+                     and item.get('target', {}).get('name') == selection['package']
+                     and item.get('target', {}).get('kind') == ['bin'] and item.get('executable')]
+        if len(artifacts) != 1:
+            raise StructuralError('package selection needs one executable artifact: '+name)
+        binary_path = Path(artifacts[0]['executable']).resolve(strict=True)
+        binary = binary_path.read_bytes()
+        retained_binary = directory/'executable.bin'
+        retained_binary.write_bytes(binary)
+        tree = (directory/'tree.stdout').read_text()
+        manual_absence = dict(tree=str(directory/'tree.stdout'), executable=str(retained_binary),
+                              method='package-scoped normal/build tree plus isolated executable byte-marker inspection',
+                              tree_has_fixture='pn-fixtures v' in tree,
+                              executable_has_fixture_marker=b'pn_fixtures' in binary,
+                              limits='Tree proves selected resolution; marker absence is not a proof of absent optimized code or installed service.')
+        build_bytes = (directory/'build.stdout').read_bytes()
+        inventory_bytes = (directory/'inventory.stdout').read_bytes()
+        receipt = dict(source=source, invocation=os.environ.get('PN_BUILDGRAPH_RUN'), configuration=name,
+                       package=selection['package'], target=selection['target'],
+                       default_features=selection['default_features'], features=selection['features'],
+                       profile=selection['profile'], build_sha256=hashlib.sha256(build_bytes).hexdigest(),
+                       inventory_sha256=hashlib.sha256(inventory_bytes).hexdigest(),
+                       roster=len(cases), executed=sum(row['outcome'] == 'passed' for row in cases), status=status,
+                       manual_absence=manual_absence)
+        (directory/'receipt.json').write_text(json.dumps(receipt, indent=2)+'\n')
+        print(f'PACKAGE-SELECTION-RECEIPT configuration={name} roster={receipt["roster"]} executed={receipt["executed"]} artifact={directory/"receipt.json"}', flush=True)
+        print(f'PACKAGE-ABSENCE configuration={name} tree_has_fixture={manual_absence["tree_has_fixture"]} executable_has_fixture_marker={manual_absence["executable_has_fixture_marker"]} artifact={directory/"receipt.json"}', flush=True)
+        results += cases
+        if status:
+            raise StructuralError('package selection run failed: '+name)
+    return results
+
+
 def split_main(action):
     """Build one complete inventory, execute disjoint tiers, require their union."""
     run = Path('.lane/tier-tests')
@@ -320,6 +430,10 @@ def split_main(action):
             print((run/(name+'.stderr')).read_text(), file=sys.stderr)
             print((run/(name+'.stdout')).read_text(), file=sys.stderr)
         return result.returncode
+    if action == 'package-selections':
+        run.mkdir(parents=True, exist_ok=True)
+        package_selections(run, registry, source)
+        return 0
     if action == 'prepare':
         run.mkdir(parents=True, exist_ok=True)
         (run/'manifest.json').unlink(missing_ok=True)
@@ -373,14 +487,16 @@ def split_main(action):
                 raise StructuralError('stale or mismatched required tier')
             status |= result['status']
             records += result['records']
+        records += package_selections(run, registry, source)
         cases = [row for row in records if row.get('scope') == 'case']
-        registry.roster('nextest', [row['operation'] for row in cases if registry.cases[row['operation']]['runner'] == 'nextest'])
-        registry.roster('doctest', [row['operation'] for row in cases if registry.cases[row['operation']]['runner'] == 'doctest'])
+        workspace_cases = [row for row in cases if row['configuration'] == CONFIGURATION]
+        registry.roster('nextest', [row['operation'] for row in workspace_cases if registry.cases[row['operation']]['runner'] == 'nextest'])
+        registry.roster('doctest', [row['operation'] for row in workspace_cases if registry.cases[row['operation']]['runner'] == 'doctest'])
         if any(row['outcome'] not in {'passed', 'failed'} for row in cases):
             raise StructuralError('required invocation omitted or ignored a case')
-        records += contract_events(run/'contracts', registry, source, cases)
+        records += contract_events(run/'contracts', registry, source, workspace_cases)
         Path('.lane/performance-events.jsonl').write_text(''.join(json.dumps(row)+'\n' for row in records))
-        print(f'REQUIRED-TIERS joined=4 cases={len(cases)} exactly_once=true status={status}')
+        print(f'REQUIRED-TIERS joined=4 cases={len(workspace_cases)} exactly_once=true status={status}')
         return status
     if action not in {'fast', 'service', 'reference-certificate', 'extended'}:
         raise StructuralError('unknown required invocation')

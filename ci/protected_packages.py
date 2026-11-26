@@ -80,6 +80,10 @@ def required_packages(root):
     selections = {(package, True, ()) for package in required}
     if 'pn-credential-generator' in required:
         selections.add(('pn-credential-generator', True, ('debug-observation',)))
+    node_features = tomllib.loads((root/'packages/node/Cargo.toml').read_text()).get('features', {})
+    if node_features.get('fixture') == ['dep:pn-fixtures']:
+        selections.add(('pn', False, ('fixture',)))
+        selections.add(('pn', False, ('debug-observation', 'fixture')))
     return selections
 
 

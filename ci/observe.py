@@ -208,7 +208,7 @@ def syntax_census(binary=None):
     result['source']=source_id()
     result['declared_configuration']='nine production packages, host target, default and no-default features with the admitted debug-observation forwarders; development-only pn-testkit, pn-verification and records/epoch test-support are outside this production configuration'
     for package in metadata['packages']:
-        admitted={'cli-common':{'debug-observation':[],'observation-test-hook':[]},'pn':{'debug-observation':['cli-common/debug-observation']},'pn-credential-generator':{'debug-observation':['cli-common/debug-observation']},'documents':{'debug-observation':['cli-common/debug-observation']},'pn-records':{'test-support':[]},'pn-epoch':{'default':[],'test-support':['pn-records/test-support']},'pn-host':{'default':[],'development-network':['dep:pn-wallet']},'pn-wallet':{'default':[],'fuzzing':[]},'pn-fixtures':{}}
+        admitted={'cli-common':{'debug-observation':[],'observation-test-hook':[]},'pn':{'debug-observation':['cli-common/debug-observation'],'fixture':['dep:pn-fixtures']},'pn-credential-generator':{'debug-observation':['cli-common/debug-observation']},'documents':{'debug-observation':['cli-common/debug-observation']},'pn-records':{'test-support':[]},'pn-epoch':{'default':[],'test-support':['pn-records/test-support']},'pn-host':{'default':[],'development-network':['dep:pn-wallet']},'pn-wallet':{'default':[],'fuzzing':[]},'pn-fixtures':{}}
         if package['id'] in metadata['workspace_members'] and '/packages/' in package['manifest_path'] and package['features'] and package['features']!=admitted.get(package['name']):
             raise StructuralError('new first-party feature configuration requires census admission')
     return result

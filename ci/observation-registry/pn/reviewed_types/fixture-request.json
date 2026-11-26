@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "FixtureRequest",
+    "package": "pn",
+    "path": "packages/node/src/main.rs",
+    "syntax": "# [doc = \" A deferred fixture choice; shared grammar terminals are decided first.\"] enum FixtureRequest { # [cfg (not (feature = \"fixture\"))] Disabled , # [cfg (feature = \"fixture\")] Missing , # [cfg (feature = \"fixture\")] Candidate (String) , # [cfg (feature = \"fixture\")] Refused , }"
+  }
+}

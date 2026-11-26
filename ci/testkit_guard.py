@@ -11,7 +11,7 @@ from devperf import StructuralError
 
 # Complete first-party feature classification; spelling is not a policy rule.
 FEATURE_CLASSES = {
-    'pn': {'debug-observation': 'production'},
+    'pn': {'debug-observation': 'production', 'fixture': 'production'},
     'cli-common': {'debug-observation': 'production', 'observation-test-hook': 'development-only'},
     'documents': {'debug-observation': 'production'}, 'execwrap': {}, 'pn-act-authentication': {}, 'pn-act-profile': {},
     'pn-credential-derivation': {}, 'pn-credential-generator': {'debug-observation': 'production'},

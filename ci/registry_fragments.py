@@ -230,7 +230,7 @@ def read(root, name):
             raise ValueError('unknown fragment key or missing identity: '+path)
         pairs.append(((kind, row['name']), path, row))
     rows = distinct(pairs)
-    order = {'level': 0, 'implementation': 1, 'tier': 2, 'suite': 3, 'row': 0}
+    order = {'level': 0, 'implementation': 1, 'configuration': 2, 'tier': 3, 'suite': 4, 'row': 0}
     keys = sorted(rows, key=lambda key: (order[key[0]], key[1].encode('utf-8')))
     return dict(namespace=schema['namespace'], version=schema['version'],
                 rows=[rows[key][1] for key in keys])
