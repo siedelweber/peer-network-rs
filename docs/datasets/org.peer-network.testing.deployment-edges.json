@@ -813,6 +813,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This locates the unselected static-check route with its existing admission owners and supplies no implementation evidence.",
+      "relation": "realizes",
+      "source": "ROOT::dec:design:epoch-route-disposition",
+      "target": "ROOT::open:design:cross-build-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "The exact boundary-sequence model checks published schedules and controller arithmetic, not plant performance.",
       "relation": "realizes",
       "source": "ROOT::dec:design:policy-schedules",
@@ -1153,6 +1160,13 @@
       "relation": "realizes",
       "source": "ROOT::open:vision:deployment-profile",
       "target": "rem:deployment:wall-calibration-oversight"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This locates the unselected static-check route with its existing admission owners and supplies no implementation evidence.",
+      "relation": "realizes",
+      "source": "ROOT::preview:design:replay-proof-cuts",
+      "target": "ROOT::open:design:cross-build-replay"
     },
     {
       "conditional_on": "",
