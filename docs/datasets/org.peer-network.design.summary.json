@@ -23,12 +23,12 @@
     },
     {
       "category": "chapter",
-      "count": 69,
+      "count": 68,
       "name": "03 Network"
     },
     {
       "category": "chapter",
-      "count": 285,
+      "count": 288,
       "name": "04 Graph"
     },
     {
@@ -48,7 +48,7 @@
     },
     {
       "category": "chapter",
-      "count": 37,
+      "count": 38,
       "name": "8 Transport"
     },
     {
@@ -88,7 +88,7 @@
     },
     {
       "category": "chapter",
-      "count": 233,
+      "count": 234,
       "name": "F Verification"
     },
     {
@@ -98,12 +98,12 @@
     },
     {
       "category": "chapter",
-      "count": 146,
+      "count": 145,
       "name": "H Necessity"
     },
     {
       "category": "chapter",
-      "count": 58,
+      "count": 59,
       "name": "Appendix I — Deployment"
     },
     {
@@ -144,7 +144,7 @@
     },
     {
       "category": "totals",
-      "count": 1759,
+      "count": 1763,
       "name": "inventory"
     },
     {
@@ -154,7 +154,7 @@
     },
     {
       "category": "labels",
-      "count": 1725,
+      "count": 1729,
       "name": "explicit"
     },
     {

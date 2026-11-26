@@ -48,8 +48,8 @@
     },
     {
       "document": "Entering state and selected evidence",
-      "members": "Cumulative facts for touched subjects and irreducible inputs",
-      "references": "Derive outgoing values; no stored epoch ordinal by default"
+      "members": "Cumulative facts for touched subjects, including undated branch, settlement and challenge facts, and irreducible inputs",
+      "references": "Derive outgoing values; no stored epoch number"
     },
     {
       "document": "Epoch root — common",

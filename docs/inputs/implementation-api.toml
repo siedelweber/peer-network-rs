@@ -13,7 +13,7 @@ bite = 8
 name = "read-published"
 operation = "Read published standing and title"
 contracts = ["sig:design:storage", "sig:design:host", "sig:design:readouts"]
-behavior = "Select an admitted published epoch at an explicit boundary and return its standing or title projection with epoch, declaration and publication references. Do not recompute with current declarations or expose a candidate as published."
+behavior = "Select an admitted epoch and return its computed standing with the selected input references, or require an explicitly named timeline and evaluation point for a computed title reading; list all branches separately and never select a default winner. Do not recompute with current declarations or expose a candidate as accepted. The successor title service is designed and unbuilt under (`open:actepoch:title-admission`)."
 requirements = ["final-state", "formation-title", "terminal-separation"]
 bite = 8
 
@@ -21,7 +21,7 @@ bite = 8
 name = "fetch-publication"
 operation = "Read fixed epoch payloads"
 contracts = ["sig:design:host", "dec:api:schema"]
-behavior = "The API owners admit named domain reads, their contextual discovery and preview before service. Exact payload bytes follow (`inv:design:fixed-payload-carriage`); typed projections are distinct read results under (`inv:api:document-bytes`). The first historical read continues to return its exact version-one document under (`inv:api:document-bytes`)."
+behavior = "The API owners admit named domain reads, their contextual discovery and preview before service. Exact payload bytes follow (`inv:design:fixed-payload-carriage`); typed projections are distinct read results under (`inv:api:document-bytes`). Until the coordinated title replacement, the first historical read returns its exact version-one document under (`inv:api:document-bytes`); that cut withdraws delivery of title-bearing documents of the single-owner design under (`conv:actepoch:title-removal`). The successor title service is designed and unbuilt: it reads an explicitly named timeline at a named evaluation point and separately lists branches, without a default winner."
 requirements = ["publication"]
 bite = 8
 
@@ -29,7 +29,7 @@ bite = 8
 name = "replay-inputs"
 operation = "Fetch replay inputs"
 contracts = ["sig:design:host", "sig:design:replay", "alg:design:reconstruction"]
-behavior = "Return the disclosed causes, declaration editions and exact evidence documents named by the historical package or, after admission, by the epoch record under (`inv:design:epoch-reference-authority`). A bounded page states its scope and continuation; only the verifier can establish complete reconstruction. The replay crate consumes these public bytes without server-side replay authority."
+behavior = "Return the disclosed causes, declaration editions and exact evidence documents named by the historical package until the coordinated title replacement, or, after admission, by the epoch record under (`inv:design:epoch-reference-authority`). A bounded page states its scope and continuation; only the verifier can establish complete reconstruction. The replay crate consumes these public bytes without server-side replay authority. Delivery of old title-bearing packages ends with (`conv:actepoch:title-removal`)."
 requirements = ["public-inputs", "replay"]
 bite = 9
 

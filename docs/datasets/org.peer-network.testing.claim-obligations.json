@@ -3595,6 +3595,19 @@
     },
     {
       "claims": [],
+      "closing_condition": "Admit the successor subjects and operations, execute the independent transition and seam cases with source/configuration-matched evidence, and replace every dependent single-owner route with its registrations and retired labels.",
+      "closing_step": "Coordinated title replacement under preview:actepoch:title-cuts after identity admission",
+      "hold": "ROOT::open:actepoch:title-admission",
+      "missing": "Admitted sufficient representations and operations, independent full-run versus undated transition controls, seam and dated-summary evidence, and the coordinated replacement of all single-owner callers.",
+      "name": "ROOT::verif:actepoch:title-transition",
+      "owner": "Graph, act/epoch, identity, epoch, publication and API designers",
+      "path": "docs/design/act-epoch-concept.md",
+      "realizers": [],
+      "status": "held",
+      "witnessed_labels": []
+    },
+    {
+      "claims": [],
       "closing_condition": "Admit the contextual schema/register, reviewed mappings and finite execution resources; attach independent passing evidence for view agreement, exact payload carriage and manifest scope/counting before serving an epoch-query edition.",
       "closing_step": "Epoch-query admission and implementation cuts before production enablement",
       "hold": "ROOT::open:api:epoch-view-admission",
@@ -4094,17 +4107,14 @@
       "closing_step": "Bite 4 follow-up, recipient evidence in bite 5 and integrated replay in bite 11",
       "evidence_paragraph": "VERIFICATION::amend:verification:bite-four-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Recipient compilation and integrated deployment replay remain with bites 5 and 11.",
+      "missing": "Successor cited-state party controls, persistent recipient compilation and integrated replay remain with the coordinated title replacement; current prior-owner controls witness no patch-tag title predicate.",
       "name": "ROOT::verif:design:settlement-party-cases",
       "owner": "Graph implementer and verification reviewer",
       "path": "docs/design/implementation.md",
       "premises": "Declared public verifier, independent raw-carrier enumerator and three isolated party mismatches; no deployment authentication theorem. Reference binding remains separate from authorization.",
       "realizers": [],
       "status": "scoped-supported",
-      "witnessed_labels": [
-        "rem:graph:settlement-party-mismatch",
-        "ver:settlement:wrong-party"
-      ]
+      "witnessed_labels": []
     },
     {
       "claims": [],

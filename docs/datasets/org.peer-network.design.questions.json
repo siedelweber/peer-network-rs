@@ -70,7 +70,7 @@
       "instruction": "Historical question and disposition for the admitted local carrier: Your separation of mathematical objects and required evidence is a safe provisional representation, provided none of the required disclosures is omitted. Hold any claim that ``cond:comparator:actor-entry-no-privileged-accrual`` introduces a fifth computational input until the boundary wording is corrected.",
       "reading": "Historical question and disposition for the admitted local carrier: Study judgment: Represent the four mathematical objects and separate required public evidence; ask maintainers to confirm the record boundary.",
       "section": "Q06 — Burn disclosure boundary",
-      "status": "**Status: corrected.** The earlier four-object distinction is the historical local carrier’s contract. At network-v0.37.0-draft.2 closure consumes supplied Actor entries, acts, carried state and specified constants; source audit and price belong to the separate oracle and optional practices. Existing disclosure fields and refusals remain local, while successor membership is held at its owning admission.",
+      "status": "**Status: corrected.** The earlier four-object distinction is the historical local carrier’s contract. At network-v0.37.1 closure consumes supplied Actor entries, acts, carried state and specified constants; source audit and price belong to the separate oracle and optional practices. Existing disclosure fields and refusals remain local, while successor membership is held at its owning admission.",
       "topic": "Burn disclosure boundary"
     },
     {
@@ -115,7 +115,7 @@
       "instruction": "Order-free standing folds are safe. Narrow your provisional “acceptance and recognition” wording: retain authoritative order for formation, but title/conflict recognition uses the specified epoch fold rather than intra-epoch latest-record order.",
       "reading": "Study judgment: Retain authoritative act order for acceptance and recognition while proposing order-free standing folds; do not claim the conflicting prose has been resolved.",
       "section": "Q10 — Order and standing",
-      "status": "**Status: corrected.** Order can affect formation, dependency validity, admission and order-sensitive raw quantities, while dependency-compliant permutations preserve standing for fixed accepted membership, final ledger, epoch title fold and constants, and conflict recognition reads membership and epoch. network-v0.37.0-draft.2, ``post:epoch:standing-epoch-set-determinism``, now explicitly names epoch inclusion as the host’s only lever over standing; order, position and intra-epoch placement reach no standing quantity.",
+      "status": "**Status: corrected.** Authoritative grouping and counted causal precedence determine formation and structural completion; no residual host ordering chooses between branches. For a fixed complete accepted set and its grouping, the shared branch graph and persistent recipient inputs are deterministic under network-v0.37.1 ``thm:graph:epoch-branch-fold`` and ``post:epoch:standing-epoch-set-determinism``. The single-owner implementation remains only until preview:actepoch:title-cuts.",
       "topic": "Order and standing"
     },
     {
@@ -145,7 +145,7 @@
       "instruction": "Apply the census and title-coupling rule now; your precedence reading is safe. The conflicting recipient cases have a specified result, so only incompatible fixture expectations need remain held.",
       "reading": "Study judgment: Use the explicit census precedence rule for the design and hold conflicting recipient cases.",
       "section": "Q13 — Settlement title coupling",
-      "status": "**Status: corrected.** Accept and Ratify allocate outward only for positive mandatory folded coordinates and a recognized, unchallenged, title-transferring settlement event, otherwise resolving to self, with successful transfers event-persistent and title sentiment-independent.",
+      "status": "**Status: corrected.** Network-v0.37.1 ``post:epoch:settlement-standing-title-coupling`` and ``lem:epoch:authored-vouch-withdrawable`` give persistent outward allocations from structurally completed handshake events, subject to positive mandatory coordinates and registration. Siblings and later Withdraw or Rescind challenges neither undo completion nor re-weigh outward settlement cells home. Incomplete handshakes resolve to self. This full successor recipient scope is designed and unbuilt under preview:actepoch:title-cuts.",
       "topic": "Settlement title coupling"
     },
     {
@@ -228,7 +228,7 @@
       "instruction": "Your records-plus-final-ledger signature is safe. Reject any replay path that obtains emission from unreported local state.",
       "reading": "Study judgment: Propose an explicit records-plus-final-ledger input and request a corrected formal signature.",
       "section": "Q21 — Compiler input signature",
-      "status": "**Status: corrected.** Projection completeness replays accepted records and the final ledger with fixed effective constants and the published domain-profile rule, deriving the epoch title fold from accepted records and emission from the final ledger and in-force safety threshold.",
+      "status": "**Status: corrected.** Projection completeness reads the complete supplied records, ledger and effective operands, including sufficient shared branch and persistent-event facts. It computes outgoing title state and emission rather than reading a committed owner certificate or unreported local state. Exact successor input representations remain open:actepoch:title-admission; the current compiler and all dependent operations change together under preview:actepoch:title-cuts.",
       "topic": "Compiler input signature"
     },
     {
@@ -340,7 +340,7 @@
       "instruction": "Your Layer-1 scope is safe: expose the specified public inputs/readings and keep bridge, CAN, reward and licensing engines outside it. Optional cached terminal services must not become standing inputs.",
       "reading": "Study judgment: Propose only the named public raw-input service, with no bridge, CAN, reward or licensing engine.",
       "section": "Q32 — Terminal boundary",
-      "status": "**Status: corrected.** The canonical terminal bridge model supplies its primitives from public inputs, with optional host caches and guild replacements under the terminal grant, while Layer 1 comprises admission closure and required evidence.",
+      "status": "**Status: corrected.** The common record supplies the branch graph and evidence without selecting, funding, releasing or disputing an externally honoured branch. The designed successor interface offers a computed named-timeline reading at a named evaluation point and a separate listing of branches, never a default winner; its admission and implementation remain open:actepoch:title-admission. Optional terminal results are not standing inputs.",
       "topic": "Terminal boundary"
     },
     {

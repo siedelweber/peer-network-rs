@@ -484,7 +484,7 @@ MATERIAL_EXCEPTIONS = {
     'rem:graph:act-time-is-summary': 'courtesy',
     'rem:graph:act-time-not-wall-clock': 'courtesy',
     'rem:graph:causal-frontier-not-ancestry': 'courtesy',
-    'rem:graph:dependency-nonce-concealment': 'courtesy',
+    'rem:graph:dependency-blinding-value-concealment': 'courtesy',
     'rem:graph:payload-size-not-act-cost': 'courtesy',
     'rem:graph:settlement-reputation': 'courtesy',
     'rem:introduction:mechanism-agnostic': 'courtesy',
@@ -544,7 +544,7 @@ def validate():
     inventory = data('inventory')
     constants = data('constants')
     material_classes(inventory)
-    if not (len(inventory) == 1759 and len({row['label'] for row in inventory}) == 1759):
+    if not (len(inventory) == 1763 and len({row['label'] for row in inventory}) == 1763):
         raise ValueError('inventory label census')
     placeholders = [row for row in inventory if re.search(r'^Track\s+.+\s+as a separately addressable\s+', row['statement'])]
     structural = {'section', 'subsection', 'appendix', 'motto'}
@@ -661,13 +661,13 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.37.0-draft.2'
-CURRENT_INVENTORY_PIN = 'aef03303123287f6f6008e47b49f2a24a664ac22419ae6e313a8ee3c72533e32'
-REFRESHED_CONSTANTS_PIN = '921c3b7276a935cdb183eaa0f68b7580a0a7d6858cdda6de0ee45e2469cebdb0'
-RELEASE_QUESTIONS_PIN = '8d7b218100fb057d82534e30cf25cbad61c3e7c494fcfd4fe844313b8118b4d3'
+PAPER_TAG = 'network-v0.37.1'
+CURRENT_INVENTORY_PIN = '63fe8ce772485e9b0280497e513aba9322df3b58d079cea725ca7b86ac5683fd'
+REFRESHED_CONSTANTS_PIN = '6c996330aa0be0319caad1f25afdeab78fcc2c3c8db76a45acebf5110f28e2f0'
+RELEASE_QUESTIONS_PIN = '85e2c58fe8246fdbca71042a318d3c7546109708532b2030638f816ed0779251'
 
 
-CRATES_PIN = '134b9943c2133eeadf987dbdfaa98f2c8785b4264802d1a8b3c65e4af1c5c9f7'
+CRATES_PIN = '1567509b6e394ad0843b1a045401f3e5760b979b38b4d5bd0a58458a8c714ae6'
 BITES_PIN = '003bc70fe0527d814d8a79c26485298a4d3e3f7c4d2934b18eb8fb33eaec3543'
 QUESTIONS_PIN = '1cef50068caab7fc33e4754f42e7084bcbeed32837ab08ee8bc958ff96e8e644'
 

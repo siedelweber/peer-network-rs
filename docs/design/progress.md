@@ -1,4 +1,4 @@
-# Specification realization tracker at network-v0.37.0-draft.2 · `reg:progress:overview`
+# Specification realization tracker at network-v0.37.1 · `reg:progress:overview`
 
 **Convention (Citation coverage)** · `conv:progress:citation-coverage` Under (`rule:testing:public-record-conformance`), this tracker measures inspectable citation coverage, not the share of the specification that is built. Unassigned means no design record makes a whole-statement citation to the statement's exact paper label. Much implemented behaviour is described by records that cite a group of paper statements without naming every label, so unassigned is a citation-coverage gap, not a claim that nothing implements the statement. Realized means an inspectable route from an exact citation to executed evidence in a named scope. Its count cannot stand for implementation completeness: broader references and other implementation evidence lie outside this exact-label join. An exact citation belongs in the sentence that designs or decides the paper statement's operative clause at this layer. The criterion is the same for definitions, axioms, corollaries and other statement kinds; a plain citation claims the whole statement, not merely a neighbouring or selected clause. Shared vocabulary alone is insufficient. Sibling labels, including rejected simplifications, are checked against the same criterion, with uncovered clauses distinguished from adopted ones. A held statement stays held until an unheld record designs its operative clause: a citation covering only part cannot discharge design work retained by held records. When the covered clause has its own label, the record cites that label. Otherwise a portion citation uses the literal opener `portion{`, the statement label in doubled backticks, a semicolon and space, the covered clause in words, and a closing `}`. The clause is nonempty and contains no braces or line breaks. The ordinary label checker retains the existing paper-exhibit boundary; the tracker structural check reads the wrapper, resolves its exact inventory label and refuses malformed wrappers. A portion records partial design, never partial evidence. A record that designs the whole statement cites it plainly even when its witness covers less; the witnessing rule in (`conv:progress:evidence-routes`) governs claim placement, without narrowing the design citation. A portion is attention only, retained with its record and clause in the statement table. It creates no design or evidence route, supplies no bite membership, and cannot lift held or unassigned. A portion in a held record does not hold the row: that record holds the statement only through a plain citation, because a portion claims no design of the whole. A separate plain citation of the same label still has its ordinary whole-statement meaning. This explicit distinction prevents a partial design from discharging the work retained by a hold. A premise citation instead uses `premise{`, the exact statement label in doubled backticks, a semicolon and space, the nonempty reason it is needed, and `}`. It records a reason for attention to the statement, not design of that statement or conformance reliance on an excluded part. The checker validates its syntax and inventory target just as for a portion, excludes it from all design and evidence routes even beside an executed claim, and retains it in the existing attention carrier's portions field with the clause prefixed by Premise only:. A separate plain occurrence still designs the statement on its own merits. This explicit relation lives beside the argument, not in a hand-kept exception list; no language inference guesses whether prose relies on a premise. Citation placement follows the design, never a desired evidence status. Conformance decisions use the companion names relies and realizes, followed by a brace, a doubled-backtick label, a semicolon and space, a nonempty part or reason, and a closing brace. Claim-site comments use matching acute accents instead, retaining the ordinary citation parentheses inside the wrapper so that the claim-site citation reader sees the same target. The shared strict parser refuses malformed wrappers. Relies names the excluded premise and what depends on it; realizes names the claimed part used or realized, or a conditional repository statement used without its marked premise. Neither is a whole-paper realization route merely by being present; paper targets remain scoped attention in this tracker. Premise keeps its existing attention-only meaning. Only explicit relies relations create conditions under (`conv:testing:deployment-dependencies`).
 
@@ -14,29 +14,29 @@
 
 **Convention (Excluded carriers)** · `conv:progress:excluded-carriers` The question register and its rendered question table name unresolved work, not design decisions; they do not create design mentions. The crate allocation carrier and unlabelled allocation tables, including ADR 007, assign responsibility rather than a design. The bite plan supplies membership only. Source and test literals, including documents integration fixtures, are not design records; test-site citations contribute only through the declared claim route. Other input carriers, including number declarations and published-value correspondence, are data rather than labelled design records; their generated datasets, templates and renders do not create independent mention edges. The inventory and its render are the census being classified, and the progress carrier, dataset and render are the result, so both are excluded from the elsewhere count to avoid circular coverage. Explanatory words and unlabelled tables outside the admitted carriers create no design edge. Classification row identities and their generated copies are reported separately when they are the only exact mentions; they are neither realization citations nor design gaps. Other exact inventory labels in tracked text are still counted below and their paths retained per statement: this exposes a harvest exclusion without silently widening the evidence relation.
 
-**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 181 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route. 42 further unassigned rows have classification identities only, retained separately in the statement table.
+**Observation (Excluded exact mentions)** · `obs:progress:excluded-mentions` 178 unassigned inventory rows are cited exactly elsewhere in tracked text outside the inventory and progress carriers. This is a count of distinct labels, not occurrences, and creates no realization route. 43 further unassigned rows have classification identities only, retained separately in the statement table.
 
 ## Totals · `sec:progress:totals`
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 412 | 35 | 56 | 440 | 20 | 28 | 881 |
-| prose | 347 | 0 | 2 | 22 | 13 | 0 | 323 |
+| implementation | 1 417 | 31 | 52 | 439 | 20 | 22 | 895 |
+| prose | 346 | 0 | 2 | 21 | 12 | 0 | 323 |
 
 ## By crate · `sec:progress:crates`
 
 | Proposed crate | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| none | 347 | 0 | 2 | 22 | 13 | 0 | 323 |
+| none | 346 | 0 | 2 | 21 | 12 | 0 | 323 |
 | pn-act-authentication | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | pn-act-profile | 2 | 0 | 0 | 2 | 2 | 0 | 0 |
-| pn-epoch | 371 | 15 | 8 | 142 | 0 | 13 | 206 |
-| pn-graph | 229 | 5 | 8 | 63 | 0 | 4 | 153 |
-| pn-host | 183 | 4 | 19 | 56 | 6 | 2 | 104 |
+| pn-epoch | 371 | 15 | 8 | 141 | 0 | 10 | 207 |
+| pn-graph | 235 | 1 | 2 | 66 | 1 | 1 | 166 |
+| pn-host | 182 | 4 | 19 | 56 | 6 | 2 | 103 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
-| pn-records | 236 | 2 | 10 | 88 | 6 | 3 | 136 |
+| pn-records | 235 | 2 | 10 | 87 | 5 | 3 | 136 |
 | pn-replay | 36 | 1 | 3 | 9 | 0 | 0 | 23 |
-| pn-verification | 283 | 8 | 6 | 70 | 5 | 6 | 199 |
+| pn-verification | 284 | 8 | 8 | 68 | 5 | 6 | 200 |
 
 ## Record citation coverage · `sec:progress:record-coverage`
 
@@ -54,7 +54,7 @@
 | pn-credential-generator | 9 | 0 |
 | pn-epoch | 55 | 19 |
 | pn-fixtures | 5 | 0 |
-| pn-graph | 78 | 34 |
+| pn-graph | 78 | 32 |
 | pn-host | 34 | 0 |
 | pn-interchange | 29 | 0 |
 | pn-readouts | 0 | 0 |
@@ -64,7 +64,7 @@
 | pn-testkit | 18 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 44 | 0 |
-| ROOT (repository-wide) | 2 152 | 253 |
+| ROOT (repository-wide) | 2 185 | 265 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -73,16 +73,16 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | 19 | 0 | 6 | 12 | 0 | 1 | 1 |
 | 2 | 33 | 6 | 5 | 22 | 0 | 1 | 0 |
-| 3 | 22 | 0 | 4 | 17 | 0 | 3 | 1 |
-| 4 | 36 | 2 | 11 | 23 | 0 | 4 | 0 |
-| 5 | 44 | 6 | 5 | 33 | 0 | 3 | 0 |
+| 3 | 22 | 0 | 4 | 17 | 0 | 0 | 1 |
+| 4 | 12 | 0 | 3 | 9 | 0 | 0 | 0 |
+| 5 | 43 | 6 | 5 | 32 | 0 | 1 | 0 |
 | 6 | 25 | 2 | 6 | 16 | 0 | 1 | 1 |
 | 7 | 38 | 1 | 7 | 30 | 0 | 2 | 0 |
 | 8 | 5 | 1 | 0 | 4 | 0 | 1 | 0 |
 | 9 | 12 | 1 | 4 | 7 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
-| 11 | 93 | 8 | 28 | 56 | 0 | 6 | 1 |
-| unlinked | 1 566 | 23 | 18 | 325 | 33 | 18 | 1 200 |
+| 11 | 93 | 8 | 28 | 56 | 0 | 4 | 1 |
+| unlinked | 1 592 | 21 | 22 | 335 | 32 | 17 | 1 214 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -90,14 +90,14 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | certificate | 6 | 0 | 1 | 4 | 0 | 0 | 1 |
 | constant | 4 | 0 | 0 | 2 | 0 | 0 | 2 |
-| data type | 4 | 0 | 1 | 3 | 0 | 1 | 0 |
-| fixture | 220 | 5 | 5 | 51 | 7 | 4 | 159 |
-| function | 216 | 10 | 5 | 100 | 1 | 8 | 101 |
-| invariant check | 515 | 16 | 15 | 143 | 2 | 10 | 341 |
+| data type | 4 | 0 | 1 | 3 | 0 | 0 | 0 |
+| fixture | 221 | 5 | 5 | 51 | 7 | 4 | 160 |
+| function | 215 | 8 | 2 | 98 | 1 | 4 | 107 |
+| invariant check | 517 | 14 | 13 | 141 | 1 | 10 | 349 |
 | none | 357 | 0 | 0 | 21 | 8 | 0 | 336 |
-| policy | 322 | 3 | 25 | 70 | 11 | 3 | 224 |
+| policy | 321 | 3 | 25 | 70 | 11 | 2 | 223 |
 | serialization | 9 | 0 | 0 | 9 | 4 | 0 | 0 |
-| type | 106 | 1 | 6 | 59 | 0 | 2 | 40 |
+| type | 109 | 1 | 7 | 61 | 0 | 2 | 40 |
 
 ## Obligation support · `sec:progress:obligations`
 
@@ -109,7 +109,6 @@
 | ``ROOT::dec:design:ledger-vintages`` | 3 |
 | ``ROOT::verif:design:core-standing-properties`` | 25 |
 | ``ROOT::verif:design:invitation-netting-cases`` | 2 |
-| ``ROOT::verif:design:settlement-party-cases`` | 1 |
 
 ## Record-granular support · `sec:progress:record-support`
 
@@ -118,8 +117,6 @@
 | ``EPOCH::amend:compiler:invitation-netting-evidence`` | ``ROOT::verif:design:invitation-netting-cases`` | 2 |
 | ``EPOCH::verif:admission:semantic-package-restoration`` | ``EPOCH::verif:admission:semantic-package-restoration`` | 3 |
 | ``GRAPH::amend:numerics:reference-wall`` | ``ROOT::gate:design:bite-6`` | 4 |
-| ``GRAPH::def:formation:settlement-recognition`` | ``ROOT::gate:design:bite-4`` | 2 |
-| ``GRAPH::def:formation:title-events`` | ``ROOT::gate:design:bite-4`` | 1 |
 | ``GRAPH::def:numerics:activation-endpoints`` | ``ROOT::gate:design:bite-6`` | 1 |
 | ``RECORDS::def:acts:authentication-disclosure`` | ``RECORDS::verif:acts:authentication-disclosures`` | 1 |
 | ``RECORDS::rec:burn:live-marker-evidence`` | ``RECORDS::verif:burn:live-marker-semantics`` | 3 |
@@ -261,7 +258,7 @@
 | ``cond:comparator:faithfulness-measurement`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:exact-anchor`` | | | |  | | |
 | ``cond:comparator:faithfulness-conservation`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``cond:comparator:faithfulness-epoch-set`` | pn-epoch; invariant check | designed | ``ROOT::dec:design:final-state`` | | | | 5, 11 | | |
-| ``cond:comparator:faithfulness-title`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:recipient-resolution`` | | | |  | | |
+| ``cond:comparator:faithfulness-title`` | pn-epoch; invariant check | designed | ``ROOT::rem:actepoch:title-standing`` | | | |  | | |
 | ``cond:comparator:faithfulness-memorylessness`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``cond:comparator:faithfulness-universal-act-weighing`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``cond:comparator:faithfulness-domain-weights`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:base-allocation`` | | | |  | | |
@@ -290,7 +287,6 @@
 | ``case:network:admission-closure-binding`` | pn-host; policy | unassigned | | | | |  | | |
 | ``case:network:admission-closure-free`` | pn-host; policy | unassigned | | | | |  | | |
 | ``case:network:admission-closure-title-feedback`` | pn-host; policy | unassigned | | | | |  | | |
-| ``case:network:admission-closure-title-terminal`` | pn-host; policy | unassigned | | | | |  | | |
 | ``rem:network:boundary-one-sentence`` | pn-host; policy | unassigned | | | | |  | | |
 | ``subsec:network:object-taxonomy`` | pn-host; policy | unassigned | | | | |  | | |
 | ``def:network:object-taxonomy`` | pn-host; type | held | ``ROOT::dec:design:terminal-separation`` ``ROOT::req:vision:terminal-separation`` | | | ``ROOT::dec:design:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>| 10, 11 | | |
@@ -330,8 +326,8 @@
 | ``case:graph:authored-act-hyper`` | pn-records; type | designed | ``RECORDS::def:acts:projection`` | | | |  | | |
 | ``def:graph:act-identifier`` | pn-records; type | designed | ``RECORDS::amend:acts:minted-reference-carrier`` ``ROOT::amend:decomposition:minted-reference-carrier`` ``ROOT::amend:design:minted-reference-carrier`` ``ROOT::dec:design:complete-acts`` ``ROOT::req:vision:complete-acts`` | | | ``ROOT::dec:design:complete-acts``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:complete-acts``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 4, 11 | | ``ROOT::amend:identity:act-proposal-admission``; Premise only: act identity is author, local sequence and family<br>``ROOT::amend:identity:act-stops``; Premise only: the Actor chooses a unique author-local sequence before submission<br>|
 | ``lem:graph:identifier-disjointness`` | pn-records; invariant check | designed | ``RECORDS::amend:acts:minted-reference-carrier`` | | | |  | | |
-| ``def:graph:anchoring`` | pn-records; function | designed | ``GRAPH::def:formation:owner`` ``GRAPH::def:formation:publish`` ``RECORDS::amend:acts:minted-reference-carrier`` ``RECORDS::def:acts:references`` ``ROOT::alg:design:formation`` ``ROOT::alg:design:title`` | | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3, 4 | | |
-| ``lem:graph:dangling-neutral-fold`` | pn-graph; invariant check | designed | ``GRAPH::def:formation:owner`` ``ROOT::alg:design:formation`` ``ROOT::alg:design:title`` | | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3, 4 | | |
+| ``def:graph:anchoring`` | pn-records; function | designed | ``GRAPH::def:formation:owner`` ``GRAPH::def:formation:publish`` ``RECORDS::amend:acts:minted-reference-carrier`` ``RECORDS::def:acts:references`` ``ROOT::alg:design:formation`` | | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3 | | |
+| ``lem:graph:dangling-neutral-fold`` | pn-graph; invariant check | designed | ``GRAPH::def:formation:owner`` ``ROOT::alg:design:formation`` | | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3 | | |
 | ``def:graph:node-taxonomy`` | pn-records; type | designed | ``GRAPH::def:formation:endpoint-census`` | | | |  | | ``ROOT::amend:identity:act-proposal-admission``; Premise only: grounded identity does not rebind<br>|
 | ``rem:graph:name-equality`` | pn-records; serialization | designed | ``RECORDS::def:acts:references`` | | | |  | | |
 | ``def:graph:genesis-act-and-creator`` | pn-records; function | designed | ``GRAPH::def:formation:owner`` ``GRAPH::def:formation:publish`` ``RECORDS::amend:acts:minted-reference-carrier`` | | | |  | | |
@@ -390,7 +386,7 @@
 | ``case:graph:act-incidence-causality-unchanged-endpoint`` | pn-graph; function | unassigned | | | | |  | `ci/design.py` | |
 | ``rem:graph:causal-frontier-not-ancestry`` | pn-graph; invariant check | unassigned | | | | |  | `ci/design.py` | |
 | ``def:graph:edge-projection-maturity`` | pn-graph; function | unassigned | | | | |  | | |
-| ``def:graph:authoritative-act-order`` | pn-records; type | designed | ``RECORDS::def:acts:history`` ``ROOT::alg:design:title`` ``ROOT::amend:decomposition:retained-ordering-metadata`` ``ROOT::amend:design:finalized-records-replay`` ``ROOT::def:actepoch:acts`` ``ROOT::open:design:cross-epoch-order`` | | | ``RECORDS::def:acts:history``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:decomposition:retained-ordering-metadata``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:finalized-records-replay``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::def:actepoch:acts``; ``ROOT::open:identity:common-document-admission``<br>| 4 | | |
+| ``def:graph:authoritative-act-order`` | pn-records; type | designed | ``RECORDS::def:acts:history`` ``ROOT::amend:decomposition:retained-ordering-metadata`` ``ROOT::amend:design:finalized-records-replay`` ``ROOT::def:actepoch:acts`` ``ROOT::open:design:cross-epoch-order`` ``ROOT::rule:actepoch:title-origin`` | | | ``RECORDS::def:acts:history``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:decomposition:retained-ordering-metadata``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:finalized-records-replay``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::def:actepoch:acts``; ``ROOT::open:identity:common-document-admission``<br>``ROOT::open:design:cross-epoch-order``; ``ROOT::open:actepoch:title-admission``<br>|  | | |
 | ``rem:graph:host-ordering-discretion`` | pn-host; policy | unassigned | | | | |  | `docs/datasets/org.peer-network.design.questions.json` `docs/design/questions.md` `docs/inputs/design-questions.toml` | |
 | ``prop:graph:act-order-path-order`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``rem:graph:act-time-not-wall-clock`` | pn-graph; invariant check | unassigned | | | | |  | `ci/design.py` | |
@@ -402,10 +398,10 @@
 | ``def:graph:act-payload-projection`` | pn-records; type | held | ``ROOT::rule:devnet:content-carrier`` | | | ``ROOT::rule:devnet:content-carrier``; ``ROOT::open:identity:act-production-concealment``<br>|  | | |
 | ``post:graph:separable-act-projections`` | pn-records; invariant check | unassigned | | | | |  | `adr/006-identity-adjudication.md` `docs/templates/adr/006-identity-adjudication.md.j2` | |
 | ``def:graph:act-payload-state`` | pn-records; type | held | ``ROOT::open:vision:deployment-profile`` ``ROOT::rule:devnet:content-carrier`` | | | ``ROOT::rule:devnet:content-carrier``; ``ROOT::open:identity:act-production-concealment``<br>|  | | ``ROOT::open:identity:optional-act-carriage``; Premise only: A pair held only by its author is full; availability belongs to an accepting carrier.<br>|
-| ``prop:graph:removable-projection-invariance`` | pn-records; invariant check | realized | ``GRAPH::def:formation:boundary-title`` ``ROOT::amend:design:act-removal-facts`` ``ROOT::amend:design:bite-four-close`` | record-claim; ``ROOT::amend:design:bite-four-close``; ``GRAPH::claim:formation:scoped-title-requires-complete-authorized-history``; ``ROOT::gate:design:bite-4``<br>| | ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
+| ``prop:graph:removable-projection-invariance`` | pn-records; invariant check | realized | ``ROOT::amend:design:act-removal-facts`` ``ROOT::amend:design:bite-four-close`` | record-claim; ``ROOT::amend:design:bite-four-close``; ``GRAPH::claim:formation:scoped-title-requires-complete-authorized-history``; ``ROOT::gate:design:bite-4``<br>| | ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
 | ``def:graph:act-payload-controller`` | pn-records; function | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``rem:graph:payload-size-not-act-cost`` | pn-records; invariant check | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
-| ``rem:graph:act-payload-removal-neutrality`` | pn-replay; invariant check | realized | ``GRAPH::def:formation:boundary-title`` ``ROOT::amend:design:bite-four-close`` | record-claim; ``ROOT::amend:design:bite-four-close``; ``GRAPH::claim:formation:scoped-title-requires-complete-authorized-history``; ``ROOT::gate:design:bite-4``<br>| | ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
+| ``rem:graph:act-payload-removal-neutrality`` | pn-replay; invariant check | realized | ``ROOT::amend:design:bite-four-close`` | record-claim; ``ROOT::amend:design:bite-four-close``; ``GRAPH::claim:formation:scoped-title-requires-complete-authorized-history``; ``ROOT::gate:design:bite-4``<br>| | ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
 | ``rem:graph:act-payload-custody-phases`` | pn-host; policy | held | ``ROOT::open:design:proposal-carriage`` ``ROOT::open:vision:deployment-profile`` ``ROOT::rule:devnet:content-carrier`` | | | ``ROOT::open:design:proposal-carriage``; ``ROOT::open:identity:act-production-concealment``<br>``ROOT::rule:devnet:content-carrier``; ``ROOT::open:identity:act-production-concealment``<br>|  | | ``ROOT::open:identity:optional-act-carriage``; Premise only: Centralized append permits decentralized carriage.<br>|
 | ``rem:graph:erasure-floor`` | pn-host; policy | held | ``ROOT::amend:identity:act-concealment`` | | | ``ROOT::amend:identity:act-concealment``; ``ROOT::open:identity:act-realization-admission``<br>|  | | |
 | ``subsec:graph:sentiment-slice`` | pn-host; policy | designed | ``CONSTANTS::const.graph.sigmoid_floor`` | | | |  | | |
@@ -510,7 +506,7 @@
 | ``def:graph:mask-promotion-criterion`` | pn-graph; function | unassigned | | | | |  | | |
 | ``def:graph:proposal-half-tier`` | pn-graph; function | unassigned | | | | |  | | |
 | ``subsec:graph:settlement-lifecycle`` | pn-graph; function | unassigned | | | | |  | | |
-| ``def:graph:item-genesis-act`` | pn-graph; function | designed | ``GRAPH::def:formation:owner`` ``GRAPH::def:formation:title-inputs`` ``ROOT::alg:design:title`` ``ROOT::amend:design:owner-formation-scope`` | | | | 4 | | |
+| ``def:graph:item-genesis-act`` | pn-graph; function | designed | ``GRAPH::def:formation:owner`` ``GRAPH::def:formation:title-inputs`` ``ROOT::amend:design:owner-formation-scope`` ``ROOT::def:actepoch:title-item`` | | | |  | | |
 | ``rem:graph:item-identity-limit`` | pn-host; policy | unassigned | | | | |  | | |
 | ``def:graph:settlement-act-reference`` | pn-records; type | designed | ``GRAPH::amend:formation:seventeen-family-conformance`` ``GRAPH::def:formation:settlement`` ``GRAPH::def:formation:title-inputs`` ``RECORDS::amend:acts:settlement-parent-carrier`` ``ROOT::amend:design:settlement-formation-scope`` ``ROOT::amend:design:settlement-parent-integration`` ``ROOT::amend:design:seventeen-family-conformance`` | | | ``ROOT::amend:design:settlement-formation-scope``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:settlement-parent-integration``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
 | ``def:graph:act-causal-parents`` | pn-records; type | designed | ``GRAPH::amend:formation:seventeen-family-conformance`` ``GRAPH::def:formation:settlement`` ``RECORDS::amend:acts:settlement-parent-carrier`` ``RECORDS::def:acts:dependencies`` ``ROOT::alg:design:dependency-partition`` ``ROOT::alg:design:formation`` ``ROOT::amend:design:settlement-parent-integration`` | | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:settlement-parent-integration``; ``ROOT::open:design:dependency-opening-recipe``<br>| 1, 3 | | |
@@ -538,31 +534,17 @@
 | ``itm:graph:act-authentication-requirements-unity`` | pn-records; policy | unassigned | | | | |  | `adr/020-testing-harness.md` `docs/templates/adr/020-testing-harness.md.j2` | ``ROOT::amend:harness:actor-retry-proposal``; Premise only: both projections share one approved parent act<br>|
 | ``itm:graph:act-authentication-requirements-projection-binding`` | pn-records; policy | unassigned | | | | |  | `adr/006-identity-adjudication.md` `docs/templates/adr/006-identity-adjudication.md.j2` | ``ROOT::amend:identity:act-proposal-admission``; Premise only: removal preserves immutable binding<br>|
 | ``itm:graph:act-authentication-requirements-ordering`` | pn-records; policy | unassigned | | | | |  | `adr/006-identity-adjudication.md` `docs/templates/adr/006-identity-adjudication.md.j2` | ``ROOT::amend:identity:act-stops``; Premise only: dependency violations are publicly provable without rewriting history<br>|
-| ``def:graph:act-completion-epoch`` | pn-graph; type | designed | ``ROOT::alg:design:title`` ``ROOT::def:actepoch:acts`` | | | ``ROOT::def:actepoch:acts``; ``ROOT::open:identity:common-document-admission``<br>| 4 | | |
-| ``def:graph:act-envelope`` | pn-records; type | held | ``ROOT::amend:design:act-envelope-field-inventory`` | | | ``ROOT::amend:design:act-envelope-field-inventory``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
-| ``def:graph:settlement-recognition`` | pn-graph; function | designed | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::dec:design:formation-title`` ``ROOT::req:vision:formation-title`` | | ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 11 | | ``ROOT::alg:design:title``; the fresh-genesis owner premise in authorization clause (iii)<br>|
-| ``itm:graph:settlement-recognition-completeness`` | pn-graph; function | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
-| ``itm:graph:settlement-recognition-reference-binding`` | pn-graph; function | realized | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::open:design:noncompliant-logical-time`` | record-claim; ``GRAPH::def:formation:settlement-recognition``; ``VERIFICATION::claim:verification:settlement-replay-retains-target-placement-faults``; ``ROOT::gate:design:bite-4``<br>| ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
-| ``itm:graph:settlement-recognition-authorization`` | pn-graph; function | designed | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::amend:decomposition:title-marker-evidence`` ``ROOT::open:design:settlement-partner-clause`` | | ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
-| ``itm:graph:settlement-recognition-buyer-consent`` | pn-graph; function | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
-| ``itm:graph:settlement-recognition-seller-consent`` | pn-graph; function | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
-| ``itm:graph:settlement-recognition-well-formedness`` | pn-graph; function | realized | ``GRAPH::def:formation:settlement-recognition`` ``ROOT::alg:design:recognition`` ``ROOT::open:design:noncompliant-logical-time`` | record-claim; ``GRAPH::def:formation:settlement-recognition``; ``VERIFICATION::claim:verification:settlement-replay-retains-target-placement-faults``; ``ROOT::gate:design:bite-4``<br>| ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
-| ``rem:graph:title-order-irrelevance`` | pn-graph; invariant check | realized | ``GRAPH::def:formation:boundary-title`` ``ROOT::amend:design:bite-four-close`` | record-claim; ``ROOT::amend:design:bite-four-close``; ``GRAPH::claim:formation:scoped-title-requires-complete-authorized-history``; ``ROOT::gate:design:bite-4``<br>| | ``ROOT::amend:design:bite-four-close``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
+| ``def:graph:act-completion-epoch`` | pn-graph; type | held | ``ROOT::def:actepoch:acts`` | | | ``ROOT::def:actepoch:acts``; ``ROOT::open:identity:common-document-admission``<br>|  | | |
+| ``rem:graph:title-order-irrelevance`` | pn-graph; invariant check | designed | ``ROOT::rule:actepoch:title-completion`` | | | |  | | |
 | ``post:graph:boundary-accountability`` | pn-host; certificate | designed | ``ROOT::alg:design:closure-registration`` ``ROOT::amend:design:candidate-admission-boundary`` | | | |  | | |
 | ``rem:graph:settlement-clause-structure`` | pn-graph; invariant check | unassigned | | | | |  | | |
-| ``def:graph:ownership-thread`` | pn-graph; type | unassigned | | | | |  | | |
-| ``def:graph:settlement-consumption`` | pn-graph; invariant check | designed | ``GRAPH::def:formation:boundary-title`` ``ROOT::alg:design:title`` | | | | 4 | | |
-| ``def:graph:title-certificate`` | pn-graph; certificate | designed | ``GRAPH::def:formation:boundary-title`` ``RECORDS::def:acts:history`` ``ROOT::alg:design:title`` ``ROOT::amend:design:finalized-records-replay`` ``ROOT::def:actepoch:titles`` ``ROOT::open:actepoch:state-provenance`` ``ROOT::open:design:cross-epoch-order`` | | | ``RECORDS::def:acts:history``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:finalized-records-replay``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
-| ``thm:graph:epoch-title-fold`` | pn-graph; function | designed | ``GRAPH::def:formation:boundary-title`` ``ROOT::alg:design:title`` ``ROOT::dec:design:formation-title`` ``ROOT::req:vision:formation-title`` | | | ``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 11 | | |
-| ``rem:graph:regret-window`` | pn-host; policy | unassigned | | | | |  | | |
+| ``def:graph:title-certificate`` | pn-graph; certificate | designed | ``RECORDS::def:acts:history`` ``ROOT::amend:design:finalized-records-replay`` ``ROOT::open:actepoch:state-provenance`` ``ROOT::open:design:cross-epoch-order`` ``ROOT::rule:actepoch:title-origin`` ``ROOT::verif:design:title-certificate-cases`` | | | ``RECORDS::def:acts:history``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::amend:design:finalized-records-replay``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:cross-epoch-order``; ``ROOT::open:actepoch:title-admission``<br>``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
 | ``rem:graph:cancellation-best-effort`` | pn-host; policy | unassigned | | | | |  | | |
-| ``thm:graph:settlement-order-freeness`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
+| ``thm:graph:settlement-order-freeness`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``thm:graph:no-death-by-inaction`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``rem:graph:causal-locality-principle`` | pn-graph; policy | unassigned | | | | |  | | |
 | ``rem:graph:settlement-reputation`` | pn-epoch; invariant check | unassigned | | | | |  | `ci/design.py` | |
 | ``rem:graph:reviews-commentary`` | pn-epoch; invariant check | unassigned | | | | |  | | |
-| ``rem:graph:settlement-cross-layer`` | pn-host; policy | unassigned | | | | |  | | |
-| ``alg:graph:title-certificate-computation`` | pn-graph; function | designed | ``GRAPH::def:formation:boundary-title`` ``ROOT::alg:design:title`` | | | | 4 | | |
 | ``subsec:graph:consumer-map`` | pn-graph; function | unassigned | | | | |  | | |
 | ``tbl:graph:consumer-map`` | pn-graph; policy | unassigned | | | | |  | | |
 | ``sec:nodes`` | none; none | unassigned | | | | |  | | |
@@ -630,7 +612,7 @@
 | ``case:nodes:self-loop-neutral-routing-inert`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``case:nodes:self-loop-neutral-routing-active`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``rem:nodes:self-loop-parity`` | pn-records; invariant check | unassigned | | | | |  | | |
-| ``edge:nodes:owner`` | pn-records; type | designed | ``GRAPH::def:formation:owner`` ``ROOT::amend:design:owner-formation-scope`` | | | |  | | |
+| ``edge:nodes:owner`` | pn-records; type | designed | ``GRAPH::def:formation:owner`` ``ROOT::amend:design:owner-formation-scope`` ``ROOT::def:actepoch:title-item`` | | | |  | | |
 | ``eq:nodes:path-view:owner`` | pn-graph; function | unassigned | | | | |  | | |
 | ``edge:nodes:join-request`` | pn-records; type | designed | ``GRAPH::def:formation:join-request`` ``ROOT::amend:design:join-request-formation-scope`` | | | |  | | |
 | ``eq:nodes:path-view:join-request`` | pn-graph; function | designed | ``GRAPH::def:formation:join-request`` | | | |  | | |
@@ -718,22 +700,21 @@
 | ``post:epoch:standing-is-measurement`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:exact-anchor`` | | | |  | | |
 | ``post:epoch:standing-pair-mass-conservation`` | pn-epoch; policy | held | ``ROOT::dec:design:conservation`` ``ROOT::req:vision:conservation`` | | | ``ROOT::dec:design:conservation``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:conservation``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 6, 11 | | |
 | ``thm:epoch:standing-pair-mass-conservation`` | pn-epoch; invariant check | realized | ``ROOT::amend:design:integrated-compiled-conservation`` | record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::dec:design:final-state``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::gate:design:bite-5``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::gate:design:bite-6``<br>record-claim; ``ROOT::amend:design:integrated-compiled-conservation``; ``EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals``; ``ROOT::verif:design:core-standing-properties``<br>| | |  | | |
-| ``post:epoch:standing-epoch-set-determinism`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:joined-state`` ``ROOT::amend:design:epoch-compiler-readings`` ``ROOT::dec:design:final-state`` ``ROOT::req:vision:final-state`` | | | ``ROOT::req:vision:final-state``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 11 | | |
-| ``def:epoch:tentative-title-fold`` | pn-epoch; function | designed | ``GRAPH::def:formation:title-events`` | | ``GRAPH::def:formation:title-events``; ``ROOT::gate:design:bite-4``<br>| |  | | |
-| ``post:epoch:settlement-standing-title-coupling`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:recipient-resolution`` ``GRAPH::def:formation:title-events`` ``ROOT::alg:design:recipients`` ``ROOT::dec:design:formation-title`` ``ROOT::req:vision:formation-title`` | | ``GRAPH::def:formation:title-events``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 5, 11 | | |
-| ``post:epoch:standing-memorylessness`` | pn-epoch; policy | designed | ``ROOT::dec:design:final-state`` ``ROOT::req:vision:final-state`` | | | ``ROOT::req:vision:final-state``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 11 | | |
+| ``post:epoch:standing-epoch-set-determinism`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:joined-state`` ``ROOT::amend:design:epoch-compiler-readings`` ``ROOT::dec:design:final-state`` ``ROOT::def:actepoch:title-domain`` ``ROOT::req:vision:final-state`` | | | ``ROOT::req:vision:final-state``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 11 | | |
+| ``post:epoch:settlement-standing-title-coupling`` | pn-epoch; policy | designed | ``GRAPH::def:formation:title-events`` ``ROOT::alg:design:recipients`` ``ROOT::dec:design:formation-title`` ``ROOT::rem:actepoch:title-standing`` ``ROOT::req:vision:formation-title`` | | | ``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 5, 11 | | |
+| ``post:epoch:standing-memorylessness`` | pn-epoch; policy | designed | ``ROOT::dec:design:final-state`` ``ROOT::def:actepoch:title-domain`` ``ROOT::req:vision:final-state`` | | | ``ROOT::req:vision:final-state``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 11 | | |
 | ``post:epoch:universal-act-weighing`` | pn-epoch; policy | held | ``ROOT::dec:design:complete-acts`` ``ROOT::req:vision:complete-acts`` | | | ``ROOT::dec:design:complete-acts``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:complete-acts``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 4, 11 | | |
 | ``post:epoch:domain-weighted-act-sum`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:boundary-inputs`` | | | |  | | |
 | ``post:epoch:hop-faded-responsive-tilt`` | pn-epoch; policy | unassigned | | | | |  | | |
 | ``post:epoch:cluster-rate-invariance`` | pn-epoch; policy | unassigned | | | | |  | | |
 | ``subsec:epoch:standing-allocation-inputs`` | pn-epoch; policy | unassigned | | | | |  | | |
 | ``def:epoch:standing-fold-cell`` | pn-epoch; function | designed | ``EPOCH::def:compiler:standing-cells`` ``ROOT::alg:design:cells`` | | | | 5 | | |
-| ``def:epoch:effective-act-contribution`` | pn-epoch; function | designed | ``CONSTANTS::result.vouch.alice_bob`` ``CONSTANTS::result.vouch.alice_carol`` ``CONSTANTS::result.vouch.alice_eve`` ``CONSTANTS::result.vouch.bob_carol`` ``CONSTANTS::result.vouch.bob_dave`` ``CONSTANTS::result.vouch.bob_eve`` ``CONSTANTS::result.vouch.carol_dave`` ``CONSTANTS::result.vouch.carol_eve`` ``CONSTANTS::result.vouch.dave_eve`` ``EPOCH::def:compiler:cell-coefficients`` ``ROOT::alg:design:cells`` | | | | 5 | | |
+| ``def:epoch:effective-act-contribution`` | pn-epoch; function | designed | ``CONSTANTS::result.vouch.alice_bob`` ``CONSTANTS::result.vouch.alice_carol`` ``CONSTANTS::result.vouch.alice_eve`` ``CONSTANTS::result.vouch.bob_carol`` ``CONSTANTS::result.vouch.bob_dave`` ``CONSTANTS::result.vouch.bob_eve`` ``CONSTANTS::result.vouch.carol_dave`` ``CONSTANTS::result.vouch.carol_eve`` ``CONSTANTS::result.vouch.dave_eve`` ``EPOCH::def:compiler:cell-coefficients`` ``ROOT::alg:design:cells`` ``ROOT::rem:actepoch:title-standing`` | | | | 5 | | |
 | ``rem:epoch:hostility-is-priced`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:cell-coefficients`` | | | |  | | |
-| ``def:epoch:standing-recipient-resolution`` | pn-epoch; function | designed | ``EPOCH::def:compiler:recipient-resolution`` ``GRAPH::def:formation:title-events`` ``ROOT::alg:design:recipients`` | | ``GRAPH::def:formation:title-events``; ``ROOT::gate:design:bite-4``<br>| | 5 | | |
+| ``def:epoch:standing-recipient-resolution`` | pn-epoch; function | designed | ``ROOT::alg:design:recipients`` ``ROOT::rem:actepoch:title-standing`` | | | | 5 | | |
 | ``rem:epoch:allocation-index-set`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:base-allocation`` | | | |  | | |
 | ``case:epoch:allocation-index-set-unanchored-recipient`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:base-allocation`` | | | |  | | |
-| ``tbl:epoch:standing-recipient-resolution`` | pn-epoch; function | designed | ``EPOCH::def:compiler:recipient-resolution`` | | | |  | | |
+| ``tbl:epoch:standing-recipient-resolution`` | pn-epoch; function | unassigned | | | | |  | | |
 | ``def:epoch:standing-domain-profile`` | pn-epoch; function | designed | ``EPOCH::def:compiler:boundary-inputs`` ``ROOT::dec:design:final-state`` ``ROOT::req:vision:final-state`` | | | ``ROOT::req:vision:final-state``; ``ROOT::open:testing:obligation-evidence``<br>| 5, 11 | | |
 | ``tbl:epoch:standing-domain-weights`` | pn-epoch; function | designed | ``EPOCH::def:compiler:boundary-inputs`` | | | |  | | |
 | ``def:epoch:self-retention-base`` | pn-epoch; function | designed | ``EPOCH::def:compiler:base-allocation`` ``EPOCH::def:compiler:boundary-inputs`` | | | |  | | |
@@ -780,12 +761,12 @@
 | ``rem:epoch:compiled-acts-fold-into-cells`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:cell-coefficients`` ``ROOT::amend:design:epoch-compiler-readings`` ``ROOT::open:design:reference-registration-base`` | | | ``ROOT::open:design:reference-registration-base``; ``ROOT::open:design:reference-registration-base``<br>|  | | |
 | ``prop:epoch:act-folding-properties`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``rem:epoch:folding-precedes-allocation`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:joined-state`` | | | |  | | |
-| ``rem:epoch:control-acts-resolve-to-self`` | pn-epoch; policy | designed | ``ROOT::alg:design:recipients`` ``ROOT::amend:design:deinvite-formation-scope`` | | | | 5 | | |
+| ``rem:epoch:control-acts-resolve-to-self`` | pn-epoch; policy | designed | ``ROOT::amend:design:deinvite-formation-scope`` | | | |  | | |
 | ``prop:epoch:net-stance-properties`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``rem:epoch:conviction-inertia`` | pn-epoch; policy | unassigned | | | | |  | | |
 | ``case:epoch:conviction-inertia-latest-edge`` | pn-epoch; policy | unassigned | | | | |  | | |
 | ``rem:epoch:severance-blindness`` | pn-epoch; policy | unassigned | | | | |  | | |
-| ``lem:epoch:authored-vouch-withdrawable`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:standing-cells`` ``ROOT::alg:design:recipients`` ``ROOT::amend:decomposition:title-marker-evidence`` ``ROOT::amend:design:epoch-compiler-readings`` ``ROOT::open:design:invitation-withdrawal-edition`` | | ``ROOT::open:design:invitation-withdrawal-edition``; ``ROOT::gate:design:bite-5``<br>``ROOT::open:design:invitation-withdrawal-edition``; ``ROOT::verif:design:compiler-cases``<br>``ROOT::open:design:invitation-withdrawal-edition``; ``ROOT::verif:design:invitation-netting-cases``<br>| | 5 | | |
+| ``lem:epoch:authored-vouch-withdrawable`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:standing-cells`` ``ROOT::alg:design:recipients`` ``ROOT::amend:decomposition:title-marker-evidence`` ``ROOT::amend:design:epoch-compiler-readings`` ``ROOT::open:design:invitation-withdrawal-edition`` ``ROOT::rem:actepoch:title-standing`` | | ``ROOT::open:design:invitation-withdrawal-edition``; ``ROOT::gate:design:bite-5``<br>``ROOT::open:design:invitation-withdrawal-edition``; ``ROOT::verif:design:compiler-cases``<br>``ROOT::open:design:invitation-withdrawal-edition``; ``ROOT::verif:design:invitation-netting-cases``<br>| | 5 | | |
 | ``subsec:epoch:vouch-activation`` | pn-epoch; function | unassigned | | | | |  | | |
 | ``def:epoch:responsive-vouch-activation`` | pn-epoch; function | realized | ``CONSTANTS::const.activation.qcore_cap`` ``GRAPH::def:numerics:activation`` ``ROOT::amend:design:bite-six-activation`` ``ROOT::amend:design:bite-six-costs`` | record-claim; ``ROOT::amend:design:bite-six-activation``; ``GRAPH::claim:numerics:activation-and-gain-agree-with-independent-brackets``; ``ROOT::gate:design:bite-6``<br>| ``ROOT::amend:design:bite-six-activation``; ``ROOT::gate:design:bite-6``<br>``ROOT::amend:design:bite-six-costs``; ``ROOT::dec:design:activation-evaluation-policy``<br>``ROOT::amend:design:bite-six-costs``; ``ROOT::gate:design:bite-6``<br>| |  | | |
 | ``eq:epoch:responsive-vouch-activation`` | pn-epoch; function | designed | ``CONSTANTS::const.epoch.hop_depth_4`` | | | |  | | |
@@ -1006,7 +987,7 @@
 | ``rem:scalability:advertising-centrality-exact`` | none; none | unassigned | | | | |  | | |
 | ``subsec:scalability:conserved-standing-work-model`` | none; none | unassigned | | | | |  | | |
 | ``def:scalability:conserved-standing-work-measures`` | pn-epoch; function | unassigned | | | | |  | | |
-| ``prop:scalability:allocation-input-maintenance-cost`` | pn-epoch; invariant check | unassigned | | | | |  | `docs/design/workload-benchmarks.md` `docs/templates/docs/design/workload-benchmarks.md.j2` | |
+| ``prop:scalability:allocation-input-maintenance-cost`` | pn-epoch; invariant check | designed | ``ROOT::def:actepoch:title-domain`` | | | |  | | |
 | ``prop:scalability:conserved-map-pass-cost`` | pn-epoch; invariant check | designed | ``ROOT::amend:design:memoized-solve`` | | | |  | | |
 | ``prop:scalability:standing-certificate-cost`` | pn-epoch; invariant check | designed | ``ROOT::amend:design:memoized-solve`` ``ROOT::rule:design:costs`` | | | |  | | |
 | ``thm:scalability:conserved-equilibrium-cost`` | pn-epoch; invariant check | designed | ``CONSTANTS::const.standing.worst_contraction`` | | | |  | | |
@@ -1532,9 +1513,8 @@
 | ``subsec:verification:settlement-walkthrough`` | pn-verification; fixture | designed | ``CONSTANTS::fixture.bid_full.direct`` ``CONSTANTS::fixture.bid_full.indirect`` ``CONSTANTS::fixture.bid_full.maturity`` ``CONSTANTS::result.bid_full.boltz`` ``CONSTANTS::result.bid_full.coherence`` ``CONSTANTS::result.bid_full.detscore`` ``CONSTANTS::result.bid_full.entropy`` ``CONSTANTS::result.bid_full.frobenius`` ``CONSTANTS::result.bid_full.weight`` | | | |  | | |
 | ``ver:settlement:bid-promotion-verification`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:raw:bid-maturity-pair`` | pn-readouts; fixture | designed (attention only) | ``ROOT::obs:design:released-witnesses`` | | | |  | | |
-| ``ver:settlement:same-epoch-cancel`` | pn-verification; fixture | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::alg:design:recognition``; cancellation through the Ratify epoch defeats recognition<br>|
+| ``ver:settlement:same-epoch-cancel`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:settlement:suppressed-cancel`` | pn-verification; fixture | unassigned | | | | |  | | |
-| ``ver:settlement:mutual-consumption`` | pn-verification; fixture | unassigned | | | | |  | `docs/design/implementation.md` `docs/templates/docs/design/implementation.md.j2` | ``ROOT::alg:design:title``; consumed identities cannot be reused and retry needs fresh records<br>|
 | ``ver:settlement:coerced-unfair`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``subsec:verification:authored-act-fixtures`` | pn-verification; fixture | unassigned | | | | |  | | |
 | ``ver:handshake:approved-act-integrity`` | pn-verification; fixture | unassigned | | | | |  | | |
@@ -1591,7 +1571,7 @@
 | ``case:necessity:epoch-set-standing-order-input`` | pn-epoch; invariant check | designed | ``ROOT::dec:design:final-state`` | | | | 5, 11 | | |
 | ``case:necessity:epoch-set-standing-memory-input`` | pn-epoch; invariant check | designed | ``ROOT::alg:design:solve`` | | | | 6 | | |
 | ``subsec:necessity:title-coupled-settlement-standing`` | pn-epoch; invariant check | unassigned | | | | |  | | |
-| ``case:necessity:title-coupled-settlement-standing-face-value`` | pn-epoch; invariant check | designed | ``EPOCH::def:compiler:recipient-resolution`` | | | |  | | |
+| ``case:necessity:title-coupled-settlement-standing-face-value`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``subsec:necessity:clamped-entry-bounds`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``case:necessity:clamped-entry-bounds-raw-products`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``subsec:necessity:always-active-baseline`` | pn-graph; invariant check | designed | ``CONSTANTS::const.graph.corner_norm`` | | | |  | | |
@@ -1629,13 +1609,6 @@
 | ``case:necessity:three-step-settlement-accept-commit`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``subsec:necessity:explicit-cancels`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``case:necessity:explicit-cancels-expiry`` | pn-graph; invariant check | unassigned | | | | |  | | |
-| ``subsec:necessity:mutual-consumption`` | pn-graph; invariant check | designed | ``ROOT::alg:design:title`` | | | | 4 | | |
-| ``case:necessity:mutual-consumption-order-tiebreak`` | pn-graph; invariant check | designed | ``ROOT::alg:design:title`` | | | | 4 | | |
-| ``case:necessity:mutual-consumption-permanent-void`` | pn-graph; invariant check | designed | ``ROOT::alg:design:title`` | | | | 4 | | |
-| ``subsec:necessity:epoch-quantized-consent`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
-| ``case:necessity:epoch-quantized-consent-instant-commit`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
-| ``case:necessity:epoch-quantized-consent-arrival-order`` | pn-graph; invariant check | unassigned | | | | |  | | |
-| ``case:necessity:epoch-quantized-consent-asserted-time`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``subsec:necessity:no-privileged-cancel-class`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``case:necessity:no-privileged-cancel-class-exempt-cancels`` | pn-epoch; invariant check | unassigned | | | | |  | | |
 | ``subsec:necessity:endogenous-clearing`` | pn-host; invariant check | held | ``ROOT::dec:design:final-membership`` | | | ``ROOT::dec:design:final-membership``; ``ROOT::open:testing:obligation-evidence``<br>| 1, 7, 11 | | |
@@ -1699,8 +1672,8 @@
 | ``case:necessity:authoritative-order-local-linearization`` | pn-host; invariant check | designed | ``ROOT::rule:design:ordering`` | | | |  | | |
 | ``subsec:necessity:retained-commitment`` | pn-records; invariant check | unassigned | | | | |  | | |
 | ``case:necessity:retained-commitment-remove-residue`` | pn-records; invariant check | unassigned | | | | |  | | |
-| ``subsec:necessity:title-order-separation`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
-| ``case:necessity:title-order-separation-host-title-tiebreak`` | pn-graph; invariant check | held | ``ROOT::alg:design:recognition`` | | | ``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 4 | | |
+| ``subsec:necessity:title-order-separation`` | pn-graph; invariant check | unassigned | | | | |  | | |
+| ``case:necessity:title-order-separation-host-title-tiebreak`` | pn-graph; invariant check | unassigned | | | | |  | | |
 | ``app:deployment`` | pn-verification; none | unassigned | | | | |  | `ci/design.py` | |
 | ``subsec:deployment:public-availability`` | pn-host; policy | unassigned | | | | |  | `ci/design.py` | |
 | ``case:deployment:public-availability-streaming`` | pn-host; policy | unassigned | | | | |  | `ci/design.py` | |
@@ -1816,26 +1789,26 @@
 | ``def:graph:stamp-fault`` | pn-records; type | designed | ``ROOT::def:actepoch:logical-time`` | | | |  | | |
 | ``prop:graph:act-time-finite`` | pn-verification; invariant check | unassigned | | | | |  | `ci/design.py` | |
 | ``rem:graph:act-time-is-summary`` | pn-records; invariant check | designed | ``ROOT::def:actepoch:logical-time`` ``ROOT::open:design:dependency-opening-recipe`` | | | ``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:crypto:dependency-admission``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:identity:act-production-concealment``<br>``ROOT::open:design:dependency-opening-recipe``; ``ROOT::open:identity:act-realization-admission``<br>|  | | |
-| ``rem:graph:cross-epoch-precedence`` | pn-records; invariant check | designed (attention only) | ``ROOT::open:design:cross-epoch-order`` | | | |  | | |
-| ``rem:graph:order-of-record-is-position`` | pn-records; invariant check | designed | ``RECORDS::def:acts:dependencies`` ``ROOT::open:design:cross-epoch-order`` | | | |  | | |
+| ``rem:graph:cross-epoch-precedence`` | pn-records; invariant check | held | ``ROOT::open:design:cross-epoch-order`` | | | ``ROOT::open:design:cross-epoch-order``; ``ROOT::open:actepoch:title-admission``<br>|  | | |
+| ``rem:graph:order-of-record-is-position`` | pn-records; invariant check | designed | ``RECORDS::def:acts:dependencies`` ``ROOT::open:design:cross-epoch-order`` | | | ``ROOT::open:design:cross-epoch-order``; ``ROOT::open:actepoch:title-admission``<br>|  | | |
 | ``ver:boundary:act-time-recomputation`` | pn-verification; fixture | designed | ``CONSTANTS::act_time_fixture`` ``CONSTANTS::result.act_time.alpha_epoch`` ``CONSTANTS::result.act_time.alpha_position`` ``CONSTANTS::result.act_time.alpha_published`` ``CONSTANTS::result.act_time.alpha_recomputed`` ``CONSTANTS::result.act_time.beta_epoch`` ``CONSTANTS::result.act_time.beta_position`` ``CONSTANTS::result.act_time.beta_published`` ``CONSTANTS::result.act_time.beta_recomputed`` ``CONSTANTS::result.act_time.delta_epoch`` ``CONSTANTS::result.act_time.delta_position`` ``CONSTANTS::result.act_time.delta_published`` ``CONSTANTS::result.act_time.delta_recomputed`` ``CONSTANTS::result.act_time.dependency_fault_count`` ``CONSTANTS::result.act_time.epsilon_epoch`` ``CONSTANTS::result.act_time.epsilon_position`` ``CONSTANTS::result.act_time.epsilon_published`` ``CONSTANTS::result.act_time.epsilon_recomputed`` ``CONSTANTS::result.act_time.eta_epoch`` ``CONSTANTS::result.act_time.eta_position`` ``CONSTANTS::result.act_time.eta_published`` ``CONSTANTS::result.act_time.eta_recomputed`` ``CONSTANTS::result.act_time.gamma_epoch`` ``CONSTANTS::result.act_time.gamma_position`` ``CONSTANTS::result.act_time.gamma_published`` ``CONSTANTS::result.act_time.gamma_recomputed`` ``CONSTANTS::result.act_time.mismatch_count`` ``CONSTANTS::result.act_time.parent_fault_count`` ``CONSTANTS::result.act_time.zeta_epoch`` ``CONSTANTS::result.act_time.zeta_position`` ``CONSTANTS::result.act_time.zeta_published`` ``CONSTANTS::result.act_time.zeta_recomputed`` ``ROOT::obs:inventory:constants`` ``ROOT::open:design:noncompliant-logical-time`` | | ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::open:design:noncompliant-logical-time``; ``ROOT::open:design:dependency-opening-recipe``<br>|  | | |
 | ``def:comparator:burn-accumulator`` | pn-records; data type | designed | ``RECORDS::def:burn:recognition`` ``ROOT::conv:lineage:paper-9`` ``ROOT::rule:design:closure-marker-registration`` ``ROOT::rule:design:marker-recognition`` ``ROOT::verif:design:marker-registration-cases`` | | | ``ROOT::verif:design:marker-registration-cases``; ``ROOT::open:testing:obligation-evidence``<br>| 2 | | |
 | ``def:comparator:epoch-marker`` | pn-records; data type | designed | ``EPOCH::def:compiler:final-ledger`` ``RECORDS::def:burn:recognition`` ``ROOT::alg:design:ledger`` ``ROOT::arg:lineage:origin-calculation`` ``ROOT::conv:lineage:paper-9`` ``ROOT::open:lineage:origin`` ``ROOT::rule:design:closure-marker-registration`` ``ROOT::rule:design:marker-recognition`` ``ROOT::verif:design:marker-registration-cases`` | | | ``ROOT::verif:design:marker-registration-cases``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5 | | |
 | ``cond:comparator:marker-epoch-registration`` | pn-epoch; invariant check | realized | ``EPOCH::def:compiler:final-ledger`` ``EPOCH::verif:admission:live-publication`` ``RECORDS::def:burn:recognition`` ``ROOT::alg:design:ledger`` ``ROOT::amend:devnet:marker-settlement`` ``ROOT::conv:lineage:paper-15`` ``ROOT::rule:design:closure-marker-registration`` ``ROOT::verif:design:marker-registration-cases`` | obligation; ``EPOCH::verif:admission:live-publication``; ``EPOCH::verif:admission:live-publication``<br>record-claim; ``EPOCH::verif:admission:live-publication``; ``EPOCH::claim:admission:finality-loss-freezes-live-publication``; ``EPOCH::verif:admission:live-publication``<br>record-claim; ``EPOCH::verif:admission:live-publication``; ``EPOCH::claim:admission:live-publication-retains-marker-registration``; ``EPOCH::verif:admission:live-publication``<br>record-claim; ``EPOCH::verif:admission:live-publication``; ``EPOCH::claim:admission:live-snapshots-use-first-accepted-increments``; ``EPOCH::verif:admission:live-publication``<br>| | ``ROOT::verif:design:marker-registration-cases``; ``ROOT::open:testing:obligation-evidence``<br>| 5 | | |
 | ``rem:comparator:finality-breach-continuity`` | pn-host; policy | realized | ``EPOCH::rule:admission:live-publication`` ``EPOCH::verif:admission:live-publication`` ``ROOT::conv:lineage:paper-17`` | obligation; ``EPOCH::verif:admission:live-publication``; ``EPOCH::verif:admission:live-publication``<br>record-claim; ``EPOCH::verif:admission:live-publication``; ``EPOCH::claim:admission:finality-loss-freezes-live-publication``; ``EPOCH::verif:admission:live-publication``<br>record-claim; ``EPOCH::verif:admission:live-publication``; ``EPOCH::claim:admission:live-publication-retains-marker-registration``; ``EPOCH::verif:admission:live-publication``<br>record-claim; ``EPOCH::verif:admission:live-publication``; ``EPOCH::claim:admission:live-snapshots-use-first-accepted-increments``; ``EPOCH::verif:admission:live-publication``<br>| | |  | | |
-| ``def:graph:settlement-parties`` | pn-graph; data type | designed | ``GRAPH::def:formation:settlement-recognition`` ``RECORDS::def:acts:references`` ``ROOT::alg:design:formation`` ``ROOT::alg:design:recognition`` ``ROOT::amend:decomposition:title-marker-evidence`` ``ROOT::open:design:settlement-partner-clause`` | | ``GRAPH::def:formation:settlement-recognition``; ``ROOT::gate:design:bite-4``<br>| ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::alg:design:recognition``; ``ROOT::open:design:dependency-opening-recipe``<br>| 3, 4 | | |
+| ``def:graph:settlement-parties`` | pn-graph; data type | designed | ``RECORDS::def:acts:references`` ``ROOT::alg:design:formation`` ``ROOT::amend:decomposition:title-marker-evidence`` ``ROOT::def:actepoch:title-state`` ``ROOT::def:actepoch:title-transfer`` ``ROOT::open:design:settlement-partner-clause`` | | | ``ROOT::alg:design:formation``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::open:design:settlement-partner-clause``; ``ROOT::open:actepoch:title-admission``<br>| 3 | | |
 | ``def:graph:title-certificate-fault`` | pn-records; data type | held | ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
 | ``cond:graph:boundary-accountability-title-certificate`` | pn-verification; invariant check | held | ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
-| ``rem:graph:settlement-party-mismatch`` | pn-graph; invariant check | realized | ``ROOT::verif:design:settlement-party-cases`` | obligation; ``ROOT::verif:design:settlement-party-cases``; ``ROOT::verif:design:settlement-party-cases``<br>record-claim; ``ROOT::verif:design:settlement-party-cases``; ``VERIFICATION::claim:verification:partner-mismatches-fail-record-derived-authorization``; ``ROOT::verif:design:settlement-party-cases``<br>| | |  | | |
-| ``rem:graph:title-certificate-is-summary`` | pn-verification; invariant check | designed | ``ROOT::def:actepoch:titles`` ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
-| ``lem:epoch:tentative-fold-agreement`` | pn-verification; invariant check | designed | ``ROOT::alg:design:title`` ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>| 4 | | |
+| ``rem:graph:settlement-party-mismatch`` | pn-graph; invariant check | designed | ``ROOT::rule:actepoch:title-transition`` | | | |  | | |
+| ``rem:graph:title-certificate-is-summary`` | pn-verification; invariant check | held | ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
+| ``lem:epoch:tentative-fold-agreement`` | pn-verification; invariant check | held | ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
 | ``rem:epoch:consumed-epoch-sequence`` | pn-epoch; policy | designed | ``EPOCH::def:compiler:final-ledger`` ``ROOT::alg:design:ledger`` | | | | 5 | | |
-| ``cond:deployment:title-certificate-monitoring`` | pn-host; policy | held | ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | ``ROOT::verif:design:title-certificate-cases``; Claimed part: The finite witness recomputes a published title and the declared mismatch response, not continuous monitoring or actual review performance.<br>|
+| ``cond:deployment:title-certificate-monitoring`` | pn-host; policy | held | ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | ``ROOT::verif:design:title-certificate-cases``; Claimed part: The finite witness recomputes the branch certificate against a supplied optional display and the declared mismatch response, not continuous monitoring or actual review performance.<br>|
 | ``case:deployment:realization-observations-finality-breach-reanchor`` | none; policy | held | ``ROOT::verif:design:finality-breach-cases`` | | | ``ROOT::verif:design:finality-breach-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | ``ROOT::verif:design:finality-breach-cases``; Claimed part: The witness checks the two declared responses to supplied breach histories, not the permanence of external finality.<br>|
 | ``case:deployment:realization-observations-finality-breach-follow`` | none; policy | held | ``ROOT::verif:design:finality-breach-cases`` | | | ``ROOT::verif:design:finality-breach-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | ``ROOT::verif:design:finality-breach-cases``; Claimed part: The witness checks the two declared responses to supplied breach histories, not the permanence of external finality.<br>|
 | ``ver:boundary:marker-registration`` | pn-verification; fixture | designed | ``ROOT::rule:design:closure-marker-registration`` ``ROOT::verif:design:marker-registration-cases`` | | | ``ROOT::verif:design:marker-registration-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | ``ROOT::verif:design:finality-breach-cases``; preservation after a finality breach<br>|
 | ``ver:boundary:title-certificate-recomputation`` | pn-verification; fixture | held | ``ROOT::verif:design:title-certificate-cases`` | | | ``ROOT::verif:design:title-certificate-cases``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
-| ``ver:settlement:wrong-party`` | pn-verification; fixture | realized | ``EPOCH::amend:compiler:recipient-evidence`` ``ROOT::open:design:settlement-partner-clause`` ``ROOT::verif:design:settlement-party-cases`` | record-claim; ``EPOCH::amend:compiler:recipient-evidence``; ``EPOCH::claim:compiler:recipients-read-persistent-title-events``; ``ROOT::gate:design:bite-5``<br>record-claim; ``EPOCH::amend:compiler:recipient-evidence``; ``EPOCH::claim:compiler:recipients-read-persistent-title-events``; ``ROOT::verif:design:compiler-cases``<br>obligation; ``ROOT::verif:design:settlement-party-cases``; ``ROOT::verif:design:settlement-party-cases``<br>record-claim; ``ROOT::verif:design:settlement-party-cases``; ``VERIFICATION::claim:verification:partner-mismatches-fail-record-derived-authorization``; ``ROOT::verif:design:settlement-party-cases``<br>| | |  | | |
+| ``ver:settlement:wrong-party`` | pn-verification; fixture | realized | ``EPOCH::amend:compiler:recipient-evidence`` | record-claim; ``EPOCH::amend:compiler:recipient-evidence``; ``EPOCH::claim:compiler:recipients-read-persistent-title-events``; ``ROOT::gate:design:bite-5``<br>record-claim; ``EPOCH::amend:compiler:recipient-evidence``; ``EPOCH::claim:compiler:recipients-read-persistent-title-events``; ``ROOT::verif:design:compiler-cases``<br>| | |  | | |
 | ``def:network:material-classification`` | none; policy | unassigned | | | | |  | `adr/006-identity-adjudication.md` `docs/design/concept.md` `docs/templates/adr/006-identity-adjudication.md.j2` `docs/templates/docs/design/concept.md.j2` | ``ROOT::open:identity:act-realization-admission``; Premise only: Closure and oracle checks do not depend on courtesy conduct.<br>``ROOT::open:vision:deployment-profile``; Premise only: These are the release’s separate material classes, not a conformance claim.<br>|
 | ``def:graph:projection`` | none; none | unassigned | | | | |  | | |
 | ``def:deployment:published-epoch-replay-floor`` | pn-replay; policy | designed | ``ROOT::amend:design:closure-record-scope`` ``ROOT::dec:design:epoch-record-order`` ``ROOT::open:identity:act-realization-admission`` ``ROOT::rule:actepoch:computed-publication`` ``ROOT::rule:actepoch:host-conformance`` | | | ``ROOT::dec:design:epoch-record-order``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::open:identity:act-realization-admission``; ``ROOT::open:identity:act-realization-admission``<br>|  | | ``ROOT::amend:decomposition:numeric-representation``; Claimed part: This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.<br>``ROOT::amend:design:closure-record-scope``; Claimed part: This locates the designed static input boundary and its held successor admission; it supplies no execution evidence or oracle premise.<br>``ROOT::dec:design:epoch-record-order``; Claimed part: This bounds the designed successor’s publication scope, not its implementation or independent enclosure soundness.<br>``ROOT::open:design:publication-profile``; Claimed part: This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.<br>``ROOT::open:design:replay-proof-fields``; Claimed part: This uses only the defined scope to locate the unresolved route; it asserts neither its implementation nor an external or private premise.<br>``ROOT::open:identity:act-realization-admission``; Claimed part: This locates the designed static input boundary and its held successor admission; it supplies no execution evidence or oracle premise.<br>``ROOT::rule:actepoch:computed-publication``; Claimed part: This designs complete public static input carriage and separates optional computed copies; it asserts no implemented successor or oracle truth.<br>``ROOT::rule:actepoch:host-conformance``; Claimed part: This states the successor public-input duty without importing historical host constructions; exact successor approval admission remains held.<br>|
@@ -1852,7 +1825,6 @@
 | ``def:graph:courtesy-handshake`` | pn-act-authentication; policy | designed | ``ROOT::amend:identity:act-proposal-admission`` ``ROOT::open:vision:deployment-profile`` ``ROOT::rule:actepoch:host-conformance`` | | | ``ROOT::amend:identity:act-proposal-admission``; ``ROOT::open:identity:act-realization-admission``<br>|  | | |
 | ``def:graph:requested-publication-intent`` | pn-act-profile; policy | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | ``ROOT::open:identity:carriage-result-recipe``; Premise only: The five request verbs and authenticated receipt need their own body and receipt design.<br>|
 | ``def:graph:dependency-list-order`` | pn-act-profile; serialization | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
-| ``rem:graph:dependency-nonce-concealment`` | none; none | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``gloss:graph:commitment`` | none; none | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``gloss:graph:opening`` | none; none | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
 | ``gloss:graph:blinding-value`` | none; none | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
@@ -1917,6 +1889,35 @@
 | ``post:epoch:declared-history-consistency`` | pn-replay; invariant check | designed | ``ROOT::amend:design:closure-record-scope`` ``ROOT::rule:actepoch:parent-connection`` | | | |  | | |
 | ``rem:deployment:computed-copy-accountability`` | pn-host; policy | designed | ``ROOT::alg:design:reconstruction`` | | | | 9 | | |
 | ``subsec:symbols:courtesy-readings`` | none; none | unassigned | | | | |  | `ci/design.py` | |
+| ``alg:graph:branch-certificate-computation`` | pn-graph; function | unassigned | | | | |  | | |
+| ``case:necessity:continuing-consent-arrival-order`` | pn-graph; invariant check | unassigned | | | | |  | | |
+| ``case:necessity:continuing-consent-asserted-time`` | pn-graph; invariant check | unassigned | | | | |  | | |
+| ``case:necessity:continuing-consent-ratify-deadline`` | pn-graph; invariant check | unassigned | | | | |  | | |
+| ``case:necessity:continuing-consent-sibling-order-tiebreak`` | pn-graph; invariant check | unassigned | | | | |  | | |
+| ``case:necessity:continuing-consent-sibling-permanent-void`` | pn-graph; invariant check | unassigned | | | | |  | | |
+| ``case:transport:item-timeline-selection`` | pn-host; policy | unassigned | | | | |  | | |
+| ``def:epoch:tentative-branch-fold`` | pn-epoch; function | designed | ``GRAPH::def:formation:title-events`` | | | |  | | |
+| ``def:graph:act-projections`` | pn-graph; type | held | ``ROOT::amend:design:act-envelope-field-inventory`` ``ROOT::def:actepoch:act`` | | | ``ROOT::amend:design:act-envelope-field-inventory``; ``ROOT::open:design:dependency-opening-recipe``<br>``ROOT::def:actepoch:act``; ``ROOT::open:identity:common-document-admission``<br>|  | | |
+| ``def:graph:branch-challenge`` | pn-graph; type | designed | ``ROOT::arg:actepoch:title-dates`` ``ROOT::def:actepoch:title-challenges`` ``ROOT::def:actepoch:title-summary`` | | | |  | | |
+| ``def:graph:counted-parent-relation`` | pn-graph; type | designed | ``ROOT::def:actepoch:public-parts`` | | | |  | | |
+| ``def:graph:item-timeline-branch`` | pn-graph; type | designed | ``ROOT::def:actepoch:title-timeline`` | | | |  | | |
+| ``def:graph:ownership-timelines`` | pn-graph; type | unassigned | | | | |  | | |
+| ``def:graph:settlement-structure`` | pn-graph; function | designed | ``ROOT::dec:design:formation-title`` ``ROOT::def:actepoch:title-state`` ``ROOT::def:actepoch:title-transfer`` ``ROOT::req:vision:formation-title`` ``ROOT::rule:actepoch:title-completion`` | | | ``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 11 | | |
+| ``itm:graph:act-authentication-requirements-identity-uniqueness`` | pn-graph; invariant check | designed | ``ROOT::rule:identity:common-document-reading`` | | | |  | | |
+| ``itm:graph:settlement-structure-authorization`` | pn-graph; function | designed | ``ROOT::amend:decomposition:title-marker-evidence`` ``ROOT::open:design:settlement-partner-clause`` | | | ``ROOT::open:design:settlement-partner-clause``; ``ROOT::open:actepoch:title-admission``<br>|  | | |
+| ``itm:graph:settlement-structure-buyer-challenge`` | pn-graph; function | unassigned | | | | |  | | |
+| ``itm:graph:settlement-structure-completeness`` | pn-graph; function | unassigned | | | | |  | | |
+| ``itm:graph:settlement-structure-reference-binding`` | pn-graph; function | unassigned | | | | |  | | |
+| ``itm:graph:settlement-structure-seller-challenge`` | pn-graph; function | unassigned | | | | |  | | |
+| ``itm:graph:settlement-structure-well-formedness`` | pn-graph; function | designed | ``ROOT::rule:actepoch:title-transition`` | | | |  | | |
+| ``lem:graph:act-projection-necessity`` | pn-graph; invariant check | unassigned | | | | |  | | |
+| ``rem:deployment:timeline-certificate-anchor`` | pn-host; policy | unassigned | | | | |  | | Classification identity only: `adr/017-claim-based-testing.md`<br>Classification identity only: `docs/datasets/org.peer-network.testing.deployment-claims.json`<br>Classification identity only: `docs/inputs/deployment-claims.toml`<br>|
+| ``rem:graph:continuing-cancellation`` | pn-graph; invariant check | designed | ``ROOT::def:actepoch:title-challenges`` | | | |  | | |
+| ``rem:graph:dependency-blinding-value-concealment`` | pn-graph; none | designed (attention only) | ``ROOT::open:vision:deployment-profile`` | | | |  | | |
+| ``subsec:necessity:continuing-consent`` | pn-graph; invariant check | unassigned | | | | |  | | |
+| ``thm:graph:epoch-branch-fold`` | pn-graph; invariant check | designed | ``ROOT::arg:actepoch:title-dates`` ``ROOT::dec:design:formation-title`` ``ROOT::def:actepoch:title-state`` ``ROOT::req:vision:formation-title`` ``ROOT::rule:actepoch:title-growth`` ``ROOT::rule:actepoch:title-transition`` | | | ``ROOT::dec:design:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:formation-title``; ``ROOT::open:testing:obligation-evidence``<br>| 3, 4, 11 | | |
+| ``ver:settlement:branch-conflicts`` | pn-verification; fixture | unassigned | | | | |  | | |
+| ``ver:settlement:late-cancellation-descendants`` | pn-verification; fixture | unassigned | | | | |  | | |
 
 ## Conformance qualification · `sec:progress:conformance-qualification`
 
