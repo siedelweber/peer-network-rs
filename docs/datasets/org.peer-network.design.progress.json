@@ -1575,7 +1575,12 @@
       "category": "statement",
       "crate": "pn-records",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:frame-document-admission",
+          "record": "ROOT::amend:identity:frame-document-design"
+        }
+      ],
       "kind": "type",
       "label": "def:comparator:imported-frame",
       "portions": [],
@@ -1585,7 +1590,7 @@
         "ROOT::amend:identity:frame-document-design"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -15812,7 +15817,12 @@
       "category": "statement",
       "crate": "pn-records",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:frame-document-admission",
+          "record": "ROOT::amend:identity:frame-document-design"
+        }
+      ],
       "kind": "policy",
       "label": "rem:transport:frame-amount-granularity",
       "portions": [],
@@ -15822,7 +15832,7 @@
         "ROOT::amend:identity:frame-document-design"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -37776,23 +37786,23 @@
     },
     {
       "category": "total",
-      "designed": 440,
-      "held": 52,
+      "designed": 438,
+      "held": 54,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "440",
+          "exact": "438",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "440",
+          "num": "438",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "52",
+          "exact": "54",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "52",
+          "num": "54",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38667,23 +38677,23 @@
     },
     {
       "category": "crate",
-      "designed": 87,
-      "held": 10,
+      "designed": 85,
+      "held": 12,
       "name": "pn-records",
       "number_forms": {
         "designed": {
-          "exact": "87",
+          "exact": "85",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "87",
+          "num": "85",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "10",
+          "exact": "12",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10",
+          "num": "12",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39657,23 +39667,23 @@
     },
     {
       "category": "kind",
-      "designed": 71,
-      "held": 25,
+      "designed": 70,
+      "held": 26,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "71",
+          "exact": "70",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "71",
+          "num": "70",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "25",
+          "exact": "26",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "25",
+          "num": "26",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39855,23 +39865,23 @@
     },
     {
       "category": "kind",
-      "designed": 61,
-      "held": 7,
+      "designed": 60,
+      "held": 8,
       "name": "type",
       "number_forms": {
         "designed": {
-          "exact": "61",
+          "exact": "60",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "61",
+          "num": "60",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "7",
+          "exact": "8",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7",
+          "num": "8",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41043,23 +41053,23 @@
     },
     {
       "category": "bite",
-      "designed": 336,
-      "held": 22,
+      "designed": 334,
+      "held": 24,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "336",
+          "exact": "334",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "336",
+          "num": "334",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "22",
+          "exact": "24",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "22",
+          "num": "24",
           "num_exact": true,
           "num_relation": "="
         },

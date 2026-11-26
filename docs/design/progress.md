@@ -20,7 +20,7 @@
 
 | Population | Total | Realized | Held | Designed | Attention only | Record-granular support, not realized | Unassigned |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| implementation | 1 417 | 31 | 52 | 440 | 20 | 22 | 894 |
+| implementation | 1 417 | 31 | 54 | 438 | 20 | 22 | 894 |
 | prose | 346 | 0 | 2 | 21 | 12 | 0 | 323 |
 
 ## By crate · `sec:progress:crates`
@@ -34,7 +34,7 @@
 | pn-graph | 235 | 1 | 2 | 66 | 1 | 1 | 166 |
 | pn-host | 182 | 4 | 19 | 57 | 6 | 2 | 102 |
 | pn-readouts | 71 | 0 | 2 | 9 | 1 | 0 | 60 |
-| pn-records | 235 | 2 | 10 | 87 | 5 | 3 | 136 |
+| pn-records | 235 | 2 | 12 | 85 | 5 | 3 | 136 |
 | pn-replay | 36 | 1 | 3 | 9 | 0 | 0 | 23 |
 | pn-verification | 284 | 8 | 8 | 68 | 5 | 6 | 200 |
 
@@ -82,7 +82,7 @@
 | 9 | 12 | 1 | 4 | 7 | 0 | 1 | 0 |
 | 10 | 14 | 0 | 5 | 9 | 0 | 0 | 0 |
 | 11 | 93 | 8 | 28 | 56 | 0 | 4 | 1 |
-| unlinked | 1 592 | 21 | 22 | 336 | 32 | 17 | 1 213 |
+| unlinked | 1 592 | 21 | 24 | 334 | 32 | 17 | 1 213 |
 
 ## By inventory kind · `sec:progress:kinds`
 
@@ -95,9 +95,9 @@
 | function | 215 | 8 | 2 | 98 | 1 | 4 | 107 |
 | invariant check | 517 | 14 | 13 | 141 | 1 | 10 | 349 |
 | none | 357 | 0 | 0 | 21 | 8 | 0 | 336 |
-| policy | 321 | 3 | 25 | 71 | 11 | 2 | 222 |
+| policy | 321 | 3 | 26 | 70 | 11 | 2 | 222 |
 | serialization | 9 | 0 | 0 | 9 | 4 | 0 | 0 |
-| type | 109 | 1 | 7 | 61 | 0 | 2 | 40 |
+| type | 109 | 1 | 8 | 60 | 0 | 2 | 40 |
 
 ## Obligation support · `sec:progress:obligations`
 
@@ -225,7 +225,7 @@
 | ``eq:comparator:marker-burn-snapshot`` | pn-records; function | designed | ``ROOT::alg:design:burn-snapshot`` ``ROOT::arg:lineage:origin-calculation`` ``ROOT::dec:design:burn-boundary`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 11 | | |
 | ``prop:comparator:marker-finalization-consistency`` | pn-host; invariant check | designed | ``ROOT::alg:design:burn-snapshot`` ``ROOT::dec:design:burn-boundary`` ``ROOT::dec:design:replay`` ``ROOT::open:design:wall-performance`` ``ROOT::open:vision:deployment-profile`` ``ROOT::req:vision:replay`` | | | ``ROOT::dec:design:burn-boundary``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::dec:design:replay``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:replay``; ``ROOT::open:testing:obligation-evidence``<br>| 2, 5, 9, 11 | | |
 | ``subsec:comparator:imported-frame`` | pn-host; policy | unassigned | | | | |  | | |
-| ``def:comparator:imported-frame`` | pn-records; type | designed | ``ROOT::amend:identity:frame-document-design`` | | | |  | | |
+| ``def:comparator:imported-frame`` | pn-records; type | held | ``ROOT::amend:identity:frame-document-design`` | | | ``ROOT::amend:identity:frame-document-design``; ``ROOT::open:identity:frame-document-admission``<br>|  | | |
 | ``eq:comparator:seam`` | pn-records; function | unassigned | | | | |  | | |
 | ``rem:comparator:neutrality-from-silence`` | pn-host; policy | unassigned | | | | |  | | |
 | ``def:comparator:frame-binding`` | pn-records; type | unassigned | | | | |  | | |
@@ -944,7 +944,7 @@
 | ``sec:transport`` | none; none | unassigned | | | | |  | | |
 | ``subsec:transport:frame-commitment`` | none; none | unassigned | | | | |  | | |
 | ``def:transport:frame-commitment`` | pn-records; type | unassigned | | | | |  | | |
-| ``rem:transport:frame-amount-granularity`` | pn-records; policy | designed | ``ROOT::amend:identity:frame-document-design`` | | | |  | | |
+| ``rem:transport:frame-amount-granularity`` | pn-records; policy | held | ``ROOT::amend:identity:frame-document-design`` | | | ``ROOT::amend:identity:frame-document-design``; ``ROOT::open:identity:frame-document-admission``<br>|  | | |
 | ``subsec:transport:guild-model`` | pn-records; policy | unassigned | | | | |  | | |
 | ``post:transport:guild-grant`` | pn-host; policy | held | ``ROOT::dec:design:terminal-separation`` ``ROOT::req:vision:terminal-separation`` | | | ``ROOT::dec:design:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::req:vision:terminal-separation``; ``ROOT::open:testing:obligation-evidence``<br>| 10, 11 | | |
 | ``rem:transport:guild-grant-preconditions`` | pn-host; policy | unassigned | | | | |  | | |
