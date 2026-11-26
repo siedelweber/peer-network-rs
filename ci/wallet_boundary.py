@@ -82,10 +82,45 @@ def check_build_scripts(rows, packages):
             raise ValueError('wallet build-script field differs: '+row['name'])
 
 
-def check_production_tree(owner, tree, allowed, host_wallet=False):
+def production_allowance(carrier, owner, defaults, features):
+    """Read the reviewed normal/build allowance for one exact Cargo selection."""
+    key = (owner, defaults, tuple(features))
+    matches = [row for row in carrier['selections']
+               if (row['package'], row['default_features'], tuple(row['features'])) == key]
+    if len(matches) != 1:
+        raise ValueError('production selection missing or duplicated: '+repr(key))
+    reference = matches[0]['list']
+    if reference not in carrier['lists']:
+        raise ValueError('production selection has foreign list: '+repr(reference))
+    return carrier['lists'][reference]
+
+
+def validate_production_selections(carrier, expected):
+    """Refuse a missing, duplicate or foreign mapping before checking any tree."""
+    if carrier.get('schema') != 2 or not isinstance(carrier.get('lists'), dict) or not isinstance(carrier.get('selections'), list):
+        raise ValueError('production selection carrier has wrong shape')
+    actual = []
+    references = set()
+    for row in carrier['selections']:
+        if set(row) != {'package', 'default_features', 'features', 'list'} or type(row['default_features']) is not bool or not isinstance(row['features'], list) or row['features'] != sorted(set(row['features'])):
+            raise ValueError('production selection has wrong shape')
+        actual.append((row['package'], row['default_features'], tuple(row['features'])))
+        references.add(row['list'])
+    if len(actual) != len(set(actual)):
+        raise ValueError('production selection duplicated')
+    if set(actual) != set(expected):
+        raise ValueError('production selection missing or foreign: '+repr(sorted(set(expected) ^ set(actual))))
+    if references != set(carrier['lists']):
+        raise ValueError('production selection has foreign or unused list')
+    for reference, rows in carrier['lists'].items():
+        if not isinstance(reference, str) or not isinstance(rows, list) or rows != sorted(set(rows)) or any(not re.fullmatch(r'\S+ \S+', row) for row in rows):
+            raise ValueError('production allowance has wrong shape: '+repr(reference))
+
+
+def check_production_tree(owner, defaults, features, tree, carrier, host_wallet=False):
     actual = set(re.findall(r'^([^\s]+) v([^\s]+)', tree, re.M))
     names = {name for name, _ in actual}
-    unknown = {name+' '+version for name, version in actual} - set(allowed[owner])
+    unknown = {name+' '+version for name, version in actual} - set(production_allowance(carrier, owner, defaults, features))
     if unknown or (owner == 'pn-host' and not host_wallet and 'pn-wallet' in names):
         raise ValueError('development dependency reached production graph: '+owner+' '+repr(sorted(unknown)))
 
@@ -143,7 +178,23 @@ def check_features(root=Path('.')):
         matches = [p for p in packages.values() if (p['name'], p['version']) == (row['name'], row['version'])]
         if len(matches) != 1 or sorted(nodes[matches[0]['id']]['features']) != sorted(row['features']):
             raise ValueError('wallet unified binding features differ: '+row['name'])
-    allowed = json.loads((root/'ci/wallet-production-packages.json').read_text())
+    def distinct_pairs(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError('production selection JSON key duplicated: '+key)
+            result[key] = value
+        return result
+    allowed = json.loads((root/'ci/wallet-production-packages.json').read_text(), object_pairs_hook=distinct_pairs)
+    expected = []
+    for package in data['packages']:
+        if package['id'] in data['workspace_members']:
+            features = sorted(set(package['features']) - {'default'})
+            expected.extend((package['name'], defaults, combination)
+                            for defaults in (True, False)
+                            for count in range(len(features)+1)
+                            for combination in itertools.combinations(features, count))
+    validate_production_selections(allowed, expected)
     for package in data['packages']:
         if package['id'] not in data['workspace_members']:
             continue
@@ -156,8 +207,10 @@ def check_features(root=Path('.')):
                 if combination:
                     args += ['--features', ','.join(combination)]
                 tree = subprocess.check_output(['cargo','tree','--offline','--locked','-p',owner,*args,
-                    '--edges','normal,build','--prefix','none','--format','{p}'], cwd=root, text=True)
-                check_production_tree(owner, tree, allowed, host_wallet='development-network' in combination)
+                    '--edges','normal,build','--prefix','none','--format','{p}', '--target',
+                    profile['wallet_evaluation_target']], cwd=root, text=True)
+                check_production_tree(owner, defaults, combination, tree, allowed,
+                                      host_wallet='development-network' in combination)
     return True
 
 

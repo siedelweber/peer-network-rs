@@ -820,7 +820,7 @@ assert (root/'payload').read_text() == 'committed'
         actual = load()
         wallet = actual.suites['ci::test_wallet_boundary']
         self.assertEqual((wallet['tier'], wallet['budget']), ('service', 'elements-suite'))
-        self.assertEqual(len(wallet['cases']), 11)
+        self.assertEqual(len(wallet['cases']), 12)
         registry = fixture()
         with self.assertRaisesRegex(StructuralError, 'inventory differs'):
             registry.roster('nextest', [])

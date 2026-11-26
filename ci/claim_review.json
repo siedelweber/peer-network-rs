@@ -1370,6 +1370,14 @@
       "review": "Read exact unified feature comparison and normal/build dependency graphs excluding dhat and the host optional wallet edge."
     },
     {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_fixture_feature_off_production",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:node-feature-off-excludes-fixture-production",
+      "before": "",
+      "after": "Claim: Each node production selection without fixture excludes the fixture library and every package added only by fixture selections; reviewed fixture selections admit their resolved trees.",
+      "review": "Package-scoped Cargo trees for both default-feature choices and each observation choice establish the selected normal/build closure. Every package in the fixture-only closure is injected into every feature-off tree and refused; fixture selections pass their reviewed allowance."
+    },
+    {
       "operation": "ci::test_wallet_boundary.WalletBoundary.test_fixture_ports",
       "path": "ci/test_wallet_boundary.py",
       "claim": "ROOT::claim:discipline:wallet-fixture-ports-survive-time-wait",

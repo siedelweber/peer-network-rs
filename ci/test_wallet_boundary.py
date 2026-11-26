@@ -3,7 +3,9 @@ from pathlib import Path
 import unittest
 import copy
 from wallet_cases import check as check_cases
-from wallet_boundary import check, check_features, check_build_scripts, check_production_tree
+from wallet_boundary import (check, check_features, check_build_scripts,
+                             check_production_tree, production_allowance,
+                             validate_production_selections)
 import wallet_crypto
 import json
 import tomllib
@@ -183,9 +185,28 @@ class WalletBoundary(unittest.TestCase):
             name, version = dependency.split()
             for owner in ['pn-wallet', 'pn-graph']:
                 with self.assertRaisesRegex(ValueError, 'production graph'):
-                    check_production_tree(owner, f'{owner} v0.1.0\n{name} v{version}\n', allowed)
+                    check_production_tree(owner, True, [], f'{owner} v0.1.0\n{name} v{version}\n', allowed)
         with self.assertRaisesRegex(ValueError, 'production graph'):
-            check_production_tree('pn-host', 'pn-host v0.1.0\npn-wallet v0.1.0\n', allowed)
+            check_production_tree('pn-host', True, [], 'pn-host v0.1.0\npn-wallet v0.1.0\n', allowed)
+        expected = [(row['package'], row['default_features'], tuple(row['features']))
+                    for row in allowed['selections']]
+        self.assertIsNone(validate_production_selections(allowed, expected))
+        self.assertEqual(production_allowance(allowed, 'pn', True, []),
+                         production_allowance(allowed, 'pn', False, ['debug-observation']))
+        for mutation, message in [
+            (lambda value: value['selections'].pop(), 'missing or foreign'),
+            (lambda value: value['selections'].append(copy.deepcopy(value['selections'][0])), 'duplicated'),
+            (lambda value: value['selections'].append(dict(package='foreign', default_features=True, features=[], list='pn')), 'missing or foreign'),
+            (lambda value: value['selections'][0].update(list='foreign'), 'foreign or unused list'),
+        ]:
+            changed = copy.deepcopy(allowed)
+            mutation(changed)
+            with self.assertRaisesRegex(ValueError, message):
+                validate_production_selections(changed, expected)
+        with self.assertRaisesRegex(ValueError, 'missing or duplicated'):
+            production_allowance(allowed, 'pn', True, ['unknown'])
+        with self.assertRaisesRegex(ValueError, 'production graph'):
+            check_production_tree('pn', True, [], 'pn v0.1.0\npn-fixtures v0.1.0\n', allowed)
         rows = tomllib.loads(Path('docs/inputs/wallet-dependencies.toml').read_text())['rows']
         for row in rows:
             package = dict(name=row['name'], version=row['version'], manifest_path='/fixture/Cargo.toml',
@@ -194,6 +215,39 @@ class WalletBoundary(unittest.TestCase):
             bad = dict(row, build='build.rs' if row['build']=='none' else 'none')
             with self.assertRaisesRegex(ValueError, 'build-script field'):
                 check_build_scripts([bad], [package])
+
+    def test_fixture_feature_off_production(self):
+        """Claim: Each node production selection without fixture excludes the fixture library and every package added only by fixture selections; reviewed fixture selections admit their resolved trees.
+        ´claim:discipline:node-feature-off-excludes-fixture-production´
+        ´test:integration:test-fixture-feature-off-production´
+        """
+        allowed = json.loads(Path('ci/wallet-production-packages.json').read_text())
+        target = tomllib.loads(Path('docs/inputs/devnet-profile.toml').read_text())['rows'][0]['wallet_evaluation_target']
+        actual = {}
+        for defaults in (True, False):
+            for features in ([], ['debug-observation'], ['fixture'], ['debug-observation', 'fixture']):
+                command = ['cargo', 'tree', '--offline', '--locked', '-p', 'pn']
+                if not defaults:
+                    command.append('--no-default-features')
+                if features:
+                    command += ['--features', ','.join(features)]
+                command += ['--edges', 'normal,build', '--prefix', 'none', '--format', '{p}', '--target', target]
+                tree = subprocess.check_output(command, text=True)
+                self.assertIsNone(check_production_tree('pn', defaults, features, tree, allowed))
+                actual[(defaults, tuple(features))] = tree
+        fixture_only = set(production_allowance(allowed, 'pn', True, ['fixture'])) - set(production_allowance(allowed, 'pn', True, []))
+        self.assertIn('pn-fixtures 0.1.0', fixture_only)
+        self.assertTrue(fixture_only)
+        for defaults in (True, False):
+            for features in ([], ['debug-observation']):
+                tree = actual[(defaults, tuple(features))]
+                self.assertFalse(any(package.split()[0]+' v'+package.split()[1] in tree.splitlines()
+                                     for package in fixture_only))
+                for package in fixture_only:
+                    name, version = package.split()
+                    with self.assertRaisesRegex(ValueError, 'production graph'):
+                        check_production_tree('pn', defaults, features,
+                                              tree+f'{name} v{version}\n', allowed)
     def test_fixture_ports(self):
         """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's declared range and automatic client allocation, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its hang, method and elapsed time against containment; injected allocation, startup and validation-queue hangs retain their awaited state, allocation and shutdown waits pin both sides of 600 seconds, and the ordinary and administrative socket waits pin 600-second containment. The real legacy wallet uses the declared producer keypool; only wallet creation and private-key import select the administrative socket bound, and each administrative success, RPC error or timeout emits public timing without replay. Unexpected RPC refusals retain the daemon log and quote bounded code, message and observed wallet/chain heights; expected refusals keep their result. The pinned daemon advertises the validation-queue barrier, and both fixture mining paths require a drained wallet at the chain height before dependent spends; stand-ins witness a lagging wallet, a failed barrier and unavailable observations without retrying a spend.
         ´claim:discipline:wallet-fixture-ports-survive-time-wait´
