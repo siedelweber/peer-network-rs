@@ -3,11 +3,12 @@
   "value": {
     "name": "host-transport",
     "status": "reviewer-confirmed",
-    "premises": "The host transport is a secret-terminating boundary, not persistence. Acquisition, sockets, startup, authentication and cancellation borrow secret-owned buffers; only bounded public placeholders and structurally admitted public frames cross into the upstream driver. Fixed diagnostics preserve their bytes; other whole messages stay secret-owned. This source review is bounded to the declared fixture and protocol profile; independent integration admission remains held.",
+    "premises": "The host transport is a secret-terminating boundary, not persistence. Acquisition, sockets, startup, authentication and cancellation borrow secret-owned buffers; only bounded public placeholders and structurally admitted public frames cross into the upstream driver. Fixed diagnostics preserve their bytes; other whole messages stay secret-owned. This source review is bounded to the declared fixture and protocol profile; independent integration admission remains held. The owned session-end watch records only the first closed public cause and does no storage or transport work when observed.",
     "membership": {
       "explicit": [
         "pn-host::packages/host/src/config.rs::config::Configuration::acquire",
         "pn-host::packages/host/src/lib.rs::<ServerError as fmt :: Display>::fmt",
+        "pn-host::packages/host/src/lib.rs::<TaskEnd as Drop>::drop",
         "pn-host::packages/host/src/lib.rs::ServerError::cause",
         "pn-host::packages/host/src/lib.rs::ServerError::concern",
         "pn-host::packages/host/src/lib.rs::ServerError::retry",
@@ -17,6 +18,7 @@
         "pn-host::packages/host/src/lib.rs::Session::last_refusal",
         "pn-host::packages/host/src/lib.rs::Session::private_diagnostics",
         "pn-host::packages/host/src/lib.rs::Session::take_server_error",
+        "pn-host::packages/host/src/lib.rs::SessionEnd::wait",
         "pn-host::packages/host/src/lib.rs::observe_public_frame",
         "pn-host::packages/host/src/lib.rs::relay",
         "pn-host::packages/host/src/lib.rs::relay_outbound",

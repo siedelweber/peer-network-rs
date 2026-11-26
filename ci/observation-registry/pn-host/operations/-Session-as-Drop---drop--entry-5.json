@@ -21,12 +21,12 @@
   "review": {
     "operation": "pn-host::packages/host/src/lib.rs::<Session as Drop>::drop",
     "class_decision": "host-transport",
-    "body": "{ let _unconsumed = self . take_server_error () ; for task in & self . tasks { task . abort () ; } }",
+    "body": "{ let cause = * self . last_refusal . lock () . unwrap_or_else (std :: sync :: PoisonError :: into_inner) ; self . end . send_if_modified (| state | { if * state == EndState :: Live { * state = EndState :: Ended (cause) ; true } else { false } }) ; let _unconsumed = self . take_server_error () ; for task in & self . tasks { task . abort () ; } }",
     "assessments": {
       "full_recording": "host-full_recording",
       "secret_flow": "host-secret_flow",
       "exposure_consumers": "host-exposure_consumers"
     },
-    "item_premise": "Teardown takes an unconsumed closed answer before aborting owned relay tasks. The take is observed and carries no diagnostic content; no server request or secret exposure is added."
+    "item_premise": "Teardown publishes the relay refusal already recorded when the session is dropped, before aborting owned tasks. Its observed take of an unconsumed closed answer carries no diagnostic content; no server request or secret exposure is added."
   }
 }

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "SessionEnd",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "# [doc = \" An owned observation of the first end of a host store session.\"] # [doc = \"\"] # [doc = \" A handle may outlive its `ServerTree`; dropping the tree closes its session\"] # [doc = \" and wakes a waiter with only a cause the relay had already recorded.\"] # [doc = \" Registration after an end and repeated waits retain the first result.\"] # [doc = \" Waiting or dropping this handle neither queries nor cancels the session.\"] # [doc = \" A dropped wait records cancellation; a later wait can observe the retained end.\"] # [doc = \" Only transport-reported loss is observable; no keepalive or probe is used.\"] # [doc = \" (´[ROOT-amend:storage:relay-termination]´)\"] # [derive (Clone , Debug)] pub struct SessionEnd { receiver : watch :: Receiver < EndState > , }"
+  }
+}

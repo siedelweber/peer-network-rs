@@ -24,6 +24,136 @@ pub(in crate::storage::tree) fn fetches() -> usize {
 }
 use super::super::{MemoryTree, tests::forks};
 use super::*;
+use std::future::Future;
+
+async fn assert_end_pending(end: &mut crate::SessionEnd) {
+    fn assert_send<T: Send>(_: &T) {}
+    let mut wait = Box::pin(end.wait());
+    assert_send(&wait);
+    std::future::poll_fn(|cx| {
+        assert!(wait.as_mut().poll(cx).is_pending());
+        std::task::Poll::Ready(())
+    })
+    .await;
+}
+
+fn end_runtime() -> tokio::runtime::Runtime {
+    tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap()
+}
+
+/// Claim: A completed, explicitly refused reader leaves its live session's end waiter pending.
+/// ´claim:host:session-end-live-reader-neighbour´
+/// ´test:unit:session-end-live-reader-neighbour´
+#[test]
+fn session_end_live_reader_neighbour() {
+    end_runtime().block_on(async {
+        let mut tree = empty_server_tree().await;
+        let mut end = tree.session_end();
+        let fixture = forks();
+        let scope = &fixture.generation.scope;
+        let mut reader = tree.reader(allowance()).await.unwrap();
+        assert!(reader.roots(scope, None, 0).await.is_err());
+        assert!(reader.end().await.is_err());
+        tree.reader(allowance()).await.unwrap().end().await.unwrap();
+        assert_end_pending(&mut end).await;
+    });
+}
+
+/// Claim: A task end observed before registration remains available to a later tree owner handle.
+/// ´claim:host:session-end-before-registration´
+/// ´test:unit:session-end-before-registration´
+#[test]
+fn session_end_before_registration() {
+    end_runtime().block_on(async {
+        let mut tree = empty_server_tree().await;
+        tree.session.tasks[1].abort();
+        assert!((&mut tree.session.tasks[1]).await.is_err());
+        assert_eq!(tree.session_end().wait().await, None);
+    });
+}
+
+/// Claim: A registered waiter wakes when the driver task ends.
+/// ´claim:host:session-end-after-registration´
+/// ´test:unit:session-end-after-registration´
+#[test]
+fn session_end_after_registration() {
+    end_runtime().block_on(async {
+        let tree = empty_server_tree().await;
+        let mut end = tree.session_end();
+        assert_end_pending(&mut end).await;
+        tree.session.tasks[1].abort();
+        assert_eq!(end.wait().await, None);
+    });
+}
+
+/// Claim: Repeated waits on one observed end retain the first bounded result.
+/// ´claim:host:session-end-repeated-observation´
+/// ´test:unit:session-end-repeated-observation´
+#[test]
+fn session_end_repeated_observation() {
+    end_runtime().block_on(async {
+        let tree = empty_server_tree().await;
+        let mut end = tree.session_end();
+        tree.session.tasks[1].abort();
+        let first = end.wait().await;
+        assert_eq!(end.wait().await, first);
+        assert_eq!(tree.session_end().wait().await, first);
+    });
+}
+
+/// Claim: Server-side termination wakes the owner with a closed relay refusal.
+/// ´claim:host:session-end-relay-wake´
+/// ´test:unit:session-end-relay-wake´
+#[test]
+fn session_end_relay_wake() {
+    end_runtime().block_on(async {
+        let tree = empty_server_tree().await;
+        let mut end = tree.session_end();
+        assert_end_pending(&mut end).await;
+        drop(
+            tree.session
+                .client()
+                .query_one("SELECT pg_terminate_backend(pg_backend_pid())", &[])
+                .await,
+        );
+        let cause = end.wait().await;
+        assert!(matches!(cause, Some(crate::Refusal::Transport | crate::Refusal::Server(_))));
+    });
+}
+
+/// Claim: Dropping a waiter neither cancels teardown nor prevents a later handle seeing tree drop.
+/// ´claim:host:session-end-waiter-drop-preserves-teardown´
+/// ´test:unit:session-end-waiter-drop-preserves-teardown´
+#[test]
+fn session_end_waiter_drop_preserves_teardown() {
+    end_runtime().block_on(async {
+        let tree = empty_server_tree().await;
+        drop(tree.session_end());
+        let mut surviving = tree.session_end();
+        drop(tree);
+        assert_eq!(surviving.wait().await, None);
+    });
+}
+
+/// Claim: Dropping a tree with no recorded relay refusal on a multi-thread runtime wakes its waiter without a cause.
+/// ´claim:host:session-end-tree-drop-multithread´
+/// ´test:unit:session-end-tree-drop-multithread´
+#[test]
+fn session_end_tree_drop_multithread() {
+    tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(2)
+        .enable_all()
+        .build()
+        .unwrap()
+        .block_on(async {
+            let tree = empty_server_tree().await;
+            let mut end = tree.session_end();
+            assert_end_pending(&mut end).await;
+            assert_eq!(tree.session.last_refusal(), None);
+            drop(tree);
+            assert_eq!(end.wait().await, None);
+        });
+}
 
 fn allowance() -> ReadBudget {
     ReadBudget {

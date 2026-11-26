@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "item": "SessionEnd::wait",
+    "owner": "HOST",
+    "signature": "async fn wait (& mut self) -> Option < Refusal >",
+    "claim": "ROOT::sig:design:storage",
+    "shape": "shape-host",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-host::packages/host/src/lib.rs::SessionEnd::wait",
+    "class_decision": "host-transport",
+    "assessments": {
+      "full_recording": "host-full_recording",
+      "secret_flow": "host-secret_flow",
+      "exposure_consumers": "host-exposure_consumers"
+    },
+    "body": "{ loop { if let EndState :: Ended (cause) = * self . receiver . borrow_and_update () { break cause ; } if self . receiver . changed () . await . is_err () { break None ; } } }",
+    "item_premise": "The asynchronous span follows each poll and records a closed public end cause on return or cancellation on a dropped wait. The watch receiver retains the first end for a later wait; it lends no statement capability or private diagnostic."
+  }
+}

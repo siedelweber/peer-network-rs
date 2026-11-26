@@ -3,7 +3,7 @@
   "value": {
     "name": "host-storage",
     "status": "reviewer-confirmed",
-    "premises": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+    "premises": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held. The owned session-end watch records only the first closed public cause and does no storage or transport work when observed.",
     "membership": {
       "explicit": [
         "pn-host::packages/host/src/storage.rs::storage::MemoryStore::append_effective_successor",
@@ -31,12 +31,12 @@
         "pn-host::packages/host/src/storage/tree/audit.rs::storage::tree::audit::AuditInventory::counts",
         "pn-host::packages/host/src/storage/tree/audit.rs::storage::tree::audit::AuditInventory::fields",
         "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::check_content",
-        "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::MemoryTree < '_ >::check_enumeration",
         "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::check_identity",
         "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::check_segments",
         "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::check_shapes",
         "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::collect",
         "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::<MemoryTree < 'a > as AuditSource < 'a >>::context",
+        "pn-host::packages/host/src/storage/tree/audit/memory.rs::storage::tree::audit::memory::MemoryTree < '_ >::check_enumeration",
         "pn-host::packages/host/src/storage/tree/index.rs::storage::tree::index::<Index < K , V > as Default>::default",
         "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::MemoryTree < 'a >::reader",
         "pn-host::packages/host/src/storage/tree/read.rs::storage::tree::read::Reader < 's , 'a >::as_of",
@@ -61,6 +61,7 @@
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::commit",
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::open",
         "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::reader",
+        "pn-host::packages/host/src/storage/tree/server.rs::storage::tree::server::ServerTree::session_end",
         "pn-host::packages/host/src/storage/tree/server/projection.rs::storage::tree::server::projection::<DebitVintage as DebitUse>::act",
         "pn-host::packages/host/src/storage/tree/server/projection.rs::storage::tree::server::projection::<DebitVintage as DebitUse>::bytes",
         "pn-host::packages/host/src/storage/tree/server/projection.rs::storage::tree::server::projection::<Selected < '_ > as SelectedUse>::use_",

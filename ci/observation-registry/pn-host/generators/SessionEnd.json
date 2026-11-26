@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "SessionEnd",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "# [derive (Clone , Debug)]",
+    "class_decision": "host-transport",
+    "expansion_review": "The cloned owned watch receiver and its Debug view carry only the retained closed public end state; no driver, diagnostic or statement capability is held."
+  }
+}

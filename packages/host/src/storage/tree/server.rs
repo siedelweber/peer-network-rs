@@ -9,6 +9,7 @@ use super::{
     AuditBudget, AuditFailure, AuditInventory, AuditUsage, EpochScope, Error, Generation, Identity, Meter, Page, Range,
     ReadBudget, StorageError, Usage, fields, scope_check,
 };
+use crate::SessionEnd;
 use crate::admitted_result::DeclarationUse;
 use crate::admitted_result::position::Retained;
 
@@ -30,6 +31,25 @@ pub struct ServerTree {
 }
 
 impl ServerTree {
+    /// Own a waitable indication of this tree's session ending.
+    ///
+    /// The handle may outlive the tree. A completed end remains visible to a
+    /// later handle and to repeated waits. Dropping the handle has no effect on
+    /// the session; dropping the tree ends the session and wakes its handles.
+    /// No operation or transport probe is made by this method.
+    #[must_use]
+    pub fn session_end(&self) -> SessionEnd {
+        let operation = cli_common::observation::scope(
+            "HOST",
+            "sig:design:storage",
+            "storage::tree::server::ServerTree::session_end",
+            &(),
+        );
+        let result = self.session.end_observer();
+        operation.finish(&"session end handle");
+        result
+    }
+
     /// Reconcile one complete read-only snapshot into an immutable logical inventory.
     /// (´[ROOT-amend:storage:tree-audit]´)
     /// # Errors

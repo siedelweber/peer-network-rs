@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "EndState",
+    "kind": "derive",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , Eq , PartialEq)]",
+    "class_decision": "host-transport",
+    "expansion_review": "Derived copying, equality and Debug see only Live or the closed public Refusal. They expose no driver diagnostic, configuration, statement capability or protected byte."
+  }
+}

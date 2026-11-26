@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "TaskEnd",
+    "package": "pn-host",
+    "path": "packages/host/src/lib.rs",
+    "syntax": "struct TaskEnd { sender : watch :: Sender < EndState > , cause : Option < Refusal > , refusal : Arc < Mutex < Option < Refusal > > > , }"
+  }
+}

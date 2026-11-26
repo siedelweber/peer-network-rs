@@ -5971,6 +5971,62 @@
       "review": "The service installs a valid generation with one selected version omitted, attempts the original root carrier and compares a fresh ended complete snapshot before and after the specific refusal."
     },
     {
+      "operation": "pn-host::storage::tree::server::tests::session_end_after_registration",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:host:session-end-after-registration",
+      "before": "",
+      "after": "Claim: A registered waiter wakes when the driver task ends.",
+      "review": "The handle is registered and first polled pending, then the driver task is aborted; the wait returns its cause-less end. No assertion about a query or probe is made."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::session_end_before_registration",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:host:session-end-before-registration",
+      "before": "",
+      "after": "Claim: A task end observed before registration remains available to a later tree owner handle.",
+      "review": "The driver task is aborted and awaited before a new handle is taken; the later wait observes the retained end."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::session_end_live_reader_neighbour",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:host:session-end-live-reader-neighbour",
+      "before": "",
+      "after": "Claim: A completed, explicitly refused reader leaves its live session's end waiter pending.",
+      "review": "The refused reader is followed by a reader snapshot opened and ended successfully on the same store before the waiter is polled once. This proves a live neighbour only on the registered PostgreSQL service."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::session_end_relay_wake",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:host:session-end-relay-wake",
+      "before": "",
+      "after": "Claim: Server-side termination wakes the owner with a closed relay refusal.",
+      "review": "A server-side backend termination is followed by the relay's Transport or Server refusal, read from the shared slot by whichever guard publishes first; a cause-less end fails."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::session_end_repeated_observation",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:host:session-end-repeated-observation",
+      "before": "",
+      "after": "Claim: Repeated waits on one observed end retain the first bounded result.",
+      "review": "A driver abort publishes a cause-less end; two waits and a newly registered handle return the same value. A retained Some cause is not asserted."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::session_end_tree_drop_multithread",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:host:session-end-tree-drop-multithread",
+      "before": "",
+      "after": "Claim: Dropping a tree with no recorded relay refusal on a multi-thread runtime wakes its waiter without a cause.",
+      "review": "The registered PostgreSQL service opens a live tree with no recorded relay refusal. Its owner handle is polled pending before tree drop, then the multi-thread runtime returns the cause-less end."
+    },
+    {
+      "operation": "pn-host::storage::tree::server::tests::session_end_waiter_drop_preserves_teardown",
+      "path": "packages/host/src/storage/tree/server/tests.rs",
+      "claim": "HOST::claim:host:session-end-waiter-drop-preserves-teardown",
+      "before": "",
+      "after": "Claim: Dropping a waiter neither cancels teardown nor prevents a later handle seeing tree drop.",
+      "review": "One handle, not a pending wait future, is dropped before another handle observes the tree's owned task teardown."
+    },
+    {
       "operation": "pn-host::storage::tree::server::tests::tree_server_closure",
       "path": "packages/host/src/storage/tree/server/tests.rs",
       "claim": "HOST::claim:history:tree-server-closure",

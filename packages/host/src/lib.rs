@@ -35,6 +35,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::sync::watch;
 
 // A bridge owns its forwarding task even when the bridge future is cancelled.
 struct ForwardingTask(tokio::task::JoinHandle<Result<(), Refusal>>);
@@ -42,6 +43,90 @@ impl Drop for ForwardingTask {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
     fn drop(&mut self) {
         self.0.abort();
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum EndState {
+    Live,
+    Ended(Option<Refusal>),
+}
+
+// Publishing in Drop also covers cancellation of a spawned task. The first
+// ending wins, so a later driver end cannot erase the relay's bounded cause.
+struct TaskEnd {
+    sender: watch::Sender<EndState>,
+    cause: Option<Refusal>,
+    refusal: Arc<Mutex<Option<Refusal>>>,
+}
+
+impl TaskEnd {
+    fn new(sender: watch::Sender<EndState>, refusal: Arc<Mutex<Option<Refusal>>>) -> Self {
+        Self {
+            sender,
+            cause: None,
+            refusal,
+        }
+    }
+}
+
+impl Drop for TaskEnd {
+    /// Justified: Task-end publication inherits the connecting session's owned task lifetime; a separate drop span would report teardown outside its owner.
+    fn drop(&mut self) {
+        let cause = self
+            .cause
+            .or_else(|| *self.refusal.lock().unwrap_or_else(std::sync::PoisonError::into_inner));
+        self.sender.send_if_modified(|state| {
+            if *state == EndState::Live {
+                *state = EndState::Ended(cause);
+                true
+            } else {
+                false
+            }
+        });
+    }
+}
+
+/// An owned observation of the first end of a host store session.
+///
+/// A handle may outlive its `ServerTree`; dropping the tree closes its session
+/// and wakes a waiter with only a cause the relay had already recorded.
+/// Registration after an end and repeated waits retain the first result.
+/// Waiting or dropping this handle neither queries nor cancels the session.
+/// A dropped wait records cancellation; a later wait can observe the retained end.
+/// Only transport-reported loss is observable; no keepalive or probe is used.
+/// (´[ROOT-amend:storage:relay-termination]´)
+#[derive(Clone, Debug)]
+pub struct SessionEnd {
+    receiver: watch::Receiver<EndState>,
+}
+
+impl SessionEnd {
+    /// Wait for session termination and return its bounded relay cause, if any.
+    /// An ordinary refused read whose session remains live does not wake this wait.
+    /// An end may have no cause if neither task has observed a relay refusal yet.
+    /// On a multi-thread runtime, cancelling a session task may carry the
+    /// transport refusal the relay records as the driver's stream closes.
+    #[tracing::instrument(
+        name = "sig:design:storage",
+        fields(
+            execution_owner = "HOST",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:storage",
+            source_item = "SessionEnd::wait",
+            asynchronous = true
+        ),
+        ret
+    )]
+    pub async fn wait(&mut self) -> Option<Refusal> {
+        loop {
+            if let EndState::Ended(cause) = *self.receiver.borrow_and_update() {
+                break cause;
+            }
+            if self.receiver.changed().await.is_err() {
+                break None;
+            }
+        }
     }
 }
 
@@ -335,6 +420,7 @@ pub struct Session {
     server_error: Arc<Mutex<Option<ServerError>>>,
     store_requests: storage::RequestState,
     tasks: Vec<tokio::task::JoinHandle<()>>,
+    end: watch::Sender<EndState>,
 }
 impl fmt::Debug for Session {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
@@ -350,6 +436,15 @@ impl fmt::Debug for Session {
 impl Drop for Session {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
     fn drop(&mut self) {
+        let cause = *self.last_refusal.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+        self.end.send_if_modified(|state| {
+            if *state == EndState::Live {
+                *state = EndState::Ended(cause);
+                true
+            } else {
+                false
+            }
+        });
         let _unconsumed = self.take_server_error();
         for task in &self.tasks {
             task.abort();
@@ -385,6 +480,7 @@ impl Session {
             let key = Arc::new(Mutex::new(None));
             let diagnostics = Arc::new(Mutex::new(Vec::new()));
             let last_refusal = Arc::new(Mutex::new(None));
+            let (end, _first_waiter) = watch::channel(EndState::Live);
             let server_error = Arc::new(Mutex::new(None));
             let mut startup = Vec::new();
             loop {
@@ -410,8 +506,10 @@ impl Session {
             let bridge_diagnostics = Arc::clone(&diagnostics);
             let bridge_refusal = Arc::clone(&last_refusal);
             let bridge_error = Arc::clone(&server_error);
+            let bridge_end = end.clone();
             let bridge = tokio::spawn(async move {
-                let _result = relay(Relay {
+                let mut task_end = TaskEnd::new(bridge_end, Arc::clone(&bridge_refusal));
+                let result = relay(Relay {
                     shim,
                     socket,
                     startup,
@@ -421,6 +519,7 @@ impl Session {
                     server_error: bridge_error,
                 })
                 .await;
+                task_end.cause = result.err();
             });
             let mut placeholder = tokio_postgres::Config::new();
             placeholder
@@ -432,7 +531,10 @@ impl Session {
                 bridge.abort();
                 return Err(Refusal::DriverHandoff);
             };
+            let driver_end = end.clone();
+            let driver_refusal = Arc::clone(&last_refusal);
             let connection = tokio::spawn(async move {
+                let _task_end = TaskEnd::new(driver_end, driver_refusal);
                 let _result = connection.await;
             });
             Ok(Self {
@@ -444,6 +546,7 @@ impl Session {
                 store_requests: storage::RequestState::new(server_error.clone()),
                 server_error,
                 tasks: vec![bridge, connection],
+                end,
             })
         }
         .await;
@@ -550,6 +653,12 @@ impl Session {
         let result = *self.last_refusal.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
         operation.finish(&result);
         result
+    }
+
+    pub(crate) fn end_observer(&self) -> SessionEnd {
+        SessionEnd {
+            receiver: self.end.subscribe(),
+        }
     }
 }
 
