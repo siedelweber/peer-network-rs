@@ -382,10 +382,12 @@ MATERIAL_EXCEPTIONS = {
     'cond:deployment:complete-act-conformance': 'courtesy',
     'cond:deployment:controller-performance': 'courtesy',
     'cond:deployment:emission-experience': 'courtesy',
+    'cond:deployment:external-value-service-conduct': 'courtesy',
     'cond:deployment:parameter-comparisons': 'courtesy',
     'cond:deployment:payload-cache-envelope': 'courtesy',
     'cond:deployment:standing-work': 'courtesy',
     'cond:deployment:terminal-regression': 'courtesy',
+    'cond:deployment:terminal-title-display-context': 'courtesy',
     'cond:deployment:title-certificate-monitoring': 'courtesy',
     'cond:graph:act-incidence-causality-completed-predecessors': 'courtesy',
     'cond:graph:act-incidence-causality-fold-accumulator': 'courtesy',
@@ -545,7 +547,7 @@ def validate():
     inventory = data('inventory')
     constants = data('constants')
     material_classes(inventory)
-    if not (len(inventory) == 1767 and len({row['label'] for row in inventory}) == 1767):
+    if not (len(inventory) == 1772 and len({row['label'] for row in inventory}) == 1772):
         raise ValueError('inventory label census')
     placeholders = [row for row in inventory if re.search(r'^Track\s+.+\s+as a separately addressable\s+', row['statement'])]
     structural = {'section', 'subsection', 'appendix', 'motto'}
@@ -662,10 +664,10 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.37.4'
-CURRENT_INVENTORY_PIN = '1e91db5992be14eb13dd024a841731b6544b1bb4e10c87bf62e0719b4a11db64'
-REFRESHED_CONSTANTS_PIN = '3c96870ca0f7f6cf93678f746f75c2c0a04027164323b83d6abc0dbc51f9e336'
-RELEASE_QUESTIONS_PIN = '97ba250e49ca8cf7ae8150d3a1ce6474bf4e6399c903117d09d173e1a0e84cdd'
+PAPER_TAG = 'network-v0.37.5'
+CURRENT_INVENTORY_PIN = '6d8766e300590e2abcb7597883cad94b06ddd37def20167a0a3e0c61bc816b09'
+REFRESHED_CONSTANTS_PIN = 'd2743642faaeec9867468ee19adfa3600ae3478d6a1da7038fdaf8ea578247a7'
+RELEASE_QUESTIONS_PIN = '9f387cfb15e0c899e0baa71529acac95af0e165b8a5ba814e253ca45861da445'
 
 
 CRATES_PIN = '1567509b6e394ad0843b1a045401f3e5760b979b38b4d5bd0a58458a8c714ae6'

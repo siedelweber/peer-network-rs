@@ -988,6 +988,20 @@
     },
     {
       "conditional_on": "",
+      "reason": "This locates the optional display context beside complete replay without adopting a display service or claiming execution.",
+      "relation": "realizes",
+      "source": "ROOT::def:actepoch:title-timeline",
+      "target": "cond:deployment:terminal-title-display-context"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This designs complete branch replay independently of optional terminal selection, without claiming an implemented title fold.",
+      "relation": "realizes",
+      "source": "ROOT::def:actepoch:title-timeline",
+      "target": "post:deployment:public-object-replay"
+    },
+    {
+      "conditional_on": "",
       "reason": "This uses exact authored coordinate pairs, not private entropy, custody or production selection.",
       "relation": "realizes",
       "source": "ROOT::def:actepoch:typed-acts",
@@ -1443,7 +1457,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "The conduct audit is separate from declared-run accounting and supplies no timing premise to it.",
+      "reason": "The conduct audit is separate from declared-run accounting and structural consistency and supplies no timing premise to it.",
       "relation": "realizes",
       "source": "ROOT::rule:actepoch:parent-connection",
       "target": "rem:deployment:boundary-conduct-oversight"

@@ -58,7 +58,7 @@
     },
     {
       "document": "Static and history closure",
-      "members": "Internal validity / declared-run accounting consistency",
+      "members": "Internal validity / declared-run accounting and structural consistency",
       "references": "History receives validated epochs and their computed states; no parent link"
     },
     {
