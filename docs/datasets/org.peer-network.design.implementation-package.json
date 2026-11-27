@@ -7,7 +7,7 @@
   ],
   "rows": [
     {
-      "contents": "Ordered acts, complete edge union, prior-history references, disjoint dependent blocks, authoritative positions, realized size, closure cause and asserted timestamp.",
+      "contents": "Ordered acts, complete edge union, prior-history references, disjoint dependent blocks, authoritative positions, realized size, asserted closure cause and asserted boundary timestamp. The cause retains only its historical meaning under (`conv:actepoch:history`); network-v0.37.4 ``post:graph:boundary-accountability`` requires only the asserted timestamp. Neither the historical cause carrier nor timestamp/duration consistency is a successor static predicate.",
       "key": 2,
       "name": "accepted-records"
     },

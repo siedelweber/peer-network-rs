@@ -3268,30 +3268,19 @@
       "tentative": 0
     },
     {
-      "bites": [
-        1,
-        7,
-        11
-      ],
+      "bites": [],
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [
-        {
-          "hold": "ROOT::open:testing:obligation-evidence",
-          "record": "ROOT::dec:design:final-membership"
-        }
-      ],
+      "holds": [],
       "kind": "policy",
       "label": "rem:network:durations-no-glyph",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [
-        "ROOT::dec:design:final-membership"
-      ],
+      "records": [],
       "routes": [],
-      "status": "held",
+      "status": "unassigned",
       "tentative": 0
     },
     {
@@ -7620,19 +7609,38 @@
       "tentative": 0
     },
     {
-      "bites": [],
+      "bites": [
+        1,
+        7,
+        11
+      ],
       "category": "statement",
       "crate": "pn-host",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:crypto:dependency-admission",
+          "record": "ROOT::amend:design:publication-field-inventory"
+        },
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::req:vision:final-membership"
+        }
+      ],
       "kind": "certificate",
       "label": "post:graph:boundary-accountability",
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
       "records": [
+        "EPOCH::rec:admission:semantic-package-sections",
         "ROOT::alg:design:closure-registration",
-        "ROOT::amend:design:candidate-admission-boundary"
+        "ROOT::amend:design:publication-field-inventory",
+        "ROOT::def:actepoch:evidence",
+        "ROOT::def:actepoch:schedule",
+        "ROOT::open:actepoch:source-selection",
+        "ROOT::req:vision:final-membership",
+        "ROOT::rule:actepoch:checking"
       ],
       "routes": [],
       "status": "designed",
@@ -13234,9 +13242,11 @@
       "portions": [],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::def:actepoch:schedule"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -13267,6 +13277,7 @@
         "ROOT::alg:design:closure-registration",
         "ROOT::amend:design:candidate-admission-boundary",
         "ROOT::dec:design:final-membership",
+        "ROOT::def:actepoch:schedule",
         "ROOT::req:vision:final-membership"
       ],
       "routes": [],
@@ -24258,7 +24269,8 @@
       "record_routes": [],
       "records": [
         "CONSTANTS::const.comparator.numeraire",
-        "CONSTANTS::const.comparator.policy_floor"
+        "CONSTANTS::const.comparator.policy_floor",
+        "ROOT::def:actepoch:schedule"
       ],
       "routes": [],
       "status": "designed",
@@ -32002,50 +32014,50 @@
     {
       "bites": [],
       "category": "statement",
-      "crate": "pn-host",
+      "crate": "pn-epoch",
       "elsewhere": [],
       "holds": [],
       "kind": "policy",
-      "label": "cond:deployment:boundary-policy",
+      "label": "cond:deployment:supplied-boundary-values",
       "portions": [
         {
-          "clause": "Claimed part: This declaration boundary retains supplied inputs and scoped measurements; it does not establish an unseen workload, acquisition truth or elapsed performance.",
+          "clause": "Claimed part: This retains the supplied target declaration without validating its oracle warrant or claiming a successor implementation",
           "record": "ROOT::amend:design:host-operational-declaration"
         },
         {
-          "clause": "Record order does not attest a duration or message delivery.",
+          "clause": "The version fixes the lead at one boundary; no lead distance is supplied. Custody and the adjacent equality attest neither real notice nor elapsed time nor assertion warrant.",
           "record": "ROOT::amend:testing:boundary-policy-announcement"
         },
         {
-          "clause": "The denial of an admission right to an unwritten candidate clarifies the publication duty rather than adding a deployment obligation.",
+          "clause": "Both supplied-values and boundary-conduct conditions deny an admission right to an unwritten candidate; this remains explanation, not a separate duty.",
           "record": "ROOT::amend:testing:boundary-policy-closure"
-        },
-        {
-          "clause": "A host timestamp has no external attestation in this paper edition.",
-          "record": "ROOT::amend:testing:boundary-policy-durations"
-        },
-        {
-          "clause": "An unseen trigger cannot be reconstructed from an accepted result.",
-          "record": "ROOT::amend:testing:boundary-policy-fallback"
         },
         {
           "clause": "The schedule and certified floor are public mathematical inputs.",
           "record": "ROOT::amend:testing:boundary-policy-floor"
         },
         {
-          "clause": "Accepted epochs do not reveal every attempted set.",
-          "record": "ROOT::amend:testing:boundary-policy-search"
-        },
-        {
-          "clause": "Both integers are fixed by the declared record.",
+          "clause": "Both consumed integers are fixed by the committed record; every epoch commits its target and an issued illustration binds no epoch and supplies no fallback.",
           "record": "ROOT::amend:testing:boundary-policy-target-size"
         },
         {
-          "clause": "A duration measurement is not attested by the record.",
-          "record": "ROOT::amend:testing:boundary-policy-timeout"
+          "clause": "Claimed part: This designs custody of committed boundary inputs, with exact bindings held and no warrant evaluation.",
+          "record": "ROOT::def:actepoch:evidence"
         },
         {
-          "clause": "Claimed part: This retains the supplied boundary policy as a design input while holding the triple’s classification and seam transition; no implemented comparison or external conduct is claimed.",
+          "clause": "Claimed part: This designs committed supplied-value resolution and the count-to-target calculation, not the warrant of asserted inputs or an implemented successor.",
+          "record": "ROOT::def:actepoch:schedule"
+        },
+        {
+          "clause": "Claimed part: This closes the material classification and retains exact custody and interpretation admissions without assuming assertion truth.",
+          "record": "ROOT::open:actepoch:source-selection"
+        },
+        {
+          "clause": "Claimed part: This designs resolution of required supplied values and the independent budget calculation, without evaluating input warrants.",
+          "record": "ROOT::rule:actepoch:checking"
+        },
+        {
+          "clause": "Claimed part: This designs the supplied-target and existing schedule boundary without a target-equality, warrant or external-time claim.",
           "record": "ROOT::rule:actepoch:parent-connection"
         }
       ],
@@ -32053,6 +32065,106 @@
       "record_routes": [],
       "records": [
         "ROOT::amend:design:host-operational-declaration",
+        "ROOT::def:actepoch:schedule",
+        "ROOT::open:actepoch:source-selection",
+        "ROOT::rule:actepoch:checking",
+        "ROOT::rule:actepoch:parent-connection"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [
+        1,
+        7,
+        11
+      ],
+      "category": "statement",
+      "crate": "pn-host",
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::dec:design:final-membership"
+        },
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::req:vision:final-membership"
+        }
+      ],
+      "kind": "policy",
+      "label": "cond:deployment:boundary-conduct",
+      "portions": [
+        {
+          "clause": "Claimed part: This retains the bounded historical candidate-conduct comparison, not external timing truth or successor static conformance.",
+          "record": "ROOT::alg:design:closure-registration"
+        },
+        {
+          "clause": "Claimed part: This retains the bounded historical candidate-conduct comparison, not external timing truth or successor static conformance.",
+          "record": "ROOT::amend:design:candidate-admission-boundary"
+        },
+        {
+          "clause": "Claimed part: This retains the local declaration and bounded supplied-record scope without adopting elapsed-time, search or fallback-execution truth.",
+          "record": "ROOT::amend:design:host-operational-declaration"
+        },
+        {
+          "clause": "A host timestamp has no external attestation in this paper edition. The retained predicate is local host conduct evidence, not a successor static operand or validity condition.",
+          "record": "ROOT::amend:testing:boundary-policy-durations"
+        },
+        {
+          "clause": "An unseen trigger cannot be reconstructed from an accepted result. The retained predicate is local host conduct evidence, not a successor static operand or validity condition.",
+          "record": "ROOT::amend:testing:boundary-policy-fallback"
+        },
+        {
+          "clause": "Accepted epochs do not reveal every attempted set. The retained predicate is local host conduct evidence, not a successor static operand or validity condition.",
+          "record": "ROOT::amend:testing:boundary-policy-search"
+        },
+        {
+          "clause": "A duration measurement is not attested by the record. The retained predicate is local host conduct evidence, not a successor static operand or validity condition.",
+          "record": "ROOT::amend:testing:boundary-policy-timeout"
+        },
+        {
+          "clause": "Claimed part: This retains the existing local host conduct scope without adopting an external timing standard or making it static validity.",
+          "record": "ROOT::dec:design:final-membership"
+        },
+        {
+          "clause": "Claimed part: This excludes the conduct operands from the successor static roster without removing historical host checks.",
+          "record": "ROOT::def:actepoch:evidence"
+        },
+        {
+          "clause": "Claimed part: This separates the existing bounded host conduct scope from static success; it adopts no external timing or search truth.",
+          "record": "ROOT::def:actepoch:schedule"
+        },
+        {
+          "clause": "Claimed part: This removes conduct from the static operand hold without adopting a timing or search duty.",
+          "record": "ROOT::open:actepoch:source-selection"
+        },
+        {
+          "clause": "Claimed part: This retains the existing local host conduct scope without adopting an external timing standard or making it static validity.",
+          "record": "ROOT::req:vision:final-membership"
+        },
+        {
+          "clause": "Claimed part: This keeps conduct checks outside static success while preserving their historical local scope.",
+          "record": "ROOT::rule:actepoch:checking"
+        },
+        {
+          "clause": "Claimed part: This excludes conduct settings from successor seam comparisons; historical local declarations retain their meaning.",
+          "record": "ROOT::rule:actepoch:parent-connection"
+        }
+      ],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::alg:design:closure-registration",
+        "ROOT::amend:design:candidate-admission-boundary",
+        "ROOT::amend:design:host-operational-declaration",
+        "ROOT::dec:design:final-membership",
+        "ROOT::def:actepoch:evidence",
+        "ROOT::def:actepoch:schedule",
+        "ROOT::open:actepoch:source-selection",
+        "ROOT::req:vision:final-membership",
+        "ROOT::rule:actepoch:checking",
         "ROOT::rule:actepoch:parent-connection"
       ],
       "routes": [],
@@ -34607,12 +34719,7 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [
-        "adr/006-identity-adjudication.md",
-        "docs/design/concept.md",
-        "docs/templates/adr/006-identity-adjudication.md.j2",
-        "docs/templates/docs/design/concept.md.j2"
-      ],
+      "elsewhere": [],
       "holds": [],
       "kind": "policy",
       "label": "def:network:material-classification",
@@ -34628,9 +34735,11 @@
       ],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::rule:actepoch:oracle-checking"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -35262,19 +35371,31 @@
       "tentative": 0
     },
     {
-      "bites": [],
+      "bites": [
+        1,
+        7,
+        11
+      ],
       "category": "statement",
       "crate": "pn-host",
-      "elsewhere": [
-        "adr/017-claim-based-testing.md",
-        "ci/design.py",
-        "docs/datasets/org.peer-network.testing.deployment-claims.json",
-        "docs/inputs/deployment-claims.toml"
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::dec:design:final-membership"
+        }
       ],
-      "holds": [],
       "kind": "policy",
-      "label": "rem:deployment:boundary-policy-oversight",
+      "label": "rem:deployment:boundary-conduct-oversight",
       "portions": [
+        {
+          "clause": "Claimed part: This retains the bounded historical candidate-conduct comparison, not external timing truth or successor static conformance.",
+          "record": "ROOT::alg:design:closure-registration"
+        },
+        {
+          "clause": "Claimed part: This retains the bounded historical candidate-conduct comparison, not external timing truth or successor static conformance.",
+          "record": "ROOT::amend:design:candidate-admission-boundary"
+        },
         {
           "clause": "The predicate compares supplied public declarations; it undertakes neither their acquisition or publication nor actual freeze compliance.",
           "record": "ROOT::amend:testing:boundary-policy-adaptation"
@@ -35286,13 +35407,36 @@
         {
           "clause": "An unanchored timestamp cannot prove that no retarget occurred during a physical interval.",
           "record": "ROOT::amend:testing:boundary-policy-freeze"
+        },
+        {
+          "clause": "Claimed part: This retains only consistency of supplied assertions in the historical conduct audit, not elapsed-time truth.",
+          "record": "ROOT::dec:design:final-membership"
+        },
+        {
+          "clause": "Claimed part: This separates external duration audit and oracle reading from closure without adopting external timing truth.",
+          "record": "ROOT::def:actepoch:schedule"
+        },
+        {
+          "clause": "Claimed part: This identifies the separate conduct audit and does not claim it as epoch replay.",
+          "record": "ROOT::rule:actepoch:checking"
+        },
+        {
+          "clause": "Claimed part: The conduct audit is separate from declared-run accounting and supplies no timing premise to it.",
+          "record": "ROOT::rule:actepoch:parent-connection"
         }
       ],
       "record_granular": 0,
       "record_routes": [],
-      "records": [],
+      "records": [
+        "ROOT::alg:design:closure-registration",
+        "ROOT::amend:design:candidate-admission-boundary",
+        "ROOT::dec:design:final-membership",
+        "ROOT::def:actepoch:schedule",
+        "ROOT::rule:actepoch:checking",
+        "ROOT::rule:actepoch:parent-connection"
+      ],
       "routes": [],
-      "status": "unassigned",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -35906,6 +36050,75 @@
       "records": [],
       "routes": [],
       "status": "unassigned",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-epoch",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "def:network:supplied-object",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::def:actepoch:schedule",
+        "ROOT::def:actepoch:source-evidence"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-epoch",
+      "elsewhere": [],
+      "holds": [],
+      "kind": "policy",
+      "label": "post:network:supplied-value-custody",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::def:actepoch:evidence",
+        "ROOT::def:actepoch:schedule",
+        "ROOT::def:actepoch:source-evidence",
+        "ROOT::rule:actepoch:checking",
+        "ROOT::rule:actepoch:oracle-checking"
+      ],
+      "routes": [],
+      "status": "designed",
+      "tentative": 0
+    },
+    {
+      "bites": [],
+      "category": "statement",
+      "crate": "pn-epoch",
+      "elsewhere": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:testing:obligation-evidence",
+          "record": "ROOT::dec:decomposition:constants"
+        }
+      ],
+      "kind": "policy",
+      "label": "def:network:defaulted-constant",
+      "portions": [],
+      "record_granular": 0,
+      "record_routes": [],
+      "records": [
+        "ROOT::dec:decomposition:constants",
+        "ROOT::def:actepoch:evidence",
+        "ROOT::def:actepoch:schedule",
+        "ROOT::def:actepoch:source-evidence",
+        "ROOT::open:actepoch:source-selection",
+        "ROOT::rule:actepoch:parent-connection"
+      ],
+      "routes": [],
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -37808,10 +38021,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "183",
+          "exact": "181",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "183",
+          "num": "181",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37822,27 +38035,27 @@
           "exact_digits": 32
         }
       },
-      "total": 183
+      "total": 181
     },
     {
       "category": "total",
-      "designed": 436,
-      "held": 56,
+      "designed": 442,
+      "held": 55,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "436",
+          "exact": "442",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "436",
+          "num": "442",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "56",
+          "exact": "55",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "56",
+          "num": "55",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37871,18 +38084,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 417",
+          "exact": "1 421",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 417",
+          "num": "1 421",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "894",
+          "exact": "893",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "894",
+          "num": "893",
           "num_exact": true,
           "num_relation": "="
         }
@@ -37920,20 +38133,20 @@
       "realized": 31,
       "record_granular": 22,
       "tentative": 20,
-      "total": 1417,
-      "unassigned": 894
+      "total": 1421,
+      "unassigned": 893
     },
     {
       "category": "total",
-      "designed": 21,
+      "designed": 22,
       "held": 2,
       "name": "prose",
       "number_forms": {
         "designed": {
-          "exact": "21",
+          "exact": "22",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "21",
+          "num": "22",
           "num_exact": true,
           "num_relation": "="
         },
@@ -37978,10 +38191,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "323",
+          "exact": "322",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "323",
+          "num": "322",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38020,19 +38233,19 @@
       "record_granular": 0,
       "tentative": 12,
       "total": 346,
-      "unassigned": 323
+      "unassigned": 322
     },
     {
       "category": "crate",
-      "designed": 21,
+      "designed": 22,
       "held": 2,
       "name": "none",
       "number_forms": {
         "designed": {
-          "exact": "21",
+          "exact": "22",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "21",
+          "num": "22",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38077,10 +38290,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "323",
+          "exact": "322",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "323",
+          "num": "322",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38119,7 +38332,7 @@
       "record_granular": 0,
       "tentative": 12,
       "total": 346,
-      "unassigned": 323
+      "unassigned": 322
     },
     {
       "category": "crate",
@@ -38321,15 +38534,15 @@
     },
     {
       "category": "crate",
-      "designed": 141,
+      "designed": 146,
       "held": 8,
       "name": "pn-epoch",
       "number_forms": {
         "designed": {
-          "exact": "141",
+          "exact": "146",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "141",
+          "num": "146",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38366,18 +38579,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "371",
+          "exact": "375",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "371",
+          "num": "375",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "207",
+          "exact": "206",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "207",
+          "num": "206",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38415,8 +38628,8 @@
       "realized": 15,
       "record_granular": 10,
       "tentative": 0,
-      "total": 371,
-      "unassigned": 207
+      "total": 375,
+      "unassigned": 206
     },
     {
       "category": "crate",
@@ -38519,23 +38732,23 @@
     },
     {
       "category": "crate",
-      "designed": 57,
-      "held": 19,
+      "designed": 58,
+      "held": 18,
       "name": "pn-host",
       "number_forms": {
         "designed": {
-          "exact": "57",
+          "exact": "58",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "57",
+          "num": "58",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "19",
+          "exact": "18",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "19",
+          "num": "18",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39410,15 +39623,15 @@
     },
     {
       "category": "kind",
-      "designed": 97,
+      "designed": 98,
       "held": 3,
       "name": "function",
       "number_forms": {
         "designed": {
-          "exact": "97",
+          "exact": "98",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "97",
+          "num": "98",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39463,10 +39676,10 @@
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "107",
+          "exact": "106",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "107",
+          "num": "106",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39505,7 +39718,7 @@
       "record_granular": 4,
       "tentative": 1,
       "total": 215,
-      "unassigned": 107
+      "unassigned": 106
     },
     {
       "category": "kind",
@@ -39707,23 +39920,23 @@
     },
     {
       "category": "kind",
-      "designed": 70,
-      "held": 26,
+      "designed": 76,
+      "held": 25,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "70",
+          "exact": "76",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "70",
+          "num": "76",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "26",
+          "exact": "25",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "26",
+          "num": "25",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39752,18 +39965,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "321",
+          "exact": "325",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "321",
+          "num": "325",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "222",
+          "exact": "221",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "222",
+          "num": "221",
           "num_exact": true,
           "num_relation": "="
         }
@@ -39801,8 +40014,8 @@
       "realized": 3,
       "record_granular": 2,
       "tentative": 11,
-      "total": 321,
-      "unassigned": 222
+      "total": 325,
+      "unassigned": 221
     },
     {
       "category": "kind",
@@ -40004,23 +40217,23 @@
     },
     {
       "category": "bite",
-      "designed": 12,
-      "held": 6,
+      "designed": 15,
+      "held": 5,
       "name": "1",
       "number_forms": {
         "designed": {
-          "exact": "12",
+          "exact": "15",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "12",
+          "num": "15",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "6",
+          "exact": "5",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "6",
+          "num": "5",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40049,10 +40262,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "19",
+          "exact": "21",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "19",
+          "num": "21",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40098,7 +40311,7 @@
       "realized": 0,
       "record_granular": 1,
       "tentative": 0,
-      "total": 19,
+      "total": 21,
       "unassigned": 1
     },
     {
@@ -40598,23 +40811,23 @@
     },
     {
       "category": "bite",
-      "designed": 30,
-      "held": 7,
+      "designed": 33,
+      "held": 6,
       "name": "7",
       "number_forms": {
         "designed": {
-          "exact": "30",
+          "exact": "33",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "30",
+          "num": "33",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "7",
+          "exact": "6",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "7",
+          "num": "6",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40643,10 +40856,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "38",
+          "exact": "40",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "38",
+          "num": "40",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40692,7 +40905,7 @@
       "realized": 1,
       "record_granular": 2,
       "tentative": 0,
-      "total": 38,
+      "total": 40,
       "unassigned": 0
     },
     {
@@ -40994,23 +41207,23 @@
     },
     {
       "category": "bite",
-      "designed": 56,
-      "held": 28,
+      "designed": 59,
+      "held": 27,
       "name": "11",
       "number_forms": {
         "designed": {
-          "exact": "56",
+          "exact": "59",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "56",
+          "num": "59",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "28",
+          "exact": "27",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "28",
+          "num": "27",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41039,10 +41252,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "93",
+          "exact": "95",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "93",
+          "num": "95",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41088,20 +41301,20 @@
       "realized": 8,
       "record_granular": 4,
       "tentative": 0,
-      "total": 93,
+      "total": 95,
       "unassigned": 1
     },
     {
       "category": "bite",
-      "designed": 332,
+      "designed": 336,
       "held": 26,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "332",
+          "exact": "336",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "332",
+          "num": "336",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41138,18 +41351,18 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "1 592",
+          "exact": "1 594",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 592",
+          "num": "1 594",
           "num_exact": true,
           "num_relation": "="
         },
         "unassigned": {
-          "exact": "1 213",
+          "exact": "1 211",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "1 213",
+          "num": "1 211",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41187,8 +41400,8 @@
       "realized": 21,
       "record_granular": 17,
       "tentative": 32,
-      "total": 1592,
-      "unassigned": 1213
+      "total": 1594,
+      "unassigned": 1211
     },
     {
       "category": "classification-identities",
@@ -41893,14 +42106,14 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 267,
+      "exact_citing": 269,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "267",
+          "exact": "269",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "267",
+          "num": "269",
           "num_exact": true,
           "num_relation": "="
         },

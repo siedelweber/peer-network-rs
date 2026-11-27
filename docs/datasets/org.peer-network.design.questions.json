@@ -70,7 +70,7 @@
       "instruction": "Historical question and disposition for the admitted local carrier: Your separation of mathematical objects and required evidence is a safe provisional representation, provided none of the required disclosures is omitted. Hold any claim that ``cond:comparator:actor-entry-no-privileged-accrual`` introduces a fifth computational input until the boundary wording is corrected.",
       "reading": "Historical question and disposition for the admitted local carrier: Study judgment: Represent the four mathematical objects and separate required public evidence; ask maintainers to confirm the record boundary.",
       "section": "Q06 — Burn disclosure boundary",
-      "status": "**Status: corrected.** The earlier four-object distinction is the historical local carrier’s contract. At network-v0.37.1 closure consumes supplied Actor entries, acts, carried state and specified constants; source audit and price belong to the separate oracle and optional practices. Existing disclosure fields and refusals remain local, while successor membership is held at its owning admission.",
+      "status": "**Status: corrected.** The earlier four-object distinction is the historical local carrier’s contract. At network-v0.37.4 closure consumes supplied Actor entries, acts, carried state and specified constants; source audit and price belong to the separate oracle and optional practices. Existing disclosure fields and refusals remain local, while successor membership is held at its owning admission.",
       "topic": "Burn disclosure boundary"
     },
     {
@@ -115,7 +115,7 @@
       "instruction": "Order-free standing folds are safe. Narrow your provisional “acceptance and recognition” wording: retain authoritative order for formation, but title/conflict recognition uses the specified epoch fold rather than intra-epoch latest-record order.",
       "reading": "Study judgment: Retain authoritative act order for acceptance and recognition while proposing order-free standing folds; do not claim the conflicting prose has been resolved.",
       "section": "Q10 — Order and standing",
-      "status": "**Status: corrected.** Authoritative grouping and counted causal precedence determine formation and structural completion; no residual host ordering chooses between branches. For a fixed complete accepted set and its grouping, the shared branch graph and persistent recipient inputs are deterministic under network-v0.37.1 ``thm:graph:epoch-branch-fold`` and ``post:epoch:standing-epoch-set-determinism``. The single-owner implementation remains only until preview:actepoch:title-cuts.",
+      "status": "**Status: corrected.** Authoritative grouping and counted causal precedence determine formation and structural completion; no residual host ordering chooses between branches. For a fixed complete accepted set and its grouping, the shared branch graph and persistent recipient inputs are deterministic under network-v0.37.4 ``thm:graph:epoch-branch-fold`` and ``post:epoch:standing-epoch-set-determinism``. The single-owner implementation remains only until preview:actepoch:title-cuts.",
       "topic": "Order and standing"
     },
     {
@@ -145,7 +145,7 @@
       "instruction": "Apply the census and title-coupling rule now; your precedence reading is safe. The conflicting recipient cases have a specified result, so only incompatible fixture expectations need remain held.",
       "reading": "Study judgment: Use the explicit census precedence rule for the design and hold conflicting recipient cases.",
       "section": "Q13 — Settlement title coupling",
-      "status": "**Status: corrected.** Network-v0.37.1 ``post:epoch:settlement-standing-title-coupling`` and ``lem:epoch:authored-vouch-withdrawable`` give persistent outward allocations from structurally completed handshake events, subject to positive mandatory coordinates and registration. Siblings and later Withdraw or Rescind challenges neither undo completion nor re-weigh outward settlement cells home. Incomplete handshakes resolve to self. This full successor recipient scope is designed and unbuilt under preview:actepoch:title-cuts.",
+      "status": "**Status: corrected.** Network-v0.37.4 ``post:epoch:settlement-standing-title-coupling`` and ``lem:epoch:authored-vouch-withdrawable`` give persistent outward allocations from structurally completed handshake events, subject to positive mandatory coordinates and registration. Siblings and later Withdraw or Rescind challenges neither undo completion nor re-weigh outward settlement cells home. Incomplete handshakes resolve to self. This full successor recipient scope is designed and unbuilt under preview:actepoch:title-cuts.",
       "topic": "Settlement title coupling"
     },
     {

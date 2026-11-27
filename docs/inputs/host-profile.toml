@@ -118,7 +118,7 @@ owner = "lane/design"
 name = "accepted-records"
 category = "section"
 key = 2
-fields = ["epoch and predecessor boundary", "authoritative ordered act identifiers and complete accepted envelopes", "final edge union with parent-act and leg references", "complete finalized prior-history references", "disjoint dependent blocks and authoritative positions", "realized size, closure cause, clock, opening and determination times, asserted boundary timestamp and earliest-determination evidence"]
+fields = ["epoch and predecessor boundary", "authoritative ordered act identifiers and complete accepted envelopes", "final edge union with parent-act and leg references", "complete finalized prior-history references", "disjoint dependent blocks and authoritative positions", "realized size, asserted closure cause (historical carrier), clock, opening and determination times, asserted boundary timestamp and earliest-determination evidence"]
 
 [[rows]]
 name = "final-ledger"
@@ -272,14 +272,14 @@ owner = "lane/graph"
 evidence = "Pending precision and resource declarations. The finite sequence and refinement-round controls preserve deterministic replay but provide no monotonic completion guarantee; no schedule is selected solely from successful samples."
 
 [[rows]]
-conformance = ["relies{``amend:testing:boundary-policy-search``; The proposed live stopping contract requires empirical workload and search evidence beyond finite fixture counts.}", "relies{``amend:testing:standing-work-envelopes``; The proposed live stopping contract requires empirical workload and search evidence beyond finite fixture counts.}", "realizes{``cond:deployment:boundary-policy``; Only the publication part is claimed here; the excluded premise is named separately by its clause.}", "realizes{``cond:deployment:standing-work``; Only the publication part is claimed here; the excluded premise is named separately by its clause.}"]
+conformance = ["relies{``amend:testing:boundary-policy-search``; The proposed live stopping contract requires empirical workload and search evidence beyond finite fixture counts.}", "relies{``amend:testing:standing-work-envelopes``; The proposed live stopping contract requires empirical workload and search evidence beyond finite fixture counts.}", "realizes{``cond:deployment:boundary-conduct``; This retains the locally selected publication and supplied-record scope of stopping conduct; the empirical workload and search premise remains named separately.}", "realizes{``cond:deployment:standing-work``; Only the publication part is claimed here; the excluded premise is named separately by its clause.}"]
 name = "stopping"
 category = "setting"
 status = "pending"
 unit = "Actor, act and matrix-entry counts; exact residual and endpoint grid"
 owner = "lane/graph"
 evidence = "Pending an exact residual target, endpoint grid and structural scope in Actor, act and matrix-entry counts and canonical byte lengths; the declaring build keeps its separate execution guards. The cap and finer-grid comparisons measure whether another proposal moves the candidate; a finite fixture maximum does not establish a live stopping contract. These are local limits or retained finite measurements, without claiming or adopting the monitoring standard."
-claim_dependencies = ["cond:deployment:boundary-policy", "cond:deployment:standing-work"]
+claim_dependencies = ["cond:deployment:boundary-conduct", "cond:deployment:standing-work"]
 
 [[rows]]
 conformance = ["relies{``amend:testing:standing-work-execution``; The historical maximum asserts a run measurement whose acquisition and original build locator are not established by the retained number.}", "realizes{``cond:deployment:standing-work``; Only the publication part is claimed here; the excluded premise is named separately by its clause.}"]

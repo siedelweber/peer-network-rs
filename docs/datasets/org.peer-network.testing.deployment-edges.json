@@ -197,6 +197,20 @@
     },
     {
       "conditional_on": "",
+      "reason": "This retains the bounded historical candidate-conduct comparison, not external timing truth or successor static conformance.",
+      "relation": "realizes",
+      "source": "ROOT::alg:design:closure-registration",
+      "target": "cond:deployment:boundary-conduct"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This retains the bounded historical candidate-conduct comparison, not external timing truth or successor static conformance.",
+      "relation": "realizes",
+      "source": "ROOT::alg:design:closure-registration",
+      "target": "rem:deployment:boundary-conduct-oversight"
+    },
+    {
+      "conditional_on": "",
       "reason": "This surface enforces the carriage hold and claims no entropy or admitted replacement process.",
       "relation": "realizes",
       "source": "ROOT::amend:api:direct-listener",
@@ -316,6 +330,20 @@
     },
     {
       "conditional_on": "",
+      "reason": "This retains the bounded historical candidate-conduct comparison, not external timing truth or successor static conformance.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:candidate-admission-boundary",
+      "target": "cond:deployment:boundary-conduct"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This retains the bounded historical candidate-conduct comparison, not external timing truth or successor static conformance.",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:candidate-admission-boundary",
+      "target": "rem:deployment:boundary-conduct-oversight"
+    },
+    {
+      "conditional_on": "",
       "reason": "This locates the designed static input boundary and its held successor admission; it supplies no execution evidence or oracle premise.",
       "relation": "realizes",
       "source": "ROOT::amend:design:closure-record-scope",
@@ -344,10 +372,10 @@
     },
     {
       "conditional_on": "",
-      "reason": "This declaration boundary retains supplied inputs and scoped measurements; it does not establish an unseen workload, acquisition truth or elapsed performance.",
+      "reason": "This retains the local declaration and bounded supplied-record scope without adopting elapsed-time, search or fallback-execution truth.",
       "relation": "realizes",
       "source": "ROOT::amend:design:host-operational-declaration",
-      "target": "cond:deployment:boundary-policy"
+      "target": "cond:deployment:boundary-conduct"
     },
     {
       "conditional_on": "",
@@ -369,6 +397,13 @@
       "relation": "realizes",
       "source": "ROOT::amend:design:host-operational-declaration",
       "target": "cond:deployment:standing-work"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This retains the supplied target declaration without validating its oracle warrant or claiming a successor implementation",
+      "relation": "realizes",
+      "source": "ROOT::amend:design:host-operational-declaration",
+      "target": "cond:deployment:supplied-boundary-values"
     },
     {
       "conditional_on": "",
@@ -820,6 +855,20 @@
     },
     {
       "conditional_on": "",
+      "reason": "This retains the existing local host conduct scope without adopting an external timing standard or making it static validity.",
+      "relation": "realizes",
+      "source": "ROOT::dec:design:final-membership",
+      "target": "cond:deployment:boundary-conduct"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This retains only consistency of supplied assertions in the historical conduct audit, not elapsed-time truth.",
+      "relation": "realizes",
+      "source": "ROOT::dec:design:final-membership",
+      "target": "rem:deployment:boundary-conduct-oversight"
+    },
+    {
+      "conditional_on": "",
       "reason": "The exact boundary-sequence model checks published schedules and controller arithmetic, not plant performance.",
       "relation": "realizes",
       "source": "ROOT::dec:design:policy-schedules",
@@ -890,10 +939,45 @@
     },
     {
       "conditional_on": "",
+      "reason": "This excludes the conduct operands from the successor static roster without removing historical host checks.",
+      "relation": "realizes",
+      "source": "ROOT::def:actepoch:evidence",
+      "target": "cond:deployment:boundary-conduct"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This designs custody of committed boundary inputs, with exact bindings held and no warrant evaluation.",
+      "relation": "realizes",
+      "source": "ROOT::def:actepoch:evidence",
+      "target": "cond:deployment:supplied-boundary-values"
+    },
+    {
+      "conditional_on": "",
       "reason": "This designs the supplied independent operand and attempted-support groups; no replay implementation or executed evidence is claimed.",
       "relation": "realizes",
       "source": "ROOT::def:actepoch:evidence",
       "target": "post:deployment:replay-verification"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This separates the existing bounded host conduct scope from static success; it adopts no external timing or search truth.",
+      "relation": "realizes",
+      "source": "ROOT::def:actepoch:schedule",
+      "target": "cond:deployment:boundary-conduct"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This designs committed supplied-value resolution and the count-to-target calculation, not the warrant of asserted inputs or an implemented successor.",
+      "relation": "realizes",
+      "source": "ROOT::def:actepoch:schedule",
+      "target": "cond:deployment:supplied-boundary-values"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This separates external duration audit and oracle reading from closure without adopting external timing truth.",
+      "relation": "realizes",
+      "source": "ROOT::def:actepoch:schedule",
+      "target": "rem:deployment:boundary-conduct-oversight"
     },
     {
       "conditional_on": "",
@@ -964,6 +1048,20 @@
       "relation": "realizes",
       "source": "ROOT::open:actepoch:authority-boundary",
       "target": "ROOT::amend:identity:act-proposal-admission"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This removes conduct from the static operand hold without adopting a timing or search duty.",
+      "relation": "realizes",
+      "source": "ROOT::open:actepoch:source-selection",
+      "target": "cond:deployment:boundary-conduct"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This closes the material classification and retains exact custody and interpretation admissions without assuming assertion truth.",
+      "relation": "realizes",
+      "source": "ROOT::open:actepoch:source-selection",
+      "target": "cond:deployment:supplied-boundary-values"
     },
     {
       "conditional_on": "",
@@ -1198,6 +1296,13 @@
     },
     {
       "conditional_on": "",
+      "reason": "This retains the existing local host conduct scope without adopting an external timing standard or making it static validity.",
+      "relation": "realizes",
+      "source": "ROOT::req:vision:final-membership",
+      "target": "cond:deployment:boundary-conduct"
+    },
+    {
+      "conditional_on": "",
       "reason": "The requirement trace names declared schedules and formula identities, not elapsed-time truth.",
       "relation": "realizes",
       "source": "ROOT::req:vision:policy-schedules",
@@ -1261,10 +1366,31 @@
     },
     {
       "conditional_on": "",
+      "reason": "This keeps conduct checks outside static success while preserving their historical local scope.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:checking",
+      "target": "cond:deployment:boundary-conduct"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This designs resolution of required supplied values and the independent budget calculation, without evaluating input warrants.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:checking",
+      "target": "cond:deployment:supplied-boundary-values"
+    },
+    {
+      "conditional_on": "",
       "reason": "This designs checking complete supplied static inputs and support, not external truth or implemented replay.",
       "relation": "realizes",
       "source": "ROOT::rule:actepoch:checking",
       "target": "post:deployment:replay-verification"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This identifies the separate conduct audit and does not claim it as epoch replay.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:checking",
+      "target": "rem:deployment:boundary-conduct-oversight"
     },
     {
       "conditional_on": "",
@@ -1303,10 +1429,24 @@
     },
     {
       "conditional_on": "",
-      "reason": "This retains the supplied boundary policy as a design input while holding the triple’s classification and seam transition; no implemented comparison or external conduct is claimed.",
+      "reason": "This excludes conduct settings from successor seam comparisons; historical local declarations retain their meaning.",
       "relation": "realizes",
       "source": "ROOT::rule:actepoch:parent-connection",
-      "target": "cond:deployment:boundary-policy"
+      "target": "cond:deployment:boundary-conduct"
+    },
+    {
+      "conditional_on": "",
+      "reason": "This designs the supplied-target and existing schedule boundary without a target-equality, warrant or external-time claim.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:parent-connection",
+      "target": "cond:deployment:supplied-boundary-values"
+    },
+    {
+      "conditional_on": "",
+      "reason": "The conduct audit is separate from declared-run accounting and supplies no timing premise to it.",
+      "relation": "realizes",
+      "source": "ROOT::rule:actepoch:parent-connection",
+      "target": "rem:deployment:boundary-conduct-oversight"
     },
     {
       "conditional_on": "",
@@ -1681,10 +1821,10 @@
     },
     {
       "conditional_on": "",
-      "reason": "Only the publication part is claimed here; the excluded premise is named separately by its clause.",
+      "reason": "This retains the locally selected publication and supplied-record scope of stopping conduct; the empirical workload and search premise remains named separately.",
       "relation": "realizes",
       "source": "input:org.peer-network.host.profile:stopping",
-      "target": "cond:deployment:boundary-policy"
+      "target": "cond:deployment:boundary-conduct"
     },
     {
       "conditional_on": "",

@@ -127,7 +127,7 @@
         "final edge union with parent-act and leg references",
         "complete finalized prior-history references",
         "disjoint dependent blocks and authoritative positions",
-        "realized size, closure cause, clock, opening and determination times, asserted boundary timestamp and earliest-determination evidence"
+        "realized size, asserted closure cause (historical carrier), clock, opening and determination times, asserted boundary timestamp and earliest-determination evidence"
       ],
       "key": 2,
       "name": "accepted-records"
@@ -388,13 +388,13 @@
     {
       "category": "setting",
       "claim_dependencies": [
-        "cond:deployment:boundary-policy",
+        "cond:deployment:boundary-conduct",
         "cond:deployment:standing-work"
       ],
       "conformance": [
         "relies{``amend:testing:boundary-policy-search``; The proposed live stopping contract requires empirical workload and search evidence beyond finite fixture counts.}",
         "relies{``amend:testing:standing-work-envelopes``; The proposed live stopping contract requires empirical workload and search evidence beyond finite fixture counts.}",
-        "realizes{``cond:deployment:boundary-policy``; Only the publication part is claimed here; the excluded premise is named separately by its clause.}",
+        "realizes{``cond:deployment:boundary-conduct``; This retains the locally selected publication and supplied-record scope of stopping conduct; the empirical workload and search premise remains named separately.}",
         "realizes{``cond:deployment:standing-work``; Only the publication part is claimed here; the excluded premise is named separately by its clause.}"
       ],
       "evidence": "Pending an exact residual target, endpoint grid and structural scope in Actor, act and matrix-entry counts and canonical byte lengths; the declaring build keeps its separate execution guards. The cap and finer-grid comparisons measure whether another proposal moves the candidate; a finite fixture maximum does not establish a live stopping contract. These are local limits or retained finite measurements, without claiming or adopting the monitoring standard.",

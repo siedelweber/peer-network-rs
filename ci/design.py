@@ -467,7 +467,8 @@ MATERIAL_EXCEPTIONS = {
     'rem:comparator:source-faithfulness-interpretation': 'courtesy',
     'rem:comparator:source-limit-survey': 'courtesy',
     'rem:comparator:surface-readings': 'oracle',
-    'rem:deployment:boundary-policy-oversight': 'courtesy',
+    'cond:deployment:boundary-conduct': 'courtesy',
+    'rem:deployment:boundary-conduct-oversight': 'courtesy',
     'rem:deployment:boundary-search-courtesies': 'courtesy',
     'rem:deployment:calibration-publication-conduct': 'courtesy',
     'rem:deployment:calibration-publication-practice': 'courtesy',
@@ -544,7 +545,7 @@ def validate():
     inventory = data('inventory')
     constants = data('constants')
     material_classes(inventory)
-    if not (len(inventory) == 1763 and len({row['label'] for row in inventory}) == 1763):
+    if not (len(inventory) == 1767 and len({row['label'] for row in inventory}) == 1767):
         raise ValueError('inventory label census')
     placeholders = [row for row in inventory if re.search(r'^Track\s+.+\s+as a separately addressable\s+', row['statement'])]
     structural = {'section', 'subsection', 'appendix', 'motto'}
@@ -661,10 +662,10 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.37.1'
-CURRENT_INVENTORY_PIN = '63fe8ce772485e9b0280497e513aba9322df3b58d079cea725ca7b86ac5683fd'
-REFRESHED_CONSTANTS_PIN = '6c996330aa0be0319caad1f25afdeab78fcc2c3c8db76a45acebf5110f28e2f0'
-RELEASE_QUESTIONS_PIN = '85e2c58fe8246fdbca71042a318d3c7546109708532b2030638f816ed0779251'
+PAPER_TAG = 'network-v0.37.4'
+CURRENT_INVENTORY_PIN = '1e91db5992be14eb13dd024a841731b6544b1bb4e10c87bf62e0719b4a11db64'
+REFRESHED_CONSTANTS_PIN = '3c96870ca0f7f6cf93678f746f75c2c0a04027164323b83d6abc0dbc51f9e336'
+RELEASE_QUESTIONS_PIN = '97ba250e49ca8cf7ae8150d3a1ce6474bf4e6399c903117d09d173e1a0e84cdd'
 
 
 CRATES_PIN = '1567509b6e394ad0843b1a045401f3e5760b979b38b4d5bd0a58458a8c714ae6'

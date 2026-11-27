@@ -23,7 +23,7 @@
     },
     {
       "category": "chapter",
-      "count": 68,
+      "count": 71,
       "name": "03 Network"
     },
     {
@@ -38,7 +38,7 @@
     },
     {
       "category": "chapter",
-      "count": 250,
+      "count": 251,
       "name": "6 Epoch"
     },
     {
@@ -144,7 +144,7 @@
     },
     {
       "category": "totals",
-      "count": 1763,
+      "count": 1767,
       "name": "inventory"
     },
     {
@@ -154,7 +154,7 @@
     },
     {
       "category": "labels",
-      "count": 1729,
+      "count": 1733,
       "name": "explicit"
     },
     {
