@@ -36159,6 +36159,10 @@
           "record": "ROOT::dec:design:epoch-record-order"
         },
         {
+          "hold": "ROOT::open:identity:chain-marker-admission",
+          "record": "ROOT::def:actepoch:closure-record"
+        },
+        {
           "hold": "ROOT::open:identity:common-document-admission",
           "record": "ROOT::def:actepoch:epoch"
         }
@@ -36239,7 +36243,12 @@
       "category": "statement",
       "crate": "pn-records",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:identity:chain-marker-admission",
+          "record": "ROOT::def:actepoch:closure-record"
+        }
+      ],
       "kind": "type",
       "label": "def:network:static-commitment-set",
       "portions": [],
@@ -41896,10 +41905,10 @@
           "num_relation": "="
         },
         "total": {
-          "exact": "2 215",
+          "exact": "2 227",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 215",
+          "num": "2 227",
           "num_exact": true,
           "num_relation": "="
         }
@@ -41914,7 +41923,7 @@
           "exact_digits": 32
         }
       },
-      "total": 2215
+      "total": 2227
     },
     {
       "category": "record-coverage",

@@ -64,7 +64,7 @@
 | pn-testkit | 18 | 0 |
 | pn-verification | 7 | 0 |
 | pn-wallet | 44 | 0 |
-| ROOT (repository-wide) | 2 215 | 267 |
+| ROOT (repository-wide) | 2 227 | 267 |
 | CONSTANTS (named carrier) | 2 833 | 2 688 |
 
 ## By bite · `sec:progress:bites`
@@ -1881,11 +1881,11 @@
 | ``rem:deployment:standing-publication-practice`` | none; policy | unassigned | | | | |  | `ci/design.py` | |
 | ``def:comparator:marker-lineage-epoch-history`` | pn-records; type | unassigned | | | | |  | `ci/design.py` | |
 | ``def:comparator:successor-standard`` | pn-records; type | designed | ``ROOT::amend:devnet:marker-settlement`` ``ROOT::dec:design:epoch-record-order`` ``ROOT::rule:actepoch:oracle-checking`` ``ROOT::rule:lineage:commitments`` | | | ``ROOT::dec:design:epoch-record-order``; ``ROOT::open:testing:obligation-evidence``<br>|  | | |
-| ``def:epoch:document-set-commitment`` | pn-records; type | designed | ``ROOT::dec:design:epoch-record-order`` ``ROOT::def:actepoch:closure-record`` ``ROOT::def:actepoch:epoch`` ``ROOT::rule:lineage:commitments`` | | | ``ROOT::dec:design:epoch-record-order``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::def:actepoch:epoch``; ``ROOT::open:identity:common-document-admission``<br>|  | | |
+| ``def:epoch:document-set-commitment`` | pn-records; type | designed | ``ROOT::dec:design:epoch-record-order`` ``ROOT::def:actepoch:closure-record`` ``ROOT::def:actepoch:epoch`` ``ROOT::rule:lineage:commitments`` | | | ``ROOT::dec:design:epoch-record-order``; ``ROOT::open:testing:obligation-evidence``<br>``ROOT::def:actepoch:closure-record``; ``ROOT::open:identity:chain-marker-admission``<br>``ROOT::def:actepoch:epoch``; ``ROOT::open:identity:common-document-admission``<br>|  | | |
 | ``def:graph:act-incidence`` | pn-records; type | unassigned | | | | |  | | |
 | ``def:network:history-closure`` | pn-replay; function | designed | ``ROOT::amend:design:closure-record-scope`` ``ROOT::conv:lineage:paper-3`` ``ROOT::rule:actepoch:parent-connection`` | | | |  | | |
 | ``def:network:static-closure`` | pn-replay; function | designed | ``ROOT::amend:design:closure-record-scope`` ``ROOT::conv:lineage:paper-3`` ``ROOT::rule:actepoch:checking`` | | | |  | | |
-| ``def:network:static-commitment-set`` | pn-records; type | designed | ``ROOT::amend:design:closure-record-scope`` ``ROOT::amend:design:replay-version-three-fields`` ``ROOT::def:actepoch:closure-record`` | | | |  | | |
+| ``def:network:static-commitment-set`` | pn-records; type | designed | ``ROOT::amend:design:closure-record-scope`` ``ROOT::amend:design:replay-version-three-fields`` ``ROOT::def:actepoch:closure-record`` | | | ``ROOT::def:actepoch:closure-record``; ``ROOT::open:identity:chain-marker-admission``<br>|  | | |
 | ``post:epoch:declared-history-consistency`` | pn-replay; invariant check | designed | ``ROOT::amend:design:closure-record-scope`` ``ROOT::rule:actepoch:parent-connection`` | | | |  | | |
 | ``rem:deployment:computed-copy-accountability`` | pn-host; policy | designed | ``ROOT::alg:design:reconstruction`` | | | | 9 | | |
 | ``subsec:symbols:courtesy-readings`` | none; none | unassigned | | | | |  | `ci/design.py` | |
