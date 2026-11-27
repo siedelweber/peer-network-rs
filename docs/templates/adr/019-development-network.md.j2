@@ -148,14 +148,19 @@
 The namespace reservation and its test designation are (`conv:design:chain-test-reservation`); no non-test namespace is assigned.
 
 ```cddl
-; Proposed initial assignments; all three documents carry a 32-byte string at position 2.
+; Proposed burn and key assignments; each carries a 32-byte string at position 2.
 burn = { 0: "o.pn.t.b", 1: [1, 0, patch], 2: bstr .size 32 }
 key-declaration = { 0: "o.pn.t.k", 1: [1, 0, patch], 2: bstr .size 32 }
-marker = { 0: "o.pn.t.m", 1: [1, 0, patch], 2: bstr .size 32 }
 patch = 0..18446744073709551615
 ```
 
-The namespace and major identify the document type, so neither a kind array nor a second kind key buys discrimination. Changing the type at position 2 requires a fresh major under (`law:interchange:major-boundary`); patch never changes the theory. The three-key rule specifies the assignments and emitted forms proposed here, not an exception to (`def:interchange:acceptance`): a reader still validates a higher minor through (`def:interchange:open-companion`), which tolerates unknown content keys without granting them an operation. Every assigned payload of this family has exactly the three envelope positions; a fourth content key is no part of the family, and adding one requires a new design decision rather than an additive minor of these theories. Changes to the 32-byte string at position 2 require a major version. The explanatory CDDL has not been parser-checked and introduces no second decoder: producers and readers use the single canonical codec of pn-interchange (`req:xchg:determinism`). The displayed shapes specify the designed and unbuilt assignments; no published theory is changed. The marker version fixes the next epoch's reading standard under (`def:devnet:wire-marker`), without changing the burn or key theory.
+The marker's complete independent theory source for publication is:
+
+```cddl
+marker = { 0: "o.pn.t.m", 1: [1, 0, uint], 2: bstr .size 32 }
+```
+
+The namespace and major identify the document type, so neither a kind array nor a second kind key buys discrimination. Changing the type at position 2 requires a fresh major under (`law:interchange:major-boundary`); patch never changes the theory. The three-key rule specifies the assignments and emitted forms proposed here, not an exception to (`def:interchange:acceptance`): a reader still validates a higher minor through (`def:interchange:open-companion`), which tolerates unknown content keys without granting them an operation. Every assigned payload of this family has exactly the three envelope positions; a fourth content key is no part of the family, and adding one requires a new design decision rather than an additive minor of these theories. Changes to the 32-byte string at position 2 require a major version. The marker source writes uint directly at the patch position under (`alg:xchg:fragment-check`); it retains the unsigned 64-bit range and the same canonical bytes. The burn and key sketches remain explanatory CDDL, not parser-checked assignments. No second decoder is introduced: producers and readers use the single canonical codec of pn-interchange (`req:xchg:determinism`). The displayed shapes specify the designed and unbuilt assignments; no published theory is changed. The marker version fixes the next epoch's reading standard under (`def:devnet:wire-marker`), without changing the burn or key theory.
 
 **Rule (Exact wire value)** · `rule:devnet:wire-value` Require one complete canonical CBOR item, preferred integer and length heads, definite lengths, distinct unsigned map keys in bytewise encoded order and no trailing bytes; accepting a repaired re-encoding instead of the received value is not validation under (`lang:interchange:data-language`).
 

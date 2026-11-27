@@ -36377,6 +36377,10 @@
         },
         {
           "hold": "ROOT::open:identity:common-document-admission",
+          "record": "ROOT::def:actepoch:closure-record"
+        },
+        {
+          "hold": "ROOT::open:identity:common-document-admission",
           "record": "ROOT::def:actepoch:epoch"
         }
       ],
@@ -36459,6 +36463,10 @@
       "holds": [
         {
           "hold": "ROOT::open:identity:chain-marker-admission",
+          "record": "ROOT::def:actepoch:closure-record"
+        },
+        {
+          "hold": "ROOT::open:identity:common-document-admission",
           "record": "ROOT::def:actepoch:closure-record"
         }
       ],
