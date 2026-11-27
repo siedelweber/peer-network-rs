@@ -1853,7 +1853,10 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/act-epoch-concept.md",
+        "docs/templates/docs/design/act-epoch-concept.md.j2"
+      ],
       "holds": [],
       "kind": "none",
       "label": "rem:comparator:vintage-consummated-debits",
@@ -4179,7 +4182,10 @@
       "bites": [],
       "category": "statement",
       "crate": "none",
-      "elsewhere": [],
+      "elsewhere": [
+        "docs/design/act-epoch-concept.md",
+        "docs/templates/docs/design/act-epoch-concept.md.j2"
+      ],
       "holds": [],
       "kind": "none",
       "label": "def:graph:chain-ordered-revision-head",
@@ -7417,10 +7423,11 @@
         "ROOT::alg:design:authentication-handoff",
         "ROOT::amend:design:act-envelope-field-inventory",
         "ROOT::dec:crypto:base-library",
+        "ROOT::def:actepoch:spent-slots",
         "ROOT::open:identity:act-realization-admission"
       ],
       "routes": [],
-      "status": "held",
+      "status": "designed",
       "tentative": 0
     },
     {
@@ -10307,7 +10314,8 @@
         "EPOCH::def:compiler:final-ledger",
         "ROOT::dec:design:final-state",
         "ROOT::model:design:ledger",
-        "ROOT::req:vision:final-state"
+        "ROOT::req:vision:final-state",
+        "ROOT::rule:actepoch:ledger-transition"
       ],
       "routes": [],
       "status": "designed",
@@ -10327,7 +10335,8 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "EPOCH::def:compiler:final-ledger"
+        "EPOCH::def:compiler:final-ledger",
+        "ROOT::rule:actepoch:ledger-transition"
       ],
       "routes": [],
       "status": "designed",
@@ -10345,7 +10354,8 @@
       "record_granular": 0,
       "record_routes": [],
       "records": [
-        "EPOCH::def:compiler:final-ledger"
+        "EPOCH::def:compiler:final-ledger",
+        "ROOT::rule:actepoch:ledger-transition"
       ],
       "routes": [],
       "status": "designed",
@@ -10576,6 +10586,7 @@
         "GRAPH::def:formation:title-events",
         "ROOT::alg:design:recipients",
         "ROOT::dec:design:formation-title",
+        "ROOT::def:actepoch:standing-basis",
         "ROOT::rem:actepoch:title-standing",
         "ROOT::req:vision:formation-title"
       ],
@@ -10794,6 +10805,7 @@
       "record_routes": [],
       "records": [
         "ROOT::alg:design:recipients",
+        "ROOT::def:actepoch:standing-basis",
         "ROOT::rem:actepoch:title-standing"
       ],
       "routes": [],
@@ -12086,6 +12098,7 @@
         "ROOT::alg:design:recipients",
         "ROOT::amend:decomposition:title-marker-evidence",
         "ROOT::amend:design:epoch-compiler-readings",
+        "ROOT::def:actepoch:standing-basis",
         "ROOT::open:design:invitation-withdrawal-edition",
         "ROOT::rem:actepoch:title-standing"
       ],
@@ -12400,8 +12413,10 @@
       "crate": "pn-epoch",
       "elsewhere": [
         "docs/datasets/org.peer-network.design.questions.json",
+        "docs/design/act-epoch-concept.md",
         "docs/design/questions.md",
-        "docs/inputs/design-questions.toml"
+        "docs/inputs/design-questions.toml",
+        "docs/templates/docs/design/act-epoch-concept.md.j2"
       ],
       "holds": [],
       "kind": "function",
@@ -38029,10 +38044,10 @@
       "name": "exact-elsewhere",
       "number_forms": {
         "total": {
-          "exact": "181",
+          "exact": "183",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "181",
+          "num": "183",
           "num_exact": true,
           "num_relation": "="
         }
@@ -38043,27 +38058,27 @@
           "exact_digits": 32
         }
       },
-      "total": 181
+      "total": 183
     },
     {
       "category": "total",
-      "designed": 442,
-      "held": 55,
+      "designed": 443,
+      "held": 54,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "442",
+          "exact": "443",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "442",
+          "num": "443",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "55",
+          "exact": "54",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "55",
+          "num": "54",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38938,23 +38953,23 @@
     },
     {
       "category": "crate",
-      "designed": 85,
-      "held": 12,
+      "designed": 86,
+      "held": 11,
       "name": "pn-records",
       "number_forms": {
         "designed": {
-          "exact": "85",
+          "exact": "86",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "85",
+          "num": "86",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "12",
+          "exact": "11",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "12",
+          "num": "11",
           "num_exact": true,
           "num_relation": "="
         },
@@ -39928,23 +39943,23 @@
     },
     {
       "category": "kind",
-      "designed": 76,
-      "held": 25,
+      "designed": 77,
+      "held": 24,
       "name": "policy",
       "number_forms": {
         "designed": {
-          "exact": "76",
+          "exact": "77",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "76",
+          "num": "77",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "25",
+          "exact": "24",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "25",
+          "num": "24",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41314,23 +41329,23 @@
     },
     {
       "category": "bite",
-      "designed": 336,
-      "held": 26,
+      "designed": 337,
+      "held": 25,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "336",
+          "exact": "337",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "336",
+          "num": "337",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "26",
+          "exact": "25",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "26",
+          "num": "25",
           "num_exact": true,
           "num_relation": "="
         },
@@ -42114,22 +42129,22 @@
     },
     {
       "category": "record-coverage",
-      "exact_citing": 269,
+      "exact_citing": 272,
       "name": "ROOT (repository-wide)",
       "number_forms": {
         "exact_citing": {
-          "exact": "269",
+          "exact": "272",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "269",
+          "num": "272",
           "num_exact": true,
           "num_relation": "="
         },
         "total": {
-          "exact": "2 227",
+          "exact": "2 234",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "2 227",
+          "num": "2 234",
           "num_exact": true,
           "num_relation": "="
         }
@@ -42144,7 +42159,7 @@
           "exact_digits": 32
         }
       },
-      "total": 2227
+      "total": 2234
     },
     {
       "category": "record-coverage",
