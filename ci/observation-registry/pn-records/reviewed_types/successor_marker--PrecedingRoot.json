@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::PrecedingRoot",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Separately supplied preceding accepted root.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-judgement]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum PrecedingRoot { # [doc = \" A separately established preceding root.\"] Known ([u8 ; 32]) , # [doc = \" No preceding root is established.\"] Unknown , }"
+  }
+}

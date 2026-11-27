@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerAcceptance",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Whether the held theory was exact or a higher-minor open companion.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-read-order]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerAcceptance { # [doc = \" An assigned theory accepted the complete payload.\"] Strict , # [doc = \" A higher-minor floor companion accepted the complete payload.\"] Tolerant , }"
+  }
+}

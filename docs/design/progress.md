@@ -58,7 +58,7 @@
 | pn-host | 34 | 0 |
 | pn-interchange | 29 | 0 |
 | pn-readouts | 0 | 0 |
-| pn-records | 54 | 19 |
+| pn-records | 55 | 19 |
 | pn-replay | 0 | 0 |
 | pn-secret-home | 11 | 0 |
 | pn-testkit | 18 | 0 |

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerDecodedError",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" A supplied decoded stamp cannot form a major-one view.\"] # [doc = \" (\u00b4[ROOT-tab:identity:marker-operations]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum MarkerDecodedError { # [doc = \" The stamp names a major other than one.\"] # [error (\"decoded marker major is not one\")] WrongMajor , }"
+  }
+}

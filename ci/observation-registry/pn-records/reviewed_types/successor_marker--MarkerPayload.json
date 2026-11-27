@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerPayload",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Constructed major-one marker payload, with its complete unsigned stamp.\"] # [doc = \" The fixed namespace is `MARKER_NAMESPACE` and is never a digest identity.\"] # [doc = \" (\u00b4[ROOT-tab:identity:marker-operations]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct MarkerPayload { # [doc = \" Major, minor and patch, in that order.\"] version : [u64 ; 3] , # [doc = \" Literal preceding accepted root, or origin zeros.\"] value : [u8 ; 32] , }"
+  }
+}

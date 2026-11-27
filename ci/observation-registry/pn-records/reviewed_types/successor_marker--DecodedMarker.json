@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::DecodedMarker",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Major-one decoded view supplied by the canonical adapter.\"] # [doc = \" It retains the received stamp and exact value; it conveys no chain evidence.\"] # [doc = \" (\u00b4[ROOT-tab:identity:marker-operations]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct DecodedMarker { # [doc = \" Received major, minor and patch, in that order.\"] version : [u64 ; 3] , # [doc = \" Exact received root word.\"] value : [u8 ; 32] , }"
+  }
+}

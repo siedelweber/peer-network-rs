@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerRead",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Fixed assessment view returned by the later canonical adapter.\"] # [doc = \" The view itself proves neither movement nor accepted-epoch lookup.\"] # [doc = \" (\u00b4[ROOT-tab:identity:marker-operations]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerRead { # [doc = \" A fully validated supported major-one payload.\"] Decoded (DecodedMarker , MarkerAcceptance) , # [doc = \" The held registry rejects the stamped version.\"] VersionRejected (MarkerVersionRejection , [u64 ; 3]) , # [doc = \" A structurally accepted major has no supported marker meaning.\"] UnsupportedMeaning ([u64 ; 3] , MarkerAcceptance) , # [doc = \" Malformed or over-protocol-length bytes.\"] Invalid (MarkerInvalidReason) , # [doc = \" A different namespace, not an invalid marker theory instance.\"] NotMarker , # [doc = \" The budgeted read could not finish inspecting the supplied bytes.\"] UnavailableBudget (MarkerReadBudgetReason , MarkerReadUsage) , }"
+  }
+}

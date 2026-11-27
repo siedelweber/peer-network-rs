@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "successor_marker::MarkerReadUsage",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , Default , PartialEq , Eq)]",
+    "class_decision": "public-records",
+    "expansion_review": "Derived Copy, Debug and equality inspect fixed public marker words, stamps, flags and typed outcomes. They introduce no allocation, chain evidence, secret access, subscriber or independent work boundary."
+  }
+}

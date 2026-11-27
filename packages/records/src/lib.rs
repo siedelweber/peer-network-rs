@@ -23,6 +23,9 @@ pub mod constants;
 pub mod burn;
 pub mod frame;
 pub mod live_markers;
+/// Pure successor marker payloads and judgement over supplied facts.
+/// (´[ROOT-amend:identity:marker-static-admission]´)
+pub mod successor_marker;
 
 /// Typed opaque act commitments; interpretation belongs to the shared profile.
 /// (´def:acts:commitment-residues´)

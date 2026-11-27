@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerMovementContext",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Whether the caller established the selected marker-token movement context.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-judgement]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerMovementContext { # [doc = \" The caller supplies one selected marker-token context.\"] Established , # [doc = \" The caller has not established that context.\"] Unknown , }"
+  }
+}

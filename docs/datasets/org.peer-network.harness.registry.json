@@ -4742,6 +4742,26 @@
     },
     {
       "budget": "pure-suite",
+      "case_span": true,
+      "cases": [
+        "pn-records::successor_marker::marker_construction",
+        "pn-records::successor_marker::marker_payload_equality",
+        "pn-records::successor_marker::marker_root_comparison",
+        "pn-records::successor_marker::marker_error_precedence",
+        "pn-records::successor_marker::marker_unavailable",
+        "pn-records::successor_marker::marker_policy_boundary",
+        "pn-records::successor_marker::marker_standard_coordinate"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-records::successor_marker",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
       "cases": [
         "pn-secret-home::integration::kernel_limits"
       ],

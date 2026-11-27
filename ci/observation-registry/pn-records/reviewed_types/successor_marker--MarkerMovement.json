@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerMovement",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Supplied result of the applicable movement rule.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-judgement]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerMovement { # [doc = \" Movement satisfies the selected rule.\"] Satisfied , # [doc = \" Movement demonstrably breaches the selected rule.\"] Breached , # [doc = \" Movement evidence is unavailable.\"] Unknown , }"
+  }
+}

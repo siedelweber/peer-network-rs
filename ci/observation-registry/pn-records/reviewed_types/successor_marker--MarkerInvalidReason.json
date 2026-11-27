@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerInvalidReason",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Records-owned malformed-payload causes.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-read-order]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerInvalidReason { # [doc = \" The protocol's 80-byte ceiling was exceeded.\"] PayloadLength , # [doc = \" The supplied bytes are not one complete canonical item.\"] Canonical , # [doc = \" The base namespace/version envelope is malformed.\"] Envelope , # [doc = \" The selected theory rejects the content.\"] Theory , }"
+  }
+}

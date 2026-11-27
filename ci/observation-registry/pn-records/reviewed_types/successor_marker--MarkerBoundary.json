@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerBoundary",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Boundary left to the owner of invalid-payload policy.\"] # [doc = \" A consumer must carry this without turning it into a lineage verdict.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-judgement]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerBoundary { # [doc = \" Otherwise invalid bytes or a different namespace.\"] UnclassifiedPayload (MarkerUnclassifiedPayload) , }"
+  }
+}

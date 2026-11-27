@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerReadUsage",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Bounded canonical-validation usage in records-owned plain values.\"] # [doc = \" The last two fields mirror interchange `CanonicalUsage` exactly.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-read-order]\u00b4)\"] # [derive (Clone , Copy , Debug , Default , PartialEq , Eq)] pub struct MarkerReadUsage { # [doc = \" Received input length, including the length-before-budget case.\"] pub received_bytes : usize , # [doc = \" Caller-declared input limit.\"] pub declared_input_bytes : usize , # [doc = \" Interchange `CanonicalUsage::allocation_calls`.\"] pub allocation_calls : usize , # [doc = \" Interchange `CanonicalUsage::allocation_bytes`.\"] pub allocation_bytes : usize , }"
+  }
+}

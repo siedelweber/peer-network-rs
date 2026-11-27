@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerJudgement",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Pure lineage judgement over supplied facts only.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-judgement]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerJudgement { # [doc = \" One stopped marker with every established error.\"] Error (MarkerErrors) , # [doc = \" Insufficient supplied evidence, with every applicable missing fact.\"] Unavailable (MarkerMissing) , # [doc = \" All applicable supplied facts establish the local pure rule.\"] Valid , }"
+  }
+}

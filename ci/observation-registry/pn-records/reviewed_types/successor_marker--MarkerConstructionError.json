@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerConstructionError",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" The one local refusal of following construction.\"] # [doc = \" (\u00b4[ROOT-tab:identity:marker-operations]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum MarkerConstructionError { # [doc = \" Major one reserves zero for the authenticated origin.\"] # [error (\"zero cannot be a following marker root\")] ZeroFollowingRoot , }"
+  }
+}

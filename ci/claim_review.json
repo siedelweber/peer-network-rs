@@ -7612,6 +7612,62 @@
       "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
     },
     {
+      "operation": "pn-records::successor_marker::marker_construction",
+      "path": "packages/records/tests/successor_marker.rs",
+      "claim": "RECORDS::claim:identity:marker-construction",
+      "before": "",
+      "after": "Claim: First and following constructors enforce the major-one zero placement policy on supplied intent.",
+      "review": "Read the literal expected typed values at the sole records test site; no expected judgement is obtained from the function being checked."
+    },
+    {
+      "operation": "pn-records::successor_marker::marker_error_precedence",
+      "path": "packages/records/tests/successor_marker.rs",
+      "claim": "RECORDS::claim:identity:marker-error-precedence",
+      "before": "",
+      "after": "Claim: Every established and combined error wins over missing evidence in the declared flag order.",
+      "review": "Read the literal expected typed values at the sole records test site; no expected judgement is obtained from the function being checked."
+    },
+    {
+      "operation": "pn-records::successor_marker::marker_payload_equality",
+      "path": "packages/records/tests/successor_marker.rs",
+      "claim": "RECORDS::claim:identity:marker-payload-equality",
+      "before": "",
+      "after": "Claim: Payload equality retains the complete unsigned version and every value byte.",
+      "review": "Read the literal expected typed values at the sole records test site; no expected judgement is obtained from the function being checked."
+    },
+    {
+      "operation": "pn-records::successor_marker::marker_policy_boundary",
+      "path": "packages/records/tests/successor_marker.rs",
+      "claim": "RECORDS::claim:identity:marker-policy-boundary",
+      "before": "",
+      "after": "Claim: Otherwise invalid payloads stay outside lineage verdicts unless an independent error is established.",
+      "review": "Read the literal expected typed values at the sole records test site; no expected judgement is obtained from the function being checked."
+    },
+    {
+      "operation": "pn-records::successor_marker::marker_root_comparison",
+      "path": "packages/records/tests/successor_marker.rs",
+      "claim": "RECORDS::claim:identity:marker-root-comparison",
+      "before": "",
+      "after": "Claim: Comparison with a supplied root is exact word equality without byte-order conversion.",
+      "review": "Read the literal expected typed values at the sole records test site; no expected judgement is obtained from the function being checked."
+    },
+    {
+      "operation": "pn-records::successor_marker::marker_standard_coordinate",
+      "path": "packages/records/tests/successor_marker.rs",
+      "claim": "RECORDS::claim:identity:marker-standard-coordinate",
+      "before": "",
+      "after": "Claim: Supported major one fixes the successor standard coordinate across minor and patch neighbours.",
+      "review": "Read the literal expected typed values at the sole records test site; no expected judgement is obtained from the function being checked."
+    },
+    {
+      "operation": "pn-records::successor_marker::marker_unavailable",
+      "path": "packages/records/tests/successor_marker.rs",
+      "claim": "RECORDS::claim:identity:marker-unavailable",
+      "before": "",
+      "after": "Claim: Missing context, place, movement and root, plus unsupported interpretation, retain their named inability without inferring validity.",
+      "review": "Read the literal expected typed values at the sole records test site; no expected judgement is obtained from the function being checked."
+    },
+    {
       "operation": "pn-records::tests::deployment_announcement_guard",
       "path": "packages/records/src/lib.rs",
       "claim": "RECORDS::claim:burn:binding-defends-genesis-announcement",

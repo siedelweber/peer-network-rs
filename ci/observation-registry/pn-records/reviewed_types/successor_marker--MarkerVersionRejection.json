@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerVersionRejection",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Reader-relative version rejection, before content validation.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-read-order]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerVersionRejection { # [doc = \" No theory for this major is held.\"] UnheldMajor , # [doc = \" A minor within the held ceiling has no assignment.\"] UnassignedMinor , }"
+  }
+}

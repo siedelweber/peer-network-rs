@@ -1,0 +1,26 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "item": "successor_marker::marker_standard",
+    "owner": "RECORDS",
+    "signature": "fn marker_standard (decoded : DecodedMarker) -> MarkerStandard",
+    "claim": "ROOT::amend:identity:marker-static-admission",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "marker-standard",
+    "body": "{ let _ = decoded ; MarkerStandard { namespace : MARKER_NAMESPACE , major : 1 , } }"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/successor_marker.rs::successor_marker::marker_standard",
+    "class_decision": "public-records",
+    "body": "{ let _ = decoded ; MarkerStandard { namespace : MARKER_NAMESPACE , major : 1 , } }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Only public fixed marker words, stamps, supplied facts, charged read usage and typed outcomes enter. Full tracing retains their Debug representations and results; no secret, chain evidence, lookup, signer or subscriber enters the body."
+  }
+}

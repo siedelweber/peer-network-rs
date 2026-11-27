@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerPlace",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Where independently authenticated evidence places the marker.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-judgement]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerPlace { # [doc = \" The selected marker is the authenticated origin.\"] AuthenticatedOrigin , # [doc = \" The selected marker follows a preceding epoch.\"] AuthenticatedFollowing , # [doc = \" Placement has not been established.\"] Unknown , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerMissing",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Why a marker cannot yet be judged from supplied evidence.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-judgement]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerMissing { # [doc = \" Selected marker-token context has not been established.\"] MarkerContext , # [doc = \" A budgeted read stopped with its charged usage.\"] ReadBudget (MarkerReadBudgetReason , MarkerReadUsage) , # [doc = \" A structurally accepted major has no assigned meaning.\"] Interpretation , # [doc = \" One or more supplied facts are missing, in the fixed field order.\"] Facts (MarkerMissingFacts) , }"
+  }
+}

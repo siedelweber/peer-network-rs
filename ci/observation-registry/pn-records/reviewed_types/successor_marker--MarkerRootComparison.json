@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerRootComparison",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Exact root comparison, with no lookup or byte-order conversion.\"] # [doc = \" (\u00b4[ROOT-tab:identity:marker-operations]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerRootComparison { # [doc = \" The supplied words are equal in every byte.\"] Equal , # [doc = \" At least one byte differs.\"] Different , }"
+  }
+}

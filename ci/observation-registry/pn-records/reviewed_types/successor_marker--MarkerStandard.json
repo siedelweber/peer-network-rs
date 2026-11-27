@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerStandard",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" The coordinate of the standard for the epoch following this marker.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-standard]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct MarkerStandard { # [doc = \" Fixed namespace of the marker theory.\"] pub namespace : & 'static str , # [doc = \" Supported major, independent of minor and patch.\"] pub major : u64 , }"
+  }
+}

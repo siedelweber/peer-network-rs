@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerReadBudgetReason",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" The three budgeted read inability causes.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-read-order]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum MarkerReadBudgetReason { # [doc = \" Received bytes exceed the caller's input declaration.\"] InputBytes , # [doc = \" Canonical validation exceeded its allocation declaration.\"] CanonicalAllocation , # [doc = \" A canonical validator allocation failed.\"] Allocation , }"
+  }
+}

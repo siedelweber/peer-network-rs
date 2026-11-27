@@ -1,0 +1,10 @@
+kind = "suite"
+name = "pn-records::successor_marker"
+case_span = true
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-records::successor_marker::marker_construction", "pn-records::successor_marker::marker_payload_equality", "pn-records::successor_marker::marker_root_comparison", "pn-records::successor_marker::marker_error_precedence", "pn-records::successor_marker::marker_unavailable", "pn-records::successor_marker::marker_policy_boundary", "pn-records::successor_marker::marker_standard_coordinate"]

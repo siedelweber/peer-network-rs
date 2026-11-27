@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerMissingFacts",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Ordered, fixed record of missing supplied facts.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-judgement]\u00b4)\"] # [derive (Clone , Copy , Debug , Default , PartialEq , Eq)] pub struct MarkerMissingFacts { # [doc = \" The authenticated place is unknown.\"] pub place : bool , # [doc = \" The applicable movement rule has no result.\"] pub movement : bool , # [doc = \" A nonzero following marker lacks a preceding root.\"] pub preceding_root : bool , }"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerErrors",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Ordered, fixed record of independently established errors.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-judgement]\u00b4)\"] # [derive (Clone , Copy , Debug , Default , PartialEq , Eq)] # [expect (clippy :: struct_excessive_bools)] pub struct MarkerErrors { # [doc = \" Supplied movement breach.\"] pub movement_breach : bool , # [doc = \" Reader rejected an unheld major.\"] pub unheld_major : bool , # [doc = \" Reader rejected an unassigned minor.\"] pub unassigned_minor : bool , # [doc = \" A proven origin carries nonzero bytes.\"] pub origin_nonzero : bool , # [doc = \" A proven following marker carries zero bytes.\"] pub following_zero : bool , # [doc = \" A known preceding root differs from a nonzero following value.\"] pub root_mismatch : bool , }"
+  }
+}

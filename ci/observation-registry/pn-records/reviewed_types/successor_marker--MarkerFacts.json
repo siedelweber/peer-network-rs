@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "successor_marker::MarkerFacts",
+    "package": "pn-records",
+    "path": "packages/records/src/successor_marker.rs",
+    "syntax": "# [doc = \" Closed facts from one selected marker context and history.\"] # [doc = \" Their authenticity remains the external producer's duty.\"] # [doc = \" (\u00b4[ROOT-rule:identity:marker-judgement]\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct MarkerFacts { # [doc = \" Selected marker-token context.\"] pub marker_movement : MarkerMovementContext , # [doc = \" Authenticated placement, if known.\"] pub place : MarkerPlace , # [doc = \" Movement rule result, if known.\"] pub movement : MarkerMovement , # [doc = \" Preceding accepted root, if known.\"] pub preceding_root : PrecedingRoot , }"
+  }
+}
