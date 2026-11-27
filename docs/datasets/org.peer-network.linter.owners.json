@@ -304,6 +304,10 @@
         {
           "owner": "NODE",
           "target": "FIXTURES"
+        },
+        {
+          "owner": "NODE",
+          "target": "HOST"
         }
       ],
       "name": "declaration",

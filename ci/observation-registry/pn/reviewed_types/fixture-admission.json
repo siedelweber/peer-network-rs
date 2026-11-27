@@ -4,6 +4,6 @@
     "item": "FixtureAdmission",
     "package": "pn",
     "path": "packages/node/src/main.rs",
-    "syntax": "enum FixtureAdmission { Unselected , # [cfg (feature = \"fixture\")] Selected , # [cfg (feature = \"fixture\")] Refused (Box < cli_common :: CliExit >) , }"
+    "syntax": "enum FixtureAdmission { Unselected , # [cfg (feature = \"fixture\")] Selected (String) , # [cfg (feature = \"fixture\")] Refused (Box < cli_common :: CliExit >) , }"
   }
 }

@@ -1,4 +1,4 @@
 name = "NODE"
 position = 17
 partitions = [{ position = 21, value = { name = "node-package", owner = "NODE", pattern = '%s"packages/node/" *VCHAR' } }]
-may_cite = [{ position = 65, value = { owner = "NODE", target = "CLICOMMON" } }, { position = 60, value = { owner = "NODE", target = "INTERCHANGE" } }, { position = 59, value = { owner = "NODE", target = "ROOT" } }, { position = 73, value = { owner = "NODE", target = "FIXTURES" } }]
+may_cite = [{ position = 65, value = { owner = "NODE", target = "CLICOMMON" } }, { position = 60, value = { owner = "NODE", target = "INTERCHANGE" } }, { position = 59, value = { owner = "NODE", target = "ROOT" } }, { position = 73, value = { owner = "NODE", target = "FIXTURES" } }, { position = 74, value = { owner = "NODE", target = "HOST" } }]

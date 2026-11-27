@@ -9,7 +9,7 @@ publish.workspace = true
 
 [features]
 debug-observation = ["cli-common/debug-observation"]
-fixture = ["dep:pn-fixtures"]
+fixture = ["dep:pn-fixtures", "dep:pn-host"]
 
 [dependencies]
 async-graphql = { version = "=7.2.1", default-features = false }
@@ -20,6 +20,7 @@ clap.workspace = true
 cli-common.workspace = true
 pn-interchange = { path = "../interchange" }
 pn-fixtures = { path = "../fixtures", optional = true }
+pn-host = { path = "../host", optional = true }
 secrecy.workspace = true
 signal-hook = { version = "=0.4.6", default-features = false }
 serde_json.workspace = true

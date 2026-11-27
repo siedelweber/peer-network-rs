@@ -288,10 +288,10 @@ fn prepare_with(
     if controller.advance(Event::Prepare { at: 0 }).is_err() {
         return terminal(runtime_terminal("Configuration"), initial_arguments);
     }
-    let fixture_selected = match fixture.accepted(command) {
-        super::FixtureAdmission::Unselected => false,
+    let fixture_name: Option<String> = match fixture.accepted(command) {
+        super::FixtureAdmission::Unselected => None,
         #[cfg(feature = "fixture")]
-        super::FixtureAdmission::Selected => true,
+        super::FixtureAdmission::Selected(name) => Some(name),
         #[cfg(feature = "fixture")]
         super::FixtureAdmission::Refused(exit) => return terminal(*exit, initial_arguments),
     };
@@ -359,7 +359,7 @@ fn prepare_with(
                 Ok(bootstrap) => bootstrap,
                 Err(reason) => return terminal(usage(reason), observed),
             };
-            if fixture_selected {
+            if fixture_name.is_some() {
                 return terminal(runtime_terminal("Configuration"), observed);
             }
             if controller.advance(Event::PreparedStart(bootstrap)).is_err() {

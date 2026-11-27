@@ -1983,6 +1983,7 @@ dependencies = [
  "clap",
  "cli-common",
  "pn-fixtures",
+ "pn-host",
  "pn-interchange",
  "secrecy",
  "serde_json",

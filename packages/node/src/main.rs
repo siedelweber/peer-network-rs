@@ -49,7 +49,7 @@ enum FixtureRequest {
 enum FixtureAdmission {
     Unselected,
     #[cfg(feature = "fixture")]
-    Selected,
+    Selected(String),
     #[cfg(feature = "fixture")]
     Refused(Box<cli_common::CliExit>),
 }
@@ -60,7 +60,9 @@ impl FixtureRequest {
         {
             match (command, self) {
                 (Command::Edition, Self::Missing) => FixtureAdmission::Unselected,
-                (Command::Start, Self::Candidate(name)) if pn_fixtures::recognizes_name(name) => FixtureAdmission::Selected,
+                (Command::Start, Self::Candidate(name)) if pn_fixtures::recognizes_name(name) => {
+                    FixtureAdmission::Selected(name.clone())
+                }
                 _ => FixtureAdmission::Refused(Box::new(cli_common::CliExit::new(
                     cli_common::ControlPlaneRecord::usage_error("pn", "fixture_selection"),
                     cli_common::CommandExit::Usage,
@@ -189,6 +191,8 @@ mod tests {
     use cli_common::ControlPlaneRecordKind;
     use cli_common::{CommandExit, ControlPlaneFields, OriginPreparation};
 
+    #[cfg(feature = "fixture")]
+    use super::{Command, FixtureAdmission, FixtureRequest};
     use super::{parse_and_prepare, process_adapter};
 
     const EDITION: &str =
@@ -227,6 +231,10 @@ mod tests {
         let calls = RefCell::new(Vec::new());
         #[cfg(feature = "fixture")]
         {
+            assert!(matches!(
+                FixtureRequest::Candidate("root".to_owned()).accepted(&Command::Start),
+                FixtureAdmission::Selected(name) if name == "root"
+            ));
             let accepted = terminal(entry(&["pn", "start", "--fixture=root"], Some(EDITION), &calls));
             assert_eq!(accepted.exit, CommandExit::Failure);
             assert_eq!(accepted.record.message, "Configuration");
