@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "frame::Frame",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "syntax": "# [derive (Debug , PartialEq , Eq)]",
+    "class_decision": "public-records",
+    "expansion_review": "Derived Debug and equality inspect public ordered frame storage without copying or allocating it. No codec, secret access, subscriber or independent work boundary is introduced."
+  }
+}

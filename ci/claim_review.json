@@ -7083,12 +7083,36 @@
       "review": "Read both numeric helpers: generated burn, numeraire, factor and action count independently supply theta, nu, rho and m. The inner oracle computes m*(theta+nu*rho); the outer oracle cross-multiplies the exact rational result using u128. The public fixed case separates theta=3 from nu=2 and rho=5, so interchanging theta and nu produces 85 rather than 65."
     },
     {
+      "operation": "pn-records::frame::tests::frame_fixed_width_views",
+      "path": "packages/records/src/frame.rs",
+      "claim": "RECORDS::claim:identity:frame-fixed-width-views",
+      "before": "",
+      "after": "Claim: The two fixed-width carriers retain every supplied byte and expose immutable borrowed views without adding a validity or identity claim.",
+      "review": "Zero, maximal and mixed bytes are independently supplied to both total constructors and compared byte for byte with their borrowed views. No document or source authority is inferred."
+    },
+    {
+      "operation": "pn-records::frame::tests::frame_records_constructor_order",
+      "path": "packages/records/src/frame.rs",
+      "claim": "RECORDS::claim:identity:frame-records-constructor-order",
+      "before": "",
+      "after": "Claim: Frame construction reports each unavailable-budget reason, checks entry and allocation ceilings before names, checks every descent before any duplicate including a later descent, and retains the accepted slice unchanged.",
+      "review": "The same three-entry slice has both descending and equal adjacent names. Entry and storage ceilings refuse first with Entries and CollectionAllocation. A separate equal pair followed by a descent exposes Order before Duplicate. The constructor's checked-arithmetic and fallible-reservation stages are exercised directly with usize::MAX because no real slice can reach either boundary; they report Representation and Allocation. Accepted two-entry, one-entry and empty slices retain their supplied values and order."
+    },
+    {
       "operation": "pn-records::integration::complete_acts_count_once",
       "path": "packages/records/tests/integration.rs",
       "claim": "RECORDS::claim:acts:complete-acts-are-counted-once",
       "before": "Claim: In a batch containing one binary and one paired act, validation exposes exactly two complete acts with three owned projections and preserves quantities, units, vintages and host metadata unchanged; this establishes counting only for this structural fixture, not membership closure or ledger accounting.",
       "after": "Claim: The local whole-act fixtures retain each structural act once with all its legs and unchanged quantities, units, vintages and host metadata, including a paired in-epoch ancestor shared by overlapping closures, while a shared history ancestor joins nothing; this is structural input accounting, not a partition or ledger verdict.",
       "review": "The first fixture preserves retained body and metadata fields. Its sibling counts a shared paired ancestor once only while it is outside history; moving it into history leaves two singleton root closures. Neither computes partition blocks."
+    },
+    {
+      "operation": "pn-records::numerics::tests::frame_document_exact_input",
+      "path": "packages/records/src/numerics.rs",
+      "claim": "RECORDS::claim:identity:frame-document-exact-input",
+      "before": "",
+      "after": "Claim: Frame integers retain independently specified unsigned totals with denominator one, and a measured resource boundary refuses rather than approximates.",
+      "review": "Independent byte arrays and decimal literals cover zero, 256, two to the power 64, two to the power 128 plus one and the largest 256-bit amount. The context ledger measures arithmetic work for each case; one below refuses, equality passes, and a second use of the same cumulative context refuses."
     },
     {
       "operation": "pn-records::numerics::tests::literal_admission",

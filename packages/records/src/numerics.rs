@@ -1,5 +1,6 @@
 //! Exact unit carriers and bounded rational arithmetic; no byte encoding.
 //! (´def:numerics:exact-carriers´)
+use crate::frame::GrossAmount;
 use nrz_cas::{
     Rational,
     limits::{Budget, Limits},
@@ -289,6 +290,43 @@ impl UnitCost {
     #[must_use]
     pub fn burn_unit(&self) -> &str {
         &self.burn_unit
+    }
+}
+
+impl NumericContext {
+    /// Embed every bit of a frame's unsigned gross amount as an exact integer.
+    /// (´[ROOT-rule:identity:frame-amount-boundary]´)
+    ///
+    /// # Errors
+    /// Propagates exact numerical resource inability with its backend cause.
+    #[tracing::instrument(
+        name = "amend:identity:frame-document-design",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "amend:identity:frame-document-design",
+            operation = "frame-integer",
+            source_item = "numerics::NumericContext::frame_integer"
+        ),
+        ret
+    )]
+    pub fn frame_integer(&mut self, amount: GrossAmount) -> Result<Computed, NumericError> {
+        let result = (|| {
+            let radix = Rational::from_ratio(256, 1, &mut self.budget)?;
+            let mut value = Rational::zero();
+            for byte in amount.bytes() {
+                value = value.mul(&radix, &mut self.budget)?;
+                let digit = Rational::from_ratio(i64::from(*byte), 1, &mut self.budget)?;
+                value = value.add(&digit, &mut self.budget)?;
+            }
+            Ok(Computed {
+                exact: Exact::new(value, &mut self.budget)?,
+            })
+        })();
+        if result.is_err() {
+            super::refused();
+        }
+        result
     }
 }
 
@@ -1367,6 +1405,84 @@ impl ReducedBurn {
 #[cfg(test)]
 mod tests {
     use super::{ComparisonLimits, ExactLimits, NumericContext, NumericError};
+    use crate::frame::GrossAmount;
+
+    /// Claim: Frame integers retain independently specified unsigned totals with denominator one, and a measured resource boundary refuses rather than approximates.
+    /// ´claim:identity:frame-document-exact-input´
+    /// ´test:unit:frame-document-exact-input´
+    #[test]
+    fn frame_document_exact_input() {
+        let cases = [
+            ([0; 32], "0"),
+            (
+                {
+                    let mut bytes = [0; 32];
+                    bytes[30] = 1;
+                    bytes[31] = 0;
+                    bytes
+                },
+                "256",
+            ),
+            (
+                {
+                    let mut bytes = [0; 32];
+                    bytes[23] = 1;
+                    bytes
+                },
+                "18446744073709551616",
+            ),
+            (
+                {
+                    let mut bytes = [0; 32];
+                    bytes[15] = 1;
+                    bytes[31] = 1;
+                    bytes
+                },
+                "340282366920938463463374607431768211457",
+            ),
+            (
+                [255; 32],
+                "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+            ),
+        ];
+        for (bytes, expected) in cases {
+            let mut context = NumericContext::new(ExactLimits::default(), ComparisonLimits::new(0, 0)).unwrap();
+            let computed = context.frame_integer(GrossAmount::from_be_bytes(bytes)).unwrap();
+            assert_eq!(computed.exact(), expected);
+            assert!(computed.exact.value.is_integer());
+            let usage = context.budget.usage();
+            let measured = usage.arithmetic_steps;
+            assert!(measured > 0);
+            let mut below = NumericContext::new(
+                ExactLimits {
+                    arithmetic_steps: measured - 1,
+                    ..ExactLimits::default()
+                },
+                ComparisonLimits::new(0, 0),
+            )
+            .unwrap();
+            assert!(matches!(
+                below.frame_integer(GrossAmount::from_be_bytes(bytes)),
+                Err(NumericError::Backend(_))
+            ));
+            let mut equal = NumericContext::new(
+                ExactLimits {
+                    arithmetic_steps: measured,
+                    ..ExactLimits::default()
+                },
+                ComparisonLimits::new(0, 0),
+            )
+            .unwrap();
+            assert_eq!(
+                equal.frame_integer(GrossAmount::from_be_bytes(bytes)).unwrap().exact(),
+                expected
+            );
+            assert!(matches!(
+                equal.frame_integer(GrossAmount::from_be_bytes(bytes)),
+                Err(NumericError::Backend(_))
+            ));
+        }
+    }
 
     /// Claim: Exact decimal import retains its source and canonical rational, negative quantities and zero costs refuse, and an exhausted arithmetic budget returns a typed backend refusal instead of an approximate value.
     /// ´claim:numerics:literal-signs-and-resources-refuse-explicitly´

@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/numerics.rs",
+    "item": "numerics::NumericContext::frame_integer",
+    "owner": "RECORDS",
+    "signature": "fn frame_integer (& mut self , amount : GrossAmount) -> Result < Computed , NumericError >",
+    "claim": "ROOT::amend:identity:frame-document-design",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "frame-integer"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::frame_integer",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { let radix = Rational :: from_ratio (256 , 1 , & mut self . budget) ? ; let mut value = Rational :: zero () ; for byte in amount . bytes () { value = value . mul (& radix , & mut self . budget) ? ; let digit = Rational :: from_ratio (i64 :: from (* byte) , 1 , & mut self . budget) ? ; value = value . add (& digit , & mut self . budget) ? ; } Ok (Computed { exact : Exact :: new (value , & mut self . budget) ? , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Only opaque public Actor names, gross amount bytes, frame entries, explicit allowances and the caller-owned exact budget enter. Full tracing retains their Debug representations, results and typed failures; no secret, publication codec, chain recognition, identity binding or subscriber enters the body."
+  }
+}

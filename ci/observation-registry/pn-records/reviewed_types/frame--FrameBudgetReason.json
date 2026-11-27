@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "frame::FrameBudgetReason",
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "syntax": "# [doc = \" Diagnostic reason for an unavailable frame construction budget.\"] # [doc = \" (´[ROOT-amend:identity:frame-document-design]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum FrameBudgetReason { # [doc = \" The entry count exceeds the declared ceiling.\"] Entries , # [doc = \" Typed-storage size arithmetic cannot be represented.\"] Representation , # [doc = \" Typed-entry storage exceeds the declared byte ceiling.\"] CollectionAllocation , # [doc = \" Allocating typed-entry storage failed.\"] Allocation , }"
+  }
+}

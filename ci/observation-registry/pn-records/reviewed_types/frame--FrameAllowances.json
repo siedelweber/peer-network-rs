@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "frame::FrameAllowances",
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "syntax": "# [doc = \" Explicit per-construction entry and storage ceilings.\"] # [doc = \" (´[ROOT-amend:identity:frame-document-design]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct FrameAllowances { # [doc = \" Maximum number of entries retained in this frame.\"] pub entries : usize , # [doc = \" Maximum bytes of typed entry storage reserved for this frame.\"] pub allocation_bytes : usize , }"
+  }
+}

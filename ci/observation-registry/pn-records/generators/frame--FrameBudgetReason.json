@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "frame::FrameBudgetReason",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "class_decision": "public-records",
+    "expansion_review": "Derived copies, debugging and equality inspect a public diagnostic reason without allocation or new observation content.",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]"
+  }
+}

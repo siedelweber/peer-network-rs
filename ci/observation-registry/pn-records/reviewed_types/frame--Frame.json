@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "frame::Frame",
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "syntax": "# [doc = \" Ordered association of opaque Actor names and unsigned gross amounts.\"] # [doc = \" It does not certify the required Actor domain or any recognized destruction.\"] # [doc = \" (´[ROOT-rule:identity:frame-document-domain]´)\"] # [derive (Debug , PartialEq , Eq)] pub struct Frame { entries : Vec < ([u8 ; 32] , GrossAmount) > , }"
+  }
+}

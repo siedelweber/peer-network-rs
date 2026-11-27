@@ -1,5 +1,5 @@
 // Generated from ci/observation-registry by ci/observe.py --write-operation-vocabulary.
-pub(super) const RECORDS_OPERATIONS: [&str; 88] = [
+pub(super) const RECORDS_OPERATIONS: [&str; 92] = [
     "assemble-boundary-inputs",
     "authentication-disclosure",
     "binary64-carrier-bind",
@@ -51,6 +51,10 @@ pub(super) const RECORDS_OPERATIONS: [&str; 88] = [
     "controller-resource-error",
     "dependency-status",
     "digest-marker-policy",
+    "frame-from-entries",
+    "frame-integer",
+    "frame-name-from-bytes",
+    "gross-amount-from-be-bytes",
     "numeric-apply-cost",
     "numeric-burn",
     "numeric-burn-per-action",

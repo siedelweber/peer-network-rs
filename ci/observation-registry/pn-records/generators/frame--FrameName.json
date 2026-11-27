@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "frame::FrameName",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "public-records",
+    "expansion_review": "Derived copies, Debug and equality inspect public fixed-width reference bytes without adding an ordering or binding claim. No codec, secret access, subscriber or independent work boundary is introduced."
+  }
+}

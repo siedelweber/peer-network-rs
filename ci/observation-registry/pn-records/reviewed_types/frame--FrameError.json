@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "frame::FrameError",
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "syntax": "# [doc = \" First cause of a refused ordered frame construction.\"] # [doc = \" (´[ROOT-amend:identity:frame-document-design]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum FrameError { # [doc = \" At least one adjacent Actor name descends.\"] # [error (\"frame entries are out of order\")] Order , # [doc = \" At least one adjacent Actor name is repeated.\"] # [error (\"frame contains a duplicate Actor name\")] Duplicate , # [doc = \" Entry, storage-arithmetic, storage-ceiling or allocation refusal.\"] # [error (\"frame construction exceeds available budget: {0:?}\")] UnavailableBudget (FrameBudgetReason) , }"
+  }
+}

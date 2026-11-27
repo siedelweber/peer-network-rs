@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "frame::FrameName",
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "syntax": "# [doc = \" An untrusted expected reference to a complete frame document.\"] # [doc = \" Construction establishes no binding to any document.\"] # [doc = \" (´[ROOT-amend:identity:frame-document-design]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct FrameName ([u8 ; 32]) ;"
+  }
+}

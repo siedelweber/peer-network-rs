@@ -196,7 +196,7 @@
 | pn-interchange::transport | active | integration | pn-interchange-rust | fast | 4 |
 | pn-interchange::vectors | active | integration | pn-interchange-rust | fast | 3 |
 | pn-interchange::versions | active | integration | pn-interchange-rust | fast | 6 |
-| pn-records | active | unit | pn-records-rust | fast | 7 |
+| pn-records | active | unit | pn-records-rust | fast | 10 |
 | pn-records-doctests | active | doctest | pn-records-rust | fast | 4 |
 | pn-records::authentication-disclosures | active | public-surface | pn-records-rust | fast | 1 |
 | pn-records::conformance | active | integration | pn-records-rust | fast | 4 |

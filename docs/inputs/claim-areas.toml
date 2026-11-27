@@ -304,6 +304,13 @@ register = "RECORDS::sec:burn:area-burn"
 contract = "RECORDS::sec:burn:area-burn"
 
 [[rows]]
+owner = "RECORDS"
+area = "identity"
+stake = "Changing fixed-width gross bytes or ordered Actor names can misstate a supplied frame before exact calculation or document checking."
+register = "RECORDS::sec:identity:area-identity"
+contract = "RECORDS::sec:identity:area-identity"
+
+[[rows]]
 owner = "HOST"
 area = "host"
 stake = "If the transport boundary fails, service reachability or credentials can enter public driver state, or an unauthenticated service can supply storage results."

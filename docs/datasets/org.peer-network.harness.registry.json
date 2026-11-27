@@ -4542,6 +4542,9 @@
       },
       "cases": [
         "pn-records::binary64::tests::binary64_exact_golden_relations",
+        "pn-records::frame::tests::frame_fixed_width_views",
+        "pn-records::frame::tests::frame_records_constructor_order",
+        "pn-records::numerics::tests::frame_document_exact_input",
         "pn-records::numerics::tests::literal_admission",
         "pn-records::tests::deployment_announcement_guard",
         "pn-records::tests::whole_act_carrier",

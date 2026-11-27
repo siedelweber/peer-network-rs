@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "frame::GrossAmount",
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "syntax": "# [doc = \" An unsigned gross amount in the selected network's minimal burnt-asset unit.\"] # [doc = \" Every fixed-width byte pattern is an amount; this is not a historical burn amount.\"] # [doc = \" (´[ROOT-def:identity:frame-amount]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct GrossAmount ([u8 ; 32]) ;"
+  }
+}

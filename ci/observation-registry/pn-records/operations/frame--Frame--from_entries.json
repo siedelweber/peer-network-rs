@@ -1,0 +1,26 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "item": "frame::Frame::from_entries",
+    "owner": "RECORDS",
+    "signature": "fn from_entries (entries : & [([u8 ; 32] , GrossAmount)] , allowances : FrameAllowances) -> Result < Self , FrameError >",
+    "claim": "ROOT::amend:identity:frame-document-design",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "frame-from-entries",
+    "body": "{ let result = (| | { if entries . len () > allowances . entries { return Err (FrameError :: UnavailableBudget (FrameBudgetReason :: Entries)) ; } let bytes = checked_allocation_bytes (entries . len ()) ? ; if bytes > allowances . allocation_bytes { return Err (FrameError :: UnavailableBudget (FrameBudgetReason :: CollectionAllocation)) ; } if entries . windows (2) . any (| pair | pair [0] . 0 > pair [1] . 0) { return Err (FrameError :: Order) ; } if entries . windows (2) . any (| pair | pair [0] . 0 == pair [1] . 0) { return Err (FrameError :: Duplicate) ; } let mut owned = reserve_entries (entries . len ()) ? ; owned . extend_from_slice (entries) ; Ok (Self { entries : owned }) }) () ; if result . is_err () { crate :: refused () ; } result }"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/frame.rs::frame::Frame::from_entries",
+    "class_decision": "public-records",
+    "body": "{ let result = (| | { if entries . len () > allowances . entries { return Err (FrameError :: UnavailableBudget (FrameBudgetReason :: Entries)) ; } let bytes = checked_allocation_bytes (entries . len ()) ? ; if bytes > allowances . allocation_bytes { return Err (FrameError :: UnavailableBudget (FrameBudgetReason :: CollectionAllocation)) ; } if entries . windows (2) . any (| pair | pair [0] . 0 > pair [1] . 0) { return Err (FrameError :: Order) ; } if entries . windows (2) . any (| pair | pair [0] . 0 == pair [1] . 0) { return Err (FrameError :: Duplicate) ; } let mut owned = reserve_entries (entries . len ()) ? ; owned . extend_from_slice (entries) ; Ok (Self { entries : owned }) }) () ; if result . is_err () { crate :: refused () ; } result }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Only opaque public Actor names, gross amount bytes, frame entries, explicit allowances and the caller-owned exact budget enter. Full tracing retains their Debug representations, results and typed failures; no secret, publication codec, chain recognition, identity binding or subscriber enters the body."
+  }
+}

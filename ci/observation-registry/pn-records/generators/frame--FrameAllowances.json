@@ -1,0 +1,12 @@
+{
+  "section": "generators",
+  "value": {
+    "item": "frame::FrameAllowances",
+    "kind": "derive",
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+    "class_decision": "public-records",
+    "expansion_review": "Derived Clone, Debug, equality and ordering, where present, operate on public fixed-width bytes or ordered frame storage only; the error display names an existing typed cause. No codec, secret access, subscriber or independent work boundary is introduced."
+  }
+}

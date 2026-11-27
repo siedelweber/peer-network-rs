@@ -4520,14 +4520,18 @@
       "witnessed_labels": []
     },
     {
-      "claims": [],
+      "claims": [
+        "RECORDS::claim:identity:frame-document-exact-input"
+      ],
       "closing_condition": "Complete the frame admission and coordinated consumers, register independent assertions at their owning sites, and provide source/configuration-matched passing evidence without reinterpreting historical amounts or identities.",
       "closing_step": "Frame identity and operation admission followed by the coordinated successor consumer cut",
+      "evidence_paragraph": "RECORDS::rec:identity:frame-records-evidence",
       "hold": "ROOT::open:identity:frame-document-admission",
-      "missing": "Implementation of the design-admitted records carrier and exact adapter and epoch codec/name comparison after its proposed registry-edge reviews and admission, theory publication and correspondence, measured allowances and independent round-trip, name, malformed-input, family-order precedence without a shared reservation callback, registry, version, measured-inability and exact-input controls; allocator-failure injection remains held with the epoch measurement owner; source recognition and gross, static-opacity and epoch-reference evidence remain with oracle and epoch owners; no executed witness exists.",
+      "missing": "The records-owned carrier, constructor and exact adapter have source-matched focused controls, including exact input and its measured arithmetic neighbour. The epoch codec/name comparison after proposed registry-edge reviews and admission, theory publication and correspondence, measured codec allowances and independent round-trip, name, malformed-input, family-order precedence without a shared reservation callback, registry, version and measured-inability controls remain owed; allocator-failure injection remains held with the epoch measurement owner; source recognition and gross, static-opacity and epoch-reference evidence remain with oracle and epoch owners.",
       "name": "ROOT::verif:identity:frame-document-controls",
       "owner": "Identity, epoch, records, numerical and oracle implementers",
       "path": "adr/006-identity-adjudication.md",
+      "premises": "The records exact-input claim covers independently authored fixed-width totals, denominator one and a measured arithmetic-work refusal at its numeric owner only. It does not witness codec bytes, name comparison, oracle attribution, static checking or external enablement.",
       "realizers": [],
       "status": "held",
       "witnessed_labels": []

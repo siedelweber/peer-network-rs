@@ -6,6 +6,6 @@ level = "unit"
 implementation = "pn-records-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-records::binary64::tests::binary64_exact_golden_relations", "pn-records::numerics::tests::literal_admission", "pn-records::tests::deployment_announcement_guard", "pn-records::tests::whole_act_carrier", "pn-records::tests::history_storage_is_shared", "pn-records::tests::identity_components", "pn-records::closure::tests::opening_evidence"]
+cases = ["pn-records::binary64::tests::binary64_exact_golden_relations", "pn-records::frame::tests::frame_fixed_width_views", "pn-records::frame::tests::frame_records_constructor_order", "pn-records::numerics::tests::frame_document_exact_input", "pn-records::numerics::tests::literal_admission", "pn-records::tests::deployment_announcement_guard", "pn-records::tests::whole_act_carrier", "pn-records::tests::history_storage_is_shared", "pn-records::tests::identity_components", "pn-records::closure::tests::opening_evidence"]
 case_budgets = { "pn-records::tests::whole_act_carrier" = "calibrated-whole-act-carrier-case" }
 case_budget_reasons = { "pn-records::tests::whole_act_carrier" = "The generated complete-act carrier retains history validation, record validation, every co-leg and boundary assembly. The serial campaign maximum includes its observed off-CPU delay; the allowance follows the uniform warm-wall rule without claiming intrinsic work growth." }

@@ -308,6 +308,13 @@
       "stake": "Omitted disclosures or repaired marker sets can fabricate readiness, move destruction between addresses, or count one destruction more than once."
     },
     {
+      "area": "identity",
+      "contract": "RECORDS::sec:identity:area-identity",
+      "owner": "RECORDS",
+      "register": "RECORDS::sec:identity:area-identity",
+      "stake": "Changing fixed-width gross bytes or ordered Actor names can misstate a supplied frame before exact calculation or document checking."
+    },
+    {
       "area": "host",
       "contract": "HOST::sec:host:area-host",
       "owner": "HOST",

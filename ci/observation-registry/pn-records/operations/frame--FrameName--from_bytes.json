@@ -1,0 +1,25 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-records",
+    "path": "packages/records/src/frame.rs",
+    "item": "frame::FrameName::from_bytes",
+    "owner": "RECORDS",
+    "signature": "fn from_bytes (bytes : [u8 ; 32]) -> Self",
+    "claim": "ROOT::amend:identity:frame-document-design",
+    "shape": "shape-records",
+    "mode": "instrumented",
+    "operation": "frame-name-from-bytes"
+  },
+  "review": {
+    "operation": "pn-records::packages/records/src/frame.rs::frame::FrameName::from_bytes",
+    "class_decision": "public-records",
+    "body": "{ Self (bytes) }",
+    "assessments": {
+      "full_recording": "records-full_recording",
+      "secret_flow": "records-secret_flow",
+      "exposure_consumers": "records-exposure_consumers"
+    },
+    "item_premise": "Only opaque public Actor names, gross amount bytes, frame entries, explicit allowances and the caller-owned exact budget enter. Full tracing retains their Debug representations, results and typed failures; no secret, publication codec, chain recognition, identity binding or subscriber enters the body."
+  }
+}

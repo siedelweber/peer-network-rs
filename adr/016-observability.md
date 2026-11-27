@@ -108,7 +108,7 @@ The implemented follow-up adds entry_origin_installation_transfer (the shared in
 | pn-graph | 72 | 57 | 15 | 0 | 71 |
 | pn-host | 379 | 102 | 277 | 0 | 250 |
 | pn-interchange | 171 | 134 | 36 | 1 | 104 |
-| pn-records | 164 | 90 | 74 | 0 | 211 |
+| pn-records | 171 | 94 | 77 | 0 | 217 |
 | pn-secret-home | 23 | 9 | 14 | 0 | 6 |
 | pn-wallet | 33 | 10 | 23 | 0 | 38 |
 
