@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "terminal_refusal_result",
+    "owner": "CLICOMMON",
+    "signature": "fn terminal_refusal_result < EmitControl > (record : & ControlPlaneRecord , emit_control : & mut EmitControl ,) -> (ExitCode , observation :: Outcome , serde_json :: Value) where EmitControl : FnMut (& ControlPlaneRecord) -> io :: Result < () > ,",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: This callback result is accounted for by the enclosing command root; it starts no second operation.",
+      "witness": "CLICOMMON::claim:cli:callback-terminal-refusal",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "public-cli"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::terminal_refusal_result",
+    "body": "{ if matches ! (record . kind , ControlPlaneRecordKind :: UsageError | ControlPlaneRecordKind :: TtyRefusal | ControlPlaneRecordKind :: Diagnostic) { let _ignored = emit_control (record) ; (CommandExit :: Usage . exit_code () , observation :: Outcome :: Refusal , serde_json :: json ! ({ \"record\" : record , \"exit\" : CommandExit :: Usage }) ,) } else { tracing :: error ! (\"invalid terminal refusal record kind\") ; (CommandExit :: Failure . exit_code () , observation :: Outcome :: Error , serde_json :: json ! ({ \"error\" : \"invalid terminal refusal record kind\" }) ,) } }",
+    "class_decision": "public-cli",
+    "item_premise": "The helper accepts only terminal refusal control record kinds, emits the selected public record, and returns a Refusal result to the enclosing command root without a separate output or observation.",
+    "assessments": {
+      "full_recording": "origin-full-recording",
+      "secret_flow": "origin-secret-flow",
+      "exposure_consumers": "origin-exposure-consumers"
+    }
+  }
+}

@@ -410,6 +410,22 @@ class WorkspaceChecks(unittest.TestCase):
             self.assertIn(('pn-credential-generator',True,()),required_packages(Path('.')), 'present generator requires its protected row')
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
+            manifest = root/'packages/node/Cargo.toml'
+            manifest.parent.mkdir(parents=True)
+            fixture_rows = {('pn',False,('fixture',)),('pn',False,('debug-observation','fixture'))}
+            empty_metadata = dict(workspace_members=[],packages=[])
+            with patch('protected_packages.subprocess.run',return_value=subprocess.CompletedProcess([],0,json.dumps(empty_metadata))):
+                for dependencies in (
+                    ['dep:pn-fixtures'],
+                    ['dep:pn-fixtures','dep:pn-host'],
+                    ['dep:pn-host','dep:pn-fixtures'],
+                ):
+                    manifest.write_text('[features]\nfixture = '+json.dumps(dependencies)+'\n')
+                    self.assertEqual(required_packages(root) & fixture_rows, fixture_rows)
+                manifest.write_text('[features]\nfixture = ["dep:pn-host"]\n')
+                self.assertFalse(required_packages(root) & fixture_rows)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
             (root/'Cargo.lock').write_text('[[package]]\nname="x"\nversion="1.0.0"\nsource="registry+https://example.invalid/index"\nchecksum="one"\n')
             original = bind_sources(root,parse_tree('x v1.0.0|\n'))
             (root/'Cargo.lock').write_text((root/'Cargo.lock').read_text().replace('one','two'))

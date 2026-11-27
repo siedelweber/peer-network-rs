@@ -81,7 +81,8 @@ def required_packages(root):
     if 'pn-credential-generator' in required:
         selections.add(('pn-credential-generator', True, ('debug-observation',)))
     node_features = tomllib.loads((root/'packages/node/Cargo.toml').read_text()).get('features', {})
-    if node_features.get('fixture') == ['dep:pn-fixtures']:
+    fixture_activations = node_features.get('fixture')
+    if isinstance(fixture_activations, list) and 'dep:pn-fixtures' in fixture_activations:
         selections.add(('pn', False, ('fixture',)))
         selections.add(('pn', False, ('debug-observation', 'fixture')))
     return selections

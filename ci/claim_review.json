@@ -1418,6 +1418,14 @@
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
     },
     {
+      "operation": "cli-common::integration::callback_terminal_refusal_output",
+      "path": "packages/cli-common/tests/integration.rs",
+      "claim": "CLICOMMON::claim:cli:callback-terminal-refusal-output",
+      "before": "",
+      "after": "Claim: A public origin callback's explicit terminal refusal emits no stdout result and retains status two with enabled or validly disabled observation.",
+      "review": "A child test process calls the public entry route, checks status two, and its parent checks the captured stdout and enabled diagnostic. A release-kind child also checks valid observation disable; the build kind is selected by the optional debug-observation feature."
+    },
+    {
       "operation": "cli-common::integration::emit_real_stdout_through_public_api",
       "path": "packages/cli-common/tests/integration.rs",
       "claim": "CLICOMMON::claim:cli:emit-real-stdout-through-public-api",
@@ -1760,6 +1768,14 @@
       "before": "",
       "after": "Claim: The compiled statement constructor refuses every invalid revision and tag form before formatting.",
       "review": "The same const constructor is called at runtime under catch_unwind for an orphan tag, short, long, uppercase and nonhex revisions, and empty, reserved, whitespace and control-containing tags; a valid neighbour is admitted."
+    },
+    {
+      "operation": "cli-common::tests::callback_terminal_refusal",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:callback-terminal-refusal",
+      "before": "",
+      "after": "Claim: An explicit callback refusal emits its control record after dispatch and completes the sole origin root as refusal with status two, even when diagnostic delivery fails.",
+      "review": "The private runner seam injects a completed origin installation and checks both successful and failed diagnostic delivery; neither writes a stdout result. The same control rejects a Help record as an inadmissible refusal; existing success and ordinary error neighbours retain their separate controls."
     },
     {
       "operation": "cli-common::tests::command_exit_codes_match_contract",

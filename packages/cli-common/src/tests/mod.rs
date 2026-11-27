@@ -203,6 +203,160 @@ fn entry_origin_failed_result() {
     assert!(rows.iter().any(|row| row["level"] == "ERROR"));
 }
 
+/// Claim: An explicit callback refusal emits its control record after dispatch and completes the sole origin root as refusal with status two, even when diagnostic delivery fails.
+/// ´claim:cli:callback-terminal-refusal´
+/// ´test:crate:callback-terminal-refusal´
+#[test]
+fn callback_terminal_refusal() {
+    use crate::observation::tests::{fixture_installation, records, with_fixture_subscriber};
+    let expected = ControlPlaneRecord::usage_error("fixture", "target_not_empty");
+    for delivery_fails in [false, true] {
+        let (installed, observation, _clock, capture) = fixture_installation(json!({"command":"fixture"}));
+        let controls = RefCell::new(Vec::new());
+        let output_called = Cell::new(false);
+        let exit = with_fixture_subscriber(&observation, || {
+            crate::run_stdout_json_command_from_origin_inner(
+                "fixture",
+                || {},
+                || crate::OriginPreparation::Continue {
+                    context: (),
+                    arguments: json!({"command":"fixture"}),
+                },
+                || None,
+                |_| Ok(Some(installed)),
+                || {},
+                |record| {
+                    controls.borrow_mut().push(record.clone());
+                    if delivery_fails {
+                        Err(io::Error::other("diagnostic delivery failed"))
+                    } else {
+                        Ok(())
+                    }
+                },
+                |_: &u8| {
+                    output_called.set(true);
+                    Ok(())
+                },
+                |()| -> crate::OriginCallbackOutcome<u8, &str> {
+                    crate::OriginCallbackOutcome::TerminalRefusal(expected.clone())
+                },
+            )
+        });
+        assert_eq!(exit, CommandExit::Usage.exit_code());
+        assert!(!output_called.get());
+        assert_eq!(controls.borrow().as_slice(), std::slice::from_ref(&expected));
+        let rows = records(&observation, &capture);
+        let completions: Vec<_> = rows
+            .iter()
+            .filter(|row| row["operation"] == "Command" && row["event_kind"] == "completion")
+            .collect();
+        assert_eq!(completions.len(), 1);
+        assert_eq!(completions[0]["detail"]["outcome"], "refusal");
+        assert_eq!(completions[0]["detail"]["result"]["record"]["message"], expected.message);
+    }
+    assert_callback_outcome_neighbours();
+    let controls = RefCell::new(Vec::new());
+    let exit = crate::run_stdout_json_command_from_origin_inner(
+        "fixture",
+        || {},
+        || crate::OriginPreparation::Continue {
+            context: (),
+            arguments: json!({"command":"fixture"}),
+        },
+        || None,
+        |_| {
+            Err(crate::observation::BootstrapError::Unavailable(
+                crate::observation::ObserverUnavailable::ObservationAlreadyInitialized,
+            ))
+        },
+        || {},
+        |record| {
+            controls.borrow_mut().push(record.clone());
+            Ok(())
+        },
+        |_: &u8| panic!("unavailable installation emitted a result"),
+        |()| -> crate::OriginCallbackOutcome<u8, &str> { crate::OriginCallbackOutcome::TerminalRefusal(expected.clone()) },
+    );
+    assert_eq!(exit, CommandExit::Usage.exit_code());
+    assert_eq!(*controls.borrow(), [expected]);
+    let (installed, observation, _clock, capture) = fixture_installation(json!({"command":"fixture"}));
+    let exit = with_fixture_subscriber(&observation, || {
+        crate::run_stdout_json_command_from_origin_inner(
+            "fixture",
+            || {},
+            || crate::OriginPreparation::Continue {
+                context: (),
+                arguments: json!({"command":"fixture"}),
+            },
+            || None,
+            |_| Ok(Some(installed)),
+            || {},
+            |_| panic!("help was emitted as a refusal"),
+            |_: &u8| panic!("help emitted a result"),
+            |()| -> crate::OriginCallbackOutcome<u8, &str> {
+                crate::OriginCallbackOutcome::TerminalRefusal(ControlPlaneRecord::help("fixture", "help"))
+            },
+        )
+    });
+    assert_eq!(exit, CommandExit::Failure.exit_code());
+    let rows = records(&observation, &capture);
+    let completion = rows
+        .iter()
+        .find(|row| row["operation"] == "Command" && row["event_kind"] == "completion")
+        .unwrap();
+    assert_eq!(completion["detail"]["outcome"], "error");
+}
+
+fn assert_callback_outcome_neighbours() {
+    use crate::observation::tests::{fixture_installation, records, with_fixture_subscriber};
+    for (outcome, expected_exit, expected_outcome, expected_output) in [
+        (
+            crate::OriginCallbackOutcome::Success(7_u8),
+            CommandExit::Success,
+            "success",
+            true,
+        ),
+        (
+            crate::OriginCallbackOutcome::RuntimeFailure("ordinary error"),
+            CommandExit::Failure,
+            "error",
+            false,
+        ),
+    ] {
+        let (installed, observation, _clock, capture) = fixture_installation(json!({"command":"fixture"}));
+        let output_called = Cell::new(false);
+        let exit = with_fixture_subscriber(&observation, || {
+            crate::run_stdout_json_command_from_origin_inner(
+                "fixture",
+                || {},
+                || crate::OriginPreparation::Continue {
+                    context: (),
+                    arguments: json!({"command":"fixture"}),
+                },
+                || None,
+                |_| Ok(Some(installed)),
+                || {},
+                |_| panic!("ordinary callback outcome emitted a control record"),
+                |value: &u8| {
+                    assert_eq!(*value, 7);
+                    output_called.set(true);
+                    Ok(())
+                },
+                |()| outcome,
+            )
+        });
+        assert_eq!(exit, expected_exit.exit_code());
+        assert_eq!(output_called.get(), expected_output);
+        let rows = records(&observation, &capture);
+        let completions: Vec<_> = rows
+            .iter()
+            .filter(|row| row["operation"] == "Command" && row["event_kind"] == "completion")
+            .collect();
+        assert_eq!(completions.len(), 1);
+        assert_eq!(completions[0]["detail"]["outcome"], expected_outcome);
+    }
+}
+
 fn assert_origin_terminal_cases() {
     use crate::observation::tests::{fixture_installation, records, with_fixture_subscriber};
     for (record, expected) in [

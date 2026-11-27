@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "OriginCallbackOutcome",
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "syntax": "# [doc = \" An origin command's explicit result after its callback has run.\"] pub enum OriginCallbackOutcome < Output , Error > { # [doc = \" Emit one complete stdout result and return success.\"] Success (Output) , # [doc = \" Emit the existing public control record and return a terminal refusal.\"] TerminalRefusal (ControlPlaneRecord) , # [doc = \" Report an ordinary runtime failure.\"] RuntimeFailure (Error) , }"
+  }
+}

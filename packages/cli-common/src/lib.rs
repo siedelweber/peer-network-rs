@@ -1068,6 +1068,27 @@ pub enum OriginPreparation<Context> {
     Terminal { exit: CliExit, arguments: serde_json::Value },
 }
 
+/// An origin command's explicit result after its callback has run.
+pub enum OriginCallbackOutcome<Output, Error> {
+    /// Emit one complete stdout result and return success.
+    Success(Output),
+    /// Emit the existing public control record and return a terminal refusal.
+    TerminalRefusal(ControlPlaneRecord),
+    /// Report an ordinary runtime failure.
+    RuntimeFailure(Error),
+}
+
+impl<Output, Error> From<Result<Output, Error>> for OriginCallbackOutcome<Output, Error> {
+    /// Justified: This conversion classifies an existing result inside its caller's origin command root without starting a second operation.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the callback mapping control witnesses the enclosing command completion.
+    fn from(result: Result<Output, Error>) -> Self {
+        match result {
+            Ok(output) => Self::Success(output),
+            Err(error) => Self::RuntimeFailure(error),
+        }
+    }
+}
+
 /// Run a stdout-result command whose synchronous preparation is measured from entry.
 /// The caller captures `EntryOrigin` as the first controlled statement of `main`.
 /// Justified: This entry-origin adapter selects a bounded pre-installation path and hands it to the explicit command root without starting a second operation.
@@ -1121,6 +1142,40 @@ where
     )
 }
 
+/// Run an origin command with an explicit post-dispatch terminal refusal option.
+/// The callback selects a refusal only by returning [`OriginCallbackOutcome::TerminalRefusal`];
+/// existing `Result` callbacks keep their success and runtime-failure mapping.
+/// Justified: This entry-origin adapter hands the accepted load to the existing command root.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the runner-order control witnesses the enclosing command operation.
+pub fn run_stdout_json_command_from_origin_with_load_outcome<Context, Output, CommandError, Prepare, Load, Run>(
+    origin: observation::EntryOrigin,
+    command_name: &str,
+    debug: bool,
+    default_level: tracing::Level,
+    prepare: Prepare,
+    load: Load,
+    run: Run,
+) -> ExitCode
+where
+    Output: serde::Serialize,
+    CommandError: std::fmt::Display,
+    Prepare: FnOnce() -> OriginPreparation<Context>,
+    Load: FnOnce(),
+    Run: FnOnce(Context) -> OriginCallbackOutcome<Output, CommandError>,
+{
+    run_stdout_json_command_from_origin_inner(
+        command_name,
+        || install_json_panic_hook(command_name),
+        prepare,
+        || stdout_tty_refusal_record(command_name),
+        |arguments| observation::install_from_origin(origin, debug, default_level, arguments).map(Some),
+        load,
+        emit_control_plane_record,
+        emit,
+        run,
+    )
+}
+
 /// Justified: This entry-origin adapter selects a bounded pre-installation path and hands it to the explicit command root without starting a second operation.
 /// Coverage exception for (´[ROOT-rule:observe:spans]´); the runner-order control witnesses the enclosing command operation.
 // Justified: The private test seam injects runner phases separately to verify their order.
@@ -1136,6 +1191,7 @@ fn run_stdout_json_command_from_origin_inner<
     EmitControl,
     EmitOutput,
     Run,
+    RunResult,
     Tty,
 >(
     command_name: &str,
@@ -1157,7 +1213,8 @@ where
     Load: FnOnce(),
     EmitControl: FnMut(&ControlPlaneRecord) -> io::Result<()>,
     EmitOutput: FnMut(&Output) -> io::Result<()>,
-    Run: FnOnce(Context) -> Result<Output, CommandError>,
+    Run: FnOnce(Context) -> RunResult,
+    RunResult: Into<OriginCallbackOutcome<Output, CommandError>>,
     Tty: FnOnce() -> Option<ControlPlaneRecord>,
 {
     hook();
@@ -1217,8 +1274,8 @@ where
                 (exit.exit.exit_code(), outcome, result)
             }
         }
-        OriginPreparation::Continue { context, .. } => match run(context) {
-            Ok(output) => match emit_output(&output) {
+        OriginPreparation::Continue { context, .. } => match run(context).into() {
+            OriginCallbackOutcome::Success(output) => match emit_output(&output) {
                 Ok(()) => (
                     CommandExit::Success.exit_code(),
                     observation::Outcome::Success,
@@ -1233,7 +1290,8 @@ where
                     )
                 }
             },
-            Err(error) => {
+            OriginCallbackOutcome::TerminalRefusal(record) => terminal_refusal_result(&record, &mut emit_control),
+            OriginCallbackOutcome::RuntimeFailure(error) => {
                 tracing::error!(error = %error, "command failed");
                 (
                     CommandExit::Failure.exit_code(),
@@ -1249,6 +1307,35 @@ where
     drop(scope);
     drop(installation);
     exit
+}
+
+/// Justified: This callback result is accounted for by the enclosing command root; it starts no second operation.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the callback terminal-refusal control witnesses the completion.
+fn terminal_refusal_result<EmitControl>(
+    record: &ControlPlaneRecord,
+    emit_control: &mut EmitControl,
+) -> (ExitCode, observation::Outcome, serde_json::Value)
+where
+    EmitControl: FnMut(&ControlPlaneRecord) -> io::Result<()>,
+{
+    if matches!(
+        record.kind,
+        ControlPlaneRecordKind::UsageError | ControlPlaneRecordKind::TtyRefusal | ControlPlaneRecordKind::Diagnostic
+    ) {
+        let _ignored = emit_control(record);
+        (
+            CommandExit::Usage.exit_code(),
+            observation::Outcome::Refusal,
+            serde_json::json!({"record":record,"exit":CommandExit::Usage}),
+        )
+    } else {
+        tracing::error!("invalid terminal refusal record kind");
+        (
+            CommandExit::Failure.exit_code(),
+            observation::Outcome::Error,
+            serde_json::json!({"error":"invalid terminal refusal record kind"}),
+        )
+    }
 }
 
 /// Run a side-effect command that does not emit stdout result data.

@@ -17,7 +17,10 @@
 //! | `parse_args_from_wraps_help_as_json_control_record` | shared parser returns JSON help metadata |
 
 use clap::Parser;
-use cli_common::{BaseArgs, CheckOutputArgs, CommandExit, ControlPlaneFields, ControlPlaneRecordKind, emit, parse_args_from};
+use cli_common::{
+    BaseArgs, CheckOutputArgs, CommandExit, ControlPlaneFields, ControlPlaneRecord, ControlPlaneRecordKind,
+    OriginCallbackOutcome, OriginPreparation, emit, parse_args_from,
+};
 use serde::Serialize;
 
 /// Minimal helper CLI: this fixture exercises the public composition of
@@ -144,4 +147,61 @@ fn parse_args_from_wraps_help_as_json_control_record() {
         panic!("help record should expose clap help text");
     };
     assert!(text.contains("Fixture helper"));
+}
+
+/// Claim: A public origin callback's explicit terminal refusal emits no stdout result and retains status two with enabled or validly disabled observation.
+/// ´claim:cli:callback-terminal-refusal-output´
+/// ´test:integration:callback-terminal-refusal-output´
+#[test]
+fn callback_terminal_refusal_output() {
+    if std::env::var_os("PN_CALLBACK_REFUSAL_CHILD").is_some() {
+        cli_common::observation::select_process_policy().expect("valid child observation policy");
+        let exit = cli_common::run_stdout_json_command_from_origin_with_load_outcome(
+            cli_common::observation::EntryOrigin::capture(),
+            "callback-fixture",
+            false,
+            tracing::Level::INFO,
+            || OriginPreparation::Continue {
+                context: (),
+                arguments: serde_json::json!({"command":"callback-fixture"}),
+            },
+            || {},
+            |()| -> OriginCallbackOutcome<serde_json::Value, std::io::Error> {
+                OriginCallbackOutcome::TerminalRefusal(ControlPlaneRecord::usage_error("callback-fixture", "target_not_empty"))
+            },
+        );
+        assert_eq!(exit, CommandExit::Usage.exit_code());
+        return;
+    }
+    for disable in [false, true] {
+        let mut child = std::process::Command::new(std::env::current_exe().expect("test executable"));
+        child
+            .arg("--exact")
+            .arg("callback_terminal_refusal_output")
+            .arg("--nocapture")
+            .env("PN_CALLBACK_REFUSAL_CHILD", "1")
+            .env_remove("PN_OBSERVE_LEVEL");
+        if disable {
+            child.env("PN_OBSERVE_DISABLE", "1");
+        } else {
+            child.env_remove("PN_OBSERVE_DISABLE");
+        }
+        let result = child.output().expect("child test");
+        assert!(result.status.success(), "{}", String::from_utf8_lossy(&result.stderr));
+        assert!(
+            String::from_utf8_lossy(&result.stdout)
+                .lines()
+                .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
+                .all(|value| !value.is_object())
+        );
+        if disable {
+            assert!(
+                !String::from_utf8_lossy(&result.stderr).contains("target_not_empty"),
+                "{}",
+                String::from_utf8_lossy(&result.stderr)
+            );
+        } else {
+            assert!(String::from_utf8_lossy(&result.stderr).contains("target_not_empty"));
+        }
+    }
 }

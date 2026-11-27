@@ -1,0 +1,32 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "cli-common",
+    "path": "packages/cli-common/src/lib.rs",
+    "item": "<OriginCallbackOutcome < Output , Error > as From < Result < Output , Error > >>::from",
+    "owner": "CLICOMMON",
+    "signature": "fn from (result : Result < Output , Error >) -> Self",
+    "claim": "ROOT::rule:observe:spans",
+    "mode": "exception",
+    "exception": {
+      "rule": "ROOT::rule:observe:spans",
+      "kind": "inherited",
+      "justification": "Justified: This conversion classifies an existing result inside its caller's origin command root without starting a second operation.",
+      "witness": "CLICOMMON::claim:cli:callback-terminal-refusal",
+      "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+      "class_decision": "public-cli"
+    },
+    "shape": "shape-003"
+  },
+  "review": {
+    "operation": "cli-common::packages/cli-common/src/lib.rs::<OriginCallbackOutcome < Output , Error > as From < Result < Output , Error > >>::from",
+    "body": "{ match result { Ok (output) => Self :: Success (output) , Err (error) => Self :: RuntimeFailure (error) , } }",
+    "class_decision": "public-cli",
+    "item_premise": "A Result is labelled as success or runtime failure without inspecting its content or making an observation outside the caller's origin root.",
+    "assessments": {
+      "full_recording": "origin-full-recording",
+      "secret_flow": "origin-secret-flow",
+      "exposure_consumers": "origin-exposure-consumers"
+    }
+  }
+}
