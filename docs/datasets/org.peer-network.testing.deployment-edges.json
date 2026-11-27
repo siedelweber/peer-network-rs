@@ -736,21 +736,21 @@
     },
     {
       "conditional_on": "",
-      "reason": "This preserves the enablement hold without asserting its implementation, custody or private entropy.",
+      "reason": "This preserves the earlier declaration and account's integration hold without asserting implementation, custody or private entropy.",
       "relation": "realizes",
       "source": "ROOT::conv:author:holds",
       "target": "ROOT::open:identity:act-realization-admission"
     },
     {
       "conditional_on": "",
-      "reason": "This retains the implementation hold for the described signature and authority routes, without asserting their enablement.",
+      "reason": "This retains the implementation hold for the earlier signed carriers, without asserting their enablement.",
       "relation": "realizes",
       "source": "ROOT::conv:author:paper",
       "target": "ROOT::open:identity:act-realization-admission"
     },
     {
       "conditional_on": "",
-      "reason": "This compares the paper case with the separate local extension without binding that case or asserting external authority.",
+      "reason": "This uses the separation of recorded-key verification from authority assessment, without claiming external authority or an implemented oracle.",
       "relation": "realizes",
       "source": "ROOT::conv:author:paper",
       "target": "def:graph:author-authority-oracle"
@@ -925,7 +925,7 @@
     },
     {
       "conditional_on": "",
-      "reason": "This preserves the enablement hold and its local transition prerequisite, without asserting a transition, external authority or new execution.",
+      "reason": "This preserves the enablement hold; the earlier local transition duties are historical.",
       "relation": "realizes",
       "source": "ROOT::dec:devnet:author-authority-convertibility",
       "target": "ROOT::open:identity:act-realization-admission"

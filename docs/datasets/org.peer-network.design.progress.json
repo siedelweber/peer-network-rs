@@ -3002,6 +3002,10 @@
       "elsewhere": [],
       "holds": [
         {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "EPOCH::def:compiler:completed-package"
+        },
+        {
           "hold": "ROOT::open:testing:obligation-evidence",
           "record": "ROOT::dec:design:admission"
         },
@@ -7128,6 +7132,10 @@
           "record": "ROOT::amend:identity:act-proposal-admission"
         },
         {
+          "hold": "ROOT::open:identity:chain-actor-binding",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
           "hold": "ROOT::open:identity:act-realization-admission",
           "record": "ROOT::amend:identity:proposal-signature"
         },
@@ -7190,6 +7198,10 @@
         },
         {
           "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
+          "hold": "ROOT::open:identity:chain-actor-binding",
           "record": "ROOT::amend:identity:act-proposal-admission"
         },
         {
@@ -7298,6 +7310,10 @@
         {
           "hold": "ROOT::open:identity:act-realization-admission",
           "record": "ROOT::amend:decomposition:act-profile"
+        },
+        {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "ROOT::open:design:dependency-opening-recipe"
         },
         {
           "hold": "ROOT::open:crypto:dependency-admission",
@@ -13366,6 +13382,10 @@
       "crate": "pn-epoch",
       "elsewhere": [],
       "holds": [
+        {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "EPOCH::def:compiler:completed-package"
+        },
         {
           "hold": "ROOT::open:design:dependency-opening-recipe",
           "record": "ROOT::amend:design:bite-five-close"
@@ -33338,6 +33358,10 @@
       "elsewhere": [],
       "holds": [
         {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "EPOCH::def:compiler:completed-package"
+        },
+        {
           "hold": "ROOT::open:testing:obligation-evidence",
           "record": "ROOT::dec:design:publication"
         },
@@ -34091,6 +34115,10 @@
       "elsewhere": [],
       "holds": [
         {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "ROOT::open:design:dependency-opening-recipe"
+        },
+        {
           "hold": "ROOT::open:crypto:dependency-admission",
           "record": "ROOT::open:design:dependency-opening-recipe"
         },
@@ -34780,6 +34808,10 @@
       "elsewhere": [],
       "holds": [
         {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "ROOT::amend:design:closure-record-scope"
+        },
+        {
           "hold": "ROOT::open:testing:obligation-evidence",
           "record": "ROOT::dec:design:epoch-record-order"
         },
@@ -34990,7 +35022,7 @@
           "record": "ROOT::amend:identity:paper-case-declaration"
         },
         {
-          "clause": "Claimed part: This compares the paper case with the separate local extension without binding that case or asserting external authority.",
+          "clause": "Claimed part: This uses the separation of recorded-key verification from authority assessment, without claiming external authority or an implemented oracle.",
           "record": "ROOT::conv:author:paper"
         },
         {
@@ -35149,6 +35181,10 @@
       "holds": [
         {
           "hold": "ROOT::open:identity:act-realization-admission",
+          "record": "ROOT::amend:identity:act-proposal-admission"
+        },
+        {
+          "hold": "ROOT::open:identity:chain-actor-binding",
           "record": "ROOT::amend:identity:act-proposal-admission"
         }
       ],
@@ -36435,7 +36471,12 @@
       "category": "statement",
       "crate": "pn-replay",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "ROOT::amend:design:closure-record-scope"
+        }
+      ],
       "kind": "function",
       "label": "def:network:history-closure",
       "portions": [],
@@ -36455,7 +36496,12 @@
       "category": "statement",
       "crate": "pn-replay",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "ROOT::amend:design:closure-record-scope"
+        }
+      ],
       "kind": "function",
       "label": "def:network:static-closure",
       "portions": [],
@@ -36477,6 +36523,14 @@
       "elsewhere": [],
       "holds": [
         {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "ROOT::amend:design:closure-record-scope"
+        },
+        {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "ROOT::amend:design:replay-version-three-fields"
+        },
+        {
           "hold": "ROOT::open:identity:chain-marker-admission",
           "record": "ROOT::def:actepoch:closure-record"
         },
@@ -36496,7 +36550,7 @@
         "ROOT::def:actepoch:closure-record"
       ],
       "routes": [],
-      "status": "designed",
+      "status": "held",
       "tentative": 0
     },
     {
@@ -36504,7 +36558,12 @@
       "category": "statement",
       "crate": "pn-replay",
       "elsewhere": [],
-      "holds": [],
+      "holds": [
+        {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "ROOT::amend:design:closure-record-scope"
+        }
+      ],
       "kind": "invariant check",
       "label": "post:epoch:declared-history-consistency",
       "portions": [],
@@ -36698,6 +36757,10 @@
         {
           "hold": "ROOT::open:design:dependency-opening-recipe",
           "record": "ROOT::amend:design:act-envelope-field-inventory"
+        },
+        {
+          "hold": "ROOT::open:actepoch:authority-boundary",
+          "record": "ROOT::def:actepoch:act"
         },
         {
           "hold": "ROOT::open:identity:common-document-admission",
@@ -38062,23 +38125,23 @@
     },
     {
       "category": "total",
-      "designed": 443,
-      "held": 54,
+      "designed": 442,
+      "held": 55,
       "name": "implementation",
       "number_forms": {
         "designed": {
-          "exact": "443",
+          "exact": "442",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "443",
+          "num": "442",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "54",
+          "exact": "55",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "54",
+          "num": "55",
           "num_exact": true,
           "num_relation": "="
         },
@@ -38953,23 +39016,23 @@
     },
     {
       "category": "crate",
-      "designed": 86,
-      "held": 11,
+      "designed": 85,
+      "held": 12,
       "name": "pn-records",
       "number_forms": {
         "designed": {
-          "exact": "86",
+          "exact": "85",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "86",
+          "num": "85",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "11",
+          "exact": "12",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "11",
+          "num": "12",
           "num_exact": true,
           "num_relation": "="
         },
@@ -40141,23 +40204,23 @@
     },
     {
       "category": "kind",
-      "designed": 60,
-      "held": 8,
+      "designed": 59,
+      "held": 9,
       "name": "type",
       "number_forms": {
         "designed": {
-          "exact": "60",
+          "exact": "59",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "60",
+          "num": "59",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "8",
+          "exact": "9",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "8",
+          "num": "9",
           "num_exact": true,
           "num_relation": "="
         },
@@ -41329,23 +41392,23 @@
     },
     {
       "category": "bite",
-      "designed": 337,
-      "held": 25,
+      "designed": 336,
+      "held": 26,
       "name": "unlinked",
       "number_forms": {
         "designed": {
-          "exact": "337",
+          "exact": "336",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "337",
+          "num": "336",
           "num_exact": true,
           "num_relation": "="
         },
         "held": {
-          "exact": "25",
+          "exact": "26",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "25",
+          "num": "26",
           "num_exact": true,
           "num_relation": "="
         },
