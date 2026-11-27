@@ -31,7 +31,7 @@ major = 1
 minor = 0
 allocator = "repository maintainers for the centralized test deployment"
 theory = "common-act"
-status = "test common-act theory designed; registry publication, confusable-name review and independent vectors pending; retained act-envelope has no namespace reservation"
+status = "test common-act theory published with registry assignment, within-reservation name review and independent unsigned vectors; pure name operation implemented; retained act-envelope has no namespace reservation"
 owner = "lane/design"
 
 [[rows]]
@@ -42,7 +42,7 @@ major = 1
 minor = 0
 allocator = "repository maintainers for the centralized test deployment"
 theory = "witnessed-act"
-status = "test theory designed; registry publication, confusable-name review and independent vectors pending"
+status = "test theory published with registry assignment, within-reservation name review and independent unsigned vectors; pure name operation implemented"
 owner = "lane/design"
 
 [[rows]]

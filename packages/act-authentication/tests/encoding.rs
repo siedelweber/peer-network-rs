@@ -2,6 +2,8 @@ use pn_act_authentication::*;
 use pn_interchange::{Array, Map, Value};
 use std::collections::BTreeSet;
 
+#[path = "encoding/common_cases.rs"]
+mod common_cases;
 #[path = "encoding/v2_cases.rs"]
 mod v2_cases;
 #[path = "encoding/v3_cases.rs"]

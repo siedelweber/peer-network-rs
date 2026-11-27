@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/common.rs",
+    "item": "common::registry",
+    "signature": "fn registry () -> Result < Registry , CommonError >",
+    "owner": "ACTAUTH",
+    "claim": "ROOT::amend:identity:common-static-admission",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/common.rs::common::registry",
+    "class_decision": "authentication-public",
+    "body": "{ let mut registry = Registry :: new () ; for (namespace , source) in [(ACT_NAMESPACE , ACT_THEORY) , (WITNESS_NAMESPACE , WITNESS_THEORY)] { let label = NamespaceLabel :: parse (namespace) . map_err (| _ | CommonError :: RegistryDefinition) ? ; let theory = Theory :: parse (source) . map_err (| _ | CommonError :: RegistryDefinition) ? ; registry . acquire (Coordinate :: new (label , 1 , 0) , theory) . map_err (| _ | CommonError :: RegistryDefinition) ? ; } Ok (registry) }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Complete public document arguments and results are recorded. The operation establishes representation or equality only, never referent validity, signature validity or authority."
+  }
+}

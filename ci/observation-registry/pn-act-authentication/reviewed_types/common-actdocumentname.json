@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "common::ActDocumentName",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/common.rs",
+    "syntax": "# [doc = \" The complete SHA-256 name of an act document.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord , Hash)] pub struct ActDocumentName ([u8 ; 32]) ;"
+  }
+}

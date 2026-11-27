@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "common::CanonicalItems",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/common.rs",
+    "syntax": "struct CanonicalItems { root : Option < Item > , level_two : [Option < Item > ; 8] , level_three : [Option < Item > ; 24] , usage_bytes : usize , }"
+  }
+}

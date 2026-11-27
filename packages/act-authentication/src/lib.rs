@@ -3,6 +3,7 @@
 //! module separately parses keys and checks fixed-message signatures.
 //! (´def:authentication:public-evidence´)
 
+pub mod common;
 pub mod v2;
 pub mod v3;
 pub mod verification;

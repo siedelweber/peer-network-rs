@@ -2658,6 +2658,30 @@
       "review": "Read the shared profile projection, retained openings and golden recomputation, the computed-versus-unopened type control, the three surviving frames and typed field refusals; no signature or authority claim is added. The added exact refusals witness unknown recipes, malformed prefixed hosts or local marker conditions, as named by this claim; no stronger authority is inferred."
     },
     {
+      "operation": "pn-act-authentication::encoding::common_cases::common_act_canonical",
+      "path": "packages/act-authentication/tests/encoding/common_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:common-act-canonical",
+      "before": "",
+      "after": "Claim: The act's complete canonical bytes and digest match an independent encoder, and ordered malformed neighbours refuse without repair.",
+      "review": "The test compares two fixed act values and independent unsigned vectors, names and combined-fault refusals, including input and output ceilings."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::common_cases::common_auth_registry",
+      "path": "packages/act-authentication/tests/encoding/common_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:common-auth-registry",
+      "before": "",
+      "after": "Claim: The two embedded published theory objects and coordinates are exactly those acquired from their source files.",
+      "review": "The test re-parses the same two embedded files through the registry API and compares their sources and coordinates with those returned by the public operation."
+    },
+    {
+      "operation": "pn-act-authentication::encoding::common_cases::common_witness_canonical",
+      "path": "packages/act-authentication/tests/encoding/common_cases.rs",
+      "claim": "ACTAUTH::claim:authentication:common-witness-canonical",
+      "before": "",
+      "after": "Claim: The witnessed act's exact unsigned bytes and name match an independent encoder, and malformed neighbours refuse before patch selection.",
+      "review": "The test compares two fixed witnessed values and the independent unsigned corpus, including wrong count, widths, canonical form and combined refusal order."
+    },
+    {
       "operation": "pn-act-authentication::encoding::header_comparison",
       "path": "packages/act-authentication/tests/encoding.rs",
       "claim": "ACTAUTH::claim:authentication:header-comparison-refuses-each-field",

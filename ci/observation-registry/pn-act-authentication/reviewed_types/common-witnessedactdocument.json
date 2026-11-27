@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "common::WitnessedActDocument",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/common.rs",
+    "syntax": "# [doc = \" Four opaque fixed-width members in the published witnessed-act order.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct WitnessedActDocument { act : [u8 ; 32] , key : [u8 ; 32] , signature_first : [u8 ; 32] , signature_second : [u8 ; 32] , }"
+  }
+}

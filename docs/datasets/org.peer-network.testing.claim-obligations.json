@@ -4507,14 +4507,20 @@
       "witnessed_labels": []
     },
     {
-      "claims": [],
+      "claims": [
+        "ACTAUTH::claim:authentication:common-act-canonical",
+        "ACTAUTH::claim:authentication:common-witness-canonical",
+        "ACTAUTH::claim:authentication:common-auth-registry"
+      ],
       "closing_condition": "Complete CD1 through CD4 for the corresponding controls, with the API control in CD1, cross-role and version-boundary controls in CD2, approval and signature cross-role controls in CD3 and spent-slot control in CD4; register each independent assertion at its sole owning site and supply source/configuration-matched passing evidence without enabling applications or converting historical carriers.",
       "closing_step": "CD1 and CD2 pure common-document implementation, CD3 supplied-key verification and CD4 measured static integration; CD5 application enablement remains separately held",
+      "evidence_paragraph": "ACTAUTH::rec:authentication:common-first-cut-evidence",
       "hold": "ROOT::open:identity:common-document-admission",
-      "missing": "Pure static operations, semantic assurance and refusal contracts are admitted as design. Published theory artifacts and separate registry correspondence controls, unsigned CD1/CD2 vectors, the held CD3 signature-evidence admission, measured budgets, dated registry-edge admission and the named controls remain unexecuted; signer and complete static integration remain held.",
+      "missing": "CD1 act and witnessed-act theory publication, unsigned vectors, canonical controls, registry correspondence and restricted-API source review are built. CD2 epoch/root/acts vectors and controls, CD2's dated registry-edge admission and list measurements, the held CD3 signature-evidence admission and verifier, CD4 measured static integration, the CD5 signer, production allowances and coordinated application enablement remain owed.",
       "name": "ROOT::verif:identity:common-document-controls",
       "owner": "Identity, authentication, epoch and successor static-check implementers",
       "path": "adr/006-identity-adjudication.md",
+      "premises": "CD1 tests compare complete public act and witnessed-act encodings and names with independent unsigned vectors, exercise ordered malformed neighbours, and compare the same two embedded theory files re-parsed through the registry API, comparing sources and coordinates with common::registry. Source review alone establishes the restricted API surface. These controls do not discharge CD2 through CD4 or application authority.",
       "realizers": [],
       "status": "held",
       "witnessed_labels": []

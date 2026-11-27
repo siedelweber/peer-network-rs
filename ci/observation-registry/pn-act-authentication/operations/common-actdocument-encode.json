@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/common.rs",
+    "item": "common::ActDocument::encode",
+    "signature": "fn encode (& self , limits : Limits) -> Result < Vec < u8 > , CommonError >",
+    "owner": "ACTAUTH",
+    "claim": "ROOT::amend:identity:common-static-admission",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/common.rs::common::ActDocument::encode",
+    "class_decision": "authentication-public",
+    "body": "{ encode_fixed (ACT_NAMESPACE , & self . words () , 274 , limits) }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Complete public document arguments and results are recorded. The operation establishes representation or equality only, never referent validity, signature validity or authority."
+  }
+}

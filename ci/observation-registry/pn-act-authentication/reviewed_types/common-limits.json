@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "common::Limits",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/common.rs",
+    "syntax": "# [doc = \" Mandatory caller declarations. The list fields are reserved for the later list cut.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct Limits { pub input_bytes : usize , pub output_bytes : usize , pub canonical_allocation_bytes : usize , pub max_pairs : usize , pub collection_allocation_bytes : usize , }"
+  }
+}

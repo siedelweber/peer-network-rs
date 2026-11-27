@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/common.rs",
+    "item": "common::WitnessedActDocument::decode_strict",
+    "signature": "fn decode_strict (input : & [u8] , limits : Limits) -> Result < Self , CommonError >",
+    "owner": "ACTAUTH",
+    "claim": "ROOT::amend:identity:common-static-admission",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/common.rs::common::WitnessedActDocument::decode_strict",
+    "class_decision": "authentication-public",
+    "body": "{ let [act , key , signature_first , signature_second] = decode_fixed :: < 4 > (input , WITNESS_NAMESPACE , limits) ? ; Ok (Self :: new (act , key , signature_first , signature_second)) }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Complete public document arguments and results are recorded. The operation establishes representation or equality only, never referent validity, signature validity or authority."
+  }
+}

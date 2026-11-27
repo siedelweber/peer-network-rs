@@ -1,0 +1,24 @@
+{
+  "section": "operations",
+  "value": {
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/common.rs",
+    "item": "common::ActDocument::typed_document",
+    "signature": "fn typed_document (& self) -> & [u8 ; 32]",
+    "owner": "ACTAUTH",
+    "claim": "ROOT::amend:identity:common-static-admission",
+    "shape": "shape-wallet",
+    "mode": "instrumented"
+  },
+  "review": {
+    "operation": "pn-act-authentication::packages/act-authentication/src/common.rs::common::ActDocument::typed_document",
+    "class_decision": "authentication-public",
+    "body": "{ & self . typed_document }",
+    "assessments": {
+      "full_recording": "authentication-public",
+      "secret_flow": "authentication-public",
+      "exposure_consumers": "authentication-public"
+    },
+    "item_premise": "Complete public document arguments and results are recorded. The operation establishes representation or equality only, never referent validity, signature validity or authority."
+  }
+}

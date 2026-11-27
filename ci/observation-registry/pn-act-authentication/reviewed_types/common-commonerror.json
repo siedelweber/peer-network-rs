@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "common::CommonError",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/common.rs",
+    "syntax": "# [doc = \" A strict common-document refusal or publication defect.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum CommonError { # [error (\"owned theory cannot be published\")] RegistryDefinition , # [error (\"canonical document resources unavailable: {reason:?}, charged {charged_bytes} bytes\")] UnavailableBudget { reason : BudgetReason , charged_bytes : usize } , # [error (\"noncanonical document bytes\")] Canonical , # [error (\"wrong envelope or header shape\")] Envelope , # [error (\"wrong namespace\")] Namespace , # [error (\"operation version unavailable\")] OperationVersion , # [error (\"wrong content key or body shape\")] Body , # [error (\"wrong body member count\")] Count , # [error (\"wrong body member type\")] MemberType , # [error (\"wrong body member width\")] MemberWidth , # [error (\"operation patch unavailable\")] OperationPatch , }"
+  }
+}

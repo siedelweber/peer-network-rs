@@ -1,0 +1,9 @@
+{
+  "section": "reviewed_types",
+  "value": {
+    "item": "common::BudgetReason",
+    "package": "pn-act-authentication",
+    "path": "packages/act-authentication/src/common.rs",
+    "syntax": "# [doc = \" A reason within the single operational inability class.\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum BudgetReason { InputBytes , OutputBytes , Representation , CanonicalAllocation , Allocation , }"
+  }
+}

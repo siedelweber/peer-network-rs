@@ -1933,7 +1933,10 @@
         "pn-act-authentication::encoding::v3_cases::material_values",
         "pn-act-authentication::encoding::v3_cases::material_order",
         "pn-act-authentication::encoding::v3_cases::roles_values",
-        "pn-act-authentication::encoding::v3_cases::roles_order"
+        "pn-act-authentication::encoding::v3_cases::roles_order",
+        "pn-act-authentication::encoding::common_cases::common_act_canonical",
+        "pn-act-authentication::encoding::common_cases::common_witness_canonical",
+        "pn-act-authentication::encoding::common_cases::common_auth_registry"
       ],
       "implementation": "pn-act-authentication-rust",
       "kind": "suite",

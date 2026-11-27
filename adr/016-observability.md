@@ -99,7 +99,7 @@ The implemented follow-up adds entry_origin_installation_transfer (the shared in
 | documents | 29 | 19 | 10 | 0 | 22 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
 | pn | 34 | 24 | 10 | 0 | 29 |
-| pn-act-authentication | 57 | 57 | 0 | 0 | 28 |
+| pn-act-authentication | 84 | 84 | 0 | 0 | 36 |
 | pn-act-profile | 43 | 40 | 3 | 0 | 17 |
 | pn-credential-derivation | 6 | 4 | 2 | 0 | 1 |
 | pn-credential-generator | 6 | 1 | 5 | 0 | 2 |

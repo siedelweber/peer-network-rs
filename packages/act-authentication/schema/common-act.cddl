@@ -1,0 +1,10 @@
+act-document = { 0 => "org.peer-network.test.act", 1 => [1, 0, uint], 2 => [author, sequence, act-type, typed-document, parents-document, content-document, dependency-document] }
+author = word
+sequence = word
+act-type = word
+typed-document = word
+parents-document = word
+content-document = word
+dependency-document = word
+patch = 0..18446744073709551615
+word = bstr .size 32

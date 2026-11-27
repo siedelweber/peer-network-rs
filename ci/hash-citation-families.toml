@@ -1260,6 +1260,17 @@ definition = "The reader independently recomputes every retained canonical value
 paths = ["packages/act-authentication/tests/encoding-golden.json"]
 
 [[rows]]
+family = "authentication-common-fixtures"
+group = "public authentication document fixtures"
+measures = "Independent common act and witnessed-act canonical bytes, names and ordered refusal operands"
+producer = "Independent Python standard-library canonical encoder and SHA-256"
+establishment = "defined"
+reader = "authentication-common-fixtures"
+source = "packages/act-authentication/tests/common-documents.json"
+definition = "The independent route regenerates the exact unsigned values without production code. Fixture key and signature words assert no valid approval, authority or referent."
+paths = ["packages/act-authentication/tests/common-documents.json"]
+
+[[rows]]
 family = "authentication-version-two-fixtures"
 group = "public authentication encoding fixtures"
 measures = "Independent version-two preimages, commitments, header, material and role messages"

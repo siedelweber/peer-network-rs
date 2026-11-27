@@ -1,0 +1,7 @@
+witnessed-act-document = { 0 => "org.peer-network.test.act.witness", 1 => [1, 0, uint], 2 => [act-hash, verification-key, signature-first, signature-second] }
+act-hash = word
+verification-key = word
+signature-first = word
+signature-second = word
+patch = 0..18446744073709551615
+word = bstr .size 32

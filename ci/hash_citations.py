@@ -337,15 +337,15 @@ def establish(root, rule):
         values.add(hashlib.sha256(publication.read_bytes()).hexdigest())
         values.update(hex(number) for number in (reference.ORDER, *reference.GENERATOR))
         return lambda candidate, _line: candidate in values
-    if kind in {"authentication-fixtures", "authentication-encoding-fixtures", "authentication-v2-fixtures", "authentication-v3-fixtures", "authentication-v3-refusals", "authentication-carrier-fixtures", "authentication-carrier-refusals", "authentication-boundary-fixtures", "publication-core-fixtures"} and standing == "defined":
+    if kind in {"authentication-fixtures", "authentication-encoding-fixtures", "authentication-v2-fixtures", "authentication-v3-fixtures", "authentication-v3-refusals", "authentication-carrier-fixtures", "authentication-carrier-refusals", "authentication-boundary-fixtures", "publication-core-fixtures", "authentication-common-fixtures"} and standing == "defined":
         if kind == "authentication-encoding-fixtures":
             from authentication_encoding_vectors import check
         else:
             from authentication_vectors import check
         value = json.loads(relative_file(root, rule['source']).read_text())
-        if kind in {"authentication-v2-fixtures", "authentication-v3-fixtures", "authentication-v3-refusals", "authentication-carrier-fixtures", "authentication-carrier-refusals", "authentication-boundary-fixtures", "publication-core-fixtures"}:
+        if kind in {"authentication-v2-fixtures", "authentication-v3-fixtures", "authentication-v3-refusals", "authentication-carrier-fixtures", "authentication-carrier-refusals", "authentication-boundary-fixtures", "publication-core-fixtures", "authentication-common-fixtures"}:
             import runpy
-            edition = 'publication_core' if kind == 'publication-core-fixtures' else 'boundary' if kind == 'authentication-boundary-fixtures' else 'carrier' if kind in {'authentication-carrier-fixtures', 'authentication-carrier-refusals'} else ('v3' if kind in {'authentication-v3-fixtures', 'authentication-v3-refusals'} else 'v2')
+            edition = 'common' if kind == 'authentication-common-fixtures' else 'publication_core' if kind == 'publication-core-fixtures' else 'boundary' if kind == 'authentication-boundary-fixtures' else 'carrier' if kind in {'authentication-carrier-fixtures', 'authentication-carrier-refusals'} else ('v3' if kind in {'authentication-v3-fixtures', 'authentication-v3-refusals'} else 'v2')
             function = 'refusal_vectors' if kind in {'authentication-v3-refusals', 'authentication-carrier-refusals'} else 'vectors'
             expected = runpy.run_path(str(root/('packages/act-authentication/tests/'+edition+'_vectors.py')))[function]()
             if value != expected:
