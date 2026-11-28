@@ -24,7 +24,7 @@
 | Public API | accepted | (`rec:api:decision`) |
 | Development network | accepted | (`rec:devnet:decision`) |
 | Testing harness | accepted | (`rec:harness:decision`) |
-| Development performance | accepted | (`rec:devperf:decision`) |
+| Development performance | accepted; superseded as verification by (`amend:foundation:verification-transition`) and retained as the record of retired machinery | (`rec:devperf:decision`) |
 | Host intranet | accepted | (`rec:intranet:decision`) |
 | Cryptographic base | accepted | (`rec:crypto:decision`) |
-| Build graph | accepted | (`rec:buildgraph:decision`) |
+| Build graph | accepted; superseded as verification by (`amend:foundation:verification-transition`) and retained as the record of retired machinery | (`rec:buildgraph:decision`) |

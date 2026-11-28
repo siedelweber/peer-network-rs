@@ -1,4 +1,4 @@
-**Record (Development performance)** · `rec:devperf:decision` Status: accepted. Scope: Wall-time budgets, nonverdict findings, measured build choices and registered expensive work. Depends on: (`rec:toolchain:decision`), (`rec:observe:decision`), (`rec:testing:decision`), (`rec:harness:decision`), (`rec:compatibility:decision`). Does not establish: The policy establishes no profile change, controlled baseline, admitted expensive exception or implemented timing collector.
+**Record (Development performance)** · `rec:devperf:decision` Status: accepted; superseded as verification by (`amend:foundation:verification-transition`) and retained as the record of retired machinery. Scope: Wall-time budgets, nonverdict findings, measured build choices and registered expensive work. Depends on: (`rec:toolchain:decision`), (`rec:observe:decision`), (`rec:testing:decision`), (`rec:harness:decision`), (`rec:compatibility:decision`). Does not establish: The policy establishes no profile change, controlled baseline, admitted expensive exception or implemented timing collector.
 
 ## Development performance · `sec:devperf:record`
 

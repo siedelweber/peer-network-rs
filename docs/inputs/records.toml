@@ -150,9 +150,9 @@ label = "rec:testing:decision"
 path = "adr/017-claim-based-testing.md"
 status = "accepted"
 title = "Claim-based testing"
-scope = "Test-site claims, meaningful glosses, owner registers and requirement-to-execution evidence."
+scope = "Review-led confidence, internal debug assertions, focused tests and the scope of public-record claims."
 depends_on = ["rec:labels:decision", "rec:lint:decision", "rec:compatibility:decision", "rec:observe:decision"]
-does_not_establish = "The record establishes neither executed domain evidence nor an implemented coverage query; those remain bite gates."
+does_not_establish = "The confidence policy establishes no executed domain evidence and discharges no product admission, because the evidence for a supported operation belongs to that operation."
 
 [[rows]]
 label = "rec:api:decision"
@@ -184,7 +184,7 @@ does_not_establish = "No harness, mock, client, benchmark baseline or service co
 [[rows]]
 label = "rec:devperf:decision"
 path = "adr/021-development-performance.md"
-status = "accepted"
+status = "accepted; superseded as verification by (`amend:foundation:verification-transition`) and retained as the record of retired machinery"
 title = "Development performance"
 scope = "Wall-time budgets, nonverdict findings, measured build choices and registered expensive work."
 depends_on = ["rec:toolchain:decision", "rec:observe:decision", "rec:testing:decision", "rec:harness:decision", "rec:compatibility:decision"]
@@ -211,7 +211,7 @@ does_not_establish = "No dependency integration, signed-object recipe, key-manag
 [[rows]]
 label = "rec:buildgraph:decision"
 path = "adr/024-build-graph.md"
-status = "accepted"
+status = "accepted; superseded as verification by (`amend:foundation:verification-transition`) and retained as the record of retired machinery"
 title = "Build graph"
 scope = "Meson composition of the existing gate, declared file coverage and verdict-preserving migration slices."
 depends_on = ["rec:toolchain:decision", "rec:lint:decision", "rec:render:decision", "rec:testing:decision", "rec:devperf:decision"]

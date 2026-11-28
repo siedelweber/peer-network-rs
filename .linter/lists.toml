@@ -34,13 +34,7 @@ allowances = []
 [NODE."profile.tests-conform"]
 allowances = []
 
-[NODE."profile.claims-conform"]
-allowances = []
-
 [ROOT."profile.tests-conform"]
-allowances = []
-
-[ROOT."profile.claims-conform"]
 allowances = []
 
 [VENDOR."labels.mints-well-formed"]
@@ -121,9 +115,6 @@ allowances = []
 [DOCUMENTS."profile.tests-conform"]
 allowances = []
 
-[DOCUMENTS."profile.claims-conform"]
-allowances = []
-
 [INTERCHANGE."labels.citations-import-form"]
 allowances = []
 
@@ -155,9 +146,6 @@ allowances = []
 allowances = []
 
 [INTERCHANGE."profile.tests-conform"]
-allowances = []
-
-[INTERCHANGE."profile.claims-conform"]
 allowances = []
 
 [CLICOMMON."labels.citations-import-form"]
@@ -193,9 +181,6 @@ allowances = []
 [CLICOMMON."profile.tests-conform"]
 allowances = []
 
-[CLICOMMON."profile.claims-conform"]
-allowances = []
-
 [EXECWRAP."labels.citations-import-form"]
 allowances = []
 
@@ -227,9 +212,6 @@ allowances = []
 allowances = []
 
 [EXECWRAP."profile.tests-conform"]
-allowances = []
-
-[EXECWRAP."profile.claims-conform"]
 allowances = []
 
 [RECORDS."labels.citations-import-form"]
@@ -265,9 +247,6 @@ allowances = []
 [RECORDS."profile.tests-conform"]
 allowances = []
 
-[RECORDS."profile.claims-conform"]
-allowances = []
-
 [TESTKIT."labels.citations-import-form"]
 allowances = []
 
@@ -299,9 +278,6 @@ allowances = []
 allowances = []
 
 [TESTKIT."profile.tests-conform"]
-allowances = []
-
-[TESTKIT."profile.claims-conform"]
 allowances = []
 
 [VERIFICATION."labels.citations-import-form"]
@@ -337,9 +313,6 @@ allowances = []
 [VERIFICATION."profile.tests-conform"]
 allowances = []
 
-[VERIFICATION."profile.claims-conform"]
-allowances = []
-
 [HOST."labels.citations-import-form"]
 allowances = []
 
@@ -371,9 +344,6 @@ allowances = []
 allowances = []
 
 [HOST."profile.tests-conform"]
-allowances = []
-
-[HOST."profile.claims-conform"]
 allowances = []
 
 [WALLET."labels.citations-import-form"]
@@ -409,9 +379,6 @@ allowances = []
 [WALLET."profile.tests-conform"]
 allowances = []
 
-[WALLET."profile.claims-conform"]
-allowances = []
-
 [GRAPH."labels.citations-import-form"]
 allowances = []
 
@@ -443,9 +410,6 @@ allowances = []
 allowances = []
 
 [GRAPH."profile.tests-conform"]
-allowances = []
-
-[GRAPH."profile.claims-conform"]
 allowances = []
 
 [EPOCH."labels.citations-import-form"]
@@ -481,9 +445,6 @@ allowances = []
 [EPOCH."profile.tests-conform"]
 allowances = []
 
-[EPOCH."profile.claims-conform"]
-allowances = []
-
 [ACTPROFILE."labels.citations-import-form"]
 allowances = []
 
@@ -515,9 +476,6 @@ allowances = []
 allowances = []
 
 [ACTPROFILE."profile.tests-conform"]
-allowances = []
-
-[ACTPROFILE."profile.claims-conform"]
 allowances = []
 
 [GENERATOR."labels.citations-import-form"]
@@ -553,9 +511,6 @@ allowances = []
 [GENERATOR."profile.tests-conform"]
 allowances = []
 
-[GENERATOR."profile.claims-conform"]
-allowances = []
-
 [DERIVATION."labels.citations-import-form"]
 allowances = []
 
@@ -587,9 +542,6 @@ allowances = []
 allowances = []
 
 [DERIVATION."profile.tests-conform"]
-allowances = []
-
-[DERIVATION."profile.claims-conform"]
 allowances = []
 
 [SECRETHOME."labels.citations-import-form"]
@@ -625,9 +577,6 @@ allowances = []
 [SECRETHOME."profile.tests-conform"]
 allowances = []
 
-[SECRETHOME."profile.claims-conform"]
-allowances = []
-
 [ACTAUTH."labels.citations-import-form"]
 allowances = []
 
@@ -661,9 +610,6 @@ allowances = []
 [ACTAUTH."profile.tests-conform"]
 allowances = []
 
-[ACTAUTH."profile.claims-conform"]
-allowances = []
-
 [FIXTURES."labels.citations-import-form"]
 allowances = []
 
@@ -695,7 +641,4 @@ allowances = []
 allowances = []
 
 [FIXTURES."profile.tests-conform"]
-allowances = []
-
-[FIXTURES."profile.claims-conform"]
 allowances = []

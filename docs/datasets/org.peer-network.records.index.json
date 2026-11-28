@@ -192,10 +192,10 @@
         "rec:compatibility:decision",
         "rec:observe:decision"
       ],
-      "does_not_establish": "The record establishes neither executed domain evidence nor an implemented coverage query; those remain bite gates.",
+      "does_not_establish": "The confidence policy establishes no executed domain evidence and discharges no product admission, because the evidence for a supported operation belongs to that operation.",
       "label": "rec:testing:decision",
       "path": "adr/017-claim-based-testing.md",
-      "scope": "Test-site claims, meaningful glosses, owner registers and requirement-to-execution evidence.",
+      "scope": "Review-led confidence, internal debug assertions, focused tests and the scope of public-record claims.",
       "status": "accepted",
       "title": "Claim-based testing"
     },
@@ -259,7 +259,7 @@
       "label": "rec:devperf:decision",
       "path": "adr/021-development-performance.md",
       "scope": "Wall-time budgets, nonverdict findings, measured build choices and registered expensive work.",
-      "status": "accepted",
+      "status": "accepted; superseded as verification by (`amend:foundation:verification-transition`) and retained as the record of retired machinery",
       "title": "Development performance"
     },
     {
@@ -300,7 +300,7 @@
       "label": "rec:buildgraph:decision",
       "path": "adr/024-build-graph.md",
       "scope": "Meson composition of the existing gate, declared file coverage and verdict-preserving migration slices.",
-      "status": "accepted",
+      "status": "accepted; superseded as verification by (`amend:foundation:verification-transition`) and retained as the record of retired machinery",
       "step_groups": [
         {
           "inputs": "ci/discipline.py and its imported checkers; toolchain, Cargo configuration, workspace and member manifests, lockfile, vendor declarations and build-policy input.",

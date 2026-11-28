@@ -1,5 +1,4 @@
 [toolchain]
-# Keep the dated nightly provisioned on every compute node so gates and fuzz
-# campaigns use one named compiler. Move the pin only in its own gated commit.
-channel = "nightly-2026-10-16"
+# Use the maintained current nightly with rustfmt and Clippy.
+channel = "nightly"
 components = ["rustfmt", "clippy"]

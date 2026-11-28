@@ -51,16 +51,8 @@
       "policy": "profile.tests-conform"
     },
     {
-      "owner": "NODE",
-      "policy": "profile.claims-conform"
-    },
-    {
       "owner": "ROOT",
       "policy": "profile.tests-conform"
-    },
-    {
-      "owner": "ROOT",
-      "policy": "profile.claims-conform"
     },
     {
       "owner": "VENDOR",
@@ -167,10 +159,6 @@
       "policy": "profile.tests-conform"
     },
     {
-      "owner": "DOCUMENTS",
-      "policy": "profile.claims-conform"
-    },
-    {
       "owner": "INTERCHANGE",
       "policy": "labels.citations-import-form"
     },
@@ -213,10 +201,6 @@
     {
       "owner": "INTERCHANGE",
       "policy": "profile.tests-conform"
-    },
-    {
-      "owner": "INTERCHANGE",
-      "policy": "profile.claims-conform"
     },
     {
       "owner": "CLICOMMON",
@@ -263,10 +247,6 @@
       "policy": "profile.tests-conform"
     },
     {
-      "owner": "CLICOMMON",
-      "policy": "profile.claims-conform"
-    },
-    {
       "owner": "EXECWRAP",
       "policy": "labels.citations-import-form"
     },
@@ -309,10 +289,6 @@
     {
       "owner": "EXECWRAP",
       "policy": "profile.tests-conform"
-    },
-    {
-      "owner": "EXECWRAP",
-      "policy": "profile.claims-conform"
     },
     {
       "owner": "RECORDS",
@@ -359,10 +335,6 @@
       "policy": "profile.tests-conform"
     },
     {
-      "owner": "RECORDS",
-      "policy": "profile.claims-conform"
-    },
-    {
       "owner": "TESTKIT",
       "policy": "labels.citations-import-form"
     },
@@ -405,10 +377,6 @@
     {
       "owner": "TESTKIT",
       "policy": "profile.tests-conform"
-    },
-    {
-      "owner": "TESTKIT",
-      "policy": "profile.claims-conform"
     },
     {
       "owner": "VERIFICATION",
@@ -455,10 +423,6 @@
       "policy": "profile.tests-conform"
     },
     {
-      "owner": "VERIFICATION",
-      "policy": "profile.claims-conform"
-    },
-    {
       "owner": "HOST",
       "policy": "labels.citations-import-form"
     },
@@ -501,10 +465,6 @@
     {
       "owner": "HOST",
       "policy": "profile.tests-conform"
-    },
-    {
-      "owner": "HOST",
-      "policy": "profile.claims-conform"
     },
     {
       "owner": "WALLET",
@@ -551,10 +511,6 @@
       "policy": "profile.tests-conform"
     },
     {
-      "owner": "WALLET",
-      "policy": "profile.claims-conform"
-    },
-    {
       "owner": "GRAPH",
       "policy": "labels.citations-import-form"
     },
@@ -597,10 +553,6 @@
     {
       "owner": "GRAPH",
       "policy": "profile.tests-conform"
-    },
-    {
-      "owner": "GRAPH",
-      "policy": "profile.claims-conform"
     },
     {
       "owner": "EPOCH",
@@ -647,10 +599,6 @@
       "policy": "profile.tests-conform"
     },
     {
-      "owner": "EPOCH",
-      "policy": "profile.claims-conform"
-    },
-    {
       "owner": "ACTPROFILE",
       "policy": "labels.citations-import-form"
     },
@@ -693,10 +641,6 @@
     {
       "owner": "ACTPROFILE",
       "policy": "profile.tests-conform"
-    },
-    {
-      "owner": "ACTPROFILE",
-      "policy": "profile.claims-conform"
     },
     {
       "owner": "GENERATOR",
@@ -743,10 +687,6 @@
       "policy": "profile.tests-conform"
     },
     {
-      "owner": "GENERATOR",
-      "policy": "profile.claims-conform"
-    },
-    {
       "owner": "DERIVATION",
       "policy": "labels.citations-import-form"
     },
@@ -789,10 +729,6 @@
     {
       "owner": "DERIVATION",
       "policy": "profile.tests-conform"
-    },
-    {
-      "owner": "DERIVATION",
-      "policy": "profile.claims-conform"
     },
     {
       "owner": "SECRETHOME",
@@ -839,10 +775,6 @@
       "policy": "profile.tests-conform"
     },
     {
-      "owner": "SECRETHOME",
-      "policy": "profile.claims-conform"
-    },
-    {
       "owner": "ACTAUTH",
       "policy": "labels.citations-import-form"
     },
@@ -887,10 +819,6 @@
       "policy": "profile.tests-conform"
     },
     {
-      "owner": "ACTAUTH",
-      "policy": "profile.claims-conform"
-    },
-    {
       "owner": "FIXTURES",
       "policy": "labels.citations-import-form"
     },
@@ -933,10 +861,6 @@
     {
       "owner": "FIXTURES",
       "policy": "profile.tests-conform"
-    },
-    {
-      "owner": "FIXTURES",
-      "policy": "profile.claims-conform"
     }
   ]
 }

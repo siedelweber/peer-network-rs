@@ -4,5 +4,5 @@
 
 | Decision | Status | Record |
 | --- | --- | --- |
-{% for record in rows('org.peer-network.records.index') %}{{ require(record.status == 'accepted', 'records index requires accepted decisions') }}| {{ record.title }} | {{ record.status }} | (`{{ record.label }}`) |
-{% endfor %}
+{% for record in rows('org.peer-network.records.index') %}{{ require(record.status == 'accepted' or (record.label in ['rec:devperf:decision', 'rec:buildgraph:decision'] and record.status == 'accepted; superseded as verification by (`amend:foundation:verification-transition`) and retained as the record of retired machinery'), 'records index requires accepted decisions') }}| {{ record.title }} | {{ record.status }} | (`{{ record.label }}`) |
+{% endfor -%}

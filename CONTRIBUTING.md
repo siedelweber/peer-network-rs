@@ -22,9 +22,9 @@ Use this guide to find the repository's working rules, label forms and invariant
 
 Edit prose in `docs/templates` and repeated facts in `docs/inputs`, then generate the datasets and render the documents; review and commit the generated files together with their sources (`rule:foundation:editing`). The [README's editing rule](README.md) gives the implemented generate/render modes and report option; a completed report request is not evidence of a clean check. This guide is a literal template for a root Markdown document, rendered under (`dec:render:policy`) and (`cor:render:tradeoffs`).
 
-Run `python3 -B ci/precheck.py` before the full gate, using the gate environment and explicitly prepared checker executables: it checks registrations and structural correspondence without compiling or executing tests (`rule:buildgraph:registration-precheck`). A new tracked file needs its build-graph declaration, and its labels and citations must fit the declared owners and inventories; follow the [build-graph record](adr/024-build-graph.md) for the complete registration checks.
+Run the repository’s verification entry (`gate:foundation:verification`) after regeneration; it checks the retained code and tests, label declarations and document fixed point. A new tracked file needs its owner and resolving labels under (`rec:labels:decision`), but no build-graph registration or prepared-checker binding is required, because those mechanisms are no longer the adopted entry.
 
-For the full gate, follow the [README’s verification gate](README.md) (`gate:foundation:verification`); it owns the command, environment and success criterion.
+The [README’s verification entry](README.md) (`gate:foundation:verification`) owns the command, environment and success criterion.
 
 ## Labels and citations · `sec:foundation:contributing-labels`
 

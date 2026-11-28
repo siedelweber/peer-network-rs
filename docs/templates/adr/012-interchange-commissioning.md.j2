@@ -14,7 +14,7 @@ No real consumer exists yet; the crate is commissioned as ready, not as consumed
 
 ## Checks · `sec:xchg:commissioning-checks`
 
-The crate is a workspace member, so `bash ci/gate.sh` covers formatting, Clippy under workspace lints, tests and documentation. Its test suite runs inside the gate’s `tests` step with a separately reported wall; the historical suite contained 668 tests. Fuzzing is outside the gate because it requires cargo-fuzz and has open-ended runtime: from `{{ adoption.path }}/fuzz`, run `bash seed.sh`, then `cargo +nightly fuzz run decode_canonical -- -max_total_time=60`, repeating for `cddl_parse` and `accept_document`. Run it at audit boundaries and before releases.
+The crate is a workspace member, so the verification entry (`gate:foundation:verification`) covers its formatting, Clippy under workspace lints, build and retained tests; the historical suite contained 668 tests. Fuzzing is outside the gate because it requires cargo-fuzz and has open-ended runtime: from `{{ adoption.path }}/fuzz`, run `bash seed.sh`, then `cargo +nightly fuzz run decode_canonical -- -max_total_time=60`, repeating for `cddl_parse` and `accept_document`. Run it at audit boundaries and before releases.
 
 ## Budget · `sec:xchg:commissioning-budget`
 
